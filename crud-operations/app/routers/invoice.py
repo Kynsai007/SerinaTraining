@@ -149,11 +149,9 @@ async def create_invoice(u_id: int, bg_task: BackgroundTasks, invoice: schema.Ne
 
 
 ##########################################################################################################
-
+#Code to be Written by Misbah Khanum
 @router.get("/readDocumentPOList/{u_id}")
-async def read_doc_po_list_item(u_id: int, offset: int, limit: int, uni_search: str = None, sp_id: Optional[int] = None,
-                                ven_id: Optional[int] = None,
-                                usertype: int = Depends(dependencies.check_usertype),
+async def read_doc_po_list_item(u_id: int,
                                 db: Session = Depends(get_db)):
     """
     ### API route to read the PO Documents. It contains following parameters.
@@ -164,12 +162,11 @@ async def read_doc_po_list_item(u_id: int, offset: int, limit: int, uni_search: 
     :param db: It provides a session to interact with the backend Database,that is of Session Object Type.
     :return: It returns PO document list.
     """
-    return await crud.read_doc_po_list(u_id, sp_id, ven_id, usertype, db, (offset, limit), uni_search)
-
-
+    return "success"
+    
+#Code to be Written by Harshitha
 @router.get("/readDocumentINVList/{u_id}")
-async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,
-                                 usertype: int = Depends(dependencies.check_usertype),
+async def read_doc_inv_list_item(u_id: int,
                                  db: Session = Depends(get_db)):
     """
     ### API route to read the Invoice Documents. It contains following parameters.
@@ -180,7 +177,7 @@ async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,
     :param db: It provides a session to interact with the backend Database,that is of Session Object Type.
     :return: It returns Invoice document list.
     """
-    return await crud.read_doc_inv_list(u_id, None, ven_id, usertype, "ven", db)
+    return "success"
 
 @router.get("/readDocumentARCList/{u_id}")
 async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,
@@ -201,10 +198,9 @@ async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,
     data["ven"] =await crud.read_doc_inv_arc_list(u_id, None, ven_id, usertype, "ven", db)
     return {"result": data}
 
-
+#Code to be Written by Nandini T
 @router.get("/readDocumentRejectList/{u_id}")
-async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,
-                                 usertype: int = Depends(dependencies.check_usertype),
+async def read_doc_inv_list_item(u_id: int,
                                  db: Session = Depends(get_db)):
     """
     ### API route to read the Invoice Documents. It contains following parameters.
@@ -215,11 +211,7 @@ async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,
     :param db: It provides a session to interact with the backend Database,that is of Session Object Type.
     :return: It returns Invoice document list.
     """
-    data = {}
-    if usertype == 1:
-        data["ser"] = await crud.read_doc_inv_rejected_list(u_id, None, ven_id, usertype, "ser", db)
-    data["ven"] = await crud.read_doc_inv_rejected_list(u_id, None, ven_id, usertype, "ven", db)
-    return {"result": data}
+    return "success"
 
 
 @router.get("/readDocumentGRNException/{u_id}")
@@ -254,11 +246,9 @@ async def read_doc_inv_list_item(u_id: int, sp_id: Optional[int] = None,
     """
     return await crud.read_doc_inv_list(u_id, sp_id, None, usertype, "ser", db)
 
-
+#Code to be Written by Neha Kouser
 @router.get("/readDocumentGRNList/{u_id}")
-async def read_doc_grn_list_item(u_id: int, offset: int, limit: int, uni_search: str = None,
-                                 ven_id: Optional[int] = None,
-                                 usertype: int = Depends(dependencies.check_usertype),
+async def read_doc_grn_list_item(u_id: int,
                                  db: Session = Depends(get_db)):
     """
     ### API route to read the GRN Documents. It contains following parameters.
@@ -269,8 +259,7 @@ async def read_doc_grn_list_item(u_id: int, offset: int, limit: int, uni_search:
     :param db: It provides a session to interact with the backend Database,that is of Session Object Type.
     :return: It returns GRN document list.
     """
-    return await crud.read_doc_grn_list(u_id, ven_id, usertype, db, (offset, limit), uni_search)
-
+    return "success"
 
 @router.get("/readInvoiceData/{u_id}/idInvoice/{inv_id}")
 async def read_invoice_data_item(u_id: int, inv_id: int, db: Session = Depends(get_db)):
