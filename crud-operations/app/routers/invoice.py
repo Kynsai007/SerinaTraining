@@ -177,7 +177,7 @@ async def read_doc_inv_list_item(u_id: int,
     :param db: It provides a session to interact with the backend Database,that is of Session Object Type.
     :return: It returns Invoice document list.
     """
-    return "success"
+    return await crud.read_doc_inv_list_item(u_id,db)
 
 @router.get("/readDocumentARCList/{u_id}")
 async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,

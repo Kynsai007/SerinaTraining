@@ -366,6 +366,11 @@ def createInvoiceUpdate(userID, documentDataID, documentLineItemID, documentUpda
 
 ####################################################################################################
 
+async def read_doc_inv_list_item(u_id,db):
+    sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+    data = db.query(model.Document.idDocument,model.Document.documentDate,model.Document.docheaderID,model.Document.totalAmount,model.Document.documentDescription,model.Document.documentTotalPages,model.Document.sourcetype).filter(model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 3).all()
+    return data
+    
 
 async def read_doc_po_list(u_id, sp_id, ven_id, usertype, db, off_limit, uni_api_filter):
     """
