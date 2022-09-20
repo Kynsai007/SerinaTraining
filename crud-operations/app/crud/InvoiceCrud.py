@@ -1,4 +1,6 @@
 # from sqlalchemy.orm import
+from cmath import e
+# from Serinamaster.SerinaTraining.crud-operations.app.model import UserAccess
 from fastapi.responses import Response, StreamingResponse
 from fastapi import File
 from datetime import datetime, timedelta
@@ -464,6 +466,38 @@ async def read_doc_po_list(u_id, sp_id, ven_id, usertype, db, off_limit, uni_api
         return Response(status_code=500, headers={"codeError": f"Server Error{str(traceback.format_exc())}"})
     finally:
         db.close()
+
+
+async def read_doc_po_list_item(u_id, db):   
+    try:
+        data = ""
+        # getting document data for reading Po's as per entity misba
+        data = db.query(model.Document).options(
+            load_only("idDocument", "docheaderID", "documentDate","totalAmount","documentDescription","documentTotalPages","sourcetype")).filter(model.Document.idDocumentType == 1).all()
+  
+    
+        sub_query = db.query(model.UserAccess.EntityID).filter(model.UserAccess.UserID==u_id, model.UserAccess.isActive==1).distinct()
+
+        data = db.query(model.Document, model.Entity).options(
+            Load(model.Document).load_only("entityID","idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype"),
+            Load(model.Entity).load_only("idEntity","EntityName")).join(
+            model.Entity,
+            model.Entity.idEntity == model.Document.entityID,
+            isouter=True).filter(model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 1)
+        data = data.limit(5).all()
+        return data
+
+    except Exception as e:
+        print(e)
+        applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_po_list_item ", str(e))
+        return Response(status_code=500, headers={"codeError": "Server Error"})
+    finally:
+        db.close()
+
+   
+    
+    
+   
 
 
 async def read_doc_inv_list(u_id, sp_id, ven_id, usertype, inv_type, db):
