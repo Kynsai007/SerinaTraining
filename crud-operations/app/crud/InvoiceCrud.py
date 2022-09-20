@@ -366,6 +366,34 @@ def createInvoiceUpdate(userID, documentDataID, documentLineItemID, documentUpda
 
 ####################################################################################################
 
+#assignment code - harshitha
+#read processed invoices as per entity
+async def read_doc_inv_list_item(u_id,db):
+    try:
+        data = db.query(model.Document).options(load_only("idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype")).filter(model.Document.idDocumentType == 3).all()
+
+        sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+
+        data = db.query(model.Document, model.Entity).options(
+            Load(model.Document).load_only("entityID","idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype"),
+            Load(model.Entity).load_only("idEntity","EntityName")).join(
+            model.Entity,
+            model.Entity.idEntity == model.Document.entityID,isouter=True).filter(model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 3).all()
+
+        return data
+
+    except Exception as e:
+        applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_inv_list_item", str(e))
+        return Response(status_code=500, headers={"codeError": "Server Error"})
+    finally:
+        db.close()
+
+    # data = db.query(model.Document.idDocument,model.Document.docheaderID,model.Document.totalAmount,model.Document.documentDescription,
+    # model.Document.documentTotalPages,model.Document.sourcetype).filter(model.Document.entityID.in_(sub_query),
+    # model.Document.idDocumentType == 3).all()
+    # return data
+
+    
 
 async def read_doc_po_list(u_id, sp_id, ven_id, usertype, db, off_limit, uni_api_filter):
     """
