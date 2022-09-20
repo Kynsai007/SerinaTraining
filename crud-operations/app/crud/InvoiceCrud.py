@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from io import BytesIO
 import pytz as tz
 import pandas as pd
+
 from sqlalchemy import func, case, or_, and_
 import traceback, base64
 import json
@@ -368,6 +369,34 @@ def createInvoiceUpdate(userID, documentDataID, documentLineItemID, documentUpda
 
 ####################################################################################################
 
+#assignment code - harshitha
+#read processed invoices as per entity
+async def read_doc_inv_list_item(u_id,db):
+    try:
+        data = db.query(model.Document).options(load_only("idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype")).filter(model.Document.idDocumentType == 3).all()
+
+        sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+
+        data = db.query(model.Document, model.Entity).options(
+            Load(model.Document).load_only("entityID","idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype"),
+            Load(model.Entity).load_only("idEntity","EntityName")).join(
+            model.Entity,
+            model.Entity.idEntity == model.Document.entityID,isouter=True).filter(model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 3).all()
+
+        return data
+
+    except Exception as e:
+        applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_inv_list_item", str(e))
+        return Response(status_code=500, headers={"codeError": "Server Error"})
+    finally:
+        db.close()
+
+    # data = db.query(model.Document.idDocument,model.Document.docheaderID,model.Document.totalAmount,model.Document.documentDescription,
+    # model.Document.documentTotalPages,model.Document.sourcetype).filter(model.Document.entityID.in_(sub_query),
+    # model.Document.idDocumentType == 3).all()
+    # return data
+
+    
 
 async def read_doc_po_list(u_id, sp_id, ven_id, usertype, db, off_limit, uni_api_filter):
     """
@@ -883,6 +912,33 @@ async def read_doc_grn_list_for_vendor(u_id, sp_id, ven_id, db):
     except Exception as e:
         applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_grn_list_for_vendor", str(e))
         return Response(status_code=500, headers={"codeError": f"Server Error{str(traceback.format_exc())}"})
+    finally:
+        db.close()
+
+#Assignment code here- Neha
+async def read_doc_grn_list_item(u_id, db):   
+    try:
+        docdata = ""
+        # getting document data for reading GRN's as per entity
+        docdata = db.query(model.Document).options(
+            load_only("idDocument", "docheaderID", "documentDate","totalAmount","documentDescription","documentTotalPages","sourcetype")).filter(model.Document.idDocumentType == 2).all()
+  
+    
+        sub_query = db.query(model.UserAccess.EntityID).filter(model.UserAccess.UserID==u_id, model.UserAccess.isActive==1).distinct()
+
+        docdata = db.query(model.Document, model.Entity).options(
+            Load(model.Document).load_only("entityID","idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype"),
+            Load(model.Entity).load_only("idEntity","EntityName")).join(
+            model.Entity,
+            model.Entity.idEntity == model.Document.entityID,
+            isouter=True).filter(model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 2)
+        docdata = docdata.all()
+        return docdata
+
+    except Exception as e:
+        print(e)
+        applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_grn_list_item ", str(e))
+        return Response(status_code=500, headers={"codeError": "Server Error"})
     finally:
         db.close()
 
