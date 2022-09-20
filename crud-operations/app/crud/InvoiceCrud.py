@@ -854,22 +854,9 @@ async def read_doc_grn_list_for_vendor(u_id, sp_id, ven_id, db):
         db.close()
 
 #Assignment code here- Neha
-# async def read_doc_grn_list_item(u_id, db):
-#     sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
-#     data = db.query(model.Document.idDocument,
-#     model.Entity.EntityName,
-#     model.Document.docheaderID,
-#     model.Document.documentDate,
-#     model.Document.totalAmount,
-#     model.Document.documentDescription,
-#     model.Document.documentTotalPages, 
-#     model.Document.sourcetype).filter(model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 2).all()
-#     return data
-
 async def read_doc_grn_list_item(u_id, db):   
     try:
         docdata = ""
-        entitydata = ""
         # getting document data for reading GRN's as per entity
         docdata = db.query(model.Document).options(
             load_only("idDocument", "docheaderID", "documentDate","totalAmount","documentDescription","documentTotalPages","sourcetype")).filter(model.Document.idDocumentType == 2).all()
@@ -892,8 +879,6 @@ async def read_doc_grn_list_item(u_id, db):
         return Response(status_code=500, headers={"codeError": "Server Error"})
     finally:
         db.close()
-
-
 
 
 async def read_invoice_data(u_id, inv_id, db):
