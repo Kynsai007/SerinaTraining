@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://rovedev.centralindia.cloudapp.azure.com",
+  apiUrl: `https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
   // apiUrl:"http://127.0.0.1:8000",
   apiVersion: "apiv1.1"
 };
