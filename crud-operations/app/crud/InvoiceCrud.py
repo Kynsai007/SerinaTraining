@@ -1,5 +1,6 @@
 # from sqlalchemy.orm import
 from cmath import e
+from statistics import mode
 # from Serinamaster.SerinaTraining.crud-operations.app.model import UserAccess
 from fastapi.responses import Response, StreamingResponse
 from fastapi import File
@@ -939,6 +940,42 @@ async def read_doc_grn_list_item(u_id, db):
         print(e)
         applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_grn_list_item ", str(e))
         return Response(status_code=500, headers={"codeError": "Server Error"})
+    finally:
+        db.close()
+
+
+#Create an API for to get invoices "Need to Review" - Week2-- Neha
+async def get_inv_need_to_review_item(u_id,db):
+    try:
+        # invoices "Need to Review", document Status id = 4, document sub status id = 29
+        data = db.query(model.Document).options(
+            load_only("idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", 
+            "documentTotalPages", "sourcetype")).filter(model.Document.idDocumentType == 3, 
+             model.Document.documentStatusID == 4, model.Document.documentsubstatusID == 29).all()
+
+        sub_query = db.query(model.UserAccess.EntityID).filter(model.UserAccess.UserID==u_id, 
+                                                               model.UserAccess.isActive==1).distinct()
+        
+        data = db.query(model.Document, model.DocumentStatus, model.DocumentSubStatus).options(
+            Load(model.Document).load_only("idDocument", "docheaderID", 
+            "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype",
+            "documentStatusID","documentsubstatusID"),
+            Load(model.DocumentStatus).load_only("idDocumentstatus","status"),
+            Load(model.DocumentSubStatus).load_only("idDocumentSubstatus","status")).join(
+            model.DocumentStatus, model.DocumentStatus.idDocumentstatus == model.Document.documentStatusID,
+            isouter=True).join(
+            model.DocumentSubStatus, model.DocumentSubStatus.idDocumentSubstatus == model.Document.documentsubstatusID,
+            isouter=True).filter(model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 3,
+            model.Document.documentStatusID == 4, model.Document.documentsubstatusID == 29)
+
+        data=data.all()    
+        return data
+
+    except Exception as e:
+        print(e)
+        applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py get_inv_need_to_review_item", str(e))
+        return Response(status_code=500, headers={"codeError": "Server Error"})
+    
     finally:
         db.close()
 
