@@ -164,6 +164,13 @@ async def read_doc_po_list_item(u_id: int,
     """
     return await crud.read_doc_po_list_item(u_id, db)
 
+
+@router.get("/InvoiceRejected/{u_id}")
+async def reject_inv_list_item(u_id: int,
+                                db: Session = Depends(get_db)):
+
+    return await crud.reject_inv_list_item(u_id, db)
+
 # @router.get("/readDocumentSentToErp/{u_id}")
 # async def read_doc_list_item_7(u_id: int,
 #                                 db: Session = Depends(get_db)):
