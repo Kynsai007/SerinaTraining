@@ -1,3 +1,4 @@
+import re
 from fastapi import Depends, FastAPI, HTTPException, status, APIRouter, BackgroundTasks
 from sqlalchemy.orm import Session, session
 from typing import Optional, List
@@ -164,6 +165,13 @@ async def read_doc_po_list_item(u_id: int,
     """
     return await crud.read_doc_po_list_item(u_id, db)
 
+
+@router.get("/InvoiceRejected/{u_id}")
+async def reject_inv_list_item(u_id: int,
+                                db: Session = Depends(get_db)):
+
+    return await crud.reject_inv_list_item(u_id, db)
+
 # @router.get("/readDocumentSentToErp/{u_id}")
 # async def read_doc_list_item_7(u_id: int,
 #                                 db: Session = Depends(get_db)):
@@ -278,6 +286,13 @@ async def read_doc_grn_list_item(u_id: int,
     :return: It returns GRN document list.
     """
     return await crud.read_doc_grn_list_item(u_id, db)
+
+
+#Create an API for to get invoices "Need to Review"- neha
+@router.get("/needToReview/{u_id}")
+async def get_inv_need_to_review_item(u_id: int,
+                                 db: Session = Depends(get_db)):
+    return await crud.get_inv_need_to_review_item(u_id, db)
 
 
 @router.get("/readInvoiceData/{u_id}/idInvoice/{inv_id}")
