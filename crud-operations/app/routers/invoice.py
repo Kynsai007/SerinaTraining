@@ -1,3 +1,4 @@
+import re
 from fastapi import Depends, FastAPI, HTTPException, status, APIRouter, BackgroundTasks
 from sqlalchemy.orm import Session, session
 from typing import Optional, List
@@ -192,6 +193,18 @@ async def read_doc_inv_list_item(u_id: int,
     """
     return await crud.read_doc_inv_list_item(u_id,db)
 
+# Create an API for to get invoices "Sent to ERP", document Status id = 7 [ Harshitha ]
+@router.get("/readDocINVSendtoERP/{u_id}")
+async def read_doc_inv_send_to_erp_7(u_id: int , db: Session = Depends(get_db)):
+    return await crud.read_doc_inv_send_to_erp_7(u_id,db)
+
+# vendor
+# @router.get("/readVendor/{u_id}")
+# async def read_doc_inv_vendor(u_id: int , db: Session = Depends(get_db)):
+#     return await crud.read_doc_inv_vendor(u_id,db)
+
+
+
 @router.get("/readDocumentARCList/{u_id}")
 async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,
                                  usertype: int = Depends(dependencies.check_usertype),
@@ -273,6 +286,13 @@ async def read_doc_grn_list_item(u_id: int,
     :return: It returns GRN document list.
     """
     return await crud.read_doc_grn_list_item(u_id, db)
+
+
+#Create an API for to get invoices "Need to Review"- neha
+@router.get("/needToReview/{u_id}")
+async def get_inv_need_to_review_item(u_id: int,
+                                 db: Session = Depends(get_db)):
+    return await crud.get_inv_need_to_review_item(u_id, db)
 
 
 @router.get("/readInvoiceData/{u_id}/idInvoice/{inv_id}")
