@@ -165,6 +165,13 @@ async def read_doc_po_list_item(u_id: int,
     """
     return await crud.read_doc_po_list_item(u_id, db)
 
+
+@router.get("/InvoiceRejected/{u_id}")
+async def reject_inv_list_item(u_id: int,
+                                db: Session = Depends(get_db)):
+
+    return await crud.reject_inv_list_item(u_id, db)
+
 # @router.get("/readDocumentSentToErp/{u_id}")
 # async def read_doc_list_item_7(u_id: int,
 #                                 db: Session = Depends(get_db)):
@@ -185,6 +192,18 @@ async def read_doc_inv_list_item(u_id: int,
     :return: It returns Invoice document list.
     """
     return await crud.read_doc_inv_list_item(u_id,db)
+
+# Create an API for to get invoices "Sent to ERP", document Status id = 7 [ Harshitha ]
+@router.get("/readDocINVSendtoERP/{u_id}")
+async def read_doc_inv_send_to_erp_7(u_id: int , db: Session = Depends(get_db)):
+    return await crud.read_doc_inv_send_to_erp_7(u_id,db)
+
+# vendor
+# @router.get("/readVendor/{u_id}")
+# async def read_doc_inv_vendor(u_id: int , db: Session = Depends(get_db)):
+#     return await crud.read_doc_inv_vendor(u_id,db)
+
+
 
 @router.get("/readDocumentARCList/{u_id}")
 async def read_doc_inv_list_item(u_id: int, ven_id: Optional[int] = None,
