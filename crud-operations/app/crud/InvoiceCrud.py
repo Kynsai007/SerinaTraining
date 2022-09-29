@@ -1,5 +1,6 @@
 # from sqlalchemy.orm import
 from cmath import e
+from statistics import mode
 # from Serinamaster.SerinaTraining.crud-operations.app.model import UserAccess
 from fastapi.responses import Response, StreamingResponse
 from fastapi import File
@@ -396,6 +397,59 @@ async def read_doc_inv_list_item(u_id,db):
     # model.Document.idDocumentType == 3).all()
     # return data
 
+# Create an API for to get invoices "Sent to ERP", document Status id = 7 [ Harshitha ]
+async def read_doc_inv_send_to_erp_7(u_id,db):
+    try:
+        data = db.query(model.Document).options(load_only("idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype")).filter(model.Document.idDocumentType == 3, model.Document.documentStatusID == 7).all()
+
+        sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+
+        data = db.query(model.Document, model.Entity, model.DocumentStatus).options(
+            Load(model.Document).load_only("entityID","documentStatusID","idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype"),
+            Load(model.Entity).load_only("idEntity","EntityName"),
+            Load(model.DocumentStatus).load_only("idDocumentstatus","status")).join(
+            model.Entity,
+            model.Entity.idEntity == model.Document.entityID,isouter=True).join(
+            model.DocumentStatus,
+            model.DocumentStatus.idDocumentstatus == model.Document.documentStatusID,isouter=True).filter(
+            model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 3,model.Document.documentStatusID == 7).all()
+
+        return data
+
+    except Exception as e:
+        print(e)
+        applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_inv_list_item", str(e))
+        return Response(status_code=500, headers={"codeError": "Server Error"})
+    finally:
+        db.close()
+
+#use vendor
+# async def read_doc_inv_vendor(u_id,db):
+#     try:
+#         data = db.query(model.Document).options(load_only("idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype")).filter(model.Document.idDocumentType == 3).all()
+
+#         sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+
+#         data = db.query(model.Document, model.Entity, model.Vendor).options(
+#             Load(model.Document).load_only("entityID","idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype"),
+#             Load(model.Entity).load_only("idEntity","EntityName"),
+#             Load(model.Vendor).load_only("idVendor","VendorName","entityID")).join(
+#             model.Entity,
+#             model.Entity.idEntity == model.Document.entityID,isouter=True).join(
+#             model.Vendor,
+#             model.Vendor.entityID == model.Entity.idEntity,isouter=True).filter(
+#             model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 3).all()
+
+#         return data
+
+#     except Exception as e:
+#         print(e)
+#         applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_inv_vendor", str(e))
+#         return Response(status_code=500, headers={"codeError": "Server Error"})
+#     finally:
+#         db.close()
+
+
     
 
 async def read_doc_po_list(u_id, sp_id, ven_id, usertype, db, off_limit, uni_api_filter):
@@ -494,6 +548,34 @@ async def read_doc_po_list_item(u_id, db):
         return Response(status_code=500, headers={"codeError": "Server Error"})
     finally:
         db.close()
+
+
+#reject invoice assesment(misba)
+async def reject_inv_list_item(u_id,db):
+    try:
+        data = db.query(model.Document).options(load_only("idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype")).filter(model.Document.idDocumentType==3, model.Document.documentStatusID == 10).all()
+        sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+        data = db.query(model.Document, model.Entity, model.DocumentStatus).options(
+            Load(model.Document).load_only("entityID","documentStatusID","idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype"),
+            Load(model.Entity).load_only("idEntity","EntityName"),
+            Load(model.DocumentStatus).load_only("idDocumentstatus","status")).join(
+            model.Entity,
+            model.Entity.idEntity == model.Document.entityID,isouter=True).join(
+            model.DocumentStatus, model.DocumentStatus.idDocumentstatus == model.Document.documentStatusID,
+            isouter=True).filter(model.Document.entityID.in_(sub_query), model.Document.idDocumentType==3,
+            model.Document.documentStatusID == 10)
+        data=data.limit(5).all()
+        return data
+
+    except Exception as e:
+        print(e)
+        applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py reject_inv_list_item", str(e))
+        return Response(status_code=500, headers={"codeError": "Server Error"})
+    finally:
+        db.close()
+  
+    
+ 
 
    
     
@@ -939,6 +1021,42 @@ async def read_doc_grn_list_item(u_id, db):
         print(e)
         applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py read_doc_grn_list_item ", str(e))
         return Response(status_code=500, headers={"codeError": "Server Error"})
+    finally:
+        db.close()
+
+
+#Create an API for to get invoices "Need to Review" - Week2-- Neha
+async def get_inv_need_to_review_item(u_id,db):
+    try:
+        # invoices "Need to Review", document Status id = 4, document sub status id = 29
+        data = db.query(model.Document).options(
+            load_only("idDocument", "docheaderID", "documentDate", "totalAmount", "documentDescription", 
+            "documentTotalPages", "sourcetype")).filter(model.Document.idDocumentType == 3, 
+             model.Document.documentStatusID == 4, model.Document.documentsubstatusID == 29).all()
+
+        sub_query = db.query(model.UserAccess.EntityID).filter(model.UserAccess.UserID==u_id, 
+                                                               model.UserAccess.isActive==1).distinct()
+        
+        data = db.query(model.Document, model.DocumentStatus, model.DocumentSubStatus).options(
+            Load(model.Document).load_only("idDocument", "docheaderID", 
+            "documentDate", "totalAmount", "documentDescription", "documentTotalPages", "sourcetype",
+            "documentStatusID","documentsubstatusID"),
+            Load(model.DocumentStatus).load_only("idDocumentstatus","status"),
+            Load(model.DocumentSubStatus).load_only("idDocumentSubstatus","status")).join(
+            model.DocumentStatus, model.DocumentStatus.idDocumentstatus == model.Document.documentStatusID,
+            isouter=True).join(
+            model.DocumentSubStatus, model.DocumentSubStatus.idDocumentSubstatus == model.Document.documentsubstatusID,
+            isouter=True).filter(model.Document.entityID.in_(sub_query),model.Document.idDocumentType == 3,
+            model.Document.documentStatusID == 4, model.Document.documentsubstatusID == 29)
+
+        data=data.all()    
+        return data
+
+    except Exception as e:
+        print(e)
+        applicationlogging.logException("ROVE HOTEL DEV", "InvoiceCrud.py get_inv_need_to_review_item", str(e))
+        return Response(status_code=500, headers={"codeError": "Server Error"})
+    
     finally:
         db.close()
 
