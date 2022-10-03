@@ -816,3 +816,19 @@ def getOnboardedByMonth(u_id,month,db):
     if month:
         data = db.query(distinc(model.DocumentModel.idVendorAccount),extract('month', model.DocumentModel.CreatedOn).label('month'),model.Vendor.VendorName,model.Entity.EntityName,model.DocumentModel.UpdatedOn).join(model.VendorAccount,model.DocumentModel.idVendorAccount == model.VendorAccount.idVendorAccount).join(model.Vendor,model.VendorAccount.vendorID == model.Vendor.idVendor).join(model.Entity,model.Vendor.entityID == model.Entity.idEntity).filter(model.DocumentModel.modelStatus.in_([4,5],model.Entity.idEntity.in_(sub_query)),extract('month', model.DocumentModel.CreatedOn) == month).all()
     return data 
+
+
+#Week 3 Assignment code here - Neha
+#Create an API to get Sum of Pages Processed by Entity Name with Entity Filter
+#getSumOfPageProcessedByEntityname
+
+def getSumOfPageProcessedByEntityname(u_id,documenttype,usertype,documentTotalPages,db):
+    sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+    user_type_filter = {1: model.Document.entityID.in_(sub_query), 2: model.Entity.idEntity.in_(sub_query)}
+    res = db.query(func.sum(model.Document.idDocument).label('sum'),model.Entity.EntityName).filter(user_type_filter[usertype],
+    model.Document.documentStatusID != 0,
+    model.Entity.idEntity.isnot(None),
+    model.Document.idDocumentType == documenttype, 
+    model.Document.documentTotalPages == documentTotalPages).join(model.Document,
+    model.Document.entityID == model.Entity.idEntity).group_by(model.Entity.EntityName).all()    
+    return res

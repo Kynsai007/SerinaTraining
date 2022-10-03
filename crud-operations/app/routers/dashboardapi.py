@@ -213,3 +213,14 @@ async def getonboarded(uid:int,month: Optional[int]=None,db: Session = Depends(g
         return {"message":f"exception {e}","data":[]}
 
 
+#Week 3 Assignment code here - Neha
+#Create an API to get Sum of Pages Processed by Entity Name with Entity Filter
+@router.get("/SumOfPageProcessedByEntityname/{u_id}/{documenttype}", status_code=status.HTTP_200_OK)
+async def getSumOfPageProcessedByEntityname(u_id: int,documenttype: int,entity: Optional[int] = None,usertype: int = Depends(dependencies.check_usertype),
+                                 db: Session = Depends(get_db)):
+    try:
+        data = crud.getSumOfPageProcessedByEntityname(u_id,documenttype,usertype,entity,db)
+        return {"message":"success","data":data}
+    except Exception as e:
+        applicationlogging.logException("ROVE HOTEL DEV","dashboard.py /SumOfPageProcessedByEntityname",str(e))
+        return {"message":f"exception {e}","data":[]}
