@@ -56,6 +56,14 @@ def getinvcountbyvendor(u_id,documenttype,usertype,vendor,entity,source,date,db)
             res = db.query(func.count(model.Document.idDocument).label('count'),model.Vendor.VendorName).filter(user_type_filter[usertype],model.Document.documentStatusID != 0,model.Document.vendorAccountID.isnot(None),model.Document.idDocumentType == documenttype,model.Document.sourcetype == source,model.Document.CreatedOn >= frdate,model.Document.CreatedOn <= todate).join(model.VendorAccount,model.Document.vendorAccountID == model.VendorAccount.idVendorAccount).join(model.Vendor,model.VendorAccount.vendorID == model.Vendor.idVendor).group_by(model.Vendor.VendorName).order_by(text('count DESC')).limit(5).all()    
     return res
 
+#To get invoice count by source using source filter(misba)
+def getinvcountbySource(u_id,documenttype,usertype,source,db):
+    sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+    user_type_filter = {1: model.Document.entityID.in_(sub_query),2: model.Document.sourcetype.in_(sub_query)}
+    res = db.query(func.count(model.Document.idDocument).label('count'),model.Document.sourcetype).filter(user_type_filter[usertype],model.Document.idDocumentType == documenttype,model.Document.sourcetype == source).group_by(model.Document.sourcetype).all()
+    return res
+
+
 def getrejectedinvcountbyvendor(u_id,documenttype,usertype,vendor,entity,source,date,db):
     # sub query to get only user accessable entities
     if usertype == 1:

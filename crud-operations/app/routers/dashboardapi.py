@@ -37,6 +37,16 @@ async def getinvcountbyvendor(u_id: int,documenttype: int,vendor: Optional[str] 
         applicationlogging.logException("ROVE HOTEL DEV","dashboard.py /invcountbyvendor",str(e))
         return {"message":f"exception {e}","data":[]}
 
+#invcount by source(misba)
+@router.get("/invcountbySource/{u_id}/{documenttype}", status_code=status.HTTP_200_OK)
+async def getinvcountbySource(u_id:int,documenttype:int,source: Optional[str] = None,usertype: int = Depends(dependencies.check_usertype),db: Session = Depends(get_db)):
+    try:
+        data = crud.getinvcountbySource(u_id,documenttype,usertype,source,db)
+        return {"message":"success","data":data}
+    except Exception as e:
+        applicationlogging.logException("ROVE HOTEL DEV","dashboard.py /invcountbysource",str(e))
+        return {"message":f"exception {e}","data":[]}
+
 @router.get("/rejectedinvcountbyvendor/{u_id}/{documenttype}", status_code=status.HTTP_200_OK)
 async def getrejinvcountbyvendor(u_id: int,documenttype: int,vendor: Optional[str] = None,entity: Optional[int] = None,source: Optional[str] = None,date: Optional[str] = None,usertype: int = Depends(dependencies.check_usertype),
                                  db: Session = Depends(get_db)):
