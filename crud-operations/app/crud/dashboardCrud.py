@@ -56,6 +56,16 @@ def getinvcountbyvendor(u_id,documenttype,usertype,vendor,entity,source,date,db)
             res = db.query(func.count(model.Document.idDocument).label('count'),model.Vendor.VendorName).filter(user_type_filter[usertype],model.Document.documentStatusID != 0,model.Document.vendorAccountID.isnot(None),model.Document.idDocumentType == documenttype,model.Document.sourcetype == source,model.Document.CreatedOn >= frdate,model.Document.CreatedOn <= todate).join(model.VendorAccount,model.Document.vendorAccountID == model.VendorAccount.idVendorAccount).join(model.Vendor,model.VendorAccount.vendorID == model.Vendor.idVendor).group_by(model.Vendor.VendorName).order_by(text('count DESC')).limit(5).all()    
     return res
 
+
+# Create an API to get Invoice Count by EntityName with Entity Filter[ Harshitha ]
+def getInvcountByEntityname(u_id,documenttype,usertype,db):
+    sub_query = db.query(model.UserAccess.EntityID).filter_by(UserID=u_id, isActive=1).distinct()
+    user_type_filter = {1: model.Document.entityID.in_(sub_query), 2: model.Entity.idEntity.in_(sub_query)}
+    res = db.query(func.count(model.Document.idDocument).label('count'),model.Entity.EntityName).filter(user_type_filter[usertype],model.Entity.idEntity.isnot(None),model.Document.idDocumentType == documenttype).join(model.Document,model.Document.entityID == model.Entity.idEntity).group_by(model.Entity.EntityName).all()
+    return res
+
+    
+
 def getrejectedinvcountbyvendor(u_id,documenttype,usertype,vendor,entity,source,date,db):
     # sub query to get only user accessable entities
     if usertype == 1:

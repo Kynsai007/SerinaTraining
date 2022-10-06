@@ -149,6 +149,18 @@ async def getinvoicespervendor(u_id:int,date: Optional[str] = None,usertype: int
         return {"message":f"exception {e}","data":[]}
 
 
+# Create an API to get Invoice Count by EntityName with Entity Filter[ Harshitha ]
+@router.get("/InvcountByEntityname/{u_id}/{documenttype}", status_code=status.HTTP_200_OK)
+async def getInvcountByEntityname(u_id: int,documenttype: int,entity: Optional[int] = None,usertype: int = Depends(dependencies.check_usertype),
+                                 db: Session = Depends(get_db)):
+    try:
+        data = crud.getInvcountByEntityname(u_id,documenttype,usertype,db)
+        return {"message":"success","data":data}
+    except Exception as e:
+        applicationlogging.logException("ROVE HOTEL DEV","dashboard.py /InvcountByEntityname",str(e))
+        return {"message":f"exception {e}","data":[]}
+
+
 @router.get("/getunderProcessInvforvendor/{u_id}", status_code=status.HTTP_200_OK)
 async def getprocessinginvvendor(u_id:int,date: Optional[str] = None,usertype: int = Depends(dependencies.check_usertype),db: Session = Depends(get_db)):
     try:
