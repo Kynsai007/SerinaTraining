@@ -6,32 +6,33 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
     constructor(private authService: AuthenticationService,
       private alertSrvice : AlertService,
-      private messageService : MessageService) { }
+      private messageService : MessageService,
+      private router:Router) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
-        return next.handle(request).pipe( catchError((err:HttpErrorResponse) => {
-          if(err.status === 401 && !(request.url.includes('login'))){
-            alert("Session got expired!, please login again");
-            setTimeout(() => {
-              this.authService.logout();
-            }, 1000);
-
-          }else if(err.status == 502 || 0){
-            // alert("System under maintenance");
-            // this.alertSrvice.errorObject.detail = "System under maintenance";
-            // this.messageService.add(this.alertSrvice.errorObject);
-          } else{
-            // const error = err.error.message || err.statusText;
-            console.log(err)
-            return throwError(err)
+      return next.handle(request).pipe( catchError((err:HttpErrorResponse) => {
+        if(err.status === 401 && !(request.url.includes('login'))){
+          if(!this.router.url.includes("/login")){
+            alert("Session Expired! Please re-login!");
+            this.authService.logout();
           }
-        }))
+        }else if(err.status == 502 || 0){
+          // alert("System under maintenance");
+          // this.alertSrvice.errorObject.detail = "System under maintenance";
+          // this.messageService.add(this.alertSrvice.errorObject);
+        } else{
+          // const error = err.error.message || err.statusText;
+          console.log(err)
+          return throwError(err)
+        }
+      }))
     }
 }
 
