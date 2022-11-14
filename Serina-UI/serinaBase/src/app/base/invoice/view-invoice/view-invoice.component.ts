@@ -102,7 +102,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   popUpHeader: string;
   lineTabBoolean: boolean;
   item_code: any;
-
+  uploadtime: string = "00:00";
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -117,10 +117,14 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private exceptionService: ExceptionsService,
     private AlertService: AlertService,
     private SharedService: SharedService,
-    private _sanitizer: DomSanitizer
+    private _sanitizer: DomSanitizer,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params =>{
+      this.uploadtime = params.uploadtime;
+    })
     this.init();
     this.AddPermission();
     this.readVendors();
