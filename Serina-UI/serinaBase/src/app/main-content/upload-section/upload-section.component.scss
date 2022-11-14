@@ -25,6 +25,10 @@
   border: 1px solid lightgray;
   border-left: hidden;
 }
+.upload-time{
+  font-weight: bold;
+  color: #2980b9
+}
 :host
   ::ng-deep
   .p-autocomplete-panel

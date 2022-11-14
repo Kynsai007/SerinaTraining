@@ -71,7 +71,8 @@ export class UploadSectionComponent implements OnInit {
   selectedEntityId: any;
   GRNUploadID: any;
   reuploadBoolean: boolean;
-
+  seconds: string="00";
+  minutes:string="00";
   constructor(
     private http: HttpClient,
     public route: Router,
@@ -86,6 +87,8 @@ export class UploadSectionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.seconds = "00";
+    this.minutes = "00";
     this.isCustomerPortal = this.sharedService.isCustomerPortal;
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     this.getEntitySummary();
@@ -359,7 +362,22 @@ export class UploadSectionComponent implements OnInit {
     this.progress = 1;
     const formData = new FormData();
     formData.append('file', this.invoiceUploadDetails);
-
+    let timer = setInterval(() => {
+      if(Number(this.seconds) < 10){
+        this.seconds = "0" + (Number(this.seconds) + 1).toString();
+      }else{
+        this.seconds = (Number(this.seconds) + 1).toString();
+      }
+      if(Number(this.seconds) > 59){
+        this.seconds = "00";
+        if(Number(this.minutes) < 10){
+          this.minutes = "0" + (Number(this.minutes) + 1).toString();
+        }else{
+          this.minutes = (Number(this.minutes) + 1).toString();
+        }
+        
+      }
+    }, 1000);
     this.http
       .post(
         `${environment.apiUrl}/${this.apiVersion}/VendorPortal/uploadfile/${this.vendorAccountId}`,
@@ -422,6 +440,7 @@ export class UploadSectionComponent implements OnInit {
             this.evtSource.addEventListener('end', (event: any) => {
               console.log(event.data);
               this.progressEvent = JSON.parse(event.data);
+              clearInterval(timer);
               if (this.progressEvent.InvoiceID) {
                 this.selectedPONumber = '';
                 this.vendorAccountName = '';
@@ -433,11 +452,11 @@ export class UploadSectionComponent implements OnInit {
                   if (this.isCustomerPortal == false) {
                     this.route.navigate([
                       `vendorPortal/invoice/InvoiceDetails/vendorUpload/${this.progressEvent.InvoiceID}`,
-                    ]);
+                    ],{queryParams:{uploadtime:this.minutes+":"+this.seconds}});
                   } else {
                     this.route.navigate([
                       `customer/invoice/InvoiceDetails/CustomerUpload/${this.progressEvent.InvoiceID}`,
-                    ]);
+                    ],{queryParams:{uploadtime:this.minutes+":"+this.seconds}});
                   }
                   // this.tagService.createInvoice = true;
                   // this.tagService.invoicePathBoolean = true;
@@ -461,6 +480,7 @@ export class UploadSectionComponent implements OnInit {
               }
             });
             this.evtSource.onerror = (err) => {
+              clearInterval(timer);
               this.messageService.add({
                 severity: 'error',
                 summary: 'error',
@@ -474,6 +494,7 @@ export class UploadSectionComponent implements OnInit {
           }
         }),
         catchError((err: any) => {
+          clearInterval(timer);
           this.progress = null;
           this.evtSource.close();
           alert(err.message);
