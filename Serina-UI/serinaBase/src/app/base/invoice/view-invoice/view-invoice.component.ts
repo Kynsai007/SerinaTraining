@@ -235,6 +235,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SharedService.getInvoiceInfo().subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
+        if(data.ok.uploadtime){
+          this.uploadtime = data.ok.uploadtime;
+        }
         data.ok.headerdata.forEach((element) => {
           this.mergedArray = {
             ...element.DocumentData,
@@ -777,7 +780,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   vendorSubmit() {
-    this.SharedService.vendorSubmit(this.reuploadBoolean).subscribe(
+    this.SharedService.vendorSubmit(this.reuploadBoolean,this.uploadtime).subscribe(
       (data: any) => {
         this.dataService.invoiceLoadedData = [];
         this.SpinnerService.hide();
