@@ -347,8 +347,8 @@ export class SharedService {
   vendorRejectInvoice(data: any): Observable<any>{
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectVendor/${this.userId}/idInvoice/${this.invoiceID}`,data) 
   }
-  vendorSubmit(query): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorInvoice/${this.userId}?re_upload=${query}&inv_id=${this.invoiceID}`)
+  vendorSubmit(query,uploadtime): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorInvoice/${this.userId}?re_upload=${query}&inv_id=${this.invoiceID}&uploadtime=${uploadtime}`)
   }
   triggerBatch(query):Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/triggerbatch/${this.invoiceID}${query}`,'')
