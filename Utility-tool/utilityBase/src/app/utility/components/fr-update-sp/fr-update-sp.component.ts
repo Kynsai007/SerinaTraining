@@ -187,6 +187,7 @@ export class FrUpdateSpComponent implements OnInit {
 
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
+    this.getAllTags();
     this.getMetaData(modal_id);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
