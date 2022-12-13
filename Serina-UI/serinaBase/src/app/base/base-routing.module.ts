@@ -51,6 +51,7 @@ const routes: Routes = [
               { path:'processReports',component: BusinessChartsComponent },
               { path:'exceptionReports',component: BusinessChartsComponent },
               { path:'emailExceptionReports',component: BusinessChartsComponent },
+              { path:'onboardedReports',component: BusinessChartsComponent },
               { path: '' , redirectTo:'processReports', pathMatch:'full'}
             ]},
           { path:'serviceBasedReports',component: BusinessChartsComponent },

@@ -303,6 +303,7 @@ export class InvoiceComponent implements OnInit {
             let invoiceData = {
               ...element.Document,
               ...element.Entity,
+              ...element.DocumentSubStatus,
               ...element.EntityBody,
               ...element.ServiceProvider,
               ...element.ServiceAccount,

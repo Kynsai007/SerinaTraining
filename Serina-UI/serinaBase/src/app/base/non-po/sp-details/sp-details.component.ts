@@ -1,7 +1,4 @@
 import { ImportExcelService } from './../../../services/importExcel/import-excel.service';
-import { NonPoComponent } from './../non-po.component';
-
-import { element } from 'protractor';
 import { SharedService } from 'src/app/services/shared.service';
 import {
   Component,
@@ -14,20 +11,15 @@ import {
   OnDestroy,
 } from '@angular/core';
 import {
-  ControlContainer,
   FormArray,
   FormBuilder,
-  FormControl,
   FormGroup,
-  FormGroupDirective,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { ActivatedRoute, Router} from '@angular/router';
 import { DatePipe } from '@angular/common';
-import * as FileSaver from 'file-saver';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {
-  ConfirmationService,
   MessageService,
   PrimeNGConfig,
 } from 'primeng/api';
@@ -197,8 +189,8 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   opened: boolean;
   filteredOP_unit: any[];
   OPUnits: any;
+  approverList: any;
   close(reason: string) {
-    console.log(reason)
     this.sidenav.close();
   }
   elementList = [];
@@ -223,6 +215,8 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.toGetEntity();
+    this.getOPunits();
+    this.getApprover();
     this.bgColorCode = this.storageService.bgColorCode;
     this.initialViewVendor = this.sharedService.initialViewSpBoolean;
     this.vendorList = this.sharedService.spListBoolean;
@@ -239,7 +233,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.readColumnsSpInvoice();
     this.Inputmask();
     this.getElementData(this.spDetails);
-    this.getOPunits();
+
   }
   Inputmask() {
     this.columnSPAccont = [
@@ -285,11 +279,10 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.someParameterValue = someParam;
   }
   initialForm() {
-    console.log(this.spDetails)
     return this.fb.group({
-      entityID: [{ value: this.spDetails.idEntity, disabled: true }],
+      entityID: [{ value: this.spDetails.idEntity }],
       serviceProviderNameAccount: [
-        { value: this.spDetails.ServiceProviderName, disabled: true },
+        { value: this.spDetails.ServiceProviderName},
       ],
       Email: [''],
       UserName: ['', Validators.required],
@@ -303,6 +296,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       isActive: [true],
       LocationCode: ['', Validators.required],
       operatingUnit: '',
+      approver: [{ value: this.spDetails.ApproverID}],
       costDetails: this.fb.array([]),
     });
   }
@@ -595,6 +589,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       LocationCode: this.SpAccountDatails.value.LocationCode,
       Address: this.SpAccountDatails.value.Address || '',
       operatingUnit: this.SpAccountDatails.value.operatingUnit || '',
+      approver: this.SpAccountDatails.value.approver || '',
       isActive: this.SpAccountDatails.value.isActive,
     };
     let sp_shed = {
@@ -798,6 +793,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       LocationCode: data.LocationCode,
       Address: data.Address,
       operatingUnit: data.operatingUnit,
+      approver: data.approver,
       isActive: data.isActive,
       costDetails: this.CostArray,
     });
@@ -823,6 +819,15 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sharedService.readOPUnits().subscribe((data:any)=>{
       this.OPUnits = data;
     })
+  }
+
+  getApprover(){
+    this.sharedService.readApprovers().subscribe((data:any)=>{
+      this.approverList = data;
+    })
+  }
+  onSelectAppprover(val){
+    console.log(val)
   }
 
   selectOP_unit(event){

@@ -1,19 +1,7 @@
 @mixin auth {
   :host {
     // The styles you want to share
-    .sideBar {
-      width: 12.5%;
-      height: 100vh;
-      background-color: #272727;
-      z-index: 1;
-    }
-    .bodyContent {
-      // width: 94%;
-      height: 100vh;
-      padding: 0px;
-      overflow-x: auto;
-      background-color: #fafafa;
-    }
+
     .menu_icon {
       position: absolute;
       top: 16px;

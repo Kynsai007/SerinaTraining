@@ -28,8 +28,18 @@
       Email Reports</a
       >
     </li>
-  </ul>
 
+    <li class="nav-item">
+      <a
+        class="nav-link ml-1"
+        [class.active-pill]="viewType == 'onboarded'"
+        (click)="choosepageTab('onboarded')"
+      >
+      Onboarded Reports</a
+      >
+    </li>
+  </ul>
+  <div *ngIf=" viewType == 'onboarded'"> <button class="btnUpload dwnldBtn" (click)="downloadReport()">Download Report</button></div>
   <div class="filter_inputDash" *ngIf="viewType == 'emailException'">
     <p-calendar
       [(ngModel)]="rangeDates"
@@ -43,7 +53,15 @@
       inputId="range"
       (onClearClick)="clearDates()"
     ></p-calendar>
+
     <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
+  </div>
+  <div class="filter_inputDash" *ngIf=" viewType == 'onboarded'">
+    <p-calendar [(ngModel)]="selectDate" view="month" dateFormat="mm" [showIcon]="true" [yearNavigator]="false" [minDate]="minDate" 
+    [maxDate]="maxDate" [yearRange]='displayYear' placeholder="Select dates to filter.." [readonlyInput]="false"
+    inputId="monthpicker"></p-calendar>
+
+    <button class="btnUpload filter_btn_m " (click)="applyMonthfilter(selectDate)"> Filter</button>
   </div>
 
   <div  [ngSwitch]="viewType" style="padding-top: 12px">
@@ -60,11 +78,23 @@
     <!-- Exception invoices Tab -->
     <div *ngSwitchCase="'emailException'" class="tableDataDiv">
       <app-table
-        [tableData]="totalTableData"
-        [invoiceColumns]="columnsForTotal"
-        [showPaginator]="showPaginatortotal"
-        [columnsToFilter]="totalColumnField"
-        [columnLength]="ColumnLengthtotal"
+        [tableData]="exceptionTableData"
+        [invoiceColumns]="columnsForException"
+        [showPaginator]="showPaginatorException"
+        [columnsToFilter]="exceptionColumnField"
+        [columnLength]="ColumnLengthException"
+      >
+      </app-table>
+    </div>
+
+    <!-- Onboarding Data Tab -->
+    <div *ngSwitchCase="'onboarded'" class="tableDataDiv">
+      <app-table
+        [tableData]="onboardTableData"
+        [invoiceColumns]="columnsForonboard"
+        [showPaginator]="showPaginatoronboard"
+        [columnsToFilter]="onboardColumnField"
+        [columnLength]="ColumnLengthonboard"
       >
       </app-table>
     </div>

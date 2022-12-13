@@ -495,6 +495,7 @@ export class UploadSectionComponent implements OnInit {
         }),
         catchError((err: any) => {
           clearInterval(timer);
+          console.log(err);
           this.progress = null;
           this.evtSource.close();
           alert(err.message);

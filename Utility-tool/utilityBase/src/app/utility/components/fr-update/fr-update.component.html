@@ -617,6 +617,7 @@
 
             <div class="modal-body b-0">
                 <p style="font-size: small;">{{vendorName}}</p>
+                <button type="button" class="btn btncancel btn-sm" style="float: right;" (click)="downloadDocAccuracy('vendor')"><i *ngIf="!downloading" class="fa fa-download"></i><div *ngIf="downloading" class="spinner-border spinner-border-sm" role="status"></div> Download Entity Level Accuracy Scores</button> 
                 <p style="font-size:small">Total Invoices Processed: <b>{{documentCount}}</b></p>
                 <ul class="list-group">
                     <li class="list-group-item home-flex active">

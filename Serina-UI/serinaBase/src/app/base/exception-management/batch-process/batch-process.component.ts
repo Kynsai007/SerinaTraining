@@ -18,9 +18,9 @@ export class BatchProcessComponent implements OnInit {
   ColumnsForBatch = [
     { field: 'docheaderID', header: 'Invoice Number' },
     { field: 'VendorName', header: 'Vendor Name' },
-    // { field: 'Name', header: 'Rule' },
-    { field: 'CreatedOn', header: 'Date' },
+    { field: 'CreatedOn', header: 'Uploaded Date' },
     { field: 'PODocumentID', header: 'PO number' },
+    { field: 'sender', header: 'Sender' },
     { field: 'status', header: 'Status' },
     { field: 'totalAmount', header: 'Amount' },
   ];

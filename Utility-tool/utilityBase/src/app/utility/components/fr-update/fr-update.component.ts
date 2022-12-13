@@ -114,7 +114,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     this.getModalList();
     this.getRules();
     this.getAmountRules();
-    this.getAllTags();
   }
   
   ngAfterContentInit() : void {
@@ -206,7 +205,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
 
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
-    this.getMetaData(modal_id);
+    this.getAllTags(modal_id);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
     this.outletRef.createEmbeddedView(this.contentRef);
@@ -274,13 +273,26 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         this.downloading = false;
       })
   }
+  downloadDocAccuracy(tagtype){
+    this.downloading = true;
+    this.sharedService.downloadDocAccuracy(tagtype).subscribe((response:any)=>{
+      let blob: any = new Blob([response], { type: 'application/vnd.ms-excel; charset=utf-8' });
+      const url = window.URL.createObjectURL(blob);
+      // window.open(url);
+      //window.location.href = response.url;
+      fileSaver.saveAs(blob, `EntityLevelAccuracy.xlsx`);
+      this.downloading = false;
+    }
+      ,err=>{
+        console.log(err);
+        this.downloading = false;
+      })
+  }
   getMetaData(documentId) {
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
       this.FRMetaData = data;
       this.headerArray = [];
       this.LineArray = [];
-      this.headerOptionalArray= [];
-      this.LineArrayOptinal = [];
       if(this.FRMetaData?.mandatoryheadertags){
         this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
         if(!this.headerArray.includes("TRN")){
@@ -298,7 +310,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
           })
         }, 1000);
       }else{
-        this.headerArray = [];
+        this.headerTags.forEach((el)=>{
+          if(el['Ismendatory'] == 1){
+            this.headerArray.push(el['Name']);
+          } 
+        });
+        this.headerArray=[...new Set(this.headerArray)];
       }
       if(this.FRMetaData?.mandatorylinetags){
         this.LineArray = this.FRMetaData['mandatorylinetags'].split(',');
@@ -311,7 +328,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         })
         }, 1000);
       }else{
-        this.LineArray = [];
+        this.LineTags.forEach((el)=>{
+          if(el['Ismendatory'] == 1){
+            this.LineArray.push(el['Name']);
+          }
+        });
+        this.LineArray=[...new Set(this.LineArray)];
       }
     
       if(this.FRMetaData?.optionalheadertags){
@@ -592,7 +614,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       return "Tagged Optional";
     }
   }
-  getAllTags() {
+  getAllTags(modal_id) {
     this.sharedService.getAllTags('vendor').subscribe((data:any)=>{
       this.headerTags = data.header;
       this.headerTags.forEach((el)=>{
@@ -604,7 +626,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         }
       });
       this.headerArray=[...new Set(this.headerArray)];
-      console.log(this.headerArray);
       this.headerOptionalArray.forEach((ele,index)=>{
         this.headerArray.forEach(tagName=>{
           if(ele == tagName){
@@ -630,6 +651,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         })
       })
       this.LineArrayOptinal =[...new Set(this.LineArrayOptinal)];
+      this.getMetaData(modal_id);
     })
   }
   showHeaderCheckboxes() {

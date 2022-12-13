@@ -42,14 +42,12 @@ export class RegistrationComponent implements OnInit {
     this.fieldTextType = !this.fieldTextType;
   }
   savePasswordforNewuser(){
-    console.log('data');
     const passwordData = {
       "activation_code": this.token,
       "password": this.registrationForm.value.password
     };
 
     this.registrationService.savenewUserPassword(JSON.stringify(passwordData)).subscribe((data:any)=>{
-      console.log(data);
       if(data.result == "Account Activated"){
         this.messageService.add({
           severity: "success",
@@ -59,7 +57,6 @@ export class RegistrationComponent implements OnInit {
         this.router.navigate(["/"]);
       }
     },error=>{
-      console.log(error)
       this.messageService.add({
         severity: "error",
         summary: "error",
@@ -71,7 +68,6 @@ export class RegistrationComponent implements OnInit {
     const decoded = jwt_decode( this.token);
 
     this.userData = decoded;
-    console.log(this.userData)
     this.registrationForm = this.fb.group({
       userName: [{value:this.userData.username , disabled:true}],
       firstName: [{value:this.userData.firstName , disabled:true}],
@@ -83,7 +79,6 @@ export class RegistrationComponent implements OnInit {
 
     const date = new Date();
     const createDate = this.datePipe.transform(date,'yyyy-MM-dd');
-    console.log(createDate)
     if(this.userData.exp_date <= createDate){
       this.linkActiveBoolean = false;
     }

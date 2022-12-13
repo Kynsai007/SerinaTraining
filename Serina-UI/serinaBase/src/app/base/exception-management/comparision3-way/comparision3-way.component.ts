@@ -95,7 +95,7 @@ export class Comparision3WayComponent
 
   isPdfAvailable: boolean;
   userDetails: any;
-  showPdf: boolean;
+  showPdf: boolean = false;
   btnText = 'View PDF';
   lineCompareData;
   totalLineItems = ['abc', 'xyz'];
@@ -126,6 +126,7 @@ export class Comparision3WayComponent
   callSession: any;
   invoiceNumber = '';
   vendorName: any;
+  isGRNDataLoaded: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -263,7 +264,7 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.inputDisplayArray = [];
     this.lineData = [];
-    this.showInvoice = '';
+    
     this.exceptionService.getInvoiceInfo().subscribe(
       (data: any) => {
         this.lineDisplayData = data.linedata.Result;
@@ -462,7 +463,7 @@ export class Comparision3WayComponent
         this.vendorName = this.vendorData['VendorName'];
         // this.selectedRule = data.ok.ruledata[0].Name;
         // this.poList = data.all_pos;
-
+        this.isGRNDataLoaded = true;
         this.SpinnerService.hide();
       },
       (error) => {
@@ -477,6 +478,7 @@ export class Comparision3WayComponent
   }
 
   readFilePath() {
+    this.showInvoice = '';
     this.SpinnerService.show();
     this.exceptionService.readFilePath().subscribe(
       (data: any) => {
@@ -491,7 +493,7 @@ export class Comparision3WayComponent
           this.showInvoice = window.URL.createObjectURL(
             new Blob([this.byteArray], { type: 'application/pdf' })
           );
-        } else if (data.content_type == 'image/jpg') {
+        } else if (data.content_type == 'image/jpg' || data.content_type == 'image/png') {
           this.isPdfAvailable = false;
           this.isImgBoolean = true;
           this.byteArray = new Uint8Array(
@@ -500,9 +502,9 @@ export class Comparision3WayComponent
               .map((char) => char.charCodeAt(0))
           );
           this.showInvoice = window.URL.createObjectURL(
-            new Blob([this.byteArray], { type: 'image/jpg' })
+            new Blob([this.byteArray], { type: data.content_type })
           );
-          this.loadImage();
+          // this.loadImage();
         } else {
           this.isPdfAvailable = true;
           this.showInvoice = '';
@@ -532,13 +534,23 @@ export class Comparision3WayComponent
 
   loadImage() {
     if (this.isImgBoolean == true) {
+      let width, height;
       setTimeout(() => {
+
         (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
           'scale(' + this.zoomVal + ')';
+
         this.canvas = <HTMLCanvasElement>document.getElementById('canvas1');
         let ctx = <CanvasRenderingContext2D>this.canvas.getContext('2d');
         let img = new Image();
+        let windowheight = window.innerHeight;
+        let windowWidth = window.innerWidth / 2;
         img.onload = function () {
+          width = img.width;
+          height = img.height;
+          if(width >1000){
+            ctx.scale(windowWidth / width, windowheight / height)
+          }
           ctx.drawImage(img, 0, 0); // Or at whatever offset you like
         };
         img.src = this.showInvoice;
@@ -635,16 +647,22 @@ export class Comparision3WayComponent
     document.getElementById(index + 1).scrollIntoView();
   }
 
-  zoomin(index) {
-    this.isRect = false;
-    this.canvas[index].setZoom(this.canvas[index].getZoom() * 1.1);
-    this.panning(index);
+  zoomin() {
+    this.zoomVal = this.zoomVal + 0.2;
+    if (this.zoomVal >= 2.0) {
+      this.zoomVal = 1;
+    }
+    (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
+      'scale(' + this.zoomVal + ')';
   }
 
   zoomout(index) {
-    this.isRect = false;
-    this.canvas[index].setZoom(this.canvas[index].getZoom() / 1.1);
-    this.panning(index);
+    this.zoomVal = this.zoomVal - 0.2;
+    if (this.zoomVal <= 0.5) {
+      this.zoomVal = 1;
+    }
+    (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
+      'scale(' + this.zoomVal + ')';
   }
 
   removeEvents(index) {
@@ -1039,6 +1057,9 @@ export class Comparision3WayComponent
       this.btnText = 'View PDF';
     } else {
       this.btnText = 'Close';
+    }
+    if(this.isImgBoolean == true){
+      this.loadImage();
     }
   }
 

@@ -12,7 +12,8 @@
   border-radius: 12px;
   padding: 14px 20px 13px 15px;
   // background-color: #fffbf0;
-  min-width: 16vw;
+  min-width: 13vw;
+  max-width: 16vw;
   color: white;
 }
 .f-15 {
@@ -94,7 +95,7 @@
   z-index: 12;
 }
 .charts_height {
-  max-height: 74vh;
+  max-height: 72vh;
   overflow: auto;
 }
 :host ::ng-deep {
@@ -109,22 +110,64 @@
     font-size: 11px;
     font-weight: 600;
   }
+  .p-datatable .p-datatable-thead > tr > th {
+    padding: 4px !important;
+  }
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 4px !important;
+  }
 }
-@media screen and (max-width:1300px) {
+.dwnload_btn {
+  position: absolute;
+    left: 44%;
+    top: 2px;
+    z-index: 12;
+}
+// @media screen and (max-width:1300px) {
+//   .filter_inputDash {
+//     top: 83px;
+//   }
+//   .filters_div {
+//     top: 82px;
+//   }
+//   .tableDtDiv {
+//     position: relative;
+//     top: 27px;
+//   }
+//   .charts_height {
+//     position: relative;
+//     top: 20px;
+//   }
+// }
+@media screen and (max-width:1450px) {
   .filter_inputDash {
-    top: 50px;
-      right: 0;
+      top: 53px;
+      // right: 0;
   }
   .filters_div {
-    top: 82px;
-    right: 0;
+    top: 90px;
+    right: 16px;
   }
   .tableDtDiv {
     position: relative;
-    top: 27px;
+    top: 35px;
   }
   .charts_height {
     position: relative;
-    top: 20px;
+    top: 30px;
+  }
+  //  .chart_div{
+  //   height: 180px;
+  //  }
+}
+@media screen and(max-width:800px) {
+  .img-wrapper {
+    width: 30px;
+    height: 30px;
+    margin: 0 15px 0 0;
+    padding: 3px 4px;
+  }
+  .d_flx_row {
+    flex-direction: column;
   }
 }

@@ -102,6 +102,8 @@ export class DataService {
   GRNExcpDispalyData = [];
   GRNExcpTableLength: number;
   reUploadData: any;
+  create_GRN_page_first = 0;
+  create_GRN_page_row_length = 10;
 
 
   constructor() { }

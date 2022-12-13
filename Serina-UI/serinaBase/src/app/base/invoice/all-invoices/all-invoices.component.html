@@ -127,9 +127,21 @@
                     }"
                   >
                     {{ invoiceData[col.dbColumnname] }}
+                    <button
+                      *ngIf="invoiceData.documentStatusID == 1"
+                      pTooltip="Trigger Batch"
+                      tooltipPosition="top"
+                      class="f-13 b-0"
+                      style="color: red; font-weight: 800"
+                      (click)="triggerBatch(invoiceData.idDocument)"
+                      [disabled]="triggerBoolean && invoiceID == invoiceData.idDocument" 
+                    >
+                     <i class="fa fa-refresh" aria-hidden="true"></i> 
+                    </button
+                    >
                     <i
-                      *ngIf="invoiceData.documentsubstatusID == 30"
-                      pTooltip="Batch Exception but ready for ERP PUSH"
+                      *ngIf="invoiceData.docstatus == 'Need To Review'"
+                      [pTooltip]="invoiceData?.status"
                       tooltipPosition="top"
                       class="f-13 ml-3"
                       style="color: red; font-weight: 800"
@@ -146,7 +158,7 @@
           </td>
           <td>
             <i
-              class="pi pi-eye f-16 showEye mr-2"
+              class="pi pi-eye f-13 showEye mr-2 font_weight_500"
               (click)="viewInvoiceDetails(invoiceData)"
             ></i>
             <span *ngIf="router.url.includes('GRNExceptions')">
@@ -156,50 +168,50 @@
               *ngIf="router.url.includes('allInvoices') || router.url.includes('archived')"
               pTooltip="Click here to view Full Status details"
               tooltipPosition="left"
-              class="fa fa-info-circle actionsBtn"
+              class="fa fa-info-circle actionsBtn f-13 icon_style i_padding font_weight_500"
               (click)="viewStatusPage(invoiceData)"
             ></i>
 
             <span *ngIf="router.url.includes('allInvoices') || router.url.includes('archived') || router.url.includes('ServiceInvoices')">
-              <span
-              class="ml-2 pos-rel"
+            <span
+              class="ml-2 icon_style"
               *ngIf="invoiceData.sourcetype == 'Web'"
               title="Uploaded through Portal"
             >
-              <i class="fa fa-cloud-upload f-16" aria-hidden="true"></i>
+              <i class="fa fa-cloud-upload f-13 font_weight_500" aria-hidden="true"></i>
             </span>
 
             <span
-              class="ml-2 pos-rel"
+              class="ml-2 icon_style"
               *ngIf="invoiceData.sourcetype == 'Mail'"
               title="Uploaded through Mail"
             >
-              <i class="fa fa-envelope f-16" aria-hidden="true"></i>
+              <i class="fa fa-envelope f-13 font_weight_500" aria-hidden="true"></i>
             </span>
 
             <span style="visibility: hidden;"
-              class="ml-2 pos-rel"
+              class="ml-2 icon_style"
               *ngIf="invoiceData.sourcetype == 'RPA'"
               title="Uploaded through Mail"
             >
-              <i class="fa fa-envelope f-16" aria-hidden="true"></i>
+              <i class="fa fa-envelope f-13 font_weight_500" aria-hidden="true"></i>
             </span>
 
             <span
-              class="ml-2 pos-rel"
+              class="ml-2 icon_style"
               *ngIf="invoiceData.sourcetype == 'SharePoint'"
               title="Uploaded through SharePoint"
             >
-              <i class="fa fa-share f-16" aria-hidden="true"></i>
+              <i class="fa fa-share f-13 font_weight_500" aria-hidden="true"></i>
             </span>
             </span>
-            <i
+            <span
             *ngIf="router.url.includes('allInvoices') || router.url.includes('ServiceInvoices') || router.url.includes('payment-details-vendor')"
               pTooltip="Click here to view ERP Status details"
               tooltipPosition="left"
-              class="fa fa-info-circle ml-2 actionsBtn"
+              class="fa fa-link actionsBtn f-13 font_weight_500 icon_style link_padding"
               (click)="checkStatus(invoiceData)"
-            ></i>
+            >  </span>
           </td>
         </tr>
       </ng-template>

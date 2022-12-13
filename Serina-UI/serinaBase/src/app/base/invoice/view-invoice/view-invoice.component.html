@@ -6,9 +6,11 @@
 </div>
 <div *ngIf="editable" class="pos_rel">
   <span class="goBackIn ml-3" (click)="backToInvoice()">
+    
     <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
   </span>
   <h6 class="headh6 pl-80">{{ headerName }}</h6>
+  
 </div>
 <div class="row invoice-body">
   <div class="viewPdf" style="right: 160px;">
@@ -111,6 +113,8 @@
       <!-- <button class="raiseAlert" pTooltip="raise an alert" tooltipPosition="top"><i class="fa fa-exclamation-triangle"
           aria-hidden="true"></i></button> -->
     </ul>
+    
+      
     <div class="bg-design-all tabsDiv">
       <h6 class="upload-time" *ngIf="uploadtime">Upload Completed in - {{uploadtime}}</h6>  
       <div class="tabDiv tab-content" id="myTabContent">
@@ -309,8 +313,9 @@
         class="btnFooter"
         mat-dialog-actions
       >
-        <!-- <button mat-button class="btn btnVender mr-4" type="button">Change attachment</button> -->
-        <button
+      <!-- <button mat-button class="btn btnVender mr-4" type="button">Change attachment</button> -->
+       
+      <button
           class="btn btnVender bg-btn-cancel mr-3"
           type="button"
           (click)="backToInvoice()"
@@ -342,8 +347,6 @@
           Submit
         </button>
 
-        
-        
         <button
           *ngIf="
             (changeApproveBoolean || financeApproveBoolean) &&

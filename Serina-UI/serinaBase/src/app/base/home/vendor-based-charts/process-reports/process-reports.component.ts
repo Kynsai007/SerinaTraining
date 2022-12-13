@@ -26,6 +26,7 @@ export class ProcessReportsComponent implements OnInit {
   rejectedCount: number;
   pendingCount: number;
   errorCount: number;
+  uploadTime:any;
   sourceData = [];
   noDataPAboolean: boolean;
   noDataVndrCountboolean: boolean;
@@ -345,11 +346,12 @@ export class ProcessReportsComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getvendorBasedSummary(filter).subscribe((data: any) => {
       this.vendorSummary = data.data;
-      this.totalUploaded = this.vendorSummary.totaluploaded[0].count;
-      this.invoicedInERP = this.vendorSummary.erpinvoice[0].count;
-      this.pendingCount = this.vendorSummary.pending[0].count;
-      this.rejectedCount = this.vendorSummary.rejected[0].count;
-      this.errorCount = this.vendorSummary.errorinv[0].count;
+      this.totalUploaded = this.vendorSummary?.totaluploaded[0]?.count;
+      this.invoicedInERP = this.vendorSummary?.erpinvoice[0]?.count;
+      this.pendingCount = this.vendorSummary?.pending[0]?.count;
+      this.rejectedCount = this.vendorSummary?.rejected[0]?.count;
+      this.errorCount = this.vendorSummary?.errorinv[0]?.count;
+      this.uploadTime = this.vendorSummary?.avguptime;
       this.SpinnerService.hide();
     }, err=>{
       this.SpinnerService.hide();

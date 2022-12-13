@@ -242,8 +242,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
               }
-              boundingBox[0] = Math.floor(boundingBox[0]*this.currentwidth);
-              boundingBox[1] = Math.floor(boundingBox[1]*this.currentheight);
+              boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+              boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
               if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1]))){
                 unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
               }
@@ -264,8 +264,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingBox = this.convertImagePixelToPixel(arr[i].boundingBoxes[0]);
               }
-              boundingBox[0] = Math.floor(boundingBox[0]*this.currentwidth);
-              boundingBox[1] = Math.floor(boundingBox[1]*this.currentheight);
+              boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+              boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
               let div = (<HTMLDivElement>document.getElementById("rect"+arr[i].page+arr[i].text+boundingBox[0]+boundingBox[1]));
               if(div){
                 div.style.backgroundColor = 'transparent';
@@ -297,7 +297,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
         if(!this.checkFieldExists({page:this.currentindex,text:arr[i].text,boundingBoxes:[boundingbox]})){
           this.labelsJson["labels"][tabindex]["value"].push({page:this.currentindex,text:arr[i].text,boundingBoxes:[boundingbox]})
-          let div = (<HTMLDivElement>document.getElementById("rect"+this.currentindex+arr[i].text+Math.floor(arr[i].x)+Math.floor(arr[i].y)));
+          let div = (<HTMLDivElement>document.getElementById("rect"+this.currentindex+arr[i].text+Math.round(arr[i].x)+Math.round(arr[i].y)));
           if(div){
             div.style.backgroundColor = 'transparent';
             div.setAttribute("selected","false");
@@ -316,8 +316,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
           }
-          boundingBox[0] = Math.floor(boundingBox[0]*this.currentwidth);
-          boundingBox[1] = Math.floor(boundingBox[1]*this.currentheight);
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
           unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
         }
         unsorted = unsorted.sort((a:any,b:any) => {
@@ -354,8 +354,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(v.boundingBoxes[0]);
           }
-          boundingBox[0] = Math.floor(boundingBox[0]*this.currentwidth);
-          boundingBox[1] = Math.floor(boundingBox[1]*this.currentheight);
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
           if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])){
             (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])).style.transform = 'scale(2)';
           }
@@ -372,8 +372,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(v.boundingBoxes[0]);
           }
-          boundingBox[0] = Math.floor(boundingBox[0]*this.currentwidth);
-          boundingBox[1] = Math.floor(boundingBox[1]*this.currentheight);
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
           if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])){
             (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])).style.transform = 'scale(1)';
           }
@@ -857,7 +857,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
             boundingbox = this.convertImagePixelToPixel(boundingbox);
           }
           let div : any = document.createElement('div');
-          div.id = "rect"+pagenum+w.text+Math.floor(boundingbox[0])+Math.floor(boundingbox[1]);
+          div.id = "rect"+pagenum+w.text+Math.round(boundingbox[0])+Math.round(boundingbox[1]);
           div.setAttribute("line",line);
           div.style.position = 'absolute';
           div.style.border = '1px solid yellow';
@@ -974,7 +974,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingbox = _this.convertPixeltoImagePixel(boundingbox);
               }
-              let div = (<HTMLDivElement>document.getElementById("rect"+_this.currentindex+_this.currentSelection[m].text+Math.floor(_this.currentSelection[m].x)+Math.floor(_this.currentSelection[m].y)));
+              let div = (<HTMLDivElement>document.getElementById("rect"+_this.currentindex+_this.currentSelection[m].text+Math.round(_this.currentSelection[m].x)+Math.round(_this.currentSelection[m].y)));
               if(div){
                 div.style.backgroundColor = 'transparent';
                 div.setAttribute("selected","false");
@@ -1211,8 +1211,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }else{
           boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
         }
-        boundingBox[0] = Math.floor(boundingBox[0]*this.currentwidth);
-        boundingBox[1] = Math.floor(boundingBox[1]*this.currentheight);
+        boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+        boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
         if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1]))){
           unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
         }
@@ -1233,8 +1233,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }else{
           boundingBox = this.convertImagePixelToPixel(arr[j].boundingBoxes[0]);
         }
-        boundingBox[0] = Math.floor(boundingBox[0]*this.currentwidth);
-        boundingBox[1] = Math.floor(boundingBox[1]*this.currentheight);
+        boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+        boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
         let div = (<HTMLDivElement>document.getElementById("rect"+arr[j].page+arr[j].text+boundingBox[0]+boundingBox[1]));
         if(div){
           div.style.backgroundColor = 'transparent';
@@ -1280,7 +1280,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           if(!this.checkFieldExists({"page":this.currentindex,"text":arr[j].text,"boundingBoxes":[boundingbox]})){
             this.labelsJson["labels"][index]["value"].push({"page":this.currentindex,"text":arr[j].text,"boundingBoxes":[boundingbox]})
-            let div = (<HTMLDivElement>document.getElementById("rect"+this.currentindex+arr[j].text+Math.floor(arr[j].x)+Math.floor(arr[j].y)));
+            let div = (<HTMLDivElement>document.getElementById("rect"+this.currentindex+arr[j].text+Math.round(arr[j].x)+Math.round(arr[j].y)));
             if(div){
               div.style.backgroundColor = 'transparent';
               div.setAttribute("selected","false");
@@ -1300,8 +1300,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }else{
             boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
           }
-          boundingBox[0] = Math.floor(boundingBox[0]*this.currentwidth);
-          boundingBox[1] = Math.floor(boundingBox[1]*this.currentheight);
+          boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
+          boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
           unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
         }
         unsorted = unsorted.sort((a:any,b:any) => {

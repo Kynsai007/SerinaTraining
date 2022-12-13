@@ -254,18 +254,29 @@ export class FrUpdateSpComponent implements OnInit {
         this.downloading = false;
       })
   }
-  
+  downloadDocAccuracy(tagtype){
+    this.downloading = true;
+    this.sharedService.downloadDocAccuracy(tagtype).subscribe((response:any)=>{
+      let blob: any = new Blob([response], { type: 'application/vnd.ms-excel; charset=utf-8' });
+      const url = window.URL.createObjectURL(blob);
+      // window.open(url);
+      //window.location.href = response.url;
+      fileSaver.saveAs(blob, `EntityLevelAccuracy.xlsx`);
+      this.downloading = false;
+    }
+      ,err=>{
+        console.log(err);
+        this.downloading = false;
+      })
+  }
   getMetaData(documentId) {
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
       this.FRMetaData = data;
       this.headerArray = [];
       this.LineArray = [];
-      this.headerOptionalArray= [];
-      this.LineArrayOptinal = [];
       if(this.FRMetaData?.mandatoryheadertags){
         this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
         setTimeout(() => {
-          console.log(this.headerArray,this.headerOptionalArray)
           this.headerArray.forEach((ele)=>{
             const index = this.headerOptionalArray.indexOf(ele);
           if (index > -1) {
@@ -274,7 +285,12 @@ export class FrUpdateSpComponent implements OnInit {
           })
         }, 1000);
       }else{
-        this.headerArray = [];
+        this.headerTags.forEach((el)=>{
+          if(el['Ismendatory'] == 1){
+            this.headerArray.push(el['Name']);
+          } 
+        });
+        this.headerArray=[...new Set(this.headerArray)];
       }
       if(this.FRMetaData?.mandatorylinetags){
         this.LineArray = this.FRMetaData['mandatorylinetags'].split(',');
@@ -287,7 +303,12 @@ export class FrUpdateSpComponent implements OnInit {
         })
         }, 1000);
       }else{
-        this.LineArray = [];
+        this.LineTags.forEach((el)=>{
+          if(el['Ismendatory'] == 1){
+            this.LineArray.push(el['Name']);
+          }
+        });
+        this.LineArray=[...new Set(this.LineArray)];
       }
     
       if(this.FRMetaData?.optionalheadertags){
@@ -303,7 +324,6 @@ export class FrUpdateSpComponent implements OnInit {
       }else{
         this.LineOptTags = [];
       }
-      this.getAllTags();
       if(this.FRMetaData){
         if(!this.FRMetaData['DateFormat'] || this.FRMetaData['DateFormat'] == ''){
           this.FRMetaData['DateFormat'] = 'dd/mm/yy';
@@ -319,8 +339,8 @@ export class FrUpdateSpComponent implements OnInit {
         (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = this.FRMetaData['AccuracyFeild'];
         (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = this.FRMetaData['InvoiceFormat'];
         
-        // (<HTMLInputElement>document.getElementById("unitprice_tol")).value = this.FRMetaData['UnitPriceTol_percent'];
-        // (<HTMLInputElement>document.getElementById("quantity_tol")).value = this.FRMetaData['QtyTol_percent'];
+        //(<HTMLInputElement>document.getElementById("unitprice_tol")).value = this.FRMetaData['UnitPriceTol_percent'];
+        //(<HTMLInputElement>document.getElementById("quantity_tol")).value = this.FRMetaData['QtyTol_percent'];
         if(!this.FRMetaData['Units'] || this.FRMetaData['Units'] == ''){
           this.FRMetaData['Units'] = 'USD';
         }
@@ -334,14 +354,14 @@ export class FrUpdateSpComponent implements OnInit {
         // }
         // this.batchBoolean = this.FRMetaData['batchmap'];
 
-        // if(!this.FRMetaData['SPType']){
-        //   this.selectedSPType = '';
+        // if(!this.FRMetaData['vendorType']){
+        //   this.selectedVendorType = '';
         // } else {
-        //   this.selectedSPType = this.FRMetaData['SPType'];
-        //   if(this.selectedSPType == "PO based"){
-        //     this.isPObasedSP = true;
+        //   this.selectedVendorType = this.FRMetaData['vendorType'];
+        //   if(this.selectedVendorType == "PO based"){
+        //     this.isPObasedVendor = true;
         //   } else {
-        //     this.isPObasedSP = false;
+        //     this.isPObasedVendor = false;
         //   }
         // }
         // if(!this.FRMetaData['GrnCreationType']){
@@ -358,7 +378,7 @@ export class FrUpdateSpComponent implements OnInit {
         (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = '90';
         (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = 'pdf,jpg';
         (<HTMLInputElement>document.getElementById("Units")).value = 'USD';
-        // (<HTMLSelectElement>document.getElementById("ruleID")).value = '';
+        //(<HTMLSelectElement>document.getElementById("ruleID")).value = '';
       }
       
     })

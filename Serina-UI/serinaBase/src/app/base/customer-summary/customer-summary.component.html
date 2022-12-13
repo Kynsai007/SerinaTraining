@@ -1,6 +1,6 @@
 <h6 class="headh6">Document Summary</h6>
 
-<div class="container-fluid">
+<div class="container-fluid" style="height: 90vh;overflow:hidden;">
   <div>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li class="nav-item mr-1">
@@ -29,22 +29,41 @@
       </li>
     </ul>
   </div>
-  <div class="filter_input" style="right: 50px">
-    <p-calendar
-      [(ngModel)]="rangeDates"
-      selectionMode="range"
-      [minDate]="minDate"
-      [maxDate]="maxDate"
-      showButtonBar="true"
-      (onClearClick)="clearDates()"
-      placeholder="Select dates to Filter"
-      [readonlyInput]="true"
-      [showIcon]="true"
-      inputId="range"
-    ></p-calendar>
-    <button class="btnUpload filter_btn_m" (click)="filterData()">
-      Filter
-    </button>
+  <div class="down_filter">
+    <div>
+      <button class="btnUpload dwnload_btn " (click)="downloadReport()">
+        Download Report
+      </button>
+    </div>
+    <div class="selectFilter mr-2">
+      <select
+        class="f-12 form-control font_weight"
+        (change)="selectEntityFilter($event.target.value)"
+      >
+        <option value="">Select Entity</option>
+        <option value="ALL">ALL</option>
+        <option *ngFor="let entity of entity" [value]="entity.idEntity">
+          {{ entity.EntityName }}
+        </option>
+      </select>
+    </div>
+    <div>
+      <p-calendar
+        [(ngModel)]="rangeDates"
+        selectionMode="range"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        showButtonBar="true"
+        (onClearClick)="clearDates()"
+        placeholder="Select dates to Filter"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        inputId="range"
+      ></p-calendar>
+      <button class="btnUpload filter_btn_m" (click)="filterData(rangeDates)">
+        Filter
+      </button>
+    </div>
   </div>
 
   <div
@@ -80,7 +99,7 @@
       </div>
 
       <div class="table_scroll">
-        <div class="tableDatDiv table_top">
+        <div class="tableDataDiv table_top">
           <app-table
             [tableData]="customerSummary"
             [invoiceColumns]="summaryColumn"
@@ -132,7 +151,7 @@
       </div>
 
       <div class="table_scroll">
-        <div class="tableDatDiv table_top">
+        <div class="tableDataDiv table_top">
           <app-table
             [tableData]="customerSummarySP"
             [invoiceColumns]="summaryColumnSP"
