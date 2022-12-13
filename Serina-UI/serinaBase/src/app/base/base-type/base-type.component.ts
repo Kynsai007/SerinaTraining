@@ -355,5 +355,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    localStorage.clear();
   }
 }

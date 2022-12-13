@@ -1,3 +1,4 @@
+import { ImportExcelService } from './../../../services/importExcel/import-excel.service';
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { ChartsService } from 'src/app/services/dashboard/charts.service';
@@ -16,22 +17,36 @@ export class VendorBasedChartsComponent implements OnInit {
   viewType ;
   exceptionData: any;
 
-  totalTableData = [];
-  columnsForTotal = [];
-  totalColumnHeader = [];
-  totalColumnField = [];
-  ColumnLengthtotal: any;
-  showPaginatortotal: boolean;
+  exceptionTableData = [];
+  columnsForException = [];
+  exceptionColumnHeader = [];
+  exceptionColumnField = [];
+  ColumnLengthException: any;
+  showPaginatorException: boolean;
+
+  onboardTableData = [];
+  columnsForonboard = [];
+  onboardColumnHeader = [];
+  onboardColumnField = [];
+  ColumnLengthonboard: any;
+  showPaginatoronboard: boolean;
 
   minDate: Date;
   maxDate: Date;
   rangeDates: Date[];
   filterDataTotal: any[];
 
+  selectedMonth = 'Current Month'
+  months: string[];
+  selectDate: Date;
+  displayYear;
+  lastYear: number;
+
   constructor(
     private chartsService: ChartsService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
+    private ImportExcelService: ImportExcelService,
     private router : Router,
     private datePipe : DatePipe,
     private dateFilterService: DateFilterService,
@@ -42,16 +57,21 @@ export class VendorBasedChartsComponent implements OnInit {
     // this.readExceptionData();
     this.prepareColumns();
     this.readEmailExceptionData('');
+    this.readOnboardedData('');
     this.dateRange();
     if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
       this.viewType = 'Process';
     } else if(this.router.url == '/customer/home/vendorBasedReports/exceptionReports'){
       this.viewType = 'Exception';
-    } else {
+    } else if(this.router.url == '/customer/home/vendorBasedReports/emailExceptionReports'){
       this.viewType = 'emailException';
+    }else {
+      this.viewType = 'onboarded';
+      this.getDate();
     }
   }
 
+  // changing tabs
   choosepageTab(value) {
     this.viewType = value;
     this.chartsService.vendorTabs = value;
@@ -61,11 +81,13 @@ export class VendorBasedChartsComponent implements OnInit {
       this.router.navigate(['/customer/home/vendorBasedReports/exceptionReports']);
     } else if(value == 'emailException') {
       this.router.navigate(['/customer/home/vendorBasedReports/emailExceptionReports']);
+    } else if(value == 'onboarded') {
+      this.router.navigate(['/customer/home/vendorBasedReports/onboardedReports']);
     }
   }
 
   prepareColumns() {
-    this.columnsForTotal = [
+    this.columnsForException = [
       { field: 'Filename', header: 'File Name' },
       { field: 'EmailSender', header: 'Sender' },
       { field: 'Exception', header: 'Exception Type' },
@@ -73,12 +95,25 @@ export class VendorBasedChartsComponent implements OnInit {
       { field: 'UploadedDate', header: 'Upload Date' },
     ];
 
-    this.columnsForTotal.forEach((e) => {
-      this.totalColumnHeader.push(e.header);
-      this.totalColumnField.push(e.field);
+    this.columnsForonboard = [
+      { field: 'VendorName', header: 'Vendor Name' },
+      { field: 'EntityName', header: 'Entity' },
+      { field: 'CreatedOn', header: 'Onboarded Date' },
+      { field: 'UpdatedOn', header: 'Last updated' },
+    ];
+
+    this.columnsForException.forEach((e) => {
+      this.exceptionColumnHeader.push(e.header);
+      this.exceptionColumnField.push(e.field);
     });
 
-    this.ColumnLengthtotal = this.columnsForTotal.length;
+    this.columnsForonboard.forEach((e) => {
+      this.onboardColumnHeader.push(e.header);
+      this.onboardColumnField.push(e.field);
+    });
+
+    this.ColumnLengthException = this.columnsForException.length;
+    this.ColumnLengthonboard = this.columnsForonboard.length;
   }
 
   // readExceptionData() {
@@ -94,10 +129,19 @@ export class VendorBasedChartsComponent implements OnInit {
 
   readEmailExceptionData(filter){
     this.chartsService.getEmailExceptionSummary(filter).subscribe((data:any)=>{
-      this.totalTableData = data.data;
-      this.filterDataTotal = this.totalTableData;
-      if(this.totalTableData.length >10){
-        this.showPaginatortotal = true;
+      this.exceptionTableData = data.data;
+      this.filterDataTotal = this.exceptionTableData;
+      if(this.exceptionTableData.length >10){
+        this.showPaginatorException = true;
+      }
+    })
+  }
+
+  readOnboardedData(filter){
+    this.chartsService.getOnbordedData(filter).subscribe((data:any)=>{
+      this.onboardTableData = data.data;
+      if(this.onboardTableData.length >10){
+        this.showPaginatoronboard = true;
       }
     })
   }
@@ -112,17 +156,17 @@ export class VendorBasedChartsComponent implements OnInit {
     // if(date != ''){
     //   let frmDate:any = this.datePipe.transform(date[0], "yyyy-MM-dd");
     //   let toDate:any = this.datePipe.transform(date[1], "yyyy-MM-dd");
-    //   this.totalTableData = this.filterDataTotal;
-    //   this.totalTableData = this.totalTableData.filter((element) => {
+    //   this.exceptionTableData = this.filterDataTotal;
+    //   this.exceptionTableData = this.exceptionTableData.filter((element) => {
     //     const dateF = new Date(element.UploadedDate).toISOString().split('T');
     //     console.log(dateF[0],frmDate,toDate)
     //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
     //   });
-    //   if(this.totalTableData.length >10){
-    //     this.showPaginatortotal = true;
+    //   if(this.exceptionTableData.length >10){
+    //     this.showPaginatorException = true;
     //   }
     //  } else {
-    //   this.totalTableData = this.filterDataTotal;
+    //   this.exceptionTableData = this.filterDataTotal;
     //  }
 
     let dateFilter = '';
@@ -133,9 +177,41 @@ export class VendorBasedChartsComponent implements OnInit {
     }
     if(this.viewType == 'emailException'){
       this.readEmailExceptionData(dateFilter);
+    } else if (this.viewType == 'onboarded'){
+      // this.readOnboardedData(dateFilter);
     }
   }
   clearDates(){
     this.filterByDate('')
+  }
+  getDate() {
+    this.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let today = new Date();
+    let month = today.getMonth();
+    this.selectedMonth = this.months[month];
+    let year = today.getFullYear();
+    this.lastYear = year - 5;
+    this.displayYear = `${this.lastYear}:${year}`;
+    let prevYear = year - 5;
+
+    this.minDate = new Date();
+    this.minDate.setMonth(month);
+    this.minDate.setFullYear(prevYear);
+
+    this.maxDate = new Date();
+    this.maxDate.setMonth(month);
+    this.maxDate.setFullYear(year);
+  }
+  applyMonthfilter(month){
+    let monthIndex = month.getMonth()+1;
+    let dateFilter = `?month=${monthIndex}`;
+    this.readOnboardedData(dateFilter);
+
+  }
+
+  downloadReport(){
+    if(this.viewType == 'onboarded') {
+      this.ImportExcelService.exportExcel(this.onboardTableData);
+    }
   }
 }

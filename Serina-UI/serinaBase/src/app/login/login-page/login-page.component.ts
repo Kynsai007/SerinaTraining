@@ -36,14 +36,14 @@ export class LoginPageComponent implements OnInit {
   showOtpComponent = true;
   @ViewChild('ngOtpInput', { static: false }) ngOtpInput: any;
   config = {
-    allowNumbersOnly: false,
+    allowNumbersOnly: true,
     length: 6,
     isPasswordInput: false,
     disableAutoFocus: false,
     placeholder: '',
     inputStyles: {
-      'width': '30px',
-      'height': '30px'
+      'width': '50px',
+      'height': '35px'
     }
   };
   userDetails = [
@@ -65,6 +65,7 @@ export class LoginPageComponent implements OnInit {
   User_type: string;
   errorMail: boolean;
   errorMailText: any;
+  tokenOTP: any;
 
 
   constructor(private router: Router,
@@ -98,7 +99,6 @@ export class LoginPageComponent implements OnInit {
     // }
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
-    console.log(this.returnUrl)
   }
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
@@ -110,9 +110,6 @@ export class LoginPageComponent implements OnInit {
     this.fieldTextTypeReset1 = !this.fieldTextTypeReset1;
   }
   test(event) {
-
-    console.log("event", event.target.value)
-
     if (this.newPassword == this.confirmPassword) {
       this.passwordMatchBoolean = false;
     } else {
@@ -140,7 +137,7 @@ export class LoginPageComponent implements OnInit {
       mail: [this.sendMail]
     }
     this.sharedService.sendMail(this.sendMail).subscribe((data) => {
-      console.log(data);
+      this.tokenOTP = data.token;
       if (data.result == "successful") {
         this.loading = false;
         this.showOtpPanel = true;
@@ -180,15 +177,12 @@ export class LoginPageComponent implements OnInit {
     // console.log(this.otpData)
   }
   resetPass() {
-
     this.loading = true;
     let updatePassword = {
-      "activation_code": this.otp,
+      "activation_code": this.tokenOTP,
       "password": this.paswrd
     } 
-    console.log("password is: ", updatePassword)
-    this.sharedService.updatepass(JSON.stringify(updatePassword)).subscribe(data => {
-      console.log(data)
+    this.sharedService.updatepass(JSON.stringify(updatePassword),this.otp).subscribe(data => {
       this.loading = false;
       this.loginboolean = false;
       this.forgotboolean = false;
@@ -225,7 +219,6 @@ export class LoginPageComponent implements OnInit {
         data => {
           this.loading = false;
           if (this.returnUrl) {
-            console.log(this.returnUrl)
             this.router.navigate([this.returnUrl]);
           } else if (data.user_type === 'customer_portal') {
             if(data.permissioninfo.NameOfRole == 'Receiver'){
@@ -240,8 +233,6 @@ export class LoginPageComponent implements OnInit {
           // window.location.reload();
         },
         error => {
-          console.log(error)
-          console.log(this.error)
           this.loading = false;
           if (error.status === 401) {
           this.error = "Username or/and password are incorrect.";
@@ -253,7 +244,6 @@ export class LoginPageComponent implements OnInit {
         });
   }
   storeUser(e) {
-    console.log(e.target.checked)
     this.keepMeLogin = e.target.checked;
     this.sharedService.keepLogin = e.target.checked;
   }

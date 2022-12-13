@@ -125,6 +125,9 @@ export class SharedService {
   downloadDoc(tagtype){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/fr/entityTaggedInfo?tagtype=${tagtype}`,{responseType: 'blob'});
   }
+  downloadDocAccuracy(tagtype){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/fr/getAccuracyByEntity/${tagtype}`,{responseType: 'blob'});
+  }
   getAccuracyScore(type,name){
     return this.http.get(`${this.url}/${this.apiVersion}/fr/getActualAccuracy/${type}/${name}`);
   }

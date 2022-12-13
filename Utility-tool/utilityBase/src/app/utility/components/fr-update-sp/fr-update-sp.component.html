@@ -603,6 +603,7 @@
 
             <div class="modal-body b-0">
                 <p style="font-size: small;">{{SPName}}</p>
+                <button type="button" class="btn btncancel btn-sm" style="float: right;" (click)="downloadDocAccuracy('sp')"><i *ngIf="!downloading" class="fa fa-download"></i><div *ngIf="downloading" class="spinner-border spinner-border-sm" role="status"></div> Download Entity Level Accuracy Scores</button> 
                 <ul class="list-group">
                     <li class="list-group-item home-flex active">
                         <div class="item"></div>

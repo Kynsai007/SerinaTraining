@@ -8,11 +8,10 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import {
   ConfirmationService,
   MessageService,
-  PrimeNGConfig
-} from "primeng/api";
+  PrimeNGConfig,
+} from 'primeng/api';
 import { SharedService } from 'src/app/services/shared.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-
 
 export interface UserData {
   name: string;
@@ -24,33 +23,33 @@ export interface UserData {
   mobile: string;
 }
 export interface updateUserEntityData {
-  idUserAccess?: number,
-  EntityID?: number,
-  EntityBodyID?: number,
-  DepartmentID?: number
+  idUserAccess?: number;
+  EntityID?: number;
+  EntityBodyID?: number;
+  DepartmentID?: number;
 }
 
 export interface dropdownData {
   Entity: string;
-  value: dropdownDatavalue[]
+  value: dropdownDatavalue[];
 }
 export interface dropdownDatavalue {
   name: string;
 }
 
 export interface selectedValue {
-  idUserAccess?: number,
+  idUserAccess?: number;
   entity?: string;
   entityBody?: string;
   entityDept?: string;
-  EntityID?: number,
-  EntityBodyID?: number,
-  DepartmentID?: number
+  EntityID?: number;
+  EntityBodyID?: number;
+  DepartmentID?: number;
 }
 @Component({
   selector: 'app-roles',
   templateUrl: './roles.component.html',
-  styleUrls: ['./roles.component.scss']
+  styleUrls: ['./roles.component.scss'],
 })
 export class RolesComponent implements OnInit {
   normalRole: boolean = true;
@@ -76,8 +75,8 @@ export class RolesComponent implements OnInit {
 
   createRoleRequiredBoolean: boolean = false;
   newRoleName: string;
-  newRoleDescription:string;
-  
+  newRoleDescription: string;
+
   events1: any[];
 
   loginUserData: any;
@@ -127,8 +126,8 @@ export class RolesComponent implements OnInit {
   financeApproveBoolean: boolean = false;
   spTriggerBoolean = false;
   vendorTriggerBoolean = false;
-  configAccessBoolean:boolean =false;
-  dashboardAccessBoolean:boolean = false;
+  configAccessBoolean: boolean = false;
+  dashboardAccessBoolean: boolean = false;
   vendorPageBoolean = false;
   settingsPageBoolean = false;
   GRNPageBoolean = false;
@@ -143,27 +142,27 @@ export class RolesComponent implements OnInit {
   deleteBtnText: string;
 
   errorObject = {
-    severity: "error",
-    summary: "error",
-    detail: "Something went wrong"
-  }
+    severity: 'error',
+    summary: 'error',
+    detail: 'Something went wrong',
+  };
   addObject = {
-    severity: "success",
-    summary: "Success",
-    detail: "Created Successfully"
-  }
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Created Successfully',
+  };
   updateObject = {
-    severity: "info",
-    summary: "Updated",
-    detail: "Updated Successfully"
-  }
+    severity: 'info',
+    summary: 'Updated',
+    detail: 'Updated Successfully',
+  };
 
-  viewType = 'user'
+  viewType = 'user';
   updateroleData;
   appied_permission_def_id: number;
   displayResponsive: boolean;
   displayAddUserDialog: boolean;
-  headerEdituserboolean: boolean
+  headerEdituserboolean: boolean;
   updateUserEnt_body_id: number;
   updateUserEnt_dept_id: number;
   updateUsersEntityInfo: updateUserEntityData[] = [];
@@ -187,23 +186,36 @@ export class RolesComponent implements OnInit {
   vendorResetBtnBoolean: boolean;
   userResetBtnBoolean: boolean;
   max_role_amount = 0;
-  role_priority:number;
+  role_priority: number;
 
-  financeapproveDisplayBoolean:boolean;
+  financeapproveDisplayBoolean: boolean;
   addRoleBoolean: boolean;
-  vendorsSubscription:Subscription;
-  entitySubscription :Subscription;
-  filteredVendors: any;
-  entitySelection:any[];
+  vendorsSubscription: Subscription;
+  entitySubscription: Subscription;
+  filteredVendors = [];
+  entitySelection: any[];
   entityForVendorCreation = [];
   vendorEntityCodes: any;
   vendorCode: any;
+  vendorMatch:any;
 
   row_customer: number = 10;
-  row_vendor : number = 10;
-  first_cust :number = 0;
-  first_vendor :number = 0;
-  constructor(private dataService: DataService,
+  row_vendor: number = 10;
+  first_cust: number = 0;
+  first_vendor: number = 0;
+  editVndrUserbool: boolean;
+  selectedEnt_venor: any[];
+  vendorUserId: any;
+  dailogText: string;
+  updateIdaccessArr = [];
+  updateVenrEntityAccess = [];
+  entLengthforup_vendr: any;
+  approveDialog: boolean;
+  tempVendorName:string;
+  vendorMatchList = [];
+  vendorOnboarderStatus: boolean;
+  constructor(
+    private dataService: DataService,
     private messageService: MessageService,
     private sharedService: SharedService,
     private router: Router,
@@ -211,31 +223,33 @@ export class RolesComponent implements OnInit {
     private permissionService: PermissionService,
     private SpinnerService: NgxSpinnerService,
     private _location: Location,
-    private settingsService : SettingsService,
-    private primengConfig: PrimeNGConfig) {
-    routeIn.params.subscribe(params => {
+    private settingsService: SettingsService,
+    private primengConfig: PrimeNGConfig
+  ) {
+    routeIn.params.subscribe((params) => {
       this.setupComponent(params['someParam']);
-    })
+    });
   }
 
   ngOnInit(): void {
     this.inIt();
   }
 
-  inIt(){
+  inIt() {
     if (this.permissionService.addUsersBoolean == true) {
       this.router.navigate(['/customer/roles', 'createdUsers']);
       this.someParameterValue = 'createdUsers';
       this.primengConfig.ripple = true;
       this.DisplayCustomerUserDetails();
-      this.toGetEntity();
+      // this.toGetEntity();
       this.getDisplayTotalRoles();
       this.getVendorsListTocreateNewVendorLogin();
       this.getVendorSuperUserList();
-      this.financeapproveDisplayBoolean = this.settingsService.finaceApproveBoolean;
+      this.financeapproveDisplayBoolean =
+        this.settingsService.finaceApproveBoolean;
       this.addRoleBoolean = this.permissionService.addUserRoleBoolean;
     } else {
-      alert("Sorry!, you do not have access");
+      alert('Sorry!, you do not have access');
       this._location.back();
     }
   }
@@ -244,9 +258,8 @@ export class RolesComponent implements OnInit {
   }
 
   showDailog(e) {
-
-    if(this.addRoleBoolean == true){
-      this.deleteBtnText = "Are you sure you want to delete this Role?";
+    if (this.addRoleBoolean == true) {
+      this.deleteBtnText = 'Are you sure you want to delete this Role?';
       this.deleteRoleBoolean = true;
       this.vendorResetBtnBoolean = false;
       this.userResetBtnBoolean = false;
@@ -254,17 +267,17 @@ export class RolesComponent implements OnInit {
       this.displayResponsive = true;
       this.sharedService.ap_id = e.idAccessPermissionDef;
     } else {
-      alert('Sorry, you do not have access!')
+      alert('Sorry, you do not have access!');
     }
   }
 
   DeleteRole() {
     this.sharedService.deleteRole().subscribe((data: any) => {
-      if (data.result == "success") {
+      if (data.result == 'success') {
         this.messageService.add({
-          severity: "success",
-          summary: "Deleted",
-          detail: "Deleted Successfully"
+          severity: 'success',
+          summary: 'Deleted',
+          detail: 'Deleted Successfully',
         });
         this.getDisplayTotalRoles();
       } else {
@@ -275,19 +288,18 @@ export class RolesComponent implements OnInit {
   }
 
   createRole() {
-    if(this.addRoleBoolean == true){
+    if (this.addRoleBoolean == true) {
       this.router.navigate(['/customer/roles', 'createNewRole']);
       this.SpinnerService.hide();
-      this.roletype = 'Create New Role'
+      this.roletype = 'Create New Role';
       this.normalRole = false;
       this.newRoleName = '';
       this.CreateNewRole = true;
       this.editUserdata = false;
       this.saveRoleBoolean = true;
     } else {
-      alert('Sorry!, you do not have access')
+      alert('Sorry!, you do not have access');
     }
-
   }
   cancelRoles() {
     this.router.navigate(['/customer/roles', 'definedRoles']);
@@ -298,48 +310,53 @@ export class RolesComponent implements OnInit {
   saveRoles() {
     if (!this.newRoleName) {
       this.createRoleRequiredBoolean = true;
-    }
-    else {
+    } else {
       this.addandUpdaterole();
-      this.sharedService.createRole(JSON.stringify(this.updateroleData)).subscribe((data: any) => {
-        if (data.result) {
-          this.messageService.add({
-            severity: "success",
-            summary: "Added",
-            detail: "Role Created Successfully"
-          });
-          this.getDisplayTotalRoles();
-          this.normalRole = true;
-          this.CreateNewRole = false;
-          this.editUserdata = false;
-        } else {
-          this.messageService.add(this.errorObject);
-          this.getDisplayTotalRoles();
-        }
-      },
-        error => {
-          if(error.status == 400){
-            this.errorObject.detail = 'Please provide other priorioty, the given priority is already taken.';
-          } else {
-            this.errorObject.detail = error.statusText;
+      this.sharedService
+        .createRole(JSON.stringify(this.updateroleData))
+        .subscribe(
+          (data: any) => {
+            if (data.result) {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Added',
+                detail: 'Role Created Successfully',
+              });
+              this.getDisplayTotalRoles();
+              this.normalRole = true;
+              this.CreateNewRole = false;
+              this.editUserdata = false;
+            } else {
+              this.messageService.add(this.errorObject);
+              this.getDisplayTotalRoles();
+            }
+          },
+          (error) => {
+            if (error.status == 400) {
+              this.errorObject.detail =
+                'Please provide other priorioty, the given priority is already taken.';
+            } else {
+              this.errorObject.detail = error.statusText;
+            }
+            this.messageService.add(this.errorObject);
           }
-          this.messageService.add(this.errorObject);
-        }
-      )
+        );
       this.createRoleRequiredBoolean = false;
       this.normalRole = true;
       this.CreateNewRole = false;
       this.editUserdata = false;
     }
-
   }
   editRole(e) {
-    if(this.addRoleBoolean == true){
-      this.router.navigate(['/customer/roles', `${e.idAccessPermissionDef}editRoleDetails`]);
+    if (this.addRoleBoolean == true) {
+      this.router.navigate([
+        '/customer/roles',
+        `${e.idAccessPermissionDef}editRoleDetails`,
+      ]);
       this.sharedService.ap_id = e.idAccessPermissionDef;
       this.newRoleName = e.NameOfRole;
-  
-      this.roletype = 'Edit Role'
+
+      this.roletype = 'Edit Role';
       this.normalRole = false;
       this.CreateNewRole = true;
       this.saveRoleBoolean = false;
@@ -349,8 +366,8 @@ export class RolesComponent implements OnInit {
       this.sharedService.displayRoleInfo().subscribe((data: any) => {
         this.roleInfoDetails = data.roleinfo.AccessPermissionDef;
         this.role_priority = this.roleInfoDetails.Priority;
-        if(data.roleinfo.AmountApproveLevel){
-        this.max_role_amount = data.roleinfo.AmountApproveLevel.MaxAmount;
+        if (data.roleinfo.AmountApproveLevel) {
+          this.max_role_amount = data.roleinfo.AmountApproveLevel.MaxAmount;
         }
         if (this.roleInfoDetails.User === 1) {
           this.AddorModifyUserBoolean = true;
@@ -375,7 +392,7 @@ export class RolesComponent implements OnInit {
         this.GRNPageBoolean = this.roleInfoDetails.is_gpa;
         this.vendorPageBoolean = this.roleInfoDetails.is_vspa;
         this.settingsPageBoolean = this.roleInfoDetails.is_spa;
-  
+
         if (this.roleInfoDetails.AccessPermissionTypeId === 4) {
           this.viewInvoiceBoolean = true;
           this.editInvoiceBoolean = true;
@@ -403,11 +420,10 @@ export class RolesComponent implements OnInit {
           this.financeApproveBoolean = false;
         }
         this.SpinnerService.hide();
-      })
+      });
     } else {
-      alert('Sorry, you do not have access!')
+      alert('Sorry, you do not have access!');
     }
-    
   }
   changeUserPermission(e) {
     if (e.target.checked === true) {
@@ -494,61 +510,83 @@ export class RolesComponent implements OnInit {
     }
   }
   addandUpdaterole() {
-    if (this.viewInvoiceBoolean == true && this.editInvoiceBoolean == true && this.changeApproveBoolean == true && this.financeApproveBoolean == true) {
-      this.AccessPermissionTypeId = 4
-    } else if (this.viewInvoiceBoolean == true && this.editInvoiceBoolean == true && this.changeApproveBoolean == true && this.financeApproveBoolean == false) {
+    if (
+      this.viewInvoiceBoolean == true &&
+      this.editInvoiceBoolean == true &&
+      this.changeApproveBoolean == true &&
+      this.financeApproveBoolean == true
+    ) {
+      this.AccessPermissionTypeId = 4;
+    } else if (
+      this.viewInvoiceBoolean == true &&
+      this.editInvoiceBoolean == true &&
+      this.changeApproveBoolean == true &&
+      this.financeApproveBoolean == false
+    ) {
       this.AccessPermissionTypeId = 3;
-    } else if (this.viewInvoiceBoolean == true && this.editInvoiceBoolean == true && this.changeApproveBoolean == false && this.financeApproveBoolean == false) {
+    } else if (
+      this.viewInvoiceBoolean == true &&
+      this.editInvoiceBoolean == true &&
+      this.changeApproveBoolean == false &&
+      this.financeApproveBoolean == false
+    ) {
       this.AccessPermissionTypeId = 2;
-    } else if (this.viewInvoiceBoolean == true && this.editInvoiceBoolean == false && this.changeApproveBoolean == false && this.financeApproveBoolean == false) {
+    } else if (
+      this.viewInvoiceBoolean == true &&
+      this.editInvoiceBoolean == false &&
+      this.changeApproveBoolean == false &&
+      this.financeApproveBoolean == false
+    ) {
       this.AccessPermissionTypeId = 1;
     }
 
     this.updateroleData = {
-      "NameOfRole": this.newRoleName,
-      "Priority": this.role_priority,
-      "User": this.AddorModifyUserBoolean,
-      "Permissions": this.userRoleBoolean,
-      "AccessPermissionTypeId": this.AccessPermissionTypeId,
-      "allowBatchTrigger":  this.vendorTriggerBoolean,
-      "isConfigPortal" : this.configAccessBoolean,
-      "isDashboard" : this.dashboardAccessBoolean,
-      "allowServiceTrigger": this.spTriggerBoolean,
-      "NewInvoice": this.invoiceBoolean,
-      "max_amount": this.max_role_amount,
-      "is_epa": this.exceptionPageBoolean,
-      "is_gpa": this.GRNPageBoolean,
-      "is_vspa": this.vendorPageBoolean,
-      "is_spa": this.settingsPageBoolean,
-    }
+      NameOfRole: this.newRoleName,
+      Priority: this.role_priority,
+      User: this.AddorModifyUserBoolean,
+      Permissions: this.userRoleBoolean,
+      AccessPermissionTypeId: this.AccessPermissionTypeId,
+      allowBatchTrigger: this.vendorTriggerBoolean,
+      isConfigPortal: this.configAccessBoolean,
+      isDashboard: this.dashboardAccessBoolean,
+      allowServiceTrigger: this.spTriggerBoolean,
+      NewInvoice: this.invoiceBoolean,
+      max_amount: this.max_role_amount,
+      is_epa: this.exceptionPageBoolean,
+      is_gpa: this.GRNPageBoolean,
+      is_vspa: this.vendorPageBoolean,
+      is_spa: this.settingsPageBoolean,
+    };
   }
 
   updateRoleInfoData() {
     this.addandUpdaterole();
-    this.sharedService.updateRoleData(JSON.stringify(this.updateroleData)).subscribe((data: any) => {
-      if (data.result) {
-        this.messageService.add(this.updateObject);
-        this.getDisplayTotalRoles();
-        this.normalRole = true;
-        this.CreateNewRole = false;
-        this.editUserdata = false;
-      } else {
-        this.messageService.add(this.errorObject);
-      }
-    },
-      error => {
-        console.log(error)
-        this.errorObject.detail = error.statusText;
-        this.messageService.add(this.errorObject);
-      }
-    )
+    this.sharedService
+      .updateRoleData(JSON.stringify(this.updateroleData))
+      .subscribe(
+        (data: any) => {
+          if (data.result) {
+            this.messageService.add(this.updateObject);
+            this.getDisplayTotalRoles();
+            this.normalRole = true;
+            this.CreateNewRole = false;
+            this.editUserdata = false;
+          } else {
+            this.messageService.add(this.errorObject);
+          }
+        },
+        (error) => {
+          this.errorObject.detail = error.statusText;
+          this.messageService.add(this.errorObject);
+        }
+      );
   }
 
   toGetEntity() {
     this.entityList = [];
     this.sharedService.getEntityDept().subscribe((data: any) => {
       this.entityList = data;
-    })
+    });
   }
 
   filterEntity(event) {
@@ -566,20 +604,24 @@ export class RolesComponent implements OnInit {
     if (this.entityBodyList) {
       let query = event.query;
       this.filterDentityBody = this.entityBodyList.filter((element) => {
-        return element.EntityBodyName.toLowerCase().indexOf(query.toLowerCase()) == 0
-      })
+        return (
+          element.EntityBodyName.toLowerCase().indexOf(query.toLowerCase()) == 0
+        );
+      });
     } else {
-      alert("Please select Entity")
+      alert('Please select Entity');
     }
   }
   filterEntityDept(event) {
     if (this.entityDeptList) {
       let query = event.query;
       this.filterDentityDept = this.entityDeptList.filter((element) => {
-        return element.DepartmentName.toLowerCase().indexOf(query.toLowerCase()) == 0
-      })
+        return (
+          element.DepartmentName.toLowerCase().indexOf(query.toLowerCase()) == 0
+        );
+      });
     } else {
-      alert("Please select Entitybody")
+      alert('Please select Entitybody');
     }
   }
   onSelectEntity(value) {
@@ -587,39 +629,51 @@ export class RolesComponent implements OnInit {
     this.entityDeptList = [];
     this.sharedService.selectedEntityId = value.idEntity;
     this.selectedEntityId = value.idEntity;
-    ;
     this.sharedService.getEntitybody().subscribe((data: any) => {
       this.entityBodyList = data;
       // this.entityDeptList = this.entityBodyList[0].department
     });
-    this.selectedEntitys.push({ entity: value.EntityName, EntityID: value.idEntity });
-    this.updateUsersEntityInfo.push({ idUserAccess: null, EntityID: value.idEntity })
+    this.selectedEntitys.push({
+      entity: value.EntityName,
+      EntityID: value.idEntity,
+    });
+    this.updateUsersEntityInfo.push({
+      idUserAccess: null,
+      EntityID: value.idEntity,
+    });
     this.selectedEntityName = value.EntityName;
   }
   onSelectEntityBody(e) {
-    let ent_body_name = this.entityBodyList.filter((element => {
+    let ent_body_name = this.entityBodyList.filter((element) => {
       return element.EntityBodyName == e.EntityBodyName;
-    }))
-    this.entityDeptList = ent_body_name[0].department
+    });
+    this.entityDeptList = ent_body_name[0].department;
     // this.updateUsersEntityInfo.push({EntityBodyID: e.idEntityBody});
     this.updateUsersEntityInfo.forEach((value) => {
       if (value.EntityID == this.selectedEntityId && !value.EntityBodyID) {
         value.EntityBodyID = e.idEntityBody;
         this.updateUserEnt_body_id = e.idEntityBody;
       }
-    })
+    });
     this.selectedEntitys.forEach((element) => {
-      if (element.entity == this.selectedEntityName && (!element.entityBody || element.entityBody.length == 0)) {
+      if (
+        element.entity == this.selectedEntityName &&
+        (!element.entityBody || element.entityBody.length == 0)
+      ) {
         element.entityBody = e.EntityBodyName;
         element.EntityBodyID = e.idEntityBody;
         this.selectedEntityBodyName = e.EntityBodyName;
       }
-    })
+    });
   }
 
   onSelectEntityDept(e) {
     this.updateUsersEntityInfo.forEach((value) => {
-      if (value.EntityID == this.selectedEntityId && value.EntityBodyID == this.updateUserEnt_body_id && !value.DepartmentID) {
+      if (
+        value.EntityID == this.selectedEntityId &&
+        value.EntityBodyID == this.updateUserEnt_body_id &&
+        !value.DepartmentID
+      ) {
         value.DepartmentID = e.idDepartment;
         this.updateUserEnt_dept_id = e.idDepartment;
       }
@@ -627,69 +681,82 @@ export class RolesComponent implements OnInit {
     let count = 0;
     this.selectedEntitys.forEach((element) => {
       if (element.entityDept === e.DepartmentName) {
-        alert("Please select other Department")
+        alert('Please select other Department');
       } else if (!element.entityDept || element.entityDept == '') {
         count = count + 1;
       } else {
         count = count + 1;
       }
-    })
+    });
     if (count === this.selectedEntitys.length) {
-      if (this.selectedEntitys[this.selectedEntitys.length - 1].entity == this.selectedEntityName &&
-        this.selectedEntitys[this.selectedEntitys.length - 1].entityBody == this.selectedEntityBodyName &&
+      if (
+        this.selectedEntitys[this.selectedEntitys.length - 1].entity ==
+          this.selectedEntityName &&
+        this.selectedEntitys[this.selectedEntitys.length - 1].entityBody ==
+          this.selectedEntityBodyName &&
         (!this.selectedEntitys[this.selectedEntitys.length - 1].entityDept ||
-          this.selectedEntitys[this.selectedEntitys.length - 1].entityDept.length == 0)) {
-        this.selectedEntitys[this.selectedEntitys.length - 1].entityDept = e.DepartmentName;
-        this.selectedEntitys[this.selectedEntitys.length - 1].DepartmentID = e.idDepartment;
+          this.selectedEntitys[this.selectedEntitys.length - 1].entityDept
+            .length == 0)
+      ) {
+        this.selectedEntitys[this.selectedEntitys.length - 1].entityDept =
+          e.DepartmentName;
+        this.selectedEntitys[this.selectedEntitys.length - 1].DepartmentID =
+          e.idDepartment;
         this.selectedEntityDeptName = e.DepartmentName;
       }
     }
   }
 
   onRemove(index, value) {
-    if(this.selectedEntitys.length > 1){
+    if (this.selectedEntitys.length > 1) {
       if (value.idUserAccess) {
-        this.updateUsersEntityInfo
-          .push({
-            idUserAccess: value.idUserAccess,
-            EntityID: value.EntityID,
-            EntityBodyID: value.EntityBodyID,
-            DepartmentID: value.DepartmentID
-          })
+        this.updateUsersEntityInfo.push({
+          idUserAccess: value.idUserAccess,
+          EntityID: value.EntityID,
+          EntityBodyID: value.EntityBodyID,
+          DepartmentID: value.DepartmentID,
+        });
       } else {
-        let Ent_id = value.EntityID ? value.EntityID : null
+        let Ent_id = value.EntityID ? value.EntityID : null;
         let Ent_body_id = value.EntityBodyID ? value.EntityBodyID : null;
         let Ent_dept_id = value.DepartmentID ? value.DepartmentID : null;
         this.updateUsersEntityInfo.forEach((element, index) => {
           if (Ent_id && Ent_body_id && Ent_dept_id) {
-            if (element.EntityID == Ent_id && element.EntityBodyID == Ent_body_id && element.DepartmentID == Ent_dept_id) {
+            if (
+              element.EntityID == Ent_id &&
+              element.EntityBodyID == Ent_body_id &&
+              element.DepartmentID == Ent_dept_id
+            ) {
               this.updateUsersEntityInfo.splice(index, 1);
             }
           } else if (Ent_id && Ent_body_id) {
-            if (element.EntityID == Ent_id && element.EntityBodyID == Ent_body_id) {
+            if (
+              element.EntityID == Ent_id &&
+              element.EntityBodyID == Ent_body_id
+            ) {
               this.updateUsersEntityInfo.splice(index, 1);
             }
-          }
-          else {
+          } else {
             if (element.EntityID == Ent_id) {
               this.updateUsersEntityInfo.splice(index, 1);
             }
           }
-        })
+        });
       }
       this.selectedEntitys.splice(index, 1);
     } else {
-      this.errorObject.detail = "Atleast one entity required"
+      this.errorObject.detail = 'Atleast one entity required';
       this.messageService.add(this.errorObject);
     }
-  };
+  }
 
   editUser(value) {
+    this.toGetEntity();
     this.router.navigate(['/customer/roles', `${value.idUser}editUser`]);
     if (value.isActive == 0) {
-      this.resetBtnText = "Resend Activation Link";
+      this.resetBtnText = 'Resend Activation Link';
     } else {
-      this.resetBtnText = "Reset Account";
+      this.resetBtnText = 'Reset Account';
     }
     this.sharedService.cuserID = value.idUser;
     this.headerEdituserboolean = true;
@@ -705,22 +772,61 @@ export class RolesComponent implements OnInit {
       this.Flevel = value.MaxAmount;
     }
 
-    this.sharedService.readEntityUserData(value.idUser).subscribe((data: any) => {
-      data.result.forEach(element => {
-        if (!element.EntityBody && !element.Department) {
-          this.selectedEntitys.push({ entity: element.Entity.EntityName, entityBody: element.EntityBody, entityDept: element.Department, idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody, DepartmentID: element.Department });
-          this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody, DepartmentID: element.Department });
-        }
-        else if (!element.Department) {
-          this.selectedEntitys.push({ entity: element.Entity.EntityName, entityBody: element.EntityBody.EntityBodyName, entityDept: element.Department, idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.Department });
-          this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.Department });
-        }
-        else {
-          this.selectedEntitys.push({ entity: element.Entity.EntityName, entityBody: element.EntityBody.EntityBodyName, entityDept: element.Department.DepartmentName, idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.Department.idDepartment });
-          this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.Department.idDepartment });
-        }
+    this.sharedService
+      .readEntityUserData(value.idUser)
+      .subscribe((data: any) => {
+        data.result.forEach((element) => {
+          // if (!element.EntityBody && !element.Department) {
+          //   this.selectedEntitys.push({
+          //     entity: element.Entity.EntityName,
+          //     entityBody: element.EntityBody,
+          //     entityDept: element.Department,
+          //     idUserAccess: element.UserAccess.idUserAccess,
+          //     EntityID: element.Entity.idEntity,
+          //     EntityBodyID: element.EntityBody,
+          //     DepartmentID: element.Department,
+          //   });
+          //   this.updateEntityUserDummy.push({
+          //     idUserAccess: element.UserAccess.idUserAccess,
+          //     EntityID: element.Entity.idEntity,
+          //     EntityBodyID: element.EntityBody,
+          //     DepartmentID: element.Department,
+          //   });
+          // } else if (!element.Department) {
+          //   this.selectedEntitys.push({
+          //     entity: element.Entity.EntityName,
+          //     entityBody: element.EntityBody.EntityBodyName,
+          //     entityDept: element.Department,
+          //     idUserAccess: element.UserAccess.idUserAccess,
+          //     EntityID: element.Entity.idEntity,
+          //     EntityBodyID: element.EntityBody.idEntityBody,
+          //     DepartmentID: element.Department,
+          //   });
+          //   this.updateEntityUserDummy.push({
+          //     idUserAccess: element.UserAccess.idUserAccess,
+          //     EntityID: element.Entity.idEntity,
+          //     EntityBodyID: element.EntityBody.idEntityBody,
+          //     DepartmentID: element.Department,
+          //   });
+          // } else {
+            this.selectedEntitys.push({
+              entity: element.Entity?.EntityName,
+              entityBody: element.EntityBody?.EntityBodyName,
+              entityDept: element.Department?.DepartmentName,
+              idUserAccess: element.UserAccess?.idUserAccess,
+              EntityID: element.Entity?.idEntity,
+              EntityBodyID: element.EntityBody?.idEntityBody,
+              DepartmentID: element.Department?.idDepartment,
+            });
+            this.updateEntityUserDummy.push({
+              idUserAccess: element.UserAccess?.idUserAccess,
+              EntityID: element.Entity?.idEntity,
+              EntityBodyID: element.EntityBody?.idEntityBody,
+              DepartmentID: element.Department?.idDepartment,
+            });
+          // }
+        });
       });
-    })
   }
 
   canceleditUser() {
@@ -735,33 +841,35 @@ export class RolesComponent implements OnInit {
   }
   UpdateUser() {
     let editUser = {
-      "User": {
-        "firstName": this.firstName,
-        "lastName": this.lastName,
-        "UserName": this.userName,
-        "email": this.userEmail
+      User: {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        UserName: this.userName,
+        email: this.userEmail,
       },
-      "userentityaccess": this.updateUsersEntityInfo
-      
-    }
-      this.sharedService.updatecustomeruser(JSON.stringify(editUser)).subscribe((data: any) => {
+      userentityaccess: this.updateUsersEntityInfo,
+    };
+    this.sharedService.updatecustomeruser(JSON.stringify(editUser)).subscribe(
+      (data: any) => {
         if (data.result == 'Updated') {
-          const userData = data.customer_user_details
+          const userData = data.customer_user_details;
           let selectrole = {
-            "applied_uid": this.sharedService.cuserID,
-            "isUser": true,
-            "appied_permission_def_id": this.appied_permission_def_id
+            applied_uid: this.sharedService.cuserID,
+            isUser: true,
+            appied_permission_def_id: this.appied_permission_def_id,
           };
-          this.sharedService.editRole(JSON.stringify(selectrole)).subscribe((data: any) => { });
+          this.sharedService
+            .editRole(JSON.stringify(selectrole))
+            .subscribe((data: any) => {});
           let amountApproval = {
-            "applied_uid": this.sharedService.cuserID,
-            "isUser": true,
-            "MaxAmount": this.Flevel
+            applied_uid: this.sharedService.cuserID,
+            isUser: true,
+            MaxAmount: this.Flevel,
           };
           // this.sharedService.newAmountApproval(JSON.stringify(amountApproval)).subscribe((data: any) => { });
           this.messageService.add(this.updateObject);
           this.ngOnInit();
-  
+
           this.normalRole = true;
           this.CreateNewRole = false;
           this.editUserdata = false;
@@ -772,29 +880,38 @@ export class RolesComponent implements OnInit {
         } else {
           this.messageService.add(this.errorObject);
         }
-  
-      }, error => {
-        alert(error.statusText)
-      })
-
+      },
+      (error) => {
+        alert(error.statusText);
+      }
+    );
   }
 
   DisplayCustomerUserDetails() {
     this.roles = [];
     this.sharedService.readcustomeruser().subscribe((data: any) => {
-      let usersList = []
-      data.forEach(element => {
-        let mergedData = { ...element.AccessPermission, ...element.AccessPermissionDef,...element.rnk, ...element.User ,...element.AmountApproveLevel,...element.rnk};
-        usersList.push(mergedData)
+      let usersList = [];
+      data.forEach((element) => {
+        let mergedData = {
+          ...element.AccessPermission,
+          ...element.AccessPermissionDef,
+          ...element.rnk,
+          ...element.User,
+          ...element.AmountApproveLevel,
+          ...element.rnk,
+        };
+        mergedData.LogName = element.LogName;
+        usersList.push(mergedData);
       });
       this.CustomerUserReadData = usersList;
       if (this.CustomerUserReadData.length > 10) {
         this.showPaginator = true;
       }
-    })
+    });
   }
 
   createCustomerUserPage() {
+    this.toGetEntity();
     this.headerEdituserboolean = false;
     this.normalRole = false;
     this.CreateNewRole = false;
@@ -807,204 +924,465 @@ export class RolesComponent implements OnInit {
   }
 
   userCheck(name) {
-    this.sharedService.userCheck(name).subscribe((data: any) => {
-      if (!data.LogName) {
-        this.userBoolean = true;
-        this.userNotBoolean = false;
-      } else {
-        this.userNotBoolean = true;
-        this.userBoolean = false;
-      }
-    })
+    if(name.length > 5){
+      this.sharedService.userCheck(name).subscribe((data: any) => {
+        if (!data.LogName) {
+          this.userBoolean = true;
+          this.userNotBoolean = false;
+        } else {
+          this.userNotBoolean = true;
+          this.userBoolean = false;
+        }
+      });
+    }
   }
 
   toCreateUser() {
     let requiredError = {
-      severity: "error",
-      summary: "Fill required fields",
-      detail: "Please fill all the given fields"
-    }
-    if (this.updateUsersEntityInfo.length > 0 && this.userName != '' && this.userNotBoolean == false) {
-
-      if (this.Flevel == "") {
+      severity: 'error',
+      summary: 'Fill required fields',
+      detail: 'Please fill all the given fields',
+    };
+    if (
+      this.updateUsersEntityInfo.length > 0 &&
+      this.userName != '' &&
+      this.userNotBoolean == false
+    ) {
+      if (this.Flevel == '') {
         this.Flevel = null;
       }
       let createUserData = {
-        "n_cust": {
-          "email": this.userEmail,
-          "firstName": this.firstName,
-          "lastName": this.lastName,
-          "userentityaccess": this.updateUsersEntityInfo,
-          "role_id": this.appied_permission_def_id,
-          "max_amount": this.Flevel,
+        n_cust: {
+          email: this.userEmail,
+          firstName: this.firstName,
+          lastName: this.lastName,
+          userentityaccess: this.updateUsersEntityInfo,
+          role_id: this.appied_permission_def_id,
+          max_amount: this.Flevel,
         },
-        "n_cred": {
-          "LogName": this.userName,
-          "LogSecret": "string"
-        }
-      }
-      this.sharedService.createNewUser(JSON.stringify(createUserData)).subscribe((data) => {
-        this.messageService.add(this.addObject);
-        this.normalRole = true;
-        this.CreateNewRole = false;
-        this.editUserdata = false;
-        this.selectedEntitys = [];
-        this.updateUsersEntityInfo = [];
-        this.userNotBoolean = false;
-        this.userBoolean = false;
-        this.firstName = '';
-        this.lastName = '';
-        this.DisplayCustomerUserDetails();
-      }, error => {
-        if (error.status == 422) {
-          this.messageService.add(requiredError);
-        } else {
-          this.errorObject.detail = error.statusText;
-          this.messageService.add(this.errorObject)
-        }
-      });
-
+        n_cred: {
+          LogName: this.userName,
+          LogSecret: 'string',
+        },
+      };
+      this.sharedService
+        .createNewUser(JSON.stringify(createUserData))
+        .subscribe(
+          (data) => {
+            this.messageService.add(this.addObject);
+            this.normalRole = true;
+            this.CreateNewRole = false;
+            this.editUserdata = false;
+            this.selectedEntitys = [];
+            this.updateUsersEntityInfo = [];
+            this.userNotBoolean = false;
+            this.userBoolean = false;
+            this.firstName = '';
+            this.lastName = '';
+            this.DisplayCustomerUserDetails();
+          },
+          (error) => {
+            if (error.status == 422) {
+              this.messageService.add(requiredError);
+            } else {
+              this.errorObject.detail = error.statusText;
+              this.messageService.add(this.errorObject);
+            }
+          }
+        );
     } else {
       this.messageService.add(requiredError);
     }
-
   }
 
   selectRole(e) {
     let item = this.DisplayRoleName.filter((item) => {
       return e.indexOf(item.NameOfRole) > -1;
-    })
-    this.appied_permission_def_id = item[0].idAccessPermissionDef
+    });
+    this.appied_permission_def_id = item[0].idAccessPermissionDef;
   }
 
   changeUserRole(e, value) {
     let item = this.DisplayRoleName.filter((item) => {
       return value.indexOf(item.NameOfRole) > -1;
-    })
+    });
     let roleData = {
-      "applied_uid": e.idUser,
-      "isUser": true,
-      "appied_permission_def_id": item[0].idAccessPermissionDef
-    }
-    this.sharedService.editRole(JSON.stringify(roleData)).subscribe((data: any) => {
-      if (data.result == "success") {
-        this.messageService.add({
-          severity: "success",
-          summary: "Role changed",
-          detail: "Role Changed Successfully"
-        });
-      } else {
-        this.messageService.add(this.errorObject);
-      }
-    })
+      applied_uid: e.idUser,
+      isUser: true,
+      appied_permission_def_id: item[0].idAccessPermissionDef,
+    };
+    this.sharedService
+      .editRole(JSON.stringify(roleData))
+      .subscribe((data: any) => {
+        if (data.result == 'success') {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Role changed',
+            detail: 'Role Changed Successfully',
+          });
+        } else {
+          this.messageService.add(this.errorObject);
+        }
+      });
   }
   getDisplayTotalRoles() {
     this.SpinnerService.show();
-    this.sharedService.displayRolesData()
-      .subscribe((data: any) => {
-        this.SpinnerService.hide();
-        this.DisplayRoleName = data.roles;
-        this.DisplayRoleName = this.DisplayRoleName.sort((a,b)=> b.isDefault - a.isDefault);
-      })
+    this.sharedService.displayRolesData().subscribe((data: any) => {
+      this.SpinnerService.hide();
+      this.DisplayRoleName = data.roles;
+      this.DisplayRoleName = this.DisplayRoleName.sort(
+        (a, b) => b.isDefault - a.isDefault
+      );
+    });
   }
 
   getVendorsListTocreateNewVendorLogin() {
-    this.sharedService.getVendorUniqueData('?offset=1&limit=100').subscribe((data: any) => {
-      this.vendorList = data;
-      console.log(this.vendorList)
-    });
-  }
-  filterVendor(event) {
-    let query = event.query.toLowerCase();
-    if(query != ''){
-      console.log(query);
-      this.sharedService.getVendorUniqueData(`?offset=1&limit=100&ven_name=${query}`).subscribe((data:any)=>{
-        this.filteredVendors = data;
+    this.sharedService
+      .getVendorUniqueData('?offset=1&limit=100')
+      .subscribe((data: any) => {
+        this.vendorList = data;
       });
-    } else {
-      this.filteredVendors = this.vendorList;
-    }
+  }
+  filterVendor(event,name) {
+    let query = event.query.toLowerCase();
+    // if(name == ''){
+      if (query != '') {
+        this.sharedService
+          .getVendorUniqueData(`?offset=1&limit=100&ven_name=${query}`)
+          .subscribe((data: any) => {
+            this.filteredVendors = data;
+          });
+      } else {
+        if(name == ''){
+          this.filteredVendors = this.vendorList;
+        } else {
+          this.filteredVendors = this.vendorMatchList;
+        }
+      }
+    // } else {
+    //   if (query != '') {
+    //         this.readVendorMatch(this.tempVendorName,`&ven_name_search=${query}&offset=0&limit=0`);
+    //         this.filteredVendors = this.vendorMatchList;
+    //   } else {
+
+    //     console.log(this.vendorMatchList)
+    //     this.filteredVendors = this.vendorMatchList;
+    //   }
+    // }
   }
 
-  selectVendor(value) {
-    console.log(value)
+  selectVendor(value,type) {
     // const accontData = this.vendorList.filter((element => {
     //   return value === element.VendorName;
     // }));
-    this.vendorCode = value.VendorCode;
-    this.readEntityForVendorOnboard(value.VendorCode);
+      this.vendorCode = value.VendorCode;
+      this.checkOnboardStatus(value.VendorCode);
+      this.readEntityForVendorOnboard(value.VendorCode, null);
 
     // this.entityForVendorCreation = accontData[0].entity_ids;
-    // 
+    //
     // console.log(accontData,this.entityForVendorCreation)
 
     // this.idVendor = accontData[0].idVendor;
   }
-
-  onSelectedEntityCode(value){
+  checkOnboardStatus(value){
+    this.sharedService.check_onboardStatus(value).subscribe((data:any)=>{
+      this.vendorOnboarderStatus = data.result.vendor_status;
+      if(data.result.vendor_status == false){
+        this.errorObject.detail = "Vendor template is not Onboarded yet."
+        this.messageService.add(this.errorObject)
+      }
+    });
   }
 
-  readEntityForVendorOnboard(ven_code){
-    this.sharedService.getVendorsCodesToCreateNewlogin(ven_code).subscribe((data: any) => {
-      this.entityForVendorCreation = data.ent_details;
-      this.entitySelection = this.entityForVendorCreation;
-    })
+  onSelectedEntityCode(value,type) {
+    let arr = [];
+    if(type == 'update'){
+      let currentCount = value.value.length;
+      this.selectedEnt_venor.find(ele=>{
+        arr.push(ele.idEntity)
+      })
+      
+        if(arr.includes(value.itemValue.idEntity)){
+          let arr1 = this.selectedEnt_venor.filter(id=>value.itemValue.idEntity === id.idEntity);
+          this.updateIdaccessArr.push(arr1[0].idVendorUserAccess);
+        } else {
+          this.entLengthforup_vendr = this.entitySelection.length;
+          if(currentCount >= this.entLengthforup_vendr){
+          this.updateVenrEntityAccess.push(value.itemValue.idEntity);
+          }
+        }
+        this.entLengthforup_vendr = value.value.length;
+        // if(val?.itemValue){
+        //   console.log('hi')
+        //   if(arr.includes(val?.itemValue?.idEntity)){
+        //     let arr1 = this.selectedEnt_venor.filter(id=>val?.itemValue?.idEntity === id.idEntity);
+        //     this.updateIdaccessArr.push(arr1[0].idVendorUserAccess);
+        //   } else {
+        //     this.entLengthforup_vendr = this.entitySelection.length;
+        //     if(currentCount >= this.entLengthforup_vendr){
+        //     this.updateVenrEntityAccess.push(val?.itemValue?.idEntity);
+        //     }
+        //   }
+        // } else {
+        //   console.log(val.value)
+        //   if(val?.value?.length>0){
+        //     val.value.forEach(ele=>{
+        //       if(arr.includes(ele?.idEntity)){
+        //         console.log(ele.idEntity)
+        //         let arr1 = this.selectedEnt_venor.filter(id=>ele?.idEntity === id.idEntity);
+        //         this.updateIdaccessArr.push(arr1[0].idVendorUserAccess);
+        //       } else {
+        //         console.log(ele?.idEntity)
+        //         this.entLengthforup_vendr = this.entitySelection.length;
+        //         if(currentCount >= this.entLengthforup_vendr){
+        //         this.updateVenrEntityAccess.push(ele?.idEntity);
+        //         }
+        //       }
+        //     })
+        //   } else {
+        //     let arr1 = []
+        //     this.selectedEnt_venor.forEach(id=>arr1.push(id.idVendorUserAccess));
+        //     this.updateIdaccessArr = arr1;
+        //     this.updateVenrEntityAccess = [];
+        //   }
+        // }
+    } else {
+      value.value.forEach(ele=>{
+        arr.push(ele.idEntity)
+      })
+      this.updateIdaccessArr = [];
+      this.updateVenrEntityAccess = arr;
+    }
+    // this.selectedEnt_venor.filter(ele=>{
+
+    // })
+    // console.log(arr,arr2)
+
+    // let result = this.updateVenrEntityAccess.filter((ent,index)=> index === this.updateVenrEntityAccess.findIndex(
+    //   other=> ent.idEntity === other.idEntity));
+    //   console.log(result)
+    // let final = this.selectedEnt_venor.filter(id=>{
+    //   return
+    // })
+    // this.updateVendorEntitylist = result;
+    
+  }
+
+  readEntityForVendorOnboard(ven_code,uid) {
+    this.SpinnerService.show();
+    this.sharedService
+      .getVendorsCodesToCreateNewlogin(ven_code)
+      .subscribe((data: any) => {
+        
+        this.entityForVendorCreation = data.ent_details;
+        if(!this.editVndrUserbool){
+          this.entitySelection = this.entityForVendorCreation;
+        } else {
+          this.getVendorUserAccess(uid,ven_code);
+        }
+        this.SpinnerService.hide();
+      },err=>{
+        this.SpinnerService.hide();
+      });
+  }
+
+  addVendorUser(){
+    this.dailogText = "Add Vendor admin";
+    this.editVndrUserbool = false;
+    this.displayAddUserDialog = true;
+    this.vendorCreate = null;
+    this.createVfirstName = null;
+    this.createVlastName = null;
+    this.emailIdInvite = null;
+    this.createUserName = null;
+    this.entitySelection = [];
+   
   }
   createVendorSuprUser() {
+   if(this.vendorOnboarderStatus){
     let entityIdArray = [];
-    this.entitySelection.forEach(ent_id=>{
+    this.entitySelection.forEach((ent_id) => {
       entityIdArray.push(ent_id.idEntity);
-    })
+    });
     let vendorSpUserData = {
-      "n_ven_user": {
+      n_ven_user: {
+        firstName: this.createVfirstName,
+        lastName: this.createVlastName,
+        email: this.emailIdInvite,
+        role_id: 7,
+        uservendoraccess: [
+          {
+            vendorUserID: 0,
+            vendorCode: this.vendorCode,
+            entityID: entityIdArray,
+            vendorAccountID: null,
+          },
+        ],
+      },
+      n_cred: {
+        LogName: this.createUserName,
+        LogSecret: 'string',
+        userID: 0,
+      },
+    };
+    this.sharedService
+      .createVendorSuperUser(JSON.stringify(vendorSpUserData))
+      .subscribe(
+        (data: any) => {
+          this.messageService.add(this.addObject);
+          this.displayAddUserDialog = false;
+
+          this.getVendorSuperUserList();
+        },
+        (error) => {
+          this.errorObject.detail = error.statusText;
+          this.messageService.add(this.errorObject);
+        }
+      );
+   } else {
+    this.errorObject.detail = "Vendor template is not onboarded";
+    this.messageService.add(this.errorObject);
+   }
+  }
+
+  editvendorUser(val){
+    this.dailogText = "Update Vendor admin";
+    this.displayAddUserDialog = true;
+    this.editVndrUserbool = true;
+    this.createVfirstName = val.firstName;
+    this.createVlastName = val.lastName;
+    this.readEntityForVendorOnboard(val.vendor_data.VendorCode,val.idUser);
+    this.vendorUserId = val.idUser;
+    this.vendorCode = val.vendor_data.VendorCode;
+    // setTimeout(() => {
+    //   this.getVendorUserAccess(val.idUser,val.vendor_data.VendorCode)
+    // }, 1000);
+  }
+  updateVendorAccess(){
+    let Obj = {
+      "User": {
         "firstName": this.createVfirstName,
         "lastName": this.createVlastName,
-        "email": this.emailIdInvite,
-        "role_id": 7,
-        "uservendoraccess": [
-          {
-            "vendorUserID": 0,
-            "vendorCode": this.vendorCode,
-            "entityID": entityIdArray,
-            "vendorAccountID": null
-          }
-        ]
       },
-      "n_cred": {
-        "LogName": this.createUserName,
-        "LogSecret": "string",
-        "userID": 0
+      "uservendoraccess": {
+        "idVendorUserAccess": this.updateIdaccessArr,
+        "vendorCode" : this.vendorCode,
+        "entityID": this.updateVenrEntityAccess,
       }
-    };
-    this.sharedService.createVendorSuperUser(JSON.stringify(vendorSpUserData)).subscribe((data: any) => {
-      this.messageService.add(this.addObject);
-      this.displayAddUserDialog = false;
-      this.createVfirstName = '';
-      this.createVlastName = '';
-      this.emailIdInvite = '';
-      this.getVendorSuperUserList();
-    }, error => {
-      this.errorObject.detail = error.statusText;
+    }
+    this.sharedService.updateVendorUserAccess(JSON.stringify(Obj),this.vendorUserId).subscribe((data:any)=>{
+      if(this.approveDialog){
+        this.addObject.detail = "Account Activation Done."
+        this.messageService.add(this.addObject);
+      } else {
+        this.messageService.add(this.updateObject);
+        this.displayAddUserDialog = false;
+        this.getVendorSuperUserList();
+      }
+      this.updateVenrEntityAccess = [];
+      this.updateIdaccessArr = [];
+    },err=>{
+      this.errorObject.detail = "Server error";
       this.messageService.add(this.errorObject);
+    })
+  }
+  approveVendoraccess(user){
+    this.approveDialog = true;
+    this.tempVendorName = user.vendor_data.VendorName;
+    this.createVfirstName = user.firstName;
+    this.createVlastName = user.lastName;
+    this.vendorUserId = user.idUser;
+    this.readVendorMatch(this.tempVendorName,`&ven_name_search=${this.tempVendorName}&offset=0&limit=0`)
+  }
+  approveActivateVendor(){
+    if(this.vendorOnboarderStatus){
+      this.updateVendorAccess();
+      this.sharedService.activate_vendor_signup(this.vendorUserId).subscribe(
+        (data: any) => {
+          this.addObject.detail = data.result;
+          this.messageService.add(this.addObject);
+          this.approveDialog = false;
+          this.vendorUserId = null;
+          // this.DisplayCustomerUserDetails();
+          this.getVendorSuperUserList();
+        },
+        (error) => {
+          this.errorObject.detail = error.statusText;
+          this.messageService.add(this.errorObject);
+        }
+      );
+    } else {
+      this.errorObject.detail = "Vendor template is not onboarded";
+      this.messageService.add(this.errorObject);
+    }
+
+  }
+  readVendorMatch(ven_name,type){
+    this.SpinnerService.show();
+    this.sharedService.getVendorMatch(ven_name,type).subscribe((data:any)=>{
+      this.vendorMatchList = data.vendorlist;
+      this.vendorMatch = this.vendorMatchList[0];
+      this.vendorCode = this.vendorMatch.VendorCode;
+      this.checkOnboardStatus(this.vendorMatch.VendorCode);
+      this.readEntityForVendorOnboard(this.vendorMatch.VendorCode, null);
+      // this.onSelectedEntityCode(this.entitySelection,type);
+      let arr = [];
+      
+      setTimeout(() => {
+        this.entitySelection.forEach(ele=>{
+          arr.push(ele.idEntity)
+        })
+        this.updateVenrEntityAccess = arr;
+      }, 1000);
+      this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+    })
+  }
+  getVendorUserAccess(uid,ven_code){
+    this.SpinnerService.show();
+    this.entitySelection = [];
+    this.selectedEnt_venor = [];
+    this.sharedService.readVendorAccess(uid,ven_code).subscribe((data:any)=>{
+      let mergeArr = [];
+      data.ent_details.forEach(ele=>{
+        let mergeObj = {
+          ...ele.Entity,
+          ...ele.VendorUserAccess
+        }
+        this.entitySelection.push({...ele.Entity});
+        mergeArr.push(mergeObj)
+      })
+      this.selectedEnt_venor = mergeArr;
+      this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
     })
   }
 
   getVendorSuperUserList() {
     this.sharedService.readVendorSuperUsersList().subscribe((data: any) => {
       let vendorUsersList = [];
-      data.forEach(element => {
-        let mergerdObject = {...element.AccessPermission,...element.AccessPermissionDef,...element.User,...element.Vendor}
+      data.forEach((element) => {
+        let mergerdObject = {
+          ...element.AccessPermission,
+          ...element.AccessPermissionDef,
+          ...element.User,
+          ...element.Vendor,
+        };
         // mergerdObject.idVendorUserAccess = element.idVendorUserAccess;
-        vendorUsersList.push(mergerdObject)
+        mergerdObject.LogName = element.LogName;
+        vendorUsersList.push(mergerdObject);
       });
       this.vendorAdminReadData = vendorUsersList;
       if (this.vendorAdminReadData.length > 10) {
         this.showPaginatorSp = true;
       }
-    })
+    });
   }
   resetPassword() {
-    this.deleteBtnText = "Are you sure you want to Reset this Account?";
+    this.deleteBtnText = 'Are you sure you want to Reset this Account?';
     this.vendorResetBtnBoolean = false;
     this.userResetBtnBoolean = true;
     this.deactivateBoolean = false;
@@ -1012,24 +1390,27 @@ export class RolesComponent implements OnInit {
     this.displayResponsive = true;
   }
   resetPasswordUserAPI() {
-    this.sharedService.resetPassword(this.userEmail).subscribe((data: any) => {
-      this.displayResponsive = false;
-      this.addObject.detail = data.result;
-      this.errorObject.detail = data.result;
-      if (data.result != 'failed mail') {
-        this.messageService.add(this.addObject);
+    this.sharedService.resetPassword(this.userEmail).subscribe(
+      (data: any) => {
         this.displayResponsive = false;
-        this.DisplayCustomerUserDetails();
-      } else {
+        this.addObject.detail = data.result;
+        this.errorObject.detail = data.result;
+        if (data.result != 'failed mail') {
+          this.messageService.add(this.addObject);
+          this.displayResponsive = false;
+          this.DisplayCustomerUserDetails();
+        } else {
+          this.messageService.add(this.errorObject);
+        }
+      },
+      (error) => {
+        this.errorObject.detail = error.statusText;
         this.messageService.add(this.errorObject);
       }
-    }, error => {
-      this.errorObject.detail = error.statusText;
-      this.messageService.add(this.errorObject);
-    });
+    );
   }
   resetPasswordVendor(mail) {
-    this.deleteBtnText = "Are you sure you want to Reset this Account?";
+    this.deleteBtnText = 'Are you sure you want to Reset this Account?';
     this.displayResponsive = true;
     this.vendorResetBtnBoolean = true;
     this.userResetBtnBoolean = false;
@@ -1039,23 +1420,26 @@ export class RolesComponent implements OnInit {
   }
 
   resetPassVendorAPI() {
-    this.sharedService.resetPassword(this.resetVendorMail).subscribe((data: any) => {
-      this.addObject.detail = data.result;
-      this.errorObject.detail = data.result;
-      if (data.result != 'failed mail') {
-        this.messageService.add(this.addObject);
-        this.displayResponsive = false;
-        this.getVendorSuperUserList();
-      } else {
+    this.sharedService.resetPassword(this.resetVendorMail).subscribe(
+      (data: any) => {
+        this.addObject.detail = data.result;
+        this.errorObject.detail = data.result;
+        if (data.result != 'failed mail') {
+          this.messageService.add(this.addObject);
+          this.displayResponsive = false;
+          this.getVendorSuperUserList();
+        } else {
+          this.messageService.add(this.errorObject);
+        }
+      },
+      (error) => {
+        this.errorObject.detail = error.statusText;
         this.messageService.add(this.errorObject);
       }
-    }, error => {
-      this.errorObject.detail = error.statusText;
-      this.messageService.add(this.errorObject);
-    });
+    );
   }
 
-  confirmationPopUp(id,text) {
+  confirmationPopUp(id, text) {
     this.deleteBtnText = `Are you sure you want to ${text} this Account?`;
     this.deactivateBoolean = true;
     this.deleteRoleBoolean = false;
@@ -1066,21 +1450,23 @@ export class RolesComponent implements OnInit {
   }
 
   activa_deactive() {
-    this.sharedService.activate_deactivate(this.custuserid).subscribe((data: any) => {
-      this.addObject.detail = data.result;
-      this.messageService.add(this.addObject);
-      this.displayResponsive = false;
-      this.custuserid = null;
-      this.DisplayCustomerUserDetails();
-      this.getVendorSuperUserList();
-    }, error => {
-      this.errorObject.detail = error.statusText;
-      this.messageService.add(this.errorObject);
-    })
+    this.sharedService.activate_deactivate(this.custuserid).subscribe(
+      (data: any) => {
+        this.addObject.detail = data.result;
+        this.messageService.add(this.addObject);
+        this.displayResponsive = false;
+        this.custuserid = null;
+        this.DisplayCustomerUserDetails();
+        this.getVendorSuperUserList();
+      },
+      (error) => {
+        this.errorObject.detail = error.statusText;
+        this.messageService.add(this.errorObject);
+      }
+    );
   }
-  paginate(event,type){
-    console.log(event)
-    if(type == 'vendor'){
+  paginate(event, type) {
+    if (type == 'vendor') {
       this.row_vendor = event.rows;
       this.first_vendor = event.first;
     } else {

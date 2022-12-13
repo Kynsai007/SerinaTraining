@@ -1,3 +1,4 @@
+import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
 import { AlertService } from './../../services/alert/alert.service';
 
 import { ServiceInvoiceService } from './../../services/serviceBased/service-invoice.service';
@@ -52,6 +53,9 @@ export class CustomerSummaryComponent implements OnInit {
   rowsPerPage = 10;
   ColumnLengthVendor: number;
   ColumnLengthSP: number;
+  entity: any;
+  selectedEntityValue: any;
+  selectedDateValue: string;
 
   constructor(
     private dateFilterService: DateFilterService,
@@ -59,13 +63,15 @@ export class CustomerSummaryComponent implements OnInit {
     private datePipe: DatePipe,
     private messageService: MessageService,
     private SpinnerService: NgxSpinnerService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private ImportExcelService: ImportExcelService
   ) {}
 
   ngOnInit(): void {
     this.dateRange();
     this.readSummary('');
     this.findColumns();
+    this.getEntitySummary();
   }
 
   // display columns
@@ -123,21 +129,63 @@ export class CustomerSummaryComponent implements OnInit {
   }
 
   // to filter the summary data
-  filterData() {
-    if (this.rangeDates) {
-      const fromDate = this.datePipe.transform(
-        this.rangeDates[0],
-        'yyyy-MM-dd'
-      );
-      const endDate = this.datePipe.transform(this.rangeDates[1], 'yyyy-MM-dd');
-
-      const format = `?ftdate=${fromDate}&endate=${endDate}`;
-      this.readSummary(format);
+  filterData(date) {
+    this.selectedDateValue = '';
+    console.log(date,this.selectedEntityValue)
+    let query = '';
+    let date1: any;
+    let date2: any
+    if (date != '' && date != undefined) {
+      date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
+      date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
+      console.log(date1, date2);
+      this.selectedDateValue = date
     }
+    if (
+      this.selectedEntityValue != 'ALL' &&
+      this.selectedDateValue == ''
+    ) {
+      query = `?entity=${this.selectedEntityValue}`;
+    } else if (
+      this.selectedEntityValue == 'ALL' &&
+      this.selectedDateValue != ''
+    ) {
+      query = `?ftdate=${date1}&endate=${date2}`;
+    } else if (
+      this.selectedEntityValue != 'ALL' &&
+      this.selectedDateValue != ''
+    ) {
+      query = `?ftdate=${date1}&endate=${date2}&entity=${this.selectedEntityValue}`;
+    }
+    // if (this.rangeDates) {
+    //   const fromDate = this.datePipe.transform(
+    //     this.rangeDates[0],
+    //     'yyyy-MM-dd'
+    //   );
+    //   const endDate = this.datePipe.transform(this.rangeDates[1], 'yyyy-MM-dd');
+
+    //   const format = `?ftdate=${fromDate}&endate=${endDate}`;
+    // }
+    this.readSummary(query);
+
   }
 
   // clearing the dates
   clearDates() {
-    this.readSummary('');
+    this.filterData('');
+  }
+
+  getEntitySummary() {
+    this.ServiceInvoiceService.getSummaryEntity().subscribe((data: any) => {
+      this.entity = data.result;
+    });
+  }
+  selectEntityFilter(e) {
+    this.selectedEntityValue = e;
+  }
+
+  downloadReport(){
+    let combine = this.customerSummary.concat(this.customerSummarySP);
+    this.ImportExcelService.exportExcel(combine);
   }
 }

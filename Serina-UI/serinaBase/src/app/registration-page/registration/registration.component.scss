@@ -2,7 +2,7 @@
     display: flex;
     width: fit-content;
     justify-content: center;
-    padding: 30px;
+    padding: 20px 30px;
     border-radius: 10px;
     height: max-content;
     box-shadow: 1px 1px 5px rgb(0 0 0 / 50%);
@@ -10,6 +10,10 @@
     background: white;
     flex-direction: column;
     align-items: center;
+
+}
+h1::first-letter{
+    color: orangered;
 }
 .reginstration_fullpage{
     display: flex;
@@ -33,6 +37,8 @@
 label{
     font-size: 13px;
     font-weight: 600;
+    margin-bottom: 0;
+    color: #6c757d;
 }
 .title{
     font-size: 20px;
@@ -77,4 +83,43 @@ label{
     margin-top: 10px;
     background: #f2be42;
 }
+.resend-div {
+    padding: 10px;
+    text-align: center;
+    color: #6c757d;
+}
+:host ::ng-deep {
+    .otp-input {
+        font-size: 22px !important;
+    }
+    .wrapper {
+        display: flex;
+        justify-content: space-evenly;
+    }
+}
+@media only screen and (max-width: 600px) {
+    .inputForm {
+        width: 100%;
+    }
+    .registrationDiv {
+        padding: 10px;
+    }
+}
 
+.slide {
+    animation: slider .7s ease-in;
+}
+
+@keyframes slider {
+    0% {
+        transform: skewX(10deg) translate(-500px);
+        opacity: 0;
+    }
+    60%{
+        transform: skewX(0deg) translate(30px);
+        opacity: 1;
+    }
+    100% {
+        transform: skew(0deg);
+    }
+}

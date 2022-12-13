@@ -97,8 +97,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   vendorName: any;
   invoiceNumber = '';
   rejectpopBoolean: boolean;
-  deletepopBoolean:boolean;
-  checkItemBoolean:boolean;
+  deletepopBoolean: boolean;
+  checkItemBoolean: boolean;
   popUpHeader: string;
   lineTabBoolean: boolean;
   item_code: any;
@@ -119,10 +119,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private SharedService: SharedService,
     private _sanitizer: DomSanitizer,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params =>{
+    this.route.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;
     })
     this.init();
@@ -197,7 +197,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     };
     this.exceptionService
       .updateDocumentLockInfo(JSON.stringify(sessionData))
-      .subscribe((data: any) => {});
+      .subscribe((data: any) => { });
   }
 
   readVendors() {
@@ -235,7 +235,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SharedService.getInvoiceInfo().subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
-        if(data.ok.uploadtime){
+        if (data.ok.uploadtime) {
           this.uploadtime = data.ok.uploadtime;
         }
         data.ok.headerdata.forEach((element) => {
@@ -248,7 +248,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         });
         this.inputData = pushedArrayHeader;
         let inv_num_data: any = this.inputData.filter((val) => {
-          return (val.TagLabel == 'InvoiceId') || (val.TagLabel ==  'bill_number');
+          return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
         });
         this.invoiceNumber = inv_num_data[0]?.Value;
         if (data.ok.vendordata) {
@@ -385,13 +385,23 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   loadImage() {
     if (this.isImgBoolean == true) {
+      let width, height;
       setTimeout(() => {
+
         (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
           'scale(' + this.zoomVal + ')';
+
         this.canvas = <HTMLCanvasElement>document.getElementById('canvas1');
         let ctx = <CanvasRenderingContext2D>this.canvas.getContext('2d');
         let img = new Image();
+        let windowheight = window.innerHeight;
+        let windowWidth = window.innerWidth / 2;
         img.onload = function () {
+          width = img.width;
+          height = img.height;
+          if(width >1000){
+            ctx.scale(windowWidth / width, windowheight / height)
+          }
           ctx.drawImage(img, 0, 0); // Or at whatever offset you like
         };
         img.src = this.showInvoice;
@@ -404,7 +414,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // this.inputData[0][key]=value;
     let updateValue = {
       documentDataID: data.idDocumentData,
-      OldValue: data.Value ||'',
+      OldValue: data.Value || '',
       NewValue: value,
     };
     this.updateInvoiceData.push(updateValue);
@@ -412,7 +422,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   onChangeLineValue(value, data) {
     let updateValue = {
       documentLineItemID: data.idDocumentLineItems,
-      OldValue: data.Value ||'',
+      OldValue: data.Value || '',
       NewValue: value,
     };
     this.updateInvoiceData.push(updateValue);
@@ -780,7 +790,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   vendorSubmit() {
-    this.SharedService.vendorSubmit(this.reuploadBoolean,this.uploadtime).subscribe(
+    this.SharedService.vendorSubmit(this.reuploadBoolean, this.uploadtime).subscribe(
       (data: any) => {
         this.dataService.invoiceLoadedData = [];
         this.SpinnerService.hide();
@@ -1001,7 +1011,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.totalPages = pdfData.numPages;
     this.isLoaded = true;
   }
-  textLayerRendered(e: CustomEvent) {}
+  textLayerRendered(e: CustomEvent) { }
 
   nextPage() {
     this.page++;
@@ -1010,7 +1020,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   prevPage() {
     this.page--;
   }
-  selectedText(): void {}
+  selectedText(): void { }
 
   search(stringToSearch: string) {
     this.pdfViewer.pdfFindController.executeCommand('find', {
@@ -1090,7 +1100,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.rejectpopBoolean = true;
       this.deletepopBoolean = false;
       this.checkItemBoolean = false;
-    } else if(str == 'delete'){
+    } else if (str == 'delete') {
       this.popUpHeader = ' Please confirm';
       this.deletepopBoolean = true;
       this.rejectpopBoolean = false;
@@ -1104,29 +1114,29 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     }
     this.displayrejectDialog = true;
   }
-  removeLine(){
-    this.exceptionService.removeLineData(this.item_code).subscribe((data:any)=>{
-      if(data.status == "deleted"){
+  removeLine() {
+    this.exceptionService.removeLineData(this.item_code).subscribe((data: any) => {
+      if (data.status == "deleted") {
         this.AlertService.addObject.detail = "Line item deleted";
         this.messageService.add(this.AlertService.addObject);
         this.displayrejectDialog = false;
         this.getInvoiceFulldata();
       }
-    },err=>{
+    }, err => {
       this.AlertService.errorObject.detail = "Server error";
       this.messageService.add(this.AlertService.errorObject);
       this.displayrejectDialog = false;
     })
   };
 
-  CheckItemStatus(item){
-    this.exceptionService.checkItemCode(item).subscribe((data:any)=>{
-      if(data.status == "not exists"){
+  CheckItemStatus(item) {
+    this.exceptionService.checkItemCode(item).subscribe((data: any) => {
+      if (data.status == "not exists") {
         let addLineData = {
           "documentID": this.invoiceID,
           "itemCode": item
         };
-        this.exceptionService.addLineItem(JSON.stringify(addLineData)).subscribe((data:any)=>{
+        this.exceptionService.addLineItem(JSON.stringify(addLineData)).subscribe((data: any) => {
           this.AlertService.addObject.detail = "Line item Added";
           this.messageService.add(this.AlertService.addObject);
           this.getInvoiceFulldata();
@@ -1136,7 +1146,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.AlertService.errorObject.detail = "Item code already exist, Please try other item code";
         this.messageService.add(this.AlertService.errorObject);
       }
-    },err=>{
+    }, err => {
       this.AlertService.errorObject.detail = "Server error";
       this.messageService.add(this.AlertService.errorObject);
       this.displayrejectDialog = false;
@@ -1150,7 +1160,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     };
     this.exceptionService
       .updateDocumentLockInfo(sessionData)
-      .subscribe((data: any) => {});
+      .subscribe((data: any) => { });
     clearTimeout(this.callSession);
     // }
 
@@ -1171,7 +1181,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.loadImage();
   }
 
-  changeTab(val,tab) {
+  changeTab(val, tab) {
     if (val === 'show') {
       this.showPdf = true;
       this.btnText = 'Close';
@@ -1179,7 +1189,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.showPdf = false;
       this.btnText = 'View PDF';
     }
-    if(tab == 'line'){
+    if (tab == 'line') {
       this.lineTabBoolean = true;
     } else {
       this.lineTabBoolean = false;

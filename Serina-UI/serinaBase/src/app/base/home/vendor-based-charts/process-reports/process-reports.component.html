@@ -68,7 +68,7 @@
 </div>
 <div class="tableDtDiv">
   <div class="d-flex justify-content-between">
-    <div class="card-div d-flex bg-1">
+    <div class="card-div d-flex d_flx_row bg-1">
       <div class="img-wrapper">
         <!-- <i class="fa fa-check"></i> -->
         <mat-icon class="placement" svgIcon="vendor_up"></mat-icon>
@@ -79,7 +79,7 @@
       </div>
     </div>
 
-    <div class="card-div d-flex bg-2">
+    <div class="card-div d-flex d_flx_row bg-2">
       <div class="img-wrapper">
         <!-- <i class="fa fa-exclamation-triangle"></i> -->
         <mat-icon class="placement" svgIcon="vendor_pr"></mat-icon>
@@ -90,7 +90,7 @@
       </div>
     </div>
     
-    <div class="card-div d-flex bg-3">
+    <div class="card-div d-flex d_flx_row bg-3">
       <div class="img-wrapper">
         <mat-icon class="placement" svgIcon="vendor_rm"></mat-icon>
       </div>
@@ -100,7 +100,7 @@
       </div>
     </div>
 
-    <div class="card-div d-flex bg-4">
+    <div class="card-div d-flex d_flx_row bg-4">
       <div class="img-wrapper">
         <mat-icon class="placement" svgIcon="vendor_rej"></mat-icon>
       </div>
@@ -110,13 +110,23 @@
       </div>
     </div>
 
-    <div class="card-div d-flex bg-5">
+    <div class="card-div d-flex d_flx_row bg-5">
       <div class="img-wrapper">
         <mat-icon class="placement" svgIcon="vendor_err"></mat-icon>
       </div>
       <div>
         <div class="f-12">Error Invoices</div>
         <div class="f-15">{{ errorCount }}</div>
+      </div>
+    </div>
+
+    <div class="card-div d-flex d_flx_row bg-3">
+      <div class="img-wrapper">
+        <mat-icon class="placement" svgIcon="vendor_rm"></mat-icon>
+      </div>
+      <div>
+        <div class="f-12">Average Upload Time</div>
+        <div class="f-15">{{ uploadTime }}</div>
       </div>
     </div>
   </div>

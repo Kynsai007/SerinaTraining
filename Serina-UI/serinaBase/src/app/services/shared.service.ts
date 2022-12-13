@@ -102,8 +102,8 @@ export class SharedService {
   sendMail(email: any): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetPassword/?email=${email}`);
   }
-  updatepass(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/setPassword/`,data);
+  updatepass(data: any,OTP): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/setPassword/?otp_code=${OTP}`,data);
   }
 
   // notifications
@@ -161,7 +161,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/newAmountApproval/${this.userId}`,data);
   }
   userCheck(name){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/userName?name=${name}`);
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/userName?name=${name}`);
   }
   resetPassword(email){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetPassword/?email=${email}`);
@@ -178,6 +178,21 @@ export class SharedService {
   }
   readVendorSuperUsersList(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/vendorUserlist/${this.userId}`);
+  }
+  readVendorAccess(uid,id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readVendorUserAccess/${uid}?ven_code=${id}`);
+  }
+  updateVendorUserAccess(data,uu_id){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/updateVendorUser/${this.userId}/idUser/${uu_id}`,data);
+  }
+  getVendorMatch(ven_name,data){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorNameCodeMatch/${this.userId}?ven_name=${ven_name}${data}`);
+  }
+  check_onboardStatus(ven_code){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/getVendorOnboardStatus/${this.userId}?ven_code=${ven_code}`);
+  }
+  activate_vendor_signup(id){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Customer/newUserActivation/${this.userId}?au_id=${id}`,'');
   }
   activate_deactivate(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/changeUserAccountStatus/${this.userId}?deactivate_uid=${id}`);
@@ -265,7 +280,9 @@ export class SharedService {
   readOPUnits(): Observable<object>{
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/getoperationalUnits`)
   }
-
+  readApprovers(){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/getapprovers`)
+  }
   // entity
 
   getEntitybody() {

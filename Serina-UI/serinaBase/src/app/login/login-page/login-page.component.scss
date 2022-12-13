@@ -108,8 +108,15 @@ input::-webkit-input-placeholder {
 .otp{
     text-align: center;
 }
-:host ::ng-deep .otp-input{
-    font-size: 20px;
+
+:host ::ng-deep {
+    .otp-input {
+        font-size: 22px !important;
+    }
+    .wrapper {
+        display: flex;
+        justify-content: space-evenly;
+    }
 }
 // .bgImageMask {
 //     background-image: url("loginmask.png");

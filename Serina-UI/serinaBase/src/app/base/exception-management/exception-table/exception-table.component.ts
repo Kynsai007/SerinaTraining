@@ -66,8 +66,8 @@ export class ExceptionTableComponent implements OnInit {
   batchBoolean: boolean;
   dashboardViewBoolean: boolean;
   portalName: string;
-  confirmText:string;
-  displayResponsivepopup:boolean;
+  confirmText: string;
+  displayResponsivepopup: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -77,7 +77,7 @@ export class ExceptionTableComponent implements OnInit {
     private ExceptionsService: ExceptionsService,
     private storageService: DataService,
     private sharedService: SharedService,
-    private SpinnerService: NgxSpinnerService,
+    private SpinnerService: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +89,7 @@ export class ExceptionTableComponent implements OnInit {
   // }
   initialData() {
     this.userType = this.authService.currentUserValue['user_type'];
-    if(this.userType == 'vendor_portal'){
+    if (this.userType == 'vendor_portal') {
       this.portalName = 'vendorPortal';
     } else {
       this.portalName = 'customer';
@@ -113,14 +113,21 @@ export class ExceptionTableComponent implements OnInit {
         this.displayStatus = this.status[this.statusId];
       }
     }
-    if (this.tagService.batchProcessTab == 'normal') {
-      this.batchBoolean = true;
-      this.first = this.storageService.exc_batch_edit_page_first;
-      this.rows = this.storageService.exc_batch_edit_page_row_length;
-    } else {
-      this.batchBoolean = false;
-      this.first = this.storageService.exc_batch_approve_page_first;
-      this.rows = this.storageService.exc_batch_approve_page_row_length;
+    // if (this.tagService.batchProcessTab == 'normal') {
+    //   this.batchBoolean = true;
+    //   this.first = this.storageService.exc_batch_edit_page_first;
+    //   this.rows = this.storageService.exc_batch_edit_page_row_length;
+    // } else {
+    //   this.batchBoolean = false;
+    //   this.first = this.storageService.exc_batch_approve_page_first;
+    //   this.rows = this.storageService.exc_batch_approve_page_row_length;
+    // }
+    if (this.router.url.includes('ExceptionManagement')) {
+        this.first = this.storageService.exc_batch_edit_page_first;
+        this.rows = this.storageService.exc_batch_edit_page_row_length ;
+    } else if(this.router.url.includes('Create_GRN_inv_list')) {
+      this.first = this.storageService.create_GRN_page_first;
+      this.rows = this.storageService.create_GRN_page_row_length;
     }
   }
 
@@ -131,7 +138,7 @@ export class ExceptionTableComponent implements OnInit {
     //   this.router.navigate([`customer/invoice/InvoiceDetails/${e.idDocument}`]);
     // }
     console.log(e);
-    if(this.router.url.includes('ExceptionManagement')){
+    if (this.router.url.includes('ExceptionManagement')) {
       this.router.navigate([
         `/${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
       ]);
@@ -140,8 +147,7 @@ export class ExceptionTableComponent implements OnInit {
         `/${this.portalName}/home/comparision-docs/${e.idDocument}`,
       ]);
     }
-    
-    
+
     this.tagService.createInvoice = true;
     this.tagService.displayInvoicePage = false;
     this.tagService.editable = false;
@@ -153,14 +159,21 @@ export class ExceptionTableComponent implements OnInit {
   paginate(event) {
     console.log(event);
     this.first = event.first;
-    if (this.tagService.batchProcessTab == 'normal') {
+    // if (this.tagService.batchProcessTab == 'normal') {
+    //   this.storageService.exc_batch_edit_page_first = this.first;
+    //   this.storageService.exc_batch_edit_page_row_length = event.rows;
+    // } else {
+    //   this.storageService.exc_batch_approve_page_first = this.first;
+    //   this.storageService.exc_batch_approve_page_row_length = event.rows;
+    // }
+
+    if (this.router.url.includes('ExceptionManagement')) {
       this.storageService.exc_batch_edit_page_first = this.first;
       this.storageService.exc_batch_edit_page_row_length = event.rows;
-    } else {
-      this.storageService.exc_batch_approve_page_first = this.first;
-      this.storageService.exc_batch_approve_page_row_length = event.rows;
+    } else if(this.router.url.includes('Create_GRN_inv_list')) {
+      this.storageService.create_GRN_page_first = this.first;
+      this.storageService.create_GRN_page_row_length = event.rows;
     }
-
   }
 
   searchInvoice(value) {
@@ -171,25 +184,33 @@ export class ExceptionTableComponent implements OnInit {
   editInvoice(e) {
     console.log(e);
     this.ExceptionsService.invoiceID = e.idDocument;
-    console.log(this.ExceptionsService.invoiceID )
+    console.log(this.ExceptionsService.invoiceID);
     this.tagService.editable = true;
     this.sharedService.invoiceID = e.idDocument;
-    if(this.router.url == `/${this.portalName}/Create_GRN_inv_list`){
+    if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`) {
       this.router.navigate([
         `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
       ]);
     } else {
       this.SpinnerService.show();
-      this.ExceptionsService.getDocumentLockInfo().subscribe((data:any)=>{
+      this.ExceptionsService.getDocumentLockInfo().subscribe((data: any) => {
         console.log(data.result);
         this.SpinnerService.hide();
-        if(data.result.Document.lock_status == false){
+        if (data.result.Document.lock_status == false) {
           if (this.tagService.batchProcessTab == 'normal') {
             if (this.permissionService.editBoolean == true) {
-              if (e.documentsubstatusID == (29 || 4)) {
+              if (e.documentsubstatusID == 29 || 
+                e.documentsubstatusID == 4 || 
+                e.documentsubstatusID == 2 || 
+                e.documentStatusID == 20 || 
+                e.documentsubstatusID == 49 || 
+                e.documentsubstatusID == 51 || 
+                e.documentsubstatusID == 54 || 
+                e.documentsubstatusID == 66 ||
+                e.documentsubstatusID == 7 ) {
                 this.ExceptionsService.selectedRuleId = e.ruleID;
                 this.router.navigate([
-                  `${this.portalName}/ExceptionManagement/InvoiceDetails/${ e.idDocument}`,
+                  `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
                 ]);
               } else {
                 this.router.navigate([
@@ -198,8 +219,8 @@ export class ExceptionTableComponent implements OnInit {
               }
               // this.invoiceListBoolean = false;
               let sessionData = {
-                "session_status": true
-              }
+                session_status: true,
+              };
               // this.ExceptionsService.updateDocumentLockInfo(JSON.stringify(sessionData)).subscribe((data:any)=>{})
               this.tagService.submitBtnBoolean = true;
               this.tagService.headerName = 'Edit Invoice';
@@ -232,8 +253,7 @@ export class ExceptionTableComponent implements OnInit {
           this.displayResponsivepopup = true;
           this.confirmText = `Sorry, "${data.result.User?.firstName} ${data.result.User?.lastName}" is doing changes for this invoice.`;
         }
-      })
-
+      });
     }
   }
 }

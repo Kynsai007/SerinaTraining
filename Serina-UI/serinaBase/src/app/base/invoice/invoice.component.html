@@ -200,13 +200,13 @@
         </div>
 
         <div class="positionCreateUpload ">
-          <div class="input-group  uni_dwn_btn" style="left: -45px;" *ngIf="(route.url.includes('PO') || route.url.includes('GRN'))">
+          <div class="input-group  uni_dwn_btn" style="left: -45px;" *ngIf="(route.url.includes('PO') || route.url.includes('GRN') && !route.url.includes('GRNExceptions'))">
             <input #serachStr type="text" class="searchInput b-r-right-0" placeholder="Search">
             <button class="btnUpload b-r-left-0 mr-2" (click)="filterString(serachStr.value)">
               <i class="fa fa-search" aria-hidden="true"></i>
             </button>
           </div>
-          <button class="btnUpload  mr-2" (click)="exportExcel()" [ngClass]="(route.url.includes('PO') || route.url.includes('GRN'))? 'downlod_btn':''">
+          <button class="btnUpload  mr-2" (click)="exportExcel()" [ngClass]="(route.url.includes('PO') || route.url.includes('GRN') && !route.url.includes('GRNExceptions'))? 'downlod_btn':''">
             <i class="fa fa-download" aria-hidden="true"></i>
           </button>
         </div>

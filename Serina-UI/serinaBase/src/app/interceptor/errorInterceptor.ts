@@ -17,22 +17,22 @@ export class ErrorInterceptor implements HttpInterceptor {
       private router:Router) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
-      return next.handle(request).pipe( catchError((err:HttpErrorResponse) => {
-        if(err.status === 401 && !(request.url.includes('login'))){
-          if(!this.router.url.includes("/login")){
-            alert("Session Expired! Please re-login!");
-            this.authService.logout();
+        return next.handle(request).pipe( catchError((err:HttpErrorResponse) => {
+          if(err.status === 401 && !(request.url.includes('login'))){
+            if(!this.router.url.includes("/login")){
+              alert("Session Expired! Please re-login!");
+              this.authService.logout();
+            }
+          }else if(err.status == 502 || 0){
+            // alert("System under maintenance");
+            // this.alertSrvice.errorObject.detail = "System under maintenance";
+            // this.messageService.add(this.alertSrvice.errorObject);
+          } else{
+            // const error = err.error.message || err.statusText;
+            console.log(err)
+            return throwError(err)
           }
-        }else if(err.status == 502 || 0){
-          // alert("System under maintenance");
-          // this.alertSrvice.errorObject.detail = "System under maintenance";
-          // this.messageService.add(this.alertSrvice.errorObject);
-        } else{
-          // const error = err.error.message || err.statusText;
-          console.log(err)
-          return throwError(err)
-        }
-      }))
+        }))
     }
 }
 

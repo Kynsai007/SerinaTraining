@@ -57,6 +57,16 @@
   max-height: 72vh;
   overflow: auto;
 }
+.selectFilter {
+  height: 35px;
+  width: 170px;
+}
+.filter_div {
+  position: absolute;
+  top: 55px;
+  right: 303px;
+}
+
 
 // :host ::ng-deep .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
 //     color: #272727 !important;
@@ -73,3 +83,8 @@
 //     padding: 4px 14px;
 //     border: none;
 // }
+.down_filter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

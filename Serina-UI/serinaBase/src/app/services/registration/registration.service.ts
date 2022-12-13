@@ -17,4 +17,14 @@ export class RegistrationService {
   resendVerificationLink(token,email){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetExpiredActivationLink/?activation_code=${token}&email=${email}`)
   }
+
+  sendOTP_email(mail){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/newVendorUserOTP?email=${mail}`)
+  }
+  verifyOTP(otp,data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/validateVendorUserOTP?otp_code=${otp}`,data)
+  }
+  signup_vendoruser(otp,data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/preApproved/newVendorAdminUser/?form_token=${otp}`,data)
+  }
 }

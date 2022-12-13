@@ -486,7 +486,14 @@ export class ChartsService {
         }
   }
 
+
 // vendor process reports API's
+  getInvoiceCountByEntity(filter): Observable<any>{
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invcountbyentity/${this.userId}/3${filter}`);
+  }
+  getPagesCountByEntity(filter): Observable<any>{
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invpagecountbyentity/${this.userId}/3${filter}`);
+  }
   getInvoiceCountByVendorData(filter): Observable<any>{
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/invcountbyvendor/${this.userId}/3${filter}`);
   }
@@ -514,6 +521,9 @@ export class ChartsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/emailexceptions${filter}`);
   }
 
+  getOnbordedData(filter): Observable<any>{
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/onboardedVendorsByMonth/${this.userId}  ${filter}`);
+  }
   /*service based process reports*/
   getServiceBasedSummary(filter): Observable<any>{
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/vendorbasedsummary/${this.userId}/3${filter}`);

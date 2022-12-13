@@ -4,7 +4,10 @@
     min-height: 70vh;
     overflow-x: hidden;
 }
-
+.border_btn {
+    border: 0;
+    background: transparent;
+}
 // .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
 //     color: #272727 !important;
 //     background-color: #f2be42 !important;
@@ -75,10 +78,22 @@ td{
   }
   .inputForm{
     height: 35px;
-    width: 80%;
+    width: 280px;
     background: white;
     border: 1px solid #d3d3d3;
     border-radius: 6px;
+  }
+  .d_flex_wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .header_div {
+    background: #a4db9e;
+    padding: 5px 30px;
+    display: inline-block;
+    border-radius: 6px;
+    text-align: center;
   }
   .inputForm:focus {
       border: 1px solid #313971;
@@ -105,6 +120,11 @@ td{
 }
 .inputBox:focus {
     border: 1px solid #313971;
+}
+.fixed_pos {
+    position: fixed;
+    bottom: 0;
+    right: 0;
 }
 
 .mt-10{
@@ -176,7 +196,7 @@ td{
 :host ::ng-deep .p-autocomplete-dd .p-autocomplete-input, .p-autocomplete-dd .p-autocomplete-multiple-container {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
-    width:420px;
+    width: 250px;
     height: 35px;
     font-size: 12px;
     font-family: "Segoe UI Regular", "Segoe UI", Arial;
@@ -255,7 +275,11 @@ td{
 }
 
 
-
+:host ::ng-deep {
+    .update .p-multiselect-panel .p-multiselect-header {
+        display: none;
+    }
+}
 
 
   // serach
