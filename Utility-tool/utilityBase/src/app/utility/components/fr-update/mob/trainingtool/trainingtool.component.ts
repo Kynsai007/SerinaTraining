@@ -109,7 +109,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
       'connstr':this.frConfigData[0].ConnectionString,
       'folderpath':this.modelData.folderPath,
       'container':this.frConfigData[0].ContainerName,
-      'account':'rovest001',
+      'account':this.frConfigData[0].ConnectionString.split("AccountName=")[1].split(";AccountKey")[0],
       'modelName':modelName
     }
     try{
