@@ -677,7 +677,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     (<HTMLDivElement>document.getElementById("sticky")).classList.remove("sticky-top")
     let frobj = {
       'container':this.frConfigData[0].ContainerName,
-      'account':'rovest001',
+      'account':this.frConfigData[0].ConnectionString.split("AccountName=")[1].split(";AccountKey")[0],
       'connstr':this.frConfigData[0].ConnectionString,
       'fr_endpoint':this.frConfigData[0].Endpoint,
       'fr_key':this.frConfigData[0].Key1,
