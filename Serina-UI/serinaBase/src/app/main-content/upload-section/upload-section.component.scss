@@ -12,7 +12,7 @@
   border-right: hidden;
 }
 :host ::ng-deep .p-autocomplete {
-  width: 25vw;
+  width: 18vw;
 }
 // .pdropdown {
 //   width: 70% !important;
@@ -25,16 +25,16 @@
   border: 1px solid lightgray;
   border-left: hidden;
 }
+.helpSection {
+  position: absolute;
+  right: 20px;
+}
 .upload-time{
   font-weight: bold;
   color: #2980b9
 }
-:host
-  ::ng-deep
-  .p-autocomplete-panel
-  .p-autocomplete-items
-  .p-autocomplete-item {
-  margin: 0;
+
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
   padding: 5px 1rem;
   border: 0 none;
   color: #495057;
@@ -53,10 +53,12 @@
   box-shadow: none;
   border-color: lightgray;
 }
-:host ::ng-deep .p-dialog .p-dialog-content {
-  min-height: 40vh;
+// :host ::ng-deep .p-dialog .p-dialog-content {
+//   min-height: 78vh;
+// }
+.multipo_pop {
+  min-height: 78vh;
 }
-
 
 .percentageDiv {
   background: white;
@@ -76,6 +78,9 @@
 }
 .f-80 {
   font-size: 80px;
+}
+.p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item:has(span){
+  color: red;
 }
 .underdropIcon {
   font-size: 20px;
@@ -116,6 +121,45 @@
   justify-content: center;
   align-items: center;
   width: 40vw;
+}
+.lineName {
+  padding: 10px 10px;
+  font-size: 11px;
+  padding-left: 10px;
+  min-width: 130px;
+  // max-width: 130px;
+  font-weight: 600;
+  background: #e3eef9;
+  position: sticky;
+  left: 0px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.linevalue {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+.lcm_table_td {
+  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 100px;
+    max-width: 140px;
+    height: 30px;
+}
+.disable {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+.mutliTable {
+  max-height: calc(50vh - 20px);
+  overflow: auto;
+}
+footer {
+  right: 5%;
+  position: fixed;
+  bottom: 5%;
 }
 .img-browse {
   background-color: #f2be42;
@@ -185,10 +229,7 @@
   .p-multiselect-panel .p-multiselect-header .p-checkbox {
     display: none;
   }
-  .p-multiselect-panel
-    .p-multiselect-header
-    .p-multiselect-filter-container
-    .p-inputtext {
+  .p-multiselect-panel .p-multiselect-header .p-multiselect-filter-container .p-inputtext {
     height: 35px;
   }
   .p-multiselect-panel .p-multiselect-items .p-multiselect-empty-message {
@@ -236,13 +277,26 @@
     font-weight: 600;
     height: 30px;
   }
+  .p-calendar .p-inputtext {
+    height: 35px !important;
+  }
+  .p-datatable .p-datatable-thead > tr > th {
+    padding: 6px !important;
+    background: #e3eef9 !important;
+    color: black !important;
+    text-align: center;
+  }
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 6px !important;
+    text-align: center;
+  }
 }
 .m-center {
   margin-left: 20%;
   margin-right: 20%;
 }
 .accountSelect {
-  width: 25vw !important;
+  width: 18vw !important;
   height: 35px;
   font-size: 13px;
 }
@@ -255,17 +309,19 @@
   margin-right: 9px;
   width: 165px;
 }
-
-@media screen and (max-width: 576px) { 
-  .flex_col {
-    flex-direction: column;
-  }
-  .accountSelect {
-    width: 100% !important;
-  }
-  :host ::ng-deep {
-    .p-autocomplete {
-      width: 100% !important;
-    }
-  }
+.width-100 {
+  width: 100px !important;
+}
+input[type="checkbox"] {
+  width: 35px;
+  height: 18px;
+  accent-color: lightgray;
+}
+.check_div {
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  height: 35px;
+  display: flex;
+  width: 18vw;
+  align-items: center;
 }

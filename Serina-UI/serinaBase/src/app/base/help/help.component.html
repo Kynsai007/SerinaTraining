@@ -1,0 +1,89 @@
+<section id="doc">
+    <h5 class="text-center font_weight">Help guide for Quick-upload
+        <button class="btnUpload" (click)="downloadPdf()" title="Download Help Document"><i class="fa fa-download"></i></button>
+    </h5>
+    <!-- <div class="f-15 heading mb-2">Upload Section</div> -->
+    <h6>Use Quick Upload for Faster Processing</h6>
+    <ul>
+        <li>In quick upload, you submit the invoices and submit it to the Serina system.</li>
+        <li>If there is no issue on the invoice, it will directly go into Approvals(if selected) or to the ERP.</li>
+        <li>If there are any issues, it would appear under Exceptions Screen.</li>
+    </ul>  
+
+    <h6>Entity Selection</h6>
+    <ul>
+        <li>Only certain Entity access is given to each user</li>
+        <li>Please make sure that only the correct Entity is selected. Any wrong selection against the invoice copy uploaded, would go into exceptions due to Entity mismatch</li>
+    </ul> 
+
+    <h6>Vendor Selection</h6>
+    <ul>
+        <li>Select the relevant vendor from the dropdown.</li>
+        <li>Green Color Coded Vendor means the vendor is onboarded into Serina and model is available.</li>
+        <li>Red Color indicates - vendor invoice templates not onboarded to Serina.</li>
+        <li>If you have an invoice where the vendor is in red category, please contact Serina Support Team to onboard the vendor.</li>
+        <li>Please share with them the 5 invoice samples for onboarding. Once they confirm, you can start uploading the invoices. Now the color code would change to green</li>
+    </ul> 
+
+    <h6>Invoice Type</h6>
+    <ul>
+        <li>There are 4 Invoice Type in Serina for AGI </li>
+    </ul>  
+
+    <h6>Single PO</h6>
+    <ul>
+        <li>This option is selected when you have an invoice against one particular PO only, can be used it again for another invoice for same PO.</li>
+        <li>When this option is selected, selecting the PO number is mandatory.</li>
+    </ul>  
+
+    <h6>Multiple PO</h6>
+    <ul>
+        <li>This option is selected when against once invoice, you have multiple PO to book against.</li>
+        <li>Once this option is selected, a pop up screen appears.</li>
+        <li>In this screen, user has to select the PO and GRN combination for each line. Once done, click add and submit.</li>
+    </ul>  
+
+    <h6>Non-PO</h6>
+    <ul>
+        <li>This option is selected when the invoice has to be posted as journal voucher.</li>
+    </ul>
+         
+    <h6>LCM</h6>
+    <ul>
+        <li>Landed Cost Module is selected when there is allocation required for certain voyage/transport across entities.</li>
+        <li>Once you click add and upload, you should select the LCM allocation from the exception screen. Once done, it will move forward to the next steps.</li>
+    </ul>  
+
+    <h6>Invoice Attachment</h6>
+    <ul>
+        <li>Only attach the Invoice Copies. Multiple pages of same invoice number is allowed. Don't attach PO and GRN copies.</li>
+        <li>Any other documents other than invoice copies would lead to low OCR accuracy and longer upload times.</li>
+    </ul>  
+
+    <h6>Supporting Document</h6>
+    <ul>
+        <li>PO, GRN copies or any other relevant documents against this invoice can be uploaded against "Supporting Document"</li>
+        <li>Don't upload the Invoice copy in this category</li>
+    </ul> 
+
+    <h6>Approvals</h6>
+    <ul>
+        <li>Select "Pre-Approved" if invoice is not going to follow an approval process</li>
+        <div>or</div>
+        <li>Click Add approvers, based on the setup, you can select the approvers and click Okay.</li>
+        <li>Two level approvers would mean the invoice will be going to 2 Approvers</li>
+    </ul> 
+
+    <h6>Add</h6>
+    <ul>
+        <li>Click Add to the invoice to the queue. This would mean that you can add more invoice to the queue before it can be sent for bulk upload.</li>
+
+    </ul> 
+
+    <h6>Upload</h6>
+    <ul>
+        <li>You can directly upload if you have only 1 invoice to be uploaded.</li>
+        <li>If you have multiple invoice copies, then click Add first. Add the 2nd copy. Then click Upload to upload all together.</li>
+    </ul> 
+        
+</section>

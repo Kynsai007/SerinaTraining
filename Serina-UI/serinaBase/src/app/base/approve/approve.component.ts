@@ -33,7 +33,7 @@ export class ApproveComponent implements OnInit {
     { field: 'VendorName', header: 'Vendor Name' },
     { field: 'Account', header: 'Vendor A/C' },
     // { field: 'documentdescription', header: 'Description' },
-    { field: 'Approvaltype', header: 'Approval type' },
+    // { field: 'Approvaltype', header: 'Approval type' },
     { field: 'documentDate', header: 'Invoice Date' },
     { field: 'UpdatedOn', header: 'Last Modified' },
     { field: 'totalAmount', header: 'Amount' },
@@ -91,7 +91,7 @@ export class ApproveComponent implements OnInit {
 
   init() {
     this.editPermissionBoolean = this.permissionService.editBoolean;
-    this.tagService.headerName = 'Finance Approval';
+    this.tagService.headerName = 'Approve';
     this.viewType = this.tagService.aprrovalPageTab;
     this.first = this.storageService.approvalVendorPaginationFirst;
     this.rows = this.storageService.approvalVendorPaginationRowLength;
@@ -189,7 +189,7 @@ export class ApproveComponent implements OnInit {
     this.sharedService.readApprovedSPInvoiceData().subscribe(
       (data: any) => {
         let approvedArray = [];
-        data.approved.forEach((element) => {
+        data?.approved?.forEach((element) => {
           let mergeArray = {
             ...element.Entity,
             ...element.EntityBody,

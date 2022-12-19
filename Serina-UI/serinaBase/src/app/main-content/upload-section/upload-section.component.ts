@@ -1,8 +1,9 @@
+import { PermissionService } from 'src/app/services/permission.service';
 import { ServiceInvoiceService } from './../../services/serviceBased/service-invoice.service';
 import { AlertService } from './../../services/alert/alert.service';
 import { HttpClient, HttpEventType } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileUploader } from 'ng2-file-upload';
 import { MessageService } from 'primeng/api';
@@ -14,7 +15,21 @@ import { SharedService } from 'src/app/services/shared.service';
 import { TaggingService } from 'src/app/services/tagging.service';
 import { DocumentService } from 'src/app/services/vendorPortal/document.service';
 import { environment } from 'src/environments/environment';
+import { DateFilterService } from 'src/app/services/date/date-filter.service';
+import { DatePipe } from '@angular/common';
+import * as fileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { AutoComplete } from 'primeng/autocomplete';
 // declare var EventSourcePolyfill: any;
+export interface getApproverData {
+  EntityID: number,
+  EntityBodyID?: number,
+  DepartmentID?: number,
+  categoryID?: number,
+  approver?: any[],
+  description?: string
+}
 
 @Component({
   selector: 'app-upload-section',
@@ -50,8 +65,8 @@ export class UploadSectionComponent implements OnInit {
   isPdf: boolean;
   showInvoice: any;
   response: string;
-  poNumbersList: any;
-  filteredPO: any[];
+  poNumbersList: any[];
+  filteredPO = [];
   displaySelectPdfBoolean: boolean;
   vendorAccountId: number;
   vendorAccountName: any;
@@ -63,7 +78,7 @@ export class UploadSectionComponent implements OnInit {
   selected = new FormControl(0);
   tabtitle: string = '';
   isCustomerPortal: boolean;
-  filteredVendors: any;
+  filteredVendors = [];
   tabData = [];
   entirePOData = [];
   evtSource: any;
@@ -71,41 +86,182 @@ export class UploadSectionComponent implements OnInit {
   selectedEntityId: any;
   GRNUploadID: any;
   reuploadBoolean: boolean;
-  seconds: string="00";
-  minutes:string="00";
+  seconds: string = "00";
+  minutes: string = "00";
+  poTypeBoolean: boolean;
+  mutliPODailog = false;
+  LCMBoolean = 'No';
+
+  rangeDates: Date[];
+  minDate: Date;
+  maxDate: Date;
+
+  summaryColumnField = [];
+  summaryColumnHeader = [];
+  customerSummary: any;
+  showPaginatorSummary: boolean;
+  totalSuccessPages: any;
+  totalInvoices: any;
+
+  summaryColumn = [
+    { field: 'PONumber', header: 'PO Number' },
+    { field: 'POLineDescription', header: 'PO Description' },
+    { field: 'POLineNumber', header: 'PO LineNumber' },
+    { field: 'GRNNumber', header: 'GRN Number' },
+    { field: 'GRNLineDescription', header: 'GRN Description' },
+    { field: 'POLineAmount', header: 'PO Line Amount' },
+    { field: 'ConsumedPOQty', header: 'PO Qty' },
+    { field: 'GRNLineAmount', header: 'GRN Line Amount' },
+    { field: 'GRNQty', header: 'GRN Qty' },
+
+  ];
+  multiBtn = "Submit"
+  ColumnLengthVendor: number;
+
+  filteredPOLines: any[];
+  poLineData = [];
+  selectedPOlinevalue: any;
+  GRNLineData = [];
+  GRNData = []
+  filteredGRN: any[];
+  selectedGRNValue: any;
+  mutliplePOTableData = [];
+  @ViewChild('multiPO') multiPO: NgForm;
+  PO_amount_line: number;
+  PO_qty: any;
+  GRN_amount_line: number;
+  GRN_qty: any;
+  PO_desc_line: any;
+  GRN_desc_line: any;
+  selectedVendorID: any;
+  multiPO_filepath = '';
+  uploadExcelValue: any;
+  // filterBool: boolean =  false;
+  s_date: any;
+  e_date: any;
+  @ViewChild('vdropdown') vdropdown: AutoComplete;
+  GRN_number: any;
+
+  selectedDepartment: any;
+  DepartmentList = [];
+  approverDialog: boolean;
+  uploadInvoicesListData = [];
+  quickUploadTable = [
+    { header: "Entity", field: 'EntityName' },
+    { header: "Vendor name", field: 'VendorName' },
+    { header: "Invoice Type", field: 'invoiceType' },
+    { header: "PO Number", field: 'PONumber' },
+    { header: "Department", field: 'departmentName' },
+    { header: "Invoices", field: 'attchedInvoice' },
+    { header: "Supprot Docs", field: 'attchedSupport' },
+    { header: "Approvers", field: 'approvers' },
+  ]
+  @ViewChild('quickUploadForm') quickUploadForm: NgForm;
+  POnumberBoolean: boolean;
+  preAproveBool: boolean;
+  approversSendData: getApproverData[] = [];
+  approverList: any;
+  approverNameList = [];
+  entityName: any;
+  selectedApprover: any;
+  approverNameListFinal = [];
+  invoiceDocList = [];
+  invoiceFilename = '';
+  supportDocList = [];
+  supportFileNamelist = [];
+  approvalBoolean: boolean;
+  selectedDepartmentID: number;
+  approversFinalList = [];
+  APIPostData = [];
+  touchedApproveBoolean: boolean;
+  filteredEnt: any[];
+  afVendor: boolean;
+  viewType: any = 'ideal';
+  userDetails: any;
+  isQuickUploadbool: boolean= false;
+  bothOptBoolean: boolean =  true;
   constructor(
     private http: HttpClient,
     public route: Router,
     private docService: DocumentService,
     private dataService: DataService,
+    private spinnerService: NgxSpinnerService,
+    private dateFilterService: DateFilterService,
     private alertService: AlertService,
     private tagService: TaggingService,
     private sharedService: SharedService,
     private authenticationService: AuthenticationService,
     private messageService: MessageService,
-    private serviceProviderService: ServiceInvoiceService
-  ) {}
+    private serviceProviderService: ServiceInvoiceService,
+    private datepipe: DatePipe,
+    private PS: PermissionService
+  ) { }
 
   ngOnInit(): void {
+    // if(this.PS.uploadPermissionBoolean){
     this.seconds = "00";
     this.minutes = "00";
     this.isCustomerPortal = this.sharedService.isCustomerPortal;
+
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     this.getEntitySummary();
-    if(this.GRNUploadID != undefined && this.GRNUploadID != null){
+    this.dateRange();
+    this.findColumns();
+    if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
       this.reuploadBoolean = true;
       this.vendorAccountId = this.dataService.reUploadData.idVendorAccount;
       this.selectedEntityId = this.dataService.reUploadData.idEntity;
     } else {
       this.reuploadBoolean = false;
     }
+    // } else {
+    //   // alert("Sorry, you don't have access!")
+    //   this.route.navigate(['customer/invoice/allInvoices']);
+    // }
 
+  }
+
+  chooseTab(val){
+    this.viewType = val;
+  }
+  // Set date range
+  dateRange() {
+    let today = new Date();
+    let day = today.getDate()
+    let month = today.getMonth() + 1;
+    let year = today.getFullYear();
+
+    this.s_date = `${year}-${month}-01`;
+    this.e_date = `${year}-${month}-${day}`;
+
+    this.dateFilterService.dateRange();
+    this.minDate = this.dateFilterService.minDate;
+    this.maxDate = this.dateFilterService.maxDate;
+  }
+  // display columns
+  findColumns() {
+    this.summaryColumn.forEach((e) => {
+      this.summaryColumnHeader.push(e.header);
+      this.summaryColumnField.push(e.field);
+    });
+
+    this.ColumnLengthVendor = this.summaryColumn.length;
+  }
+  clearDates() { }
+  filterData(val) {
+    let s_date = this.datepipe.transform(val[0], "yyyy-MM-dd");
+    let e_date = this.datepipe.transform(val[1], "yyyy-MM-dd");
+    //  if(s_date && e_date){
+    //   this.filterBool = true;
+    //  } else {
+    //   this.filterBool = false;
+    //  }
+    this.readPONumbers(s_date, e_date);
   }
 
   runEventSource(eventSourceObj) {
     this.evtSource = new EventSource(
-      `${environment.apiUrl}/${
-        this.apiVersion
+      `${environment.apiUrl}/${this.apiVersion
       }/ocr/status/stream?eventSourceObj=${encodeURIComponent(
         JSON.stringify(eventSourceObj)
       )}`
@@ -117,30 +273,97 @@ export class UploadSectionComponent implements OnInit {
       this.entity = data.result;
     });
   }
-  
+
   getVendorAccountsData(ent_id) {
     this.docService.readVendorAccountsData(ent_id).subscribe((data: any) => {
       this.vendorAccount = data.result;
     });
   }
 
-  selectEntity(value){
-    this.selectedEntityId = value;
-    this.vendorAccount = [];
-    this.displaySelectPdfBoolean = false;
+  // selectEntity(value){
+  //   this.selectedEntityId = value;
+  //   this.vendorAccount = [];
+  //   this.displaySelectPdfBoolean = false;
+
+  // }
+  onSelectLCM(val) {
+    if (val == true) {
+      this.poTypeBoolean = true;
+      this.LCMBoolean = 'Yes';
+    } else {
+      this.poTypeBoolean = false;
+      this.LCMBoolean = 'No';
+    }
+  }
+
+  onSelectPOType(val, type) {
+    if (type == 'ideal') {
+      this.LCMBoolean = 'No';
+      if (val == 'singlePO' || val == "nonPO") {
+        this.poTypeBoolean = true;
+      } else if (val == 'LCM') {
+        this.poTypeBoolean = true;
+        this.LCMBoolean = 'Yes';
+      }
+      else if (val == 'multiPO') {
+        this.poTypeBoolean = false;
+        this.readPONumbers(this.s_date, this.e_date);
+        if (this.displaySelectPdfBoolean) {
+          this.mutliPODailog = true;
+          this.multiBtn = 'Submit';
+        }
+      }
+    } else {
+      if (val == 'singlePO') {
+        this.POnumberBoolean = true;
+      } else if (val == 'multiPO') {
+        this.poTypeBoolean = false;
+        this.readPONumbers(this.s_date, this.e_date);
+          this.mutliPODailog = true;
+          this.multiBtn = 'Submit';
+        this.POnumberBoolean = false;
+      } else {
+        this.POnumberBoolean = false;
+      }
+    }
+  }
+
+  selectEntity(value) {
+    this.approversSendData = [];
+    this.selectedEntityId = value.idEntity;
+    this.sharedService.selectedEntityId = value.idEntity;
+    // this.entity.forEach(val => {
+    //   if (value == val.idEntity) {
+    this.entityName = value.EntityName;
+    //   }
+    // })
     if (this.isCustomerPortal == true) {
       this.getCustomerVendors();
-    } else {    
-      this.getVendorAccountsData(value);
+     this.readDepartment();
+     // this.dropdown.show();
+     this.afVendor = true
+     // this.vdropdown.autofocus = true;
+     let event = {
+       query: ''
+     }
+     this.filterVendor(event);
+    } else {
+      this.getVendorAccountsData(value.idEntity);
     }
+
   }
 
   getCustomerVendors() {
     this.sharedService
       .getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}`)
       .subscribe((data: any) => {
-        this.vendorAccount = data.vendorlist;
-        this.filteredVendors = data.vendorlist;
+        let arr = [];
+        data.vendorlist.forEach(ele => {
+          ele.VendorName1 = `${ele.VendorName} - ${ele.VendorCode}`;
+          arr.push({ VendorName: ele.VendorName1, idVendor: ele.idVendor, is_onboarded: ele.is_onboarded })
+        })
+        this.vendorAccount = arr;
+        // this.filteredVendors = arr;
       });
   }
   onSelectAccountByEntity(val) {
@@ -167,9 +390,14 @@ export class UploadSectionComponent implements OnInit {
 
   filterVendor(event) {
     let query = event.query.toLowerCase();
-    if(query != ''){
-      this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}&ven_name=${query}`).subscribe((data:any)=>{
-        this.filteredVendors = data.vendorlist;
+    if (query != '') {
+      this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}&ven_name=${query}`).subscribe((data: any) => {
+        let arr = [];
+        data.vendorlist.forEach(ele => {
+          ele.VendorName1 = `${ele.VendorName} - ${ele.VendorCode}`;
+          arr.push({ VendorName: ele.VendorName1, idVendor: ele.idVendor, is_onboarded: ele.is_onboarded })
+        })
+        this.filteredVendors = arr;
       });
     } else {
       this.filteredVendors = this.vendorAccount;
@@ -188,6 +416,7 @@ export class UploadSectionComponent implements OnInit {
   selectVendorAccount(value) {
     // this.vendorAccountId = value.vendoraccounts[0].idVendorAccount;
     // this.getPONumbers(this.vendorAccountId);
+    this.selectedVendorID = value.idVendor;
     this.getAccountsByEntity(value.idVendor);
   }
 
@@ -197,69 +426,279 @@ export class UploadSectionComponent implements OnInit {
       .subscribe((data: any) => {
         this.vendorAccountByEntity = data.result;
         this.vendorAccountId = this.vendorAccountByEntity[0].idVendorAccount;
-        if (this.vendorAccountId) {
+        this.getPONumbers(this.vendorAccountId);
+        if (this.vendorAccountId && this.viewType == 'ideal') {
           this.displaySelectPdfBoolean = true;
         } else {
           this.displaySelectPdfBoolean = false;
         }
       });
   }
+  getPONumbers(id) {
+    this.sharedService.getPoNumbers(id).subscribe((data: any) => {
+      this.poNumbersList = data;
+    })
+  }
 
-  // filterPOnumber(event) {
-  //   let filtered: any[] = [];
-  //   let query = event.query;
+  filterPOnumber(event) {
+    // if(this.filterBool){
+    let filtered: any[] = [];
+    let query = event.query;
 
-  //   for (let i = 0; i < this.poNumbersList.length; i++) {
-  //     let PO: any = this.poNumbersList[i];
-  //     if (PO.PODocumentID.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-  //       filtered.push(PO);
-  //     }
-  //   }
-  //   this.filteredPO = filtered;
-  // }
+    if (this.poNumbersList?.length > 0) {
+      for (let i = 0; i < this.poNumbersList?.length; i++) {
+        let PO: any = this.poNumbersList[i];
+        if (PO.PODocumentID.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(PO);
+        }
+      }
+    }
+    // if (filtered.length == 0) {
+    //   // filtered.push({idDocument:null,PODocumentID:"PO's not available" })
+    //   this.alertService.errorObject.detail = "PO numbers are not available, please select other range.";
+    //   this.messageService.add(this.alertService.errorObject);
+    // }
+    this.filteredPO = filtered;
+    // } else {
 
-  // selectedPO(event) {
-  //   console.log(event)
-  //   console.log(this.selectedPONumber);
-  //   let arrayLegth = event.value.length;
-  //   let tabsLength = 0;
-  //   if (event.value.length == 0) {
-  //     this.displaySelectPdfBoolean = false;
-  //   } else {
-  //     this.displaySelectPdfBoolean = true;
-  //     this.addTab();
-  //   }
-  // }
+    // }
+  }
 
-  // addTab() {
-  //   if(this.tabtitle != ''){
-  //      this.tabs.push(this.tabtitle);
-  //   }else{
-  //     this.selectedPONumber.forEach(element => {
-  //       if(!this.tabs.includes(element.PODocumentID)){
-  //         this.tabs.push(element.PODocumentID);
-  //         this.sharedService.readUploadPOData(element.idDocument).subscribe((data:any)=>{
-  //           const pushedArrayHeader = [];
-  //           data.result.headerdata.forEach(element => {
-  //             let mergedArray = { ...element.DocumentData, ...element.DocumentTagDef };
-  //             mergedArray.DocumentUpdates = element.DocumentUpdates
-  //             pushedArrayHeader.push(mergedArray);
-  //           });
-  //           pushedArrayHeader['tabName'] = element.PODocumentID;
-  //           this.entirePOData.push(pushedArrayHeader);
-  //         });
+  selectedPO(event) {
+    if (this.mutliPODailog) {
+      this.readPOLines(event.PODocumentID);
+    }
+    this.selectedPONumber = event.PODocumentID;
+  }
+  filterEntity(event) {
+    let filtered: any[] = [];
+    let query = event.query;
 
-  //       }
-  //     });
-  //   }
+    if (this.entity?.length > 0) {
+      for (let i = 0; i < this.entity?.length; i++) {
+        let ent: any = this.entity[i];
+        if (ent.EntityName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(ent);
+        }
+      }
+    }
+    this.filteredEnt = filtered;
+  }
 
-  //   this.tabtitle = '';
+  readPONumbers(s_d, e_d) {
+    this.spinnerService.show();
+    this.sharedService.readPOnumbers(this.selectedEntityId, this.selectedVendorID, s_d, e_d).subscribe((data: any) => {
+      this.poNumbersList = data;
+      this.spinnerService.hide();
+    }, err => {
+      this.alertService.errorObject.detail = "Server error";
+      this.messageService.add(this.alertService.errorObject);
+      this.spinnerService.hide();
+    })
+  }
 
-  // }
-  // removeTab(index: number) {
-  //   this.entirePOData.splice(index, 1);
-  //   this.tabs.splice(index, 1);
-  // }
+  readPOLines(po_num) {
+    this.sharedService.readPOLines(po_num).subscribe((data: any) => {
+      this.poLineData = data.PODATA;
+      this.GRNData = data?.GRNDATA?.filter((val1,i,a)=> a.findIndex(val2=>val2.PackingSlip == val1.PackingSlip) === i);
+      // let jsonObj = data?.GRNDATA?.map(JSON.stringify);
+      // let uniqeSet = new Set(jsonObj);
+      // let unique = Array?.from(uniqeSet)?.map(JSON.parse);
+      let arr = [];
+      data?.GRNDATA?.forEach(val=>{
+        let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
+        arr.push({PackingSlip:val.PackingSlip,POLineNumber:val.POLineNumber,GRNField:ele});
+      })
+      // this.po_grn_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
+    }, err => {
+      this.alertService.errorObject.detail = "Server error";
+      this.messageService.add(this.alertService.errorObject);
+    })
+  }
+
+  filterPOLine(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+
+    if (this.poLineData?.length > 0) {
+      for (let i = 0; i < this.poLineData?.length; i++) {
+        let PO: any = this.poLineData[i];
+        if (PO.Name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(PO);
+        }
+      }
+    }
+    this.filteredPOLines = filtered;
+  }
+
+  selectedPOLine(event) {
+    this.selectedPOlinevalue = event.Name;
+    // let obj = {
+    //   PODocumentID : this.selectedPONumber,
+    //   Name : event.Name,
+    //   PO_line_amount : event.UnitPrice * event.PurchQty,
+    //   PurchQty : event.PurchQty
+    // }
+    // this.multiPO.control.patchValue(obj);
+    this.PO_desc_line = event.Name;
+    this.PO_amount_line = event.UnitPrice * event.PurchQty;
+    this.PO_qty = event.PurchQty;
+  }
+
+  filterGRNnumber(event, name) {
+    let filtered: any[] = [];
+    let query = event.query;
+
+    if (name == 'grn_num') {
+      for (let i = 0; i < this.GRNData?.length; i++) {
+        let PO: any = this.GRNData[i];
+        if (PO?.PackingSlip?.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(PO);
+        }
+      }
+
+    } else {
+      for (let i = 0; i < this.GRNLineData?.length; i++) {
+        let PO: any = this.GRNLineData[i];
+        if (PO.Name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(PO);
+        }
+      }
+
+    }
+
+    this.filteredGRN = filtered;
+  }
+  selectedGRN(event, name) {
+    if (name == 'grn_num') {
+      this.GRN_number = event.PackingSlip;
+      this.GRNLineData = this.GRNData.filter(ele => ele.PackingSlip === event.PackingSlip);
+    } else {
+      this.GRN_desc_line = event.Name;
+      this.GRN_amount_line = event.Price * event.Qty;
+      this.GRN_qty = event.Qty;
+    }
+    // let obj = {
+    //   GRN_Name : event.Name,
+    //   GRN_line_amount : event.UnitPrice * event.Qty,
+    //   Qty : event.Qty
+    // }
+    // this.multiPO.control.patchValue(obj);
+
+  }
+
+  addMultiPOLines(value) {
+    let obj = {
+      "PONumber": this.selectedPONumber,
+      "POLineNumber": value.Name.LineNumber,
+      "POLineDescription": this.PO_desc_line,
+      "GRNNumber": this.GRN_number,
+      "GRNLineDescription": this.GRN_desc_line,
+      "POLineAmount": this.PO_amount_line,
+      "ConsumedPOQty": value.ConsumedPOQty,
+      "POremainingQty": value.Name.RemainPurchFinancial,
+      "GRNLineAmount": this.GRN_amount_line,
+      "GRNQty": this.GRN_qty
+    }
+    this.mutliplePOTableData.push(obj);
+    this.multiPO.resetForm();
+  }
+
+  onChange(evt) {
+    const formData = new FormData();
+    formData.append("file", evt.target.files[0]);
+    let data, data1, header;
+    const target: DataTransfer = <DataTransfer>(evt.target);
+    const reader: FileReader = new FileReader();
+    reader.onload = (e: any) => {
+      /* read workbook */
+      const bstr: string = e.target.result;
+      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+      const wsname: string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+      /* save data */
+      data = XLSX.utils.sheet_to_json(ws);
+    };
+
+    reader.readAsBinaryString(target.files[0]);
+
+    reader.onloadend = (e) => {
+      this.uploadExcel_multiPO(formData, data)
+    }
+
+  }
+
+  uploadExcel_multiPO(file, json_data) {
+    this.spinnerService.show();
+    this.sharedService.uploadMultiPO(file).subscribe((data: any) => {
+      if (data.Result.excelCheck == 1) {
+        json_data.forEach(ele => {
+          this.mutliplePOTableData.push(ele);
+        });
+        this.alertService.addObject.detail = data.Result.status_msg;
+        this.messageService.add(this.alertService.addObject);
+      } else {
+        this.alertService.errorObject.detail = data.Result.status_msg;
+        this.messageService.add(this.alertService.errorObject);
+      }
+      // this.mutliPODailog = false;
+      // this.poTypeBoolean = true;
+      this.spinnerService.hide();
+    }, err => {
+      this.alertService.errorObject.detail = "Server error"
+      this.messageService.add(this.alertService.errorObject);
+    })
+    // delete this.uploadExcelValue;
+  }
+
+  downloadTemplate() {
+    this.sharedService.downloadTemplate('').subscribe((data: any) => {
+      this.excelDownload(data, 'Multiple PO upload template');
+    })
+  }
+  excelDownload(data, type) {
+    let blob: any = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    let d = new Date();
+    let datestring = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
+      d.getHours() + ":" + d.getMinutes();
+    fileSaver.saveAs(blob, `${type}-(${datestring})`);
+  }
+  editMulti() {
+    this.mutliPODailog = true;
+    this.multiBtn = 'Update';
+    this.readSavedLines();
+  }
+  readSavedLines() {
+    this.spinnerService.show();
+    this.sharedService.readSavedLines(this.multiPO_filepath).subscribe((data: any) => {
+      console.log(data);
+      this.spinnerService.hide();
+    }, err => {
+      this.spinnerService.hide();
+    })
+  }
+
+
+  submitMultiPO() {
+    let query = '';
+    if(this.multiPO_filepath != ''){
+      query =`?filename=${this.multiPO_filepath}`
+    }
+    this.sharedService.saveMultiPO(JSON.stringify(this.mutliplePOTableData),query).subscribe((data: any) => {
+      this.multiPO_filepath = data.Result;
+      this.mutliPODailog = false;
+      if(this.viewType == 'ideal'){
+        this.poTypeBoolean = true;
+      }
+      this.alertService.addObject.detail = "Line details data saved."
+      this.messageService.add(this.alertService.addObject)
+    }, err => {
+      this.alertService.errorObject.detail = "Server error"
+      this.messageService.add(this.alertService.errorObject);
+    })
+  }
 
   onSelectFile(event) {
     this.isuploadable = false;
@@ -274,12 +713,12 @@ export class UploadSectionComponent implements OnInit {
         // called once readAsDataURL is completed
         this.url = event.target.result;
         var img = new Image();
-        img.onload = () => {};
+        img.onload = () => { };
       };
     }
 
     this.fileDataProcess(event);
-    for (var i = 0; i < event.target.files.length; i++) {
+    for (var i = 0; i < event.target.files?.length; i++) {
       this.name = event.target.files[i].name;
       this.type = event.target.files[i].type;
       this.size = event.target.files[i].size;
@@ -294,7 +733,6 @@ export class UploadSectionComponent implements OnInit {
 
   // drop file in upload file selection
   fileDrop(event) {
-    console.log(event[0]);
     this.invoiceUploadDetails = event[0];
     this.isuploadable = false;
     this.dragfile = true;
@@ -309,7 +747,7 @@ export class UploadSectionComponent implements OnInit {
         this.url = event.target;
       };
     }
-    for (var i = 0; i < event.length; i++) {
+    for (var i = 0; i < event?.length; i++) {
       this.name = event[i].name;
       this.type = event[i].type;
       this.size = event[i].size;
@@ -326,7 +764,6 @@ export class UploadSectionComponent implements OnInit {
 
   //file data processing on file selection
   fileDataProcess(event) {
-    console.log(event);
   }
 
   // identify drop file area
@@ -363,19 +800,19 @@ export class UploadSectionComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', this.invoiceUploadDetails);
     let timer = setInterval(() => {
-      if(Number(this.seconds) < 10){
+      if (Number(this.seconds) < 10) {
         this.seconds = "0" + (Number(this.seconds) + 1).toString();
-      }else{
+      } else {
         this.seconds = (Number(this.seconds) + 1).toString();
       }
-      if(Number(this.seconds) > 59){
+      if (Number(this.seconds) > 59) {
         this.seconds = "00";
-        if(Number(this.minutes) < 10){
+        if (Number(this.minutes) < 10) {
           this.minutes = "0" + (Number(this.minutes) + 1).toString();
-        }else{
+        } else {
           this.minutes = (Number(this.minutes) + 1).toString();
         }
-        
+
       }
     }, 1000);
     this.http
@@ -417,6 +854,8 @@ export class UploadSectionComponent implements OnInit {
             // var EventSource = EventSourcePolyfill;
             let eventSourceObj = {
               file_path: this.OCRInput,
+              MultiPO_upload: this.multiPO_filepath,
+              lcmtype: this.LCMBoolean,
               vendorAccountID: this.vendorAccountId,
               poNumber: '',
               VendoruserID: this.sharedService.userId,
@@ -438,7 +877,6 @@ export class UploadSectionComponent implements OnInit {
               // console.log(event)
             });
             this.evtSource.addEventListener('end', (event: any) => {
-              console.log(event.data);
               this.progressEvent = JSON.parse(event.data);
               clearInterval(timer);
               if (this.progressEvent.InvoiceID) {
@@ -452,14 +890,15 @@ export class UploadSectionComponent implements OnInit {
                   if (this.isCustomerPortal == false) {
                     this.route.navigate([
                       `vendorPortal/invoice/InvoiceDetails/vendorUpload/${this.progressEvent.InvoiceID}`,
-                    ],{queryParams:{uploadtime:this.minutes+":"+this.seconds}});
+                    ], { queryParams: { uploadtime: this.minutes + ":" + this.seconds } });
                   } else {
                     this.route.navigate([
                       `customer/invoice/InvoiceDetails/CustomerUpload/${this.progressEvent.InvoiceID}`,
-                    ],{queryParams:{uploadtime:this.minutes+":"+this.seconds}});
+                    ], { queryParams: { uploadtime: this.minutes + ":" + this.seconds } });
                   }
                   // this.tagService.createInvoice = true;
                   // this.tagService.invoicePathBoolean = true;
+                  this.tagService.documentType = this.progressEvent.UploadDocType;
                   this.tagService.isUploadScreen = true;
                   this.tagService.displayInvoicePage = false;
                   this.tagService.editable = true;
@@ -470,7 +909,6 @@ export class UploadSectionComponent implements OnInit {
               } else {
                 this.alertService.errorObject.detail =
                   this.progressEvent['status'];
-                console.log(this.progressEvent['status']);
                 this.messageService.add(this.alertService.errorObject);
                 this.OcrProgress = null;
                 this.isuploadable = true;
@@ -488,14 +926,12 @@ export class UploadSectionComponent implements OnInit {
               });
               this.OcrProgress = null;
               this.processStage = '';
-              console.error('EventSource failed:', err);
               this.evtSource.close();
             };
           }
         }),
         catchError((err: any) => {
           clearInterval(timer);
-          console.log(err);
           this.progress = null;
           this.evtSource.close();
           alert(err.message);
@@ -505,7 +941,253 @@ export class UploadSectionComponent implements OnInit {
       .toPromise();
 
     if (this.OCRInput) {
-      console.log(1);
+    }
+  }
+  readDepartment() {
+    this.sharedService.getDepartment().subscribe((data: any) => {
+      this.DepartmentList = data.department;
+      let deparmrnt_id;
+      deparmrnt_id = this.DepartmentList[0]?.idDepartment;
+      this.selectedDepartmentID = this.DepartmentList[0]?.idDepartment;
+      this.selectedDepartment = this.DepartmentList[0]?.DepartmentName;
+      this.approversSendData.push({
+        EntityID: this.sharedService.selectedEntityId,
+        DepartmentID: deparmrnt_id
+      });
+      this.checkApprovalStatus();
+      // this.readApproverData();
+      this.approversSendData[0].DepartmentID = this.DepartmentList[0]?.idDepartment ? this.DepartmentList[0]?.idDepartment : null;
+      // this.entityDeptList = this.entityBodyList[0].department
+    });
+  }
+  readApproverData() {
+    this.spinnerService.show();
+    this.approversSendData[0].approver = [];
+    this.approverList = {};
+    this.sharedService.invoiceID = 12344;
+    this.approverNameList = [];
+    this.sharedService.readApprovers(JSON.stringify(this.approversSendData[0])).subscribe((data: any) => {
+      let resultData = data?.result
+      let array = [];
+      let list = [];
+      let count = 0;
+      for (const item in resultData) {
+        count = count + 1;
+        list = resultData[item].sort((a, b) => a.userPriority - b.userPriority);
+        this.approverList[`${item}_${count}`] = list;
+        this.approverNameList.push(resultData[item][0]?.User?.firstName)
+        array.push(resultData[item][0]?.User?.idUser);
+      }
+      this.approversSendData[0].approver = array;
+      this.spinnerService.hide();
+    }, err => {
+      this.spinnerService.hide();
+      if (err.status == 403) {
+        this.alertService.errorObject.detail = 'Approvers are not available for this combination';
+      } else {
+        this.alertService.errorObject.detail = 'Server error';
+      }
+      this.messageService.add(this.alertService.errorObject);
+
+    })
+
+  }
+  onSelectDepartment(val) {
+    this.DepartmentList.forEach(ele => {
+      if (ele.DepartmentName == val) {
+        this.approversSendData[0].DepartmentID = ele.idDepartment
+        this.selectedDepartmentID = ele.idDepartment;
+      }
+    })
+
+    this.checkApprovalStatus();
+  }
+  checkApprovalStatus() {
+    let obj = {
+      "subRole": 0,
+      "EntityID": this.selectedEntityId,
+      "DepartmentID": Number(this.selectedDepartmentID),
+      "userPriority": 0
+    }
+    this.sharedService.checkPriority(true, JSON.stringify(obj)).subscribe((data: any) => {
+
+      if (data.status == 1) {
+        this.approvalBoolean = true;
+        this.readApproverData();
+      } else {
+        this.approvalBoolean = false;
+      }
+    })
+  }
+  addApprovers() {
+    this.approverDialog = false;
+    this.approverNameListFinal = this.approverNameList;
+    this.approversFinalList = this.approversSendData[0].approver;
+  }
+  onSelectFile_quick(event, type) {
+    this.supportFileNamelist = [];
+    if (type == 'invoice') {
+      for (var i = 0; i < event.target.files?.length; i++) {
+        this.invoiceDocList.push(event.target.files[i]);
+        this.invoiceFilename = event.target.files[i].name;
+      }
+    } else {
+      for (var i = 0; i < event.target.files?.length; i++) {
+        this.supportDocList.push(event.target.files[i]);
+        this.supportFileNamelist.push(event.target.files[i].name);
+      }
+    }
+  }
+  onSelectPreaprve(val) {
+    if (val) {
+      this.touchedApproveBoolean = true;
+    } else {
+      this.touchedApproveBoolean = false;
+    }
+
+  }
+  onSelectApprovers(value, index) {
+    this.approversSendData[0].approver[index] = value;
+    let approver
+    let count = 0;
+    for (const item in this.approverList) {
+      if (count == index) {
+        this.approverList[item].forEach(ele => {
+          if (ele.User.idUser == value) {
+            this.approverNameList[index] = ele.User.firstName;
+          }
+
+        })
+      }
+      count = count + 1;
+
+      // approver = this.approversSendData[0].approver.filter((ele)=> this.approverList[item].User.idUser == ele)
+    }
+  }
+  addInvoiceDetailsToQueue(val) {
+    if (this.approvalBoolean) {
+      if (this.touchedApproveBoolean || this.approverNameListFinal.length > 0) {
+        if (val.invoiceType == 'multiPO') {
+          if (this.multiPO_filepath != '') {
+            this.addFunction(val)
+          } else {
+            this.alertService.errorObject.detail = "Please add multiple PO lines.";
+            this.messageService.add(this.alertService.errorObject);
+          }
+        } else {
+          this.addFunction(val)
+        }
+
+      } else {
+        this.alertService.errorObject.detail = "Please select pre-approve or approver names.";
+        this.messageService.add(this.alertService.errorObject);
+      }
+    } else {
+      this.addFunction(val)
+    }
+
+  }
+  addFunction(val) {
+    let Approver;
+    let pre_approved = false;
+    let multiPath = this.multiPO_filepath;
+    if (val.preApprove) {
+      Approver = "Pre Approved";
+      pre_approved = true;
+    } else {
+      Approver = this.approverNameListFinal
+
+    }
+    let obj = {
+      EntityName: this.entityName,
+      VendorName: val.vendor?.VendorName,
+      PONumber: val.PONumber?.PODocumentID,
+      invoiceType: val.invoiceType,
+      attchedInvoice: this.invoiceFilename,
+      attchedSupport: this.supportFileNamelist,
+      departmentName: val.departmentName,
+      approvers: Approver
+
+    }
+    let APIObj = {
+      "ven_acc_id": this.vendorAccountId,
+      "invoice_type": val.invoiceType,
+      "is_pre_approved": pre_approved,
+      "EntityID": val.EntityName?.idEntity,
+      "DepartmentID": this.selectedDepartmentID,
+      "approver": this.approversFinalList,
+      "invoice_name": this.invoiceFilename,
+      "po_number": val.PONumber?.PODocumentID,
+      "multi_po_path": multiPath,
+      "supporting_doc_names": this.supportFileNamelist
+    }
+    this.uploadInvoicesListData.push(obj);
+    this.APIPostData.push(APIObj);
+    this.quickUploadForm.control.reset();
+    this.approverNameList = [];
+    this.approverNameListFinal = [];
+    this.approversFinalList = [];
+    this.supportFileNamelist = [];
+    this.approvalBoolean = false;
+    this.selectedDepartmentID = 0;
+    this.touchedApproveBoolean = false;
+    this.invoiceFilename = '';
+    this.multiPO_filepath = '';
+    this.approversSendData = [];
+    this.mutliplePOTableData = [];
+    this.POnumberBoolean = false;
+  }
+  deleteQueue(index, data) {
+    if (confirm('Are you sure you want to delete?')) {
+      this.APIPostData.splice(index, 1);
+      this.uploadInvoicesListData.splice(index, 1);
+      this.invoiceDocList.splice(index, 1);
+      data.attchedSupport.forEach(ele => {
+        let ind = this.supportDocList.findIndex(val => val.name == ele)
+        if (ind !== -1) {
+          this.supportDocList.splice(ind, 1);
+        }
+      });
+    }
+
+  }
+  uploadSigle(val) {
+    this.addInvoiceDetailsToQueue(val);
+    setTimeout(() => {
+      if (this.APIPostData.length > 0) {
+        this.uploadAllFiles();
+      }
+    }, 100);
+  }
+  uploadAllFiles() {
+    const inv_formData: any = new FormData();
+    for (const file of this.invoiceDocList) {
+      inv_formData.append('invoices', file, file.name);
+    }
+    for (const file of this.supportDocList) {
+      inv_formData.append('supporting_docs', file, file.name);
+    }
+    inv_formData.append('data', JSON.stringify(this.APIPostData))
+
+    this.spinnerService.show();
+    this.sharedService.mutliUpload(inv_formData).subscribe((data: any) => {
+      this.alertService.addObject.detail = "Files Uploading process started, please check after some time.";
+      this.messageService.add(this.alertService.addObject);
+      this.APIPostData = [];
+      this.uploadInvoicesListData = [];
+      this.invoiceDocList = [];
+      this.supportDocList = [];
+      this.spinnerService.hide();
+    }, err => {
+      this.alertService.errorObject.detail = "Server error";
+      this.messageService.add(this.alertService.errorObject);
+      this.spinnerService.hide();
+    })
+  }
+
+  deleteMultiPO(index, data) {
+    if (confirm('Are you sure you want to delete?')) {
+      this.mutliplePOTableData.splice(index, 1);
     }
   }
 }

@@ -104,7 +104,6 @@ export class ExceptionTableComponent implements OnInit {
     }
     // this.getColumnData();
     if (this.columnsData) {
-      console.log(this.columnsData);
       // if(this.columnsData.length > 10){
 
       //   this.showPaginator = true;
@@ -123,8 +122,15 @@ export class ExceptionTableComponent implements OnInit {
     //   this.rows = this.storageService.exc_batch_approve_page_row_length;
     // }
     if (this.router.url.includes('ExceptionManagement')) {
+      if (this.tagService.batchProcessTab == 'normal') {
+        this.batchBoolean = true;
         this.first = this.storageService.exc_batch_edit_page_first;
-        this.rows = this.storageService.exc_batch_edit_page_row_length ;
+        this.rows = this.storageService.exc_batch_edit_page_row_length;
+      } else {
+        this.batchBoolean = false;
+        this.first = this.storageService.exc_batch_approve_page_first;
+        this.rows = this.storageService.exc_batch_approve_page_row_length;
+      }
     } else if(this.router.url.includes('Create_GRN_inv_list')) {
       this.first = this.storageService.create_GRN_page_first;
       this.rows = this.storageService.create_GRN_page_row_length;
@@ -137,7 +143,6 @@ export class ExceptionTableComponent implements OnInit {
     // } else if(this.userType == 'customer_portal'){
     //   this.router.navigate([`customer/invoice/InvoiceDetails/${e.idDocument}`]);
     // }
-    console.log(e);
     if (this.router.url.includes('ExceptionManagement')) {
       this.router.navigate([
         `/${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
@@ -183,10 +188,11 @@ export class ExceptionTableComponent implements OnInit {
   // edit invoice details if something wrong
   editInvoice(e) {
     console.log(e);
+    this.storageService.editableInvoiceData = e;
     this.ExceptionsService.invoiceID = e.idDocument;
-    console.log(this.ExceptionsService.invoiceID);
     this.tagService.editable = true;
     this.sharedService.invoiceID = e.idDocument;
+    this.tagService.documentType = e.UploadDocType;
     if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`) {
       this.router.navigate([
         `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,

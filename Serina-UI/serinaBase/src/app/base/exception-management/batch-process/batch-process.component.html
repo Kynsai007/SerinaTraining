@@ -1,4 +1,4 @@
-<h6 *ngIf="!dashboardViewBoolean" class="headh6">Vendor based Exception</h6>
+<h6 *ngIf="!dashboardViewBoolean" class="headh6">Vendor Based Exception</h6>
 
 <div class="container-fluid">
   <div>
@@ -17,7 +17,7 @@
             class="nav-link"
             [class.active-tab]="viewType == 'editApproveBatch'"
             (click)="chooseEditedpageTab('editApproveBatch')"
-            >Edit Approval({{ dataLengthAdmin }})</a
+            >Approval Pending({{ dataLengthAdmin }})</a
           >
         </li> -->
       </ul>
@@ -59,8 +59,8 @@
         <div *ngIf="!dashboardViewBoolean" class="tableDiv">
           <div>
             <app-exception-table
-              [invoiceColumns]="ColumnsForBatchApproval"
-              [columnsToDisplay]="columnsToDisplayBatchApproval"
+              [invoiceColumns]="ColumnsForBatch"
+              [columnsToDisplay]="columnsToDisplay"
               (searchInvoiceData)="searchInvoiceDataV($event)"
               [ColumnLength]="approvalPageColumnLength"
               [showPaginatorAllInvoice]="showPaginatorApproval"

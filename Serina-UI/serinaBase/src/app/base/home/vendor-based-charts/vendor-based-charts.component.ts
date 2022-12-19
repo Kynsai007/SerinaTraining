@@ -1,3 +1,4 @@
+import { DataService } from './../../../services/dataStore/data.service';
 import { ImportExcelService } from './../../../services/importExcel/import-excel.service';
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
@@ -46,6 +47,7 @@ export class VendorBasedChartsComponent implements OnInit {
     private chartsService: ChartsService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
+    private dataStoreService : DataService,
     private ImportExcelService: ImportExcelService,
     private router : Router,
     private datePipe : DatePipe,
@@ -53,25 +55,28 @@ export class VendorBasedChartsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.viewType = this.chartsService.vendorTabs;
-    // this.readExceptionData();
-    this.prepareColumns();
-    this.readEmailExceptionData('');
-    this.readOnboardedData('');
-    this.dateRange();
-    if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
-      this.viewType = 'Process';
-    } else if(this.router.url == '/customer/home/vendorBasedReports/exceptionReports'){
-      this.viewType = 'Exception';
-    } else if(this.router.url == '/customer/home/vendorBasedReports/emailExceptionReports'){
-      this.viewType = 'emailException';
-    }else {
-      this.viewType = 'onboarded';
-      this.getDate();
+    if(this.dataStoreService.configData?.vendorInvoices){
+      this.viewType = this.chartsService.vendorTabs;
+      // this.readExceptionData();
+      this.prepareColumns();
+      this.readEmailExceptionData('');
+      this.dateRange();
+      if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
+        this.viewType = 'Process';
+      } else if(this.router.url == '/customer/home/vendorBasedReports/exceptionReports'){
+        this.viewType = 'Exception';
+      } else if(this.router.url == '/customer/home/vendorBasedReports/emailExceptionReports'){
+        this.viewType = 'emailException';
+      }else {
+        this.viewType = 'onboarded';
+        this.getDate();
+      }
+    } else {
+      history.back();
     }
+
   }
 
-  // changing tabs
   choosepageTab(value) {
     this.viewType = value;
     this.chartsService.vendorTabs = value;

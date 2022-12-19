@@ -1,4 +1,4 @@
-<h6 *ngIf="!dashboardViewBoolean" class="headh6">Finance Approval</h6>
+<h6 *ngIf="!dashboardViewBoolean" class="headh6">Approval</h6>
 
 <div
   *ngIf="invoiceListBoolean"
@@ -16,14 +16,14 @@
             >Vendor Invoices({{ approvedDataLength }})</a
           >
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'serviceInvoice'"
             (click)="chooseApprovalpageTab('serviceInvoice')"
             >Service Invoices({{ approvedDataLengthSP }})</a
           >
-        </li>
+        </li> -->
       </ul>
 
       <div class="positionCreateUpload">
@@ -124,7 +124,6 @@
                     {{ invoiceData[col.field] }}
                   </td>
                   <td *ngIf="!dashboardViewBoolean">
-                    <!-- <i class="pi pi-eye f-16 showEye mr-2" (click)="viewInvoice(invoiceData)"></i> -->
                     <button
                       class="b-0 actionsBtn"
                       [disabled]="!editPermissionBoolean"

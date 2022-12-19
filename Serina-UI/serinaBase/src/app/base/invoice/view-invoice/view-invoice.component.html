@@ -13,19 +13,46 @@
   
 </div>
 <div class="row invoice-body">
-  <div class="viewPdf" style="right: 160px;">
+  <div
+    *ngIf="isLCMTab && editable && !isLCMCompleted"
+    class="viewPdf d-flex"
+    style="right: 180px"
+  >
+    <div>
+      <button class="btnUpload" (click)="downloadLCMTemplate()">
+        Download Template
+      </button>
+    </div>
+    <div style="margin-top: 2px" class="ml-2">
+      <input
+        type="file"
+        id="custom-upload"
+        [(ngModel)]="uploadExcelValue"
+        (change)="onChange($event)"
+        hidden
+        #inputFile
+        accept=".xls,.xlsx"
+      />
+      <label for="custom-upload" class="btnUpload filter_btn_m f-12 mr-2"
+        ><span style="position: relative; top: 5px">Upload Excel</span></label
+      >
+    </div>
+  </div>
+  <div class="viewPdf" style="right: 160px">
     <button
-          *ngIf="
-            (editPermissionBoolean ||
-              changeApproveBoolean ||
-              financeApproveBoolean) &&
-            (submitBtn_boolean || vendorUplaodBoolean) && lineTabBoolean
-          "
-          class="btnUpload btn_extra_bg"
-          (click)="open_dialog('AddLine',null)"
-        >
-        <i class="fa fa-plus" aria-hidden="true"></i> Add Line
-        </button>
+      *ngIf="
+        (editPermissionBoolean ||
+          changeApproveBoolean ||
+          financeApproveBoolean) &&
+        (submitBtn_boolean || vendorUplaodBoolean) &&
+        lineTabBoolean &&
+        !isLinenonEditable
+      "
+      class="btnUpload bg-blue"
+      (click)="captureComments('AddLine', null)"
+    >
+      <i class="fa fa-plus" aria-hidden="true"></i> Add Line
+    </button>
   </div>
   <div class="viewPdf" *ngIf="!isPdfAvailable" style="right: 100px;">
     <button class="btnUpload" (click)="DownloadPDF()">
@@ -48,14 +75,14 @@
         (click)="changeTab('show','vendor')"
       >
         <a
-          class="nav-link active"
+          class="nav-link"
           id="vendor-tab"
           data-toggle="tab"
           href="#vendor"
           role="tab"
           aria-controls="vendor"
           aria-selected="true"
-          >Vendor details</a
+          >Vendor</a
         >
       </li>
       <li
@@ -66,14 +93,14 @@
         (click)="changeTab('show','service')"
       >
         <a
-          class="nav-link active"
+          class="nav-link"
           id="vendor-tab"
           data-toggle="tab"
           href="#vendor"
           role="tab"
           aria-controls="vendor"
           aria-selected="true"
-          >Service details</a
+          >Service</a
         >
       </li>
       <li
@@ -83,21 +110,23 @@
         (click)="changeTab('show','head')"
       >
         <a
-          class="nav-link "
+          class="nav-link"
           id="header-tab"
           data-toggle="tab"
           href="#header"
           role="tab"
           aria-controls="header"
           aria-selected="false"
-          >Header details</a
+          [ngClass]="approval_selection_boolean ? '' : 'active'"
+          >Header</a
         >
       </li>
       <li
         class="nav-item"
         pTooltip="Line details"
         tooltipPosition="top"
-        (click)="changeTab('hide','line')"
+        (click)="changeTab('hide', 'line')"
+        *ngIf="!isLCMInvoice"
       >
         <a
           class="nav-link"
@@ -110,17 +139,79 @@
           >Line details</a
         >
       </li>
+
+      <li
+        class="nav-item"
+        pTooltip="LCM details"
+        tooltipPosition="top"
+        (click)="changeTab('hide', 'LCM')"
+        *ngIf="isLCMInvoice"
+      >
+        <a
+          class="nav-link"
+          id="lcm-tab"
+          data-toggle="tab"
+          href="#lcm"
+          role="tab"
+          aria-controls="lcm"
+          [ngClass]="isLCMInvoice ? 'active' : ''"
+          aria-selected="false"
+          >LCM line details</a
+        >
+      </li>
+
+      <li
+        *ngIf="!isServiceData && !approval_selection_boolean"
+        class="nav-item ml-2"
+        pTooltip="Support Doc"
+        tooltipPosition="top"
+        (click)="changeTab('show', 'support')"
+      >
+        <a
+          [ngClass]="tabName == 'support' ? 'bg-2' : 'bg-1'"
+          class="nav-link"
+          id="support-tab"
+          data-toggle="tab"
+          href="#support"
+          role="tab"
+          aria-controls="support"
+          aria-selected="false"
+          >Support Doc</a
+        >
+      </li>
+
+      <li
+        *ngIf="!isServiceData && approval_selection_boolean && isLCMCompleted"
+        class="nav-item ml-2"
+        pTooltip="Approver Selection"
+        tooltipPosition="top"
+        (click)="changeTab('hide', 'approver_selection')"
+      >
+        <a
+          class="nav-link"
+          id="approver_selection-tab"
+          data-toggle="tab"
+          href="#approver_selection"
+          role="tab"
+          aria-controls="approver_selection"
+          aria-selected="false"
+          [ngClass]="
+            approval_selection_boolean && !isLCMInvoice ? 'active' : ''
+          "
+          >Approver Selection</a
+        >
+      </li>
       <!-- <button class="raiseAlert" pTooltip="raise an alert" tooltipPosition="top"><i class="fa fa-exclamation-triangle"
           aria-hidden="true"></i></button> -->
     </ul>
-    
-      
     <div class="bg-design-all tabsDiv">
-      <h6 class="upload-time" *ngIf="uploadtime">Upload Completed in - {{uploadtime}}</h6>  
+      <h6 class="upload-time" *ngIf="uploadtime">
+        Upload Completed in - {{ uploadtime }}
+      </h6>
       <div class="tabDiv tab-content" id="myTabContent">
         <!-- vendor -->
         <div
-          class="tab-pane fade show active"
+          class="tab-pane fade"
           id="vendor"
           role="tabpanel"
           aria-labelledby="vendor-tab"
@@ -157,6 +248,7 @@
         <!-- header -->
         <div
           class="tab-pane fade"
+          [ngClass]="approval_selection_boolean ? '' : 'show active'"
           id="header"
           role="tabpanel"
           aria-labelledby="header-tab"
@@ -164,10 +256,7 @@
           <div class="displayFlex">
             <div *ngFor="let value of inputData">
               <div>
-                <label
-                  class="label-head"
-                  style="margin-bottom: -5px"
-                  
+                <label class="label-head" style="margin-bottom: -5px"
                   >{{ value.TagLabel }}
                   <span
                     *ngIf="value.isError == 1"
@@ -228,7 +317,14 @@
               class="invert_tr"
               *ngFor="let item of lineDisplayData; let i = index"
             >
-              <td class="lineName invert_th_td" [ngStyle]="{'min-width' : item.TagName == 'S.NO' ?'40px':'130px'}">{{ item.TagName }}</td>
+              <td
+                class="lineName invert_th_td"
+                [ngStyle]="{
+                  'min-width': item.TagName == 'S.No' ? '40px' : '130px'
+                }"
+              >
+                {{ item.TagName }}
+              </td>
               <!-- <div>
                     <div class="linevalue invert_thtd">{{i+1}}</div>
                   </div> -->
@@ -236,34 +332,54 @@
                 class="linevalue invert_th_td"
                 *ngFor="let line1 of item.linedata; let i = index"
               >
-                  
+                <div *ngIf="item.TagName == 'S.No'">
+                  <div class="linevalue invert_thtd p-2">{{ i + 1 }}</div>
+                </div>
                 <div
                   *ngFor="let line of line1 | keyvalue"
                   class="d-flex"
                   style="position: relative"
                 >
-                  <div *ngIf="line.key == 'DocumentLineItems' ">
+                  <div
+                    *ngIf="
+                      line.key == 'DocumentLineItems' && item.TagName != 'S.No'
+                    "
+                  >
                     <!-- {{line.value.Value |json}} -->
-                    <div *ngIf="item.TagName == 'S.NO'">
-                      <div class="linevalue invert_thtd p-2">{{line.value.itemCode }}</div>
+                    <div *ngIf="item.TagName == 'S.No'">
+                      <div class="linevalue invert_thtd p-2">
+                        {{ line.value.itemCode }}
+                      </div>
                     </div>
                     <div *ngIf="item.TagName == 'Actions' && editable">
                       <div class="linevalue invert_thtd">
-                        <button style="border-color: transparent;" (click)="open_dialog('delete', line.value)">
+                        <button
+                          style="border-color: transparent"
+                          (click)="captureComments('delete', line.value)"
+                        >
                           <i class="fa fa-trash-o" aria-hidden="true"></i>
                         </button>
                       </div>
                     </div>
-                    <span  *ngIf="item.TagName != 'S.NO' &&  item.TagName != 'Actions'">
+                    <span
+                      *ngIf="
+                        item.TagName != 'S.No' && item.TagName != 'Actions'
+                      "
+                    >
                       <input
                         #inputv
                         type="text"
                         [ngClass]="
-                          (item.TagName == 'Description' || item.TagName == 'Name') ? 'w-des' : 'w-sm'
+                          item.TagName == 'Description' ||
+                          item.TagName == 'Name'
+                            ? 'w-des'
+                            : 'w-sm'
                         "
                         [value]="line.value.Value"
                         [title]="line.value.Value"
-                        [disabled]="!editable || fin_boolean"
+                        [disabled]="
+                          !editable || fin_boolean || isLinenonEditable
+                        "
                         [ngStyle]="{
                           border:
                             line.value.isError === 1
@@ -282,7 +398,11 @@
                     </span>
                   </div>
                   <div
-                    *ngIf="line.value?.isError == 1 && item.TagName != 'S.NO' && item.TagName != 'Actions'"
+                    *ngIf="
+                      line.value?.isError == 1 &&
+                      item.TagName != 'S.No' &&
+                      item.TagName != 'Actions'
+                    "
                     [pTooltip]="line.value.ErrorDesc"
                     tooltipPosition="top"
                   >
@@ -291,25 +411,563 @@
                       aria-hidden="true"
                     ></i>
                   </div>
-                  <div *ngIf="line.key == 'DocumentUpdates' && line.value && item.TagName != 'S.NO' && item.TagName != 'Actions'">
+                  <div
+                    *ngIf="
+                      line.key == 'DocumentUpdates' &&
+                      line.value &&
+                      item.TagName != 'S.No' &&
+                      item.TagName != 'Actions'
+                    "
+                  >
                     <span class="old_value"
                       >Prev:
                       <span style="color: #f38a6b"
-                        >"{{ line.value.OldValue}}"</span
+                        >"{{ line.value.OldValue }}"</span
                       ></span
                     >
                   </div>
-                  
                 </div>
-                
               </td>
             </tr>
           </table>
         </div>
+
+        <!--LCM-->
+        <div
+          class="tab-pane fade"
+          [ngClass]="isLCMInvoice ? 'show active' : ''"
+          id="lcm"
+          role="tabpanel"
+          aria-labelledby="lcm-tab"
+        >
+          <form
+            *ngIf="editable && !isLCMCompleted"
+            class="d-flex flex-wrap"
+            style="gap: 0px 5px"
+            #LCMLineForm="ngForm"
+            (ngSubmit)="AddLCMLine(LCMLineForm.value)"
+          >
+            <div>
+              <label class="f-12 mb-0">Select Entity</label><br />
+              <!-- <p-autoComplete placeholder="" (onSelect)="onSelectEnt($event)" [group]="false"
+                [suggestions]="filteredEnt" (completeMethod)="filterEnttity($event)" field="EntityName"
+                [dropdown]="true" [style]="{ width: '160px' }" name="EntityName" [(ngModel)]="EntityName" required>
+                <ng-template let-group pTemplate="group">
+                  <div class="flex align-items-center">
+                    <span class="f-12">{{ group.EntityName }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete> -->
+              <select
+                class="form-control inputHeight"
+                style="width: 160px"
+                name="EntityName"
+                [(ngModel)]="EntityName"
+                [title]="EntityName"
+                (change)="onSelectEntity(EntityName)"
+              >
+                <option
+                  *ngFor="let entity of entityList"
+                  [value]="entity.EntityName"
+                >
+                  {{ entity.EntityName }}
+                </option>
+              </select>
+            </div>
+            <div>
+              <label class="f-12 mb-0">Select PO Number</label><br />
+              <p-autoComplete
+                placeholder=" "
+                (onSelect)="selectedPO($event)"
+                [group]="false"
+                [suggestions]="filteredPO"
+                (completeMethod)="filterPOnumber($event)"
+                field="PODocumentID"
+                [dropdown]="true"
+                [style]="{ width: '160px' }"
+                name="PoDocumentId"
+                ngModel
+                required
+              >
+                <ng-template let-group pTemplate="group">
+                  <div class="flex align-items-center">
+                    <span class="f-12">{{ group.PODocumentID }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+            </div>
+
+            <div>
+              <label class="f-12 mb-0">Line Description</label><br />
+              <p-autoComplete
+                placeholder=" "
+                (onSelect)="OnSelectLine($event)"
+                [group]="false"
+                [suggestions]="filteredLCMLines"
+                (completeMethod)="filterLCMLine($event)"
+                field="PoLineDescription"
+                [dropdown]="true"
+                [style]="{ width: '160px' }"
+                name="PoLineDescription"
+                ngModel
+                required
+              >
+                <ng-template let-group pTemplate="group">
+                  <div class="flex align-items-center">
+                    <span class="f-12">{{ group.PoLineDescription }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+            </div>
+
+            <!-- <div>
+              <label class="f-12 mb-0">Item ID</label><br />
+              <p-autoComplete placeholder="" (onSelect)="OnSelectLine($event)" [group]="false"
+                [suggestions]="filteredLCMLines" (completeMethod)="filterLCMLine($event)" field="ItemNumber"
+                [dropdown]="true" name="ItemNumber" [style]="{ width: '160px' }" ngModel required>
+                <ng-template let-group pTemplate="group">
+                  <div class="flex align-items-center">
+                    <span class="f-12">{{ group.Name }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+            </div> -->
+
+            <!-- <div>
+              <label class="f-12 mb-0">Voyage Number</label><br />
+              <p-autoComplete placeholder="" (onSelect)="onSelectVoyage($event)" [group]="false"
+                [suggestions]="filteredVoyage" (completeMethod)="filterVoyage($event)" field="voyage_number"
+                [dropdown]="true" name="VoyageNumber" [style]="{ width: '160px' }" ngModel required>
+                <ng-template let-group pTemplate="group">
+                  <div class="flex align-items-center">
+                    <span class="f-12">{{ group.Name }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+            </div> -->
+            <div>
+              <label class="f-12 mb-0">Charges code</label><br />
+              <p-autoComplete
+                placeholder=""
+                (onSelect)="onSelectCost($event)"
+                [group]="false"
+                [suggestions]="filteredCost"
+                (completeMethod)="filterCost($event)"
+                field="MarkupCode"
+                [dropdown]="true"
+                [style]="{ width: '160px' }"
+                name="CostCategory"
+                ngModel
+                required
+              >
+                <ng-template let-group pTemplate="group">
+                  <div class="flex align-items-center">
+                    <span class="f-12">{{ group.MarkupCode }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+            </div>
+
+            <!-- <div>
+              <label class="f-12 mb-0"> Item ID</label><br />
+              <input
+                type="text"
+                class="form-control inputHeight"
+                style="width: 120px"
+                name="ItemID"
+                [(ngModel)]="itemId"
+                ngModel
+                disabled
+              />
+            </div> -->
+            <div>
+              <label class="f-12 mb-0"> Voyage Number</label><br />
+              <input
+                type="text"
+                class="form-control inputHeight"
+                style="width: 120px"
+                name="VoyageNumber"
+                [(ngModel)]="selectedVoyage"
+                ngModel
+                disabled
+              />
+            </div>
+            <div>
+              <label class="f-12 mb-0">Vessel Number</label><br />
+              <input
+                type="text"
+                class="form-control inputHeight"
+                style="width: 120px"
+                name="AGIVesselNumber"
+                [(ngModel)]="AGIVesselNumber"
+                disabled
+              />
+            </div>
+            <div>
+              <label class="f-12 mb-0"> Estimated value</label><br />
+              <input
+                type="text"
+                class="form-control inputHeight"
+                style="width: 120px"
+                name="EstimatedValue"
+                [(ngModel)]="est_val"
+                ngModel
+                disabled
+              />
+            </div>
+
+            <div>
+              <label class="f-12 mb-0">Actualized value</label><br />
+              <input
+                type="text"
+                class="form-control inputHeight"
+                style="width: 120px"
+                name="ActualizedValue"
+                [(ngModel)]="act_val"
+                disabled
+              />
+            </div>
+
+            <div>
+              <label class="f-12 mb-0">Allocate</label><br />
+              <input
+                type="number"
+                min="0"
+                [max]="max_allocation"
+                class="form-control inputHeight"
+                style="width: 120px"
+                name="Allocate"
+                ngModel
+                required
+              />
+            </div>
+
+            <div>
+              <label class="f-12 mb-0"></label><br />
+              <button
+                class="btnUpload bg-blue"
+                [disabled]="LCMLineForm.invalid"
+              >
+                + Add
+              </button>
+            </div>
+          </form>
+          <table class="d-flex lcm_table_ht" *ngIf="LCMDataTable?.length > 0">
+            <div *ngFor="let item of LCMTable; let i = index">
+              <tr>
+                <th class="lineName text-center f-12" style="min-width: 100px">
+                  {{ item.name }}
+                </th>
+                <th
+                  *ngIf="i > 7"
+                  class="lineName text-center f-12"
+                  style="min-width: 80px"
+                >
+                  Actions
+                </th>
+              </tr>
+              <tr *ngFor="let p of LCMDataTable; let ind = index" class="mb-2">
+                <td
+                  class="f-12 linevalue lcm_table_td text-center"
+                  [title]="p[item.field]"
+                >
+                  {{ p[item.field] }}
+                </td>
+                <td
+                  *ngIf="i > 7"
+                  class="f-12 linevalue text-center"
+                  style="cursor: pointer"
+                  (click)="captureComments('delete', p)"
+                >
+                  <i class="fa fa-trash-o"></i>
+                </td>
+              </tr>
+            </div>
+          </table>
+          <hr />
+          <div
+            *ngIf="LCMDataTable?.length > 0"
+            class="f-12 d-flex flex-column align-items-end"
+            style="margin-right: 140px"
+          >
+            <div>Total Invoice Amount = {{ invoiceTotal }}</div>
+            <div>Total Allocation = {{ allocateTotal }}</div>
+            <div>
+              Balance Invoice Amount =
+              <span
+                [ngStyle]="{ color: balanceAmount < 0 ? 'red' : 'green' }"
+                >{{ balanceAmount }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Support Doc -->
+        <div
+          class="tab-pane fade show active"
+          id="support"
+          role="tabpanel"
+          aria-labelledby="support-tab"
+          style="position: relative"
+        >
+          <div
+            *ngIf="
+              supportTabBoolean &&
+              support_doc_list?.length > 0 &&
+              !approval_selection_boolean
+            "
+          >
+            <table class="table">
+              <tr class="f-12 lineName">
+                <th>S.No</th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+              <tr
+                *ngFor="let file of support_doc_list; let i = index"
+                class="f-11"
+              >
+                <td>{{ i + 1 }}</td>
+                <td class="break_word">{{ file }}</td>
+                <td>
+                  <i
+                    class="fa fa-download"
+                    aria-hidden="true"
+                    style="cursor: pointer"
+                    (click)="downloadDoc(file)"
+                  ></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div
+            *ngIf="
+              supportTabBoolean &&
+              !(support_doc_list?.length > 0) &&
+              !approval_selection_boolean
+            "
+          >
+            <div class="no_doc_div f-14">
+              No Supporting Document available, if you have any please upload.
+            </div>
+          </div>
+          <div class="file_table" *ngIf="uploadFileList.length > 0">
+            <table class="table">
+              <tr class="f-12">
+                <th>S.No</th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+              <tr
+                *ngFor="let file of uploadFileList; let i = index"
+                class="f-11"
+              >
+                <td>{{ i + 1 }}</td>
+                <td>{{ file.name }}</td>
+                <td>
+                  <i
+                    class="fa fa-trash-o"
+                    aria-hidden="true"
+                    style="cursor: pointer"
+                    (click)="removeUploadQueue(i)"
+                  ></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div
+            *ngIf="supportTabBoolean && editable && !approval_selection_boolean"
+          >
+            <label
+              for="img"
+              class="img-browse"
+              [ngClass]="uploadFileList.length > 0 ? 'disable_clas' : ''"
+            >
+              Attach Document
+            </label>
+            <input
+              (change)="onSelectFile($event)"
+              #fileInput
+              type="file"
+              id="img"
+              name="img"
+              accept=".pdf,.doc, .docx"
+              multiple
+              [disabled]="uploadFileList.length > 0"
+              hidden
+            />
+            <!-- <input type="file" multiple (change)="uploadSupport($event)"> -->
+
+            <button
+              class="img-browse h-35 b-0 ml-2"
+              (click)="uploadSupport()"
+              [disabled]="!(uploadFileList.length > 0)"
+              [ngClass]="!(uploadFileList.length > 0) ? 'disable_clas' : ''"
+            >
+              Upload
+            </button>
+          </div>
+        </div>
+
+        <!--Approval Selection-->
+        <div
+          class="tab-pane fade"
+          [ngClass]="
+            approval_selection_boolean && !isLCMInvoice ? 'show active' : ''
+          "
+          id="approver_selection"
+          role="tabpanel"
+          aria-labelledby="approver_selection-tab"
+          style="position: relative"
+        >
+          <div *ngIf="selectionTabBoolean" class="selection_Div">
+            <div class="d-flex justify-content-between flex-wrap f-12">
+              <div>
+                <label>Select Entity</label>
+                <select
+                  class="form-control inputHeight"
+                  [(ngModel)]="entityName"
+                  [title]="entityName"
+                  disabled
+                >
+                  <option
+                    *ngFor="let entity of entityList"
+                    [value]="entity.EntityName"
+                  >
+                    {{ entity.EntityName }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label>Select Department</label>
+                <select
+                  class="form-control inputHeight"
+                  [(ngModel)]="selectedDepartment"
+                  (change)="onSelectDepartment($event.target.value)"
+                >
+                  <option
+                    *ngFor="let name of DepartmentList"
+                    [value]="name.DepartmentName"
+                  >
+                    {{ name.DepartmentName }}
+                  </option>
+                </select>
+              </div>
+              <!-- <div>
+                <label>Select Category</label>
+                <select
+                  class="form-control inputHeight"
+                  (change)="onSelectCategory($event.target.value)"
+                >
+                  <option value=""></option>
+                </select>
+              </div> -->
+              <div *ngFor="let item of approverList | keyvalue; let i = index">
+                <label>Select Approver {{ i + 1 }}</label>
+                <!-- <div>{{item.value | json}}</div> -->
+                <select
+                  class="form-control inputHeight"
+                  [disabled]="preApproveBoolean"
+                  (change)="onSelectApprovers($event.target.value, i)"
+                >
+                  <option
+                    *ngFor="let element of item.value"
+                    [value]="element.User.idUser"
+                  >
+                    {{ element.User.firstName }} {{ element.User.lastName }}
+                  </option>
+                </select>
+              </div>
+              <!-- <div>
+                <label>Select Approver 2</label>
+                <select class="form-control inputHeight" [disabled]="preApproveBoolean">
+                  <option value="">Karan</option>
+                </select>
+              </div> -->
+            </div>
+
+            <div class="mt-2">
+              <label for="pre_approve" class="f-12">
+                <input
+                  type="checkbox"
+                  id="pre_approve"
+                  class="mr-2"
+                  [(ngModel)]="preApproveBoolean"
+                  (change)="onSelectPerApprove(preApproveBoolean)"
+                />
+                <span class="label_adjust">Pre Approved</span></label
+              >
+            </div>
+
+            <div>
+              <label
+                for="img"
+                class="img-browse bg-blue"
+                [ngClass]="uploadFileList.length > 0 ? 'disable_clas' : ''"
+              >
+                Attach support Document
+              </label>
+              <input
+                (change)="onSelectFileApprove($event)"
+                #fileInput
+                type="file"
+                id="img"
+                name="img"
+                multiple
+                [disabled]="uploadFileList.length > 0"
+                hidden
+              />
+              <!-- <input type="file" multiple (change)="uploadSupport($event)"> -->
+
+              <!-- <button
+                class="img-browse h-35 b-0 ml-2 bg-blue"
+                (click)="uploadSupport()"
+                [disabled]="!(uploadFileList.length > 0)"
+                [ngClass]="!(uploadFileList.length > 0) ? 'disable_clas' : ''"
+              >
+                Upload
+              </button> -->
+              <div class="f-11" style="color: #e56767">
+                Note: Please upload supporting documents if you have any
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="
+              tabName == 'approver_selection' && support_doc_list?.length > 0
+            "
+            class="selection_Div"
+            style="min-height: auto"
+          >
+            <h6 class="f-13">Supporting Documents</h6>
+            <table class="table">
+              <tr class="f-12 lineName">
+                <th>S.No</th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+              <tr
+                *ngFor="let file of support_doc_list; let i = index"
+                class="f-11"
+              >
+                <td>{{ i + 1 }}</td>
+                <td>{{ file }}</td>
+                <td>
+                  <i
+                    class="fa fa-download"
+                    aria-hidden="true"
+                    style="cursor: pointer"
+                    (click)="downloadDoc(file)"
+                  ></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div
-        *ngIf="editable || vendorUplaodBoolean"
+        *ngIf="(editable || vendorUplaodBoolean) && !isLCMCompleted"
         class="btnFooter"
         mat-dialog-actions
       >
@@ -330,7 +988,7 @@
             (submitBtn_boolean || vendorUplaodBoolean)
           "
           class="btn btnVender bg-btn-cancel mr-3"
-          (click)="open_dialog('reject',null)"
+          (click)="captureComments('reject', null)"
         >
           Reject
         </button>
@@ -365,11 +1023,30 @@
           style="min-width: fit-content"
           (click)="financeApprove()"
         >
-          Finance Approve
+          Approve
         </button>
         <!-- <button *ngIf=" flipBoolean" class="btn btnVender mr-2 " (click)="Create()" >Create</button>
           <button *ngIf="!tabChangeLINEBoolean && flipBoolean"  class="btn btnVender mr-2" (click)="displayAddLabelDialog = true" pTooltip="Add Label" tooltipPosition="top" >Add Label</button>
           <button *ngIf="tabChangeLINEBoolean && flipBoolean" class="btn btnVender " (click)="addLine()" >Add Line</button> -->
+      </div>
+
+      <div
+        *ngIf="approval_selection_boolean && isLCMCompleted"
+        class="btnFooter"
+      >
+        <button
+          class="btn btnVender bg-btn-cancel mr-3"
+          type="button"
+          (click)="backToInvoice()"
+        >
+          Cancel
+        </button>
+        <button
+          class="btn btnVender bg-btn-success"
+          (click)="onSubmitApprovers()"
+        >
+          Submit
+        </button>
       </div>
     </div>
     <ngx-spinner
@@ -382,6 +1059,7 @@
       <p style="color: rgb(0, 0, 0)"></p>
     </ngx-spinner>
   </div>
+
   <div
     *ngIf="!isPdfAvailable && showPdf"
     class="col-lg-7 col-12 maxPage ShowInvoiceTypeSize"
@@ -459,6 +1137,7 @@
 
           <pdf-viewer
             #pdfviewer
+            id="pdfContainer"
             [src]="showInvoice"
             style="width: 100%; overflow: auto"
             [show-all]="true"
@@ -512,7 +1191,7 @@
 
 <!-- Reject modal-->
 <p-dialog
-  [header]="popUpHeader"
+  [header]="comment_header"
   [(visible)]="displayrejectDialog"
   [breakpoints]="{ '960px': '75vw' }"
   [style]="{ width: '31vw' }"
@@ -520,67 +1199,53 @@
   [draggable]="false"
   [resizable]="false"
 >
-  <div>
-    <!-- <label class="label-head">
-      <input
-        type="radio"
-        name="addLabel"
-        [(ngModel)]="rejectOption.value"
-        value="IT_reject"
-        required
-      />
-      <span class="ml-2 f-13">IT Reject</span>
-    </label>
-    <br />
+  <div
+    *ngIf="
+      isRejectCommentBoolean || isApproveCommentBoolean || preApproveBoolean
+    "
+  >
+    <label class="label-head mt-2 mb-0">Comments</label> <br />
+    <small *ngIf="preApproveBoolean" class="f-11 cmt_text"
+      >Desc: Add the Names of the Signatory is mandatory</small
+    >
 
-    <label class="label-head" *ngIf="!isServiceData">
-      <input
-        type="radio"
-        name="addLabel"
-        [(ngModel)]="rejectOption.value"
-        value="vendor_reject"
-        required
-      />
-      <span class="ml-2 f-13"> Vendor Reject</span>
-    </label>
-    <br /> -->
+    <textarea
+      required
+      name="comment"
+      class="form-control"
+      style="font-size: 13px"
+      minlength="0"
+      (keyup)="addComments($event.target.value)"
+      cols="50"
+      rows="2"
+    ></textarea>
+    <!-- <small class="noteCss">NOTE: Add atleast 10 characters</small> -->
+  </div>
 
-    <div *ngIf="rejectpopBoolean">
-      <label class="label-head mt-2 mb-0">Comments</label>
-      <textarea
-        name="comments"
-        class="form-control"
-        style="font-size: 13px"
-        minlength="10"
-        [(ngModel)]="rejectionComments"
-        cols="50"
-        rows="2"
-        ngModel
-        #comments="ngModel"
-        required
-      ></textarea>
-      <small class="noteCss">NOTE: Add atleast 10 characters</small>
-    </div>
-    <div *ngIf="deletepopBoolean">
-      <div class="text-center">
-        <div>
-          <i
-            class="pi pi-exclamation-triangle"
-            style="font-size: 4rem; color: red"
-          ></i>
-        </div>
-        <div class="deleteDivText">
-          Are you sure you want to delete?
-        </div>
+  <div *ngIf="(isLCMSubmitBoolean && !preApproveBoolean) || deletepopBoolean">
+    <div class="text-center">
+      <div>
+        <i
+          class="pi pi-exclamation-triangle"
+          style="font-size: 4rem; color: red"
+        ></i>
+      </div>
+      <div class="deleteDivText">
+        {{ BtnpopText }}
       </div>
     </div>
-    <div *ngIf="checkItemBoolean">
-      <label class="f-12 mt-2 mb-0">Please enter Item code number and Check is it available or not.</label>
-      <input #ItemCode type="number" class="form-control f-12">
-      <button class="btn btnVender bg-btn-success mt-2" (click)="CheckItemStatus(ItemCode.value)">
-        Check & ADD
-      </button>
-    </div>
+  </div>
+  <div *ngIf="checkItemBoolean">
+    <label class="f-12 mt-2 mb-0"
+      >Please enter Item code number and Check is it available or not.</label
+    >
+    <input #ItemCode type="number" class="form-control f-12" />
+    <button
+      class="btn btnVender bg-btn-success mt-2"
+      (click)="CheckItemStatus(ItemCode.value)"
+    >
+      Check & ADD
+    </button>
   </div>
 
   <ng-template pTemplate="footer">
@@ -593,14 +1258,40 @@
         Cancel
       </button>
       <button
+        *ngIf="isRejectCommentBoolean"
         type="button"
-        *ngIf="rejectpopBoolean"
         class="btn btnVender bg-btn-success"
-        [disabled]="comments.invalid"
-        [ngStyle]="{ cursor: comments.invalid ? 'not-allowed' : 'pointer' }"
+        [disabled]="commentslabelBool"
+        [ngStyle]="{ cursor: commentslabelBool ? 'not-allowed' : 'pointer' }"
         (click)="Reject()"
       >
         Send for Rejection
+      </button>
+      <button
+        *ngIf="preApproveBoolean"
+        type="button"
+        class="btn btnVender bg-btn-success"
+        (click)="displayrejectDialog = false"
+      >
+        Ok
+      </button>
+      <button
+        *ngIf="isApproveCommentBoolean"
+        type="button"
+        class="btn btnVender bg-btn-success"
+        [disabled]="commentslabelBool"
+        [ngStyle]="{ cursor: commentslabelBool ? 'not-allowed' : 'pointer' }"
+        (click)="financeApprove()"
+      >
+        Approve
+      </button>
+      <button
+        *ngIf="isLCMSubmitBoolean && !preApproveBoolean"
+        type="button"
+        class="btn btnVender bg-btn-success"
+        (click)="submitLCMLines()"
+      >
+        Confirm
       </button>
       <button
         type="button"

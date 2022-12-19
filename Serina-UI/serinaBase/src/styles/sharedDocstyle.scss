@@ -45,7 +45,7 @@
     }
     .tableDataDiv {
       box-shadow: none;
-      max-height: 74vh;
+      max-height: 78vh;
       overflow: auto;
       margin-top: -5px;
     }
@@ -364,9 +364,9 @@
       .statusType {
         margin: 4px;
       }
-      // li a {
-      //   // font-size: 11px;
-      // }
+      li a {
+        // font-size: 11px;
+      }
       .ulTab {
         max-width: 60% !important;
       }

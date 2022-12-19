@@ -8,6 +8,7 @@
 html,
 body {
     height: 100%;
+    scroll-behavior: smooth;
 }
 body {
     margin: 0;
@@ -940,11 +941,11 @@ option:hover {
 }
 
 .fileUploadDiv {
-    min-height: 90vh;
+    min-height: 70vh;
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 7;
-    max-height: 90vh;
+    max-height: 80vh;
     display: flex;
     margin: auto;
     background: #fafafa;
@@ -995,6 +996,47 @@ option:hover {
     top: 57px;
     right: 320px;
 }
+.bg-blue {
+    background-color: royalblue !important;
+    color: #ffffff !important;
+  }
+  .bg-gray {
+    background-color: #d3d3d3!important;
+    color: #272727 !important;
+  }
+  .b-success {
+    background-color: #fdf6f6 !important;
+    color: #3dad2e !important;
+    border: 1px solid #3dad2e;
+    min-width: 100px;
+    padding: 5px !important;
+  }
+  .bg-green {
+    background-color: green !important;
+    color: #ffffff !important;
+  }
+  .b-r-right-0 {
+    border-radius: 4px 0px 0px 4px;
+    }
+    .b-r-left-0 {
+        border-radius: 0px 4px 4px 0px;
+    }
+  .disable_clas{
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .break_word {
+    word-break: break-all;
+  }
+
+  .p-button.p-button-text {
+      font-size: 12px;
+      font-weight: 600;
+  }
+  .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-empty-message {
+    font-size: 12px;
+    font-weight: 600;
+  }
   @media screen and (max-width: 576px){ 
     .d_mobile {
         display: none;

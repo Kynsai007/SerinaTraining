@@ -13,9 +13,7 @@ import { VendorBaseComponent } from './vendor-base/vendor-base.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import{ HomeComponent} from '../main-content/home/home.component';
-import { PoComponent } from '../base/invoice/po/po.component';
 import { GrnComponent } from '../base/invoice/grn/grn.component';
-import { ArchivedComponent } from '../base/invoice/archived/archived.component';
 import { ViewInvoiceComponent } from '../base/invoice/view-invoice/view-invoice.component';
 import { CanDeactivateGuard } from '../base/can-deactivate/can-deactivate.guard';
 import { ErrorPageComponent } from '../error-page/error-page.component';
@@ -48,11 +46,11 @@ const routes: Routes = [
             component: DocumentStatusComponent,
             children:[
               { path:'allInvoices', component:AllInvoicesComponent },
-              { path:'PO', component:PoComponent },
+              { path:'PO', component:AllInvoicesComponent },
               { path: 'GRN', component:GrnComponent },
-              { path: 'archived' , component:ArchivedComponent },
-              { path: 'rejected' , component:ArchivedComponent },
-              { path: 'GRNExceptions' , component:ArchivedComponent },
+              { path: 'archived' , component:AllInvoicesComponent },
+              { path: 'rejected' , component:AllInvoicesComponent },
+              { path: 'GRNExceptions' , component:AllInvoicesComponent },
               { path: '' , redirectTo:'allInvoices', pathMatch:'full'}
             ]
           },

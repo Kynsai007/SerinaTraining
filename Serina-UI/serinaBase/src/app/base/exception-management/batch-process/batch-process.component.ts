@@ -72,6 +72,7 @@ export class BatchProcessComponent implements OnInit {
       this.prepareColumnsArray();
       this.getBatchInvoiceData();
       // this.getApprovalBatchData();
+
     } else{
       alert("Sorry!, you do not have access");
       this.router.navigate(['customer/invoice/allInvoices'])
@@ -141,36 +142,34 @@ export class BatchProcessComponent implements OnInit {
     );
   }
 
-  // getApprovalBatchData() {
-  //   this.ngxSpinner.show();
-  //   this.exceptionService.readApprovalBatchInvoicesData().subscribe(
-  //     (data: any) => {
-  //       const batchData = [];
-  //       data.forEach((element) => {
-  //         let mergeData = {
-  //           ...element.Document,
-  //           ...element.DocumentSubStatus,
-  //           ...element.Rule,
-  //           ...element.Vendor,
-  //           ...element.DocumentRuleupdates,
-  //         };
-  //         mergeData.Approvaltype = element.Approvaltype;
-  //         batchData.push(mergeData);
-  //       });
-  //       this.columnsDataAdmin = batchData;
-  //       this.dataLengthAdmin = this.columnsDataAdmin.length;
-  //       if (this.dataLengthAdmin > 10) {
-  //         this.showPaginatorApproval = true;
-  //       }
-  //       this.ngxSpinner.hide();
-  //     },
-  //     (error) => {
-  //       this.ngxSpinner.hide();
-  //       this.alertService.errorObject.detail = error.statusText;
-  //       this.MessageService.add(this.alertService.errorObject);
-  //     }
-  //   );
-  // }
+  getApprovalBatchData() {
+    this.ngxSpinner.show();
+    this.exceptionService.readApprovalPendingData().subscribe(
+      (data: any) => {
+        const batchData = [];
+        data.result.pending_approval_invoice.forEach((element) => {
+          let mergeData = {
+            ...element.Document,
+            ...element.Entity,
+            ...element.Vendor,
+          };
+          mergeData.status= element.docstatus;
+          batchData.push(mergeData);
+        });
+        this.columnsDataAdmin = batchData;
+        this.dataLengthAdmin = this.columnsDataAdmin.length;
+        if (this.dataLengthAdmin > 10) {
+          this.showPaginatorApproval = true;
+        }
+        this.ngxSpinner.hide();
+      },
+      (error) => {
+        this.ngxSpinner.hide();
+        this.alertService.errorObject.detail = error.statusText;
+        this.MessageService.add(this.alertService.errorObject);
+      }
+    );
+  }
   exportExcel() {
     let exportData = [];
     if (this.tagService.batchProcessTab == 'normal') {

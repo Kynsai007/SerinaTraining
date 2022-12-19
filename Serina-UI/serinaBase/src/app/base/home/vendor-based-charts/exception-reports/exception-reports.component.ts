@@ -165,10 +165,10 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
     this.chartsService.getvendorExceptionSummary(query).subscribe((data) => {
       console.log(data);
       this.exceptionData = data;
-      // this.totalInv = data.data.total[0].count;
-      // this.OcrInv = data.data.ocrqueue[0].count;
-      // this.batchInv = data.data.batchqueue[0].count;
-      // this.ErpInv = data.data.erpqueue[0].count;
+      this.totalInv = data.data.total[0].count;
+      this.OcrInv = data.data.ocrqueue[0].count;
+      this.batchInv = data.data.batchqueue[0].count;
+      this.ErpInv = data.data.erpqueue[0].count;
       let mergedArray = [];
       this.totalTableData = [];
       this.OCRTableData = [];

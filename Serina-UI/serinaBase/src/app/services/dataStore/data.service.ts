@@ -75,6 +75,7 @@ export class DataService {
     { id:16, name :'ERP Exception', bgcolor: '#fff3e0', textColor :'#b7925b'},
     { id:15, name :'Mismatch value/s', bgcolor: '#ddebc5', textColor :'#818549'},
     { id:14, name :'Posted In ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:20, name :'Set Approval', bgcolor: '#ECF9ED', textColor :'#3EB948'},
   ]
   serviceinvoiceLoadedData: any[];
   approvalServicePaginationRowLength = 10;
@@ -87,6 +88,10 @@ export class DataService {
   exc_batch_approve_page_row_length = 10;
   entityData = new BehaviorSubject<any>([]);
   VendorsReadData = new BehaviorSubject<any>([]);
+  NonPOvendorPaginationFirst = 0;
+  NonPOvendorPaginationRowLength = 10;
+  entityID: any;
+  editableInvoiceData: any;
   vendorNameList = new BehaviorSubject<any>([]);
   vendorsListData = [];
   offsetCount = 1;
@@ -104,7 +109,8 @@ export class DataService {
   reUploadData: any;
   create_GRN_page_first = 0;
   create_GRN_page_row_length = 10;
-
+  searchTextException: any;
+  configData: any;
 
   constructor() { }
 
