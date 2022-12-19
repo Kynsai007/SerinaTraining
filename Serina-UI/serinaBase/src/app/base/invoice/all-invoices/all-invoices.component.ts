@@ -233,7 +233,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     this.storageService.reUploadData = val;
   }
   triggerBatch(id){
-    alert("Reloading Invoice")
+    alert("Are you sure you want to re-trigger the batch for the Invoice?")
     this.triggerBoolean = true;
     let query = `?re_upload=false`;
     this.invoiceID = id;
@@ -241,7 +241,11 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     this.sharedService.triggerBatch(query).subscribe((data:any)=>{
       if(data){
         this.triggerBoolean = false;
+        window.location.reload();
       }
-    })
+    },(error => {
+      this.triggerBoolean = false;
+      console.log(`error ${error}`)
+    }))
   }
 }
