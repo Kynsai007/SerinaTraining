@@ -1,3 +1,4 @@
+import { DataService } from './../../../services/dataStore/data.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { Component, OnInit } from '@angular/core';
 import { ChartsService } from 'src/app/services/dashboard/charts.service';
@@ -15,9 +16,14 @@ export class ServiceBasedChartsComponent implements OnInit {
   rangeDates: Date[];
 
   constructor(private chartsService: ChartsService,
-    private dateFilterService : DateFilterService) {}
+    private dateFilterService : DateFilterService,
+    private DataService: DataService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if(!this.DataService.configData.serviceInvoices){
+      history.back();
+    }
+  }
 
   choosepageTab(value) {
     this.viewType = value;

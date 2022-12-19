@@ -54,6 +54,7 @@ import { DetailedReportsComponent } from './home/service-based-charts/detailed-r
 import { TableComponent } from './home/service-based-charts/table/table.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { CreateGRNComponent } from './create-grn/create-grn.component';
+import { HelpComponent } from './help/help.component';
 
 @NgModule({
   declarations: [
@@ -98,6 +99,7 @@ import { CreateGRNComponent } from './create-grn/create-grn.component';
     TableComponent,
     ChangePasswordComponent,
     CreateGRNComponent,
+    HelpComponent,
   ],
   imports: [
     CommonModule,
@@ -120,7 +122,8 @@ import { CreateGRNComponent } from './create-grn/create-grn.component';
     TableComponent,
     ChangePasswordComponent,
     BatchProcessComponent,
-    InvoiceStatusComponent
+    InvoiceStatusComponent,
+    HelpComponent
   ],
   providers: [
     DatePipe,

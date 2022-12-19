@@ -1,23 +1,12 @@
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { ServiceInvoiceService } from './../../services/serviceBased/service-invoice.service';
-import { TaggingService } from './../../services/tagging.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { Component, OnInit, ViewChild, AfterViewInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit,  AfterViewInit, Input } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { FileUploader } from 'ng2-file-upload';
-import { LazyLoadEvent } from 'primeng/api';
-import { DatePipe, Location } from '@angular/common';
+import {  Location } from '@angular/common';
 import { NgxSpinnerService } from "ngx-spinner";
-import {
-  ConfirmationService,
-  MessageService,
-  PrimeNGConfig
-} from "primeng/api";
 import { PermissionService } from 'src/app/services/permission.service';
 
 
@@ -40,10 +29,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
   users: UserData[] = []
 
   vendorData = []
-  VendorAccount = [
-    { vendorAcId: '12', entityId: '34267', entityBody: "12565", noOfInvoices: '36', noOfPo: '4' }
-  ]
-  items = ["item 1", "item 2", "item 3"]
+  VendorAccount = []
 
   openFilter: boolean = false;
 
@@ -101,7 +87,6 @@ export class VendorComponent implements OnInit, AfterViewInit {
     private SpinnerService: NgxSpinnerService,
     private permissionService : PermissionService,
     private dataService : DataService,
-    private _location : Location,
     private router :Router) {
 
   }
@@ -111,11 +96,14 @@ export class VendorComponent implements OnInit, AfterViewInit {
       this.initialViewVendor = this.sharedService.initialViewVendorBoolean;
       this.vendorreaddata = this.dataService.vendorsListData;
       this.entityFilterData = this.dataService.vendorsListData;
-      if(this.vendorreaddata .length <= 10){
+      if(this.vendorreaddata.length <= 0){
         this.APIParams = `?offset=1&limit=50`;
         this.DisplayVendorDetails(this.APIParams);
-      } else {
+      }
+      if(this.vendorreaddata.length > 10){
         this.showPaginator = true;
+      } else {
+        this.showPaginator = false;
       }
       this.getEntitySummary();
     } else{

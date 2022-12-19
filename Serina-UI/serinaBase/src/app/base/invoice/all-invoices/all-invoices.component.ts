@@ -18,7 +18,6 @@ import { Table } from 'primeng/table';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { MessageService } from 'primeng/api';
-import { AlertPromise } from 'selenium-webdriver';
 
 export interface statusArray {
   name:string;
@@ -70,8 +69,6 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   statusText:string;
   statusText1: string;
   portal_name: string;
-  triggerBoolean: boolean;
-  invoiceID: any;
 
   constructor(
     private tagService: TaggingService,
@@ -232,22 +229,5 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     console.log(val);
     this.router.navigate([`/${this.portal_name}/uploadInvoices`]);
     this.storageService.reUploadData = val;
-  }
-
-  triggerBatch(id){
-    alert("Are you sure you want to re-trigger the batch for the Invoice?")
-    this.triggerBoolean = true;
-    let query = `?re_upload=false`;
-    this.invoiceID = id;
-    this.sharedService.invoiceID = id;
-    this.sharedService.triggerBatch(query).subscribe((data:any)=>{
-      if(data){
-        this.triggerBoolean = false;
-        window.location.reload();
-      }
-    },(error => {
-      this.triggerBoolean = false;
-      console.log(`error ${error}`)
-    }))
   }
 }

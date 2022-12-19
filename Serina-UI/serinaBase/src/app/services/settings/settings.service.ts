@@ -16,7 +16,9 @@ export class SettingsService {
   constructor(private http : HttpClient) {
     // this.userData = JSON.parse(localStorage.getItem('currentLoginUser'));
    }
-
+   readConfig() {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Instance/getInstanceInfo`)
+   }
   financeApprovalSetting(data):Observable<any> {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Customer/switchRoleBased/${this.userId}?isenabled=${data}`,'')
   }

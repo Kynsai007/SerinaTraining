@@ -43,12 +43,11 @@
   max-height: 86vh;
 }
 .invoice-body {
-  // box-shadow: 1px 1px 5px rgb(0 0 0 / 10%);
   margin: 10px 5px;
   border-radius: 10px;
-  padding: 8px;
+  padding: 2px 8px;
   padding-left: 0;
-  height: 90vh;
+  height: 89vh;
   overflow: auto;
   margin-top: 0;
 }
@@ -183,9 +182,10 @@ a {
   padding: 5px;
 }
 .maxPage {
-  max-height: 87vh;
+  max-height: 82vh;
   overflow: auto;
   padding-right: 0px;
+  top: 40px;
 }
 .invert {
   display: flex;
@@ -228,6 +228,13 @@ a {
   padding: 5px 8px;
   font-size: 12px;
 }
+.lcm_table_td {
+  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 100px;
+    max-width: 140px;
+}
 .hClass {
   color: rgb(226, 43, 43);
 }
@@ -246,10 +253,24 @@ a {
   height: 35px;
   border-radius: 20px;
 }
-:host ::ng-deep .ng2-pdf-viewer-container {
-  height: 87vh !important;
-  background-color: white;
-  border-radius: 10px;
+:host ::ng-deep {
+  .ng2-pdf-viewer-container {
+    height: 82vh !important;
+    background-color: white;
+    border-radius: 10px;
+  }
+  .p-inputtext {
+    margin: 0;
+    height: 30px;
+    width: 142px !important;
+    border-color: #d3d3d3;
+    font-size: 12px;
+    font-weight: 600;
+    border-right: 0;
+  }
+  .p-button.p-button-icon-only {
+    background-color: #ffffff;
+  }
 }
 
 .radioBtn {
@@ -276,7 +297,41 @@ a {
 //     border: 0;
 //     opacity: 1;
 // }
-
+.img-browse {
+  background-color: #f2be42;
+  color: #272727;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+.file_table {
+  // position: absolute;
+  // bottom: 50px;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  margin: 10px;
+  background: lemonchiffon;
+  margin-left: auto;
+  min-width: 410px;
+}
+.h-35{
+  height: 35px;
+}
+.no_doc_div {
+  min-height: 20vh;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  text-align: center;
+}
+// .table th, .table td {
+//   border:1px solid #dee2e6;
+// }
 .viewPdf {
   position: absolute;
   right: 15px;
@@ -288,10 +343,57 @@ a {
   bottom: 3%;
   right: 2%;
 }
+.attach_apprve {
+    left: 200px;
+    top: 150px;
+    bottom: unset;
+}
+.label_adjust {
+  position: relative;
+  top: -2px;
+}
+.selection_Div {
+    padding: 10px;
+    border: 1px solid lightgray;
+    border-radius: 6px;
+    width: 70%;
+    margin: auto;
+    margin-top: 20px;
+    background: #fafafa;
+    min-height: 30vh;
+}
+.lcm_table_ht {
+  max-height: calc(60vh - 60px);
+  overflow: auto;
+}
+.form-control:disabled, .form-control[readonly]{
+  background-color: #d9d0d0 !important;
+  opacity: 1;
+}
+.bg-1 {
+  background-color: #ffe8e0 !important;
+}
+.bg-2 {
+  background-color: #fdac8d !important;
+}
+:host ::ng-deep {
+  .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
+    font-size: 11px;
+    font-weight: 600;
+  }
+  p-autocomplete.ng-dirty.ng-invalid > .p-autocomplete > .p-inputtext {
+    border-color: #d3d3d3 !important;
+}
+}
 .dlt_btn{
-    display: flex;
-    align-items: center;
-    height: 32px;
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+.cmt_text {
+  margin-top: -7px;
+  display: block;
+  font-size: 10px !important;
 }
 @media screen and (max-width:1200px) {
   .zoom_pos_pdf {

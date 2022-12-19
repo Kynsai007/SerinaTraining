@@ -126,7 +126,6 @@ export class Comparision3WayComponent
   callSession: any;
   invoiceNumber = '';
   vendorName: any;
-  isGRNDataLoaded: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -463,7 +462,7 @@ export class Comparision3WayComponent
         this.vendorName = this.vendorData['VendorName'];
         // this.selectedRule = data.ok.ruledata[0].Name;
         // this.poList = data.all_pos;
-        this.isGRNDataLoaded = true;
+
         this.SpinnerService.hide();
       },
       (error) => {
@@ -868,26 +867,26 @@ export class Comparision3WayComponent
   }
 
   financeApprove() {
-    this.SharedService.financeApprovalPermission().subscribe(
-      (data: any) => {
-        this.dataService.invoiceLoadedData = [];
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Approved',
-          detail: data.result,
-        });
-        setTimeout(() => {
-          this._location.back();
-        }, 1000);
-      },
-      (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: error.statusText,
-        });
-      }
-    );
+    // this.SharedService.financeApprovalPermission().subscribe(
+    //   (data: any) => {
+    //     this.dataService.invoiceLoadedData = [];
+    //     this.messageService.add({
+    //       severity: 'success',
+    //       summary: 'Approved',
+    //       detail: data.result,
+    //     });
+    //     setTimeout(() => {
+    //       this._location.back();
+    //     }, 1000);
+    //   },
+    //   (error) => {
+    //     this.messageService.add({
+    //       severity: 'error',
+    //       summary: 'error',
+    //       detail: error.statusText,
+    //     });
+    //   }
+    // );
   }
 
   open_modal() {

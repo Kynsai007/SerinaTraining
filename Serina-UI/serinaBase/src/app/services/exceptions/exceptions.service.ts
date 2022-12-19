@@ -13,7 +13,7 @@ export class ExceptionsService {
 
   userId: any;
   poNumber: string;
-  invoiceID:any;
+  invoiceID:number;
 
   selectedRuleId:number;
 
@@ -23,8 +23,8 @@ export class ExceptionsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/batchprocesssummary/${this.userId}`).pipe(retry(3))
   }
 
-  readApprovalBatchInvoicesData():Observable<any> {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/batchprocesssummaryAdmin/${this.userId}`).pipe(retry(3))
+  readApprovalPendingData():Observable<any> {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/readPendingInvoiceApprovals/${this.userId}`)
   }
 
   readBatchRules():Observable<any> {

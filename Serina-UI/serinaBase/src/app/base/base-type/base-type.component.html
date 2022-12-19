@@ -79,7 +79,7 @@
           class="navLink"
           routerLinkActive="active"
           data-text="Exceptions"
-          [routerLink]="'ExceptionManagement'"
+          [routerLink]="exceptionRoute"
           (click)="showInnerException()"
           *ngIf="excpetionPageAccess"
         >
@@ -95,6 +95,7 @@
           <li
             class="navLink"
             id="ex_sub"
+            *ngIf="vendorInvoiceAccess"
             [routerLink]="'ExceptionManagement'"
             [ngClass]="
               router.url == '/customer/ExceptionManagement'
@@ -107,6 +108,7 @@
           <li
             class="navLink"
             id="ex_sub"
+            *ngIf="serviceInvoiceAccess"
             [routerLink]="'ExceptionManagement/Service_ExceptionManagement'"
             [ngClass]="
               router.url ==
@@ -137,7 +139,7 @@
           routerLinkActive="active"
           data-text="Create GRN"
           [routerLink]="'Create_GRN_inv_list'"
-          *ngIf="GRNPageAccess"
+          *ngIf="GRNCreationAccess && GRNPageAccess"
         >
           <!-- <i class="fa fa-certificate f-18 ml-r-12" aria-hidden="true"></i> -->
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
@@ -145,12 +147,12 @@
           </span>
           Create GRN
         </div>
-        <div
-          class="navLink"
-          routerLinkActive="active"
+      <div     
+        class="navLink"
+        routerLinkActive="active"
           data-text="Vendors"
           [routerLink]="'vendor'"
-          *ngIf="vendor_SP_PageAccess"
+          *ngIf="vendorInvoiceAccess && vendor_SP_PageAccess"
           (click)="sideMenuVendor()"
         >
           <!-- <i class="fa fa-user f-18 ml-r-12" aria-hidden="true"></i> -->
@@ -186,7 +188,7 @@
           routerLinkActive="active"
           data-text="Service Provider"
           (click)="showInner()"
-          *ngIf="vendor_SP_PageAccess"
+          *ngIf="serviceInvoiceAccess && vendor_SP_PageAccess"
         >
           <i
             class="fa fa-user-secret f-18 ml-r-12"
@@ -266,7 +268,7 @@
           Roles
         </div>
 
-        <div
+        <!-- <div
           class="navLink"
           routerLinkActive="active"
           data-text="Settings"
@@ -279,7 +281,7 @@
             routerLinkActive="ml-9"
           ></i>
           Settings
-        </div>
+        </div> -->
       </div>
 
       <div class="copy">Copyrights <span class="cpr f-14">&#169;</span> 2022</div>
@@ -437,6 +439,7 @@
             <ul *ngIf="openBooleanException" class="showHide f-13">
               <li
                 class="navLink"
+                *ngIf="vendorInvoiceAccess"
                 id="ex_sub"
                 [routerLink]="'ExceptionManagement'"
                 [ngClass]="
@@ -450,6 +453,7 @@
               <li
                 class="navLink"
                 id="ex_sub"
+                *ngIf="serviceInvoiceAccess"
                 [routerLink]="'ExceptionManagement/Service_ExceptionManagement'"
                 [ngClass]="
                   router.url ==
@@ -480,7 +484,7 @@
               routerLinkActive="active"
               data-text="Create GRN"
               [routerLink]="'Create_GRN_inv_list'"
-              *ngIf="GRNPageAccess"
+              *ngIf="GRNCreationAccess && GRNPageAccess"
             >
               <!-- <i class="fa fa-certificate f-18 ml-r-12" aria-hidden="true"></i> -->
               <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
@@ -493,7 +497,7 @@
               routerLinkActive="active"
               data-text="Vendors"
               [routerLink]="'vendor'"
-              *ngIf="vendor_SP_PageAccess"
+              *ngIf="vendorInvoiceAccess && vendor_SP_PageAccess"
               (click)="sideMenuVendor()"
             >
               <!-- <i class="fa fa-user f-18 ml-r-12" aria-hidden="true"></i> -->
@@ -531,7 +535,7 @@
               routerLinkActive="active"
               data-text="Service Provider"
               (click)="showInner()"
-              *ngIf="vendor_SP_PageAccess"
+              *ngIf="serviceInvoiceAccess && vendor_SP_PageAccess"
             >
               <i
                 class="fa fa-user-secret f-18 ml-r-12"
@@ -614,7 +618,7 @@
               Roles
             </div>
 
-            <div
+            <!-- <div
               class="navLink"
               routerLinkActive="active"
               data-text="Settings"
@@ -627,7 +631,7 @@
                 routerLinkActive="ml-9"
               ></i>
               Settings
-            </div>
+            </div> -->
             <div
               class="navLink"
               data-text="Change Password"

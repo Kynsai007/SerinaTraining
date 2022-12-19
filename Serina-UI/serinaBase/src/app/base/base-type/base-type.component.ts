@@ -50,6 +50,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   vendor_SP_PageAccess: boolean;
   menubarBoolean:boolean;
 
+  GRNCreationAccess:boolean;
+  vendorInvoiceAccess:boolean;
+  serviceInvoiceAccess:boolean;
+  exceptionRoute: string;
+
   constructor(
     public router: Router,
     private SharedService: SharedService,
@@ -73,6 +78,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.dataStoreService.configData = JSON.parse(localStorage.getItem('configData'));
+    console.log(this.dataStoreService.configData)
+    if(!this.dataStoreService.configData){
+      this.readConfig();
+    }
     this.show2ndMenu();
     this.servicesData();
     this.getPermissions();
@@ -81,10 +91,17 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.getEntitySummary();
     // this.readVendors();
     // this.readVendorNames();
+
   }
 
   openDialog() {
     this.dialog.open(ChangePasswordComponent);
+  }
+  readConfig(){
+    this.settingService.readConfig().subscribe((data:any)=>{
+      localStorage.setItem("configData", JSON.stringify(data.InstanceModel));
+      this.dataStoreService.configData = data.InstanceModel ;
+    })
   }
   
   notification_logic() {
@@ -108,6 +125,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
 
   servicesData() {
+    this.financeapproveDisplayBoolean =
+    this.dataStoreService.configData?.enableApprovals;
+    this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
+    this.vendorInvoiceAccess = this.dataStoreService.configData?.vendorInvoices;
+    this.serviceInvoiceAccess = this.dataStoreService.configData?.serviceInvoices;
     this.userDetails = this.authService.currentUserValue;
     environment1.password = this.userDetails.token;
     environment1.username = JSON.parse(localStorage.getItem('username'));
@@ -120,8 +142,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this,this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login1 = this.userDetails.last_login;
-    this.financeapproveDisplayBoolean =
-      this.settingService.finaceApproveBoolean;
+      if(this.vendorInvoiceAccess){
+        this.exceptionRoute = 'ExceptionManagement';
+      } else if(this.serviceInvoiceAccess) {
+        this.exceptionRoute = 'ExceptionManagement/Service_ExceptionManagement';
+      }
     // console.log(environment1);
   }
 
@@ -355,6 +380,5 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    localStorage.clear();
   }
 }

@@ -60,9 +60,9 @@
 }
 
 :host ::ng-deep {
-  // .p-datatable .p-datatable-thead > tr > th {
-  //   // width: 100%;
-  // }
+  .p-datatable .p-datatable-thead > tr > th {
+    // width: 100%;
+  }
   .p-datatable table {
     background-color: white;
   }
@@ -80,7 +80,7 @@
 }
 @media screen and (max-width:1300px) {
   .filter_inputDash {
-    top: 82px;
+    top: 50px;
       right: 0;
   }
   .filters_div {
@@ -88,8 +88,8 @@
     right: 0;
   }
   .dwnldBtn {
-    right: 255px;
-    top: 83px;
+    right: 0;
+    top: 86px;
   }
   .tableDatDiv {
    margin-top: 27px;

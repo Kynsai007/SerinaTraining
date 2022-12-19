@@ -28,8 +28,6 @@ export class ErrorInterceptor implements HttpInterceptor {
             // this.alertSrvice.errorObject.detail = "System under maintenance";
             // this.messageService.add(this.alertSrvice.errorObject);
           } else{
-            // const error = err.error.message || err.statusText;
-            console.log(err)
             return throwError(err)
           }
         }))

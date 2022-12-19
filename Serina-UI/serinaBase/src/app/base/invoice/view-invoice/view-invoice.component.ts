@@ -1,8 +1,9 @@
+import { SettingsService } from 'src/app/services/settings/settings.service';
 import { AlertService } from './../../../services/alert/alert.service';
 import { ExceptionsService } from './../../../services/exceptions/exceptions.service';
 import { AuthenticationService } from './../../../services/auth/auth-service.service';
 import { DataService } from './../../../services/dataStore/data.service';
-import { Subscription } from 'rxjs';
+import { Subscription, throwError } from 'rxjs';
 import { PermissionService } from './../../../services/permission.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -19,11 +20,33 @@ import {
 } from '@angular/core';
 import { fabric } from 'fabric';
 import { Location } from '@angular/common';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import * as $ from 'jquery';
+import { FormGroup, NgForm } from '@angular/forms';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { DomSanitizer } from '@angular/platform-browser';
 import IdleTimer from '../../idleTimer/idleTimer';
+import { catchError, map } from 'rxjs/operators';
+import { HttpEventType } from '@angular/common/http';
+import * as fileSaver from 'file-saver';
+
+export interface getApproverData {
+  EntityID: number,
+  EntityBodyID?: number,
+  DepartmentID?: number,
+  categoryID?: number,
+  approver?: any[],
+  description?: string
+}
+export interface saveLCM {
+  EntityName: string,
+  PoDocumentId: string,
+  ItemNumber: string,
+  VoyageNumber: string,
+  CostCategory: string,
+  EstimatedValue: string,
+  ActualizedValue: string,
+  Allocate: string,
+  AGIVesselNumber: string
+}
 
 @Component({
   selector: 'app-view-invoice',
@@ -97,14 +120,100 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   vendorName: any;
   invoiceNumber = '';
   rejectpopBoolean: boolean;
+  supportTabBoolean: boolean;
+  approval_selection_boolean: boolean;
+  uploadFileList = [];
+  progress: number;
+  support_doc_list = [];
+  selectionTabBoolean: boolean;
+
+  entityList: any;
+  entityName: string;
+  comment_header: string;
   deletepopBoolean: boolean;
   checkItemBoolean: boolean;
   popUpHeader: string;
   lineTabBoolean: boolean;
   item_code: any;
+  isRejectCommentBoolean: boolean;
+  isApproveCommentBoolean: boolean;
+  isLCMSubmitBoolean: boolean;
+  BtnpopText: string;
+  preApproveBoolean = false;
+  approval_setting_boolean: boolean;
+  DepartmentList: any;
+  approversSendData: getApproverData[] = [];
+  selectedDepartment: string;
+
+  isLCMInvoice: boolean;
+  LCMTable = [
+    { name: "Entity", id: 'drp', field: 'EntityName', data: [''] },
+    { name: "PO Number", id: 'drp', field: 'PoDocumentId', data: [''] },
+    { name: "PO Line Descrption", id: 'drp', field: 'PoLineDescription', data: [''] },
+    { name: "Voyage Number", id: 'drp', field: 'VoyageNumber', data: [''] },
+    { name: "Charges code", id: 'drp', field: 'CostCategory', data: [''] },
+    { name: "Vessel Number", id: 'drp', field: 'AGIVesselNumber', data: [''] },
+    { name: "Estimated value", id: 'text', field: 'EstimatedValue', data: [''] },
+    { name: "Actualized value", id: 'text', field: 'ActualizedValue', data: [''] },
+    { name: "Allocate", id: 'text', field: 'Allocate', data: [''] },
+  ]
+  LCMDataTable = [];
+  poList: any;
+  filteredPO: any[];
+  approverList: any;
+  categoryList: any;
+  isLinenonEditable: boolean;
+  LCMObj = {
+    EntityName: '',
+    PoDocumentId: '',
+    PoLineDescription: '',
+    PoLineNumber: '',
+    VoyageNumber: '',
+    CostCategory: '',
+    EstimatedValue: '',
+    ActualizedValue: '',
+    AGIVesselNumber: '',
+    Allocate: '',
+    ContextTableId: '',
+    ContextRecId: '',
+    MarkupTransRecId: ''
+  }
+
+  @ViewChild('LCMLineForm') LCMLineForm: NgForm;
+  isLCMCompleted: boolean;
+  isLCMTab: boolean;
+  POlist_LCM = [];
+  filteredEnt: any[];
+  filteredLCMLines: any[];
+  filteredVoyage: any[];
+  filteredCost: any[];
+  selectedPONumber: any;
+  LCMItems = [];
+  voyageList: any;
+  selectedLCMLine: any;
+  selectedVoyage: any;
+  selectedEntity: any;
+  max_allocation: number;
+  est_val: number;
+  act_val: number;
+  AGIVesselNumber: string;
+  selectedCost: any;
+  chargeList: any;
+  EntityName: any;
+  itemId: any;
+  lineNumber: any;
+  ContextTableId: any;
+  ContextRecId: any;
+  uploadExcelValue: any;
+  MarkupTransRecId: any;
+  tabName: string;
+  commentslabelBool = true;
+  documentType: string;
+  allocateTotal: number;
+  balanceAmount: any;
+  invoiceTotal: any;
   uploadtime: string = "00:00";
   constructor(
-    fb: FormBuilder,
     private tagService: TaggingService,
     private router: Router,
     private authService: AuthenticationService,
@@ -118,6 +227,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private AlertService: AlertService,
     private SharedService: SharedService,
     private _sanitizer: DomSanitizer,
+    private settingsService: SettingsService,
     private route: ActivatedRoute
   ) { }
 
@@ -130,6 +240,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.readVendors();
     if (this.tagService.editable == true) {
       this.updateSessionTime();
+      this.getEntity();
+    this.approval_setting_boolean = this.settingsService.finaceApproveBoolean;
       this.idleTimer(180, 'Start');
       this.callSession = setTimeout(() => {
         this.updateSessionTime();
@@ -167,9 +279,39 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.approveBtn_boolean = this.tagService.approveBtnBoolean;
     this.headerName = this.tagService.headerName;
     this.userDetails = this.authService.currentUserValue;
+    this.approval_selection_boolean =
+    this.tagService.approval_selection_boolean;
+  this.isLCMInvoice = this.tagService.LCM_boolean;
+  this.documentType = this.tagService.documentType
+  if (this.tagService.documentType == 'lcm' || this.tagService.documentType == 'multipo') {
+    this.isLinenonEditable = true;
+  }
 
+  if (this.approval_selection_boolean == true && this.isLCMInvoice == true) {
+
+    this.supportTabBoolean = false;
+    this.isLCMTab = true;
+    this.readPONumbersLCM(this.dataService.entityID);
+    this.showPdf = false;
+    this.btnText = 'View PDF';
+
+    // this.selectionTabBoolean = true;
+    // this.supportTabBoolean = true;
+  } else if (this.approval_selection_boolean == true && this.isLCMInvoice == false) {
+    this.readDepartment();
+    this.readCategoryData();
+    this.showPdf = false;
+    this.btnText = 'View PDF';
+    this.tabName = "approver_selection";
+    this.selectionTabBoolean = true;
+    this.supportTabBoolean = true;
+    this.isLCMCompleted = true;
+
+  } else {
     this.showPdf = true;
     this.btnText = 'Close';
+    this.selectionTabBoolean = false;
+  }
   }
 
   idleTimer(time, str) {
@@ -251,6 +393,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
         });
         this.invoiceNumber = inv_num_data[0]?.Value;
+        let inv_total: any = this.inputData.filter((val) => {
+          return (val.TagLabel == 'InvoiceTotal');
+        });
+        this.invoiceTotal = inv_total[0]?.Value;
+        if (this.tagService.documentType == 'lcm') {
+          this.readSavedLCMLineData();
+        }
         if (data.ok.vendordata) {
           this.isServiceData = false;
           this.vendorData = {
@@ -295,7 +444,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         } else {
           this.lineDisplayData = data.ok.linedata;
           this.lineDisplayData.unshift({
-            TagName: 'S.NO',
+            TagName: 'S.No',
             idDocumentLineItemTags: 1,
           });
           if (this.editable) {
@@ -305,12 +454,16 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             });
           }
           this.lineDisplayData.forEach((ele) => {
-            if (ele.TagName == 'S.NO') {
+            if (ele.TagName == 'S.No') {
               ele.linedata = this.lineDisplayData[1]?.linedata;
             } else if (ele.TagName == 'Actions') {
               ele.linedata = this.lineDisplayData[1]?.linedata;
             }
           });
+        }
+        this.support_doc_list = data.ok.support_doc?.files;
+        if (this.support_doc_list == null) {
+          this.support_doc_list = []
         }
         this.SpinnerService.hide();
       },
@@ -344,7 +497,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           this.showInvoice = window.URL.createObjectURL(
             new Blob([this.byteArray], { type: 'application/pdf' })
           );
-        } else if (data.result.content_type == 'image/jpg') {
+        } else if (data.result.content_type == 'image/jpg' || data.result.content_type == 'image/png') {
+          let filetype = data.result.content_type
           this.isPdfAvailable = false;
           this.isImgBoolean = true;
           this.byteArray = new Uint8Array(
@@ -353,7 +507,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               .map((char) => char.charCodeAt(0))
           );
           this.showInvoice = window.URL.createObjectURL(
-            new Blob([this.byteArray], { type: 'image/jpg' })
+            new Blob([this.byteArray], { type: filetype })
           );
           this.loadImage();
         } else {
@@ -701,7 +855,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     //     this.messageService.add(this.AlertService.errorObject);
     //   })
     // } else {
-
+    if (this.isLCMInvoice == false) {
     this.getInvoiceFulldata();
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
@@ -787,6 +941,63 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         /* Error reponse end*/
       }
     }, 2000);
+  } else {
+    if (this.LCMDataTable.length > 0) {
+      this.captureComments('LCM', null);
+    } else {
+      this.AlertService.errorObject.detail = 'Please add LCM lines';
+      this.messageService.add(this.AlertService.errorObject);
+    }
+  }
+}
+  SaveLCM(obj) {
+    this.SharedService.saveLCMdata(JSON.stringify([obj]), true).subscribe((data: any) => {
+      if (data?.result) {
+        this.AlertService.addObject.detail = data?.result;
+        this.messageService.add(this.AlertService.addObject);
+        this.LCMObj.EntityName = this.EntityName;
+        this.LCMLineForm.control.patchValue(this.LCMObj);
+        this.readSavedLCMLineData();
+      } else if (data?.error) {
+        this.AlertService.errorObject.detail = data?.error;
+        this.messageService.add(this.AlertService.errorObject);
+      }
+    }, err => {
+      this.AlertService.errorObject.detail = 'Server error';
+      this.messageService.add(this.AlertService.errorObject);
+    })
+  }
+
+  submitLCMLines() {
+    this.SpinnerService.show();
+    this.SharedService.saveLCMdata(JSON.stringify(this.LCMDataTable), false).subscribe((data: any) => {
+      if (data?.result[2] == true) {
+        this.AlertService.addObject.detail = 'LCM Lines added please select Approvers';
+        this.isLCMCompleted = true;
+        this.selectionTabBoolean = true;
+        this.supportTabBoolean = true;
+        this.isLCMInvoice = false;
+        this.readDepartment();
+        this.readCategoryData();
+        this.getInvoiceFulldata();
+        this.tabName = 'approver_selection';
+      } else {
+        this.AlertService.addObject.detail = 'LCM Lines created';
+        setTimeout(() => {
+          this._location.back();
+        }, 1000);
+      }
+      this.displayrejectDialog = false;
+      this.SpinnerService.hide();
+      this.messageService.add(this.AlertService.addObject);
+
+    }, err => {
+      this.displayrejectDialog = false;
+      this.AlertService.errorObject.detail = 'Server error';
+      this.messageService.add(this.AlertService.errorObject);
+      this.SpinnerService.hide();
+    })
+
   }
 
   vendorSubmit() {
@@ -859,27 +1070,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   approveChanges() {
-    // let approve = {
-    //   "documentdescription": ""
-    // }
-    // this.SharedService.approveInvoiceChanges(JSON.stringify(approve)).subscribe((data: any) => {
-    //   this.dataService.invoiceLoadedData = [];
-    //   this.messageService.add({
-    //     severity: "success",
-    //     summary: "Approved",
-    //     detail: "Changes approved successfully"
-    //   });
-    //   setTimeout(() => {
-    //     this._location.back()
-    //   }, 1000);
-    // }, error => {
-    //   this.messageService.add({
-    //     severity: "error",
-    //     summary: "error",
-    //     detail: error.statusText
-    //   });
-    // })
-
     this.exceptionService.send_batch_approval().subscribe(
       (data: any) => {
         this.AlertService.addObject.detail = 'Send to batch successfully';
@@ -895,8 +1085,115 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     );
   }
 
+  addComments(val) {
+    this.rejectionComments = val;
+    if (this.rejectionComments.length > 9) {
+      this.commentslabelBool = false;
+    } else {
+      this.commentslabelBool = true;
+    }
+  }
+
+  captureComments(reason, val) {
+    this.displayrejectDialog = true;
+    if (reason == 'reject') {
+      this.comment_header = 'Add Rejection Comments';
+      this.isRejectCommentBoolean = true;
+      this.isApproveCommentBoolean = false;
+      this.isLCMSubmitBoolean = false;
+      this.deletepopBoolean = false;
+      this.checkItemBoolean = false;
+    } else if (reason == 'approve') {
+      this.comment_header = 'Add Pre-approval Comments';
+      if (this.preApproveBoolean == false) {
+        this.comment_header = 'Add Approval Comments';
+        this.isRejectCommentBoolean = false;
+        this.isApproveCommentBoolean = true;
+        this.isLCMSubmitBoolean = false;
+        this.deletepopBoolean = false;
+        this.checkItemBoolean = false;
+      }
+    } else if (reason == 'delete') {
+      this.comment_header = ' Please confirm';
+      this.BtnpopText = 'Are you sure you want to delete?';
+      this.isRejectCommentBoolean = false;
+      this.deletepopBoolean = true;
+      this.checkItemBoolean = false;
+      this.item_code = val.itemCode;
+      this.isLCMSubmitBoolean = false;
+      this.isRejectCommentBoolean = false;
+      this.isApproveCommentBoolean = false;
+    } else if (reason == 'AddLine') {
+      this.comment_header = "Check Item code availability";
+      this.isRejectCommentBoolean = false;
+      this.deletepopBoolean = false;
+      this.checkItemBoolean = true;
+      this.isLCMSubmitBoolean = false;
+      this.isRejectCommentBoolean = false;
+      this.isApproveCommentBoolean = false;
+    } else {
+      this.comment_header = 'Please Confirm';
+      this.BtnpopText = "Are you sure you want to submit? Once submit is done, you can not modify."
+      this.isLCMSubmitBoolean = true;
+      this.isRejectCommentBoolean = false;
+      this.isApproveCommentBoolean = false;
+      this.deletepopBoolean = false;
+      this.checkItemBoolean = false;
+    }
+
+  }
+
+  removeLine() {
+    this.exceptionService.removeLineData(this.item_code).subscribe((data: any) => {
+      if (data.status == "deleted") {
+        this.AlertService.addObject.detail = "Line item deleted";
+        this.messageService.add(this.AlertService.addObject);
+        this.displayrejectDialog = false;
+        if (this.isLCMInvoice) {
+          this.readSavedLCMLineData();
+        } else {
+          this.getInvoiceFulldata();
+        }
+      }
+    }, err => {
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+      this.displayrejectDialog = false;
+    })
+  };
+
+  CheckItemStatus(item) {
+    this.SpinnerService.show();
+    this.exceptionService.checkItemCode(item).subscribe((data: any) => {
+      if (data.status == "not exists") {
+        let addLineData = {
+          "documentID": this.invoiceID,
+          "itemCode": item
+        };
+        this.exceptionService.addLineItem(JSON.stringify(addLineData)).subscribe((data: any) => {
+          this.AlertService.addObject.detail = "Line item Added";
+          this.messageService.add(this.AlertService.addObject);
+          this.getInvoiceFulldata();
+        });
+        this.displayrejectDialog = false;
+      } else {
+        this.AlertService.errorObject.detail = "Item code already exist, Please try other item code";
+        this.messageService.add(this.AlertService.errorObject);
+      }
+      this.SpinnerService.hide();
+    }, err => {
+      this.SpinnerService.hide();
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+      this.displayrejectDialog = false;
+    })
+  }
+
   financeApprove() {
-    this.SharedService.financeApprovalPermission().subscribe(
+    let desc = {
+      "desp": this.rejectionComments
+    }
+    this.SharedService.financeApprovalPermission(JSON.stringify(desc)).subscribe(
       (data: any) => {
         this.dataService.invoiceLoadedData = [];
         this.messageService.add({
@@ -904,6 +1201,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           summary: 'Approved',
           detail: data.result,
         });
+        this.displayrejectDialog = false;
         setTimeout(() => {
           this._location.back();
         }, 1000);
@@ -914,6 +1212,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           summary: 'error',
           detail: error.statusText,
         });
+        this.displayrejectDialog = false;
       }
     );
   }
@@ -1020,17 +1319,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   prevPage() {
     this.page--;
   }
-  selectedText(): void { }
-
-  search(stringToSearch: string) {
-    this.pdfViewer.pdfFindController.executeCommand('find', {
-      caseSensitive: false,
-      findPrevious: undefined,
-      highlightAll: true,
-      phraseSearch: true,
-      query: stringToSearch,
-    });
-  }
 
   rotate(angle: number) {
     this.rotation += angle;
@@ -1047,7 +1335,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     let Ycord = arr.Ycord * ppi;
     return [Height, Width, Xcord, Ycord];
   }
-
+  viewPdf() {
+    this.showPdf = !this.showPdf;
+    if (this.showPdf != true) {
+      this.btnText = 'View PDF';
+    } else {
+      this.btnText = 'Close';
+    }
+    this.loadImage();
+  }
   hightlight(val) {
     let boundingBox = this.convertInchToPixel(val);
     let hgt: number = boundingBox[0];
@@ -1094,94 +1390,17 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       textLayer[0].getBoundingClientRect().top;
   }
 
-  open_dialog(str, val) {
-    if (str == 'reject') {
-      this.popUpHeader = ' ADD Rejection Comments';
-      this.rejectpopBoolean = true;
-      this.deletepopBoolean = false;
-      this.checkItemBoolean = false;
-    } else if (str == 'delete') {
-      this.popUpHeader = ' Please confirm';
-      this.deletepopBoolean = true;
-      this.rejectpopBoolean = false;
-      this.checkItemBoolean = false;
-      this.item_code = val.itemCode;
-    } else {
-      this.popUpHeader = "Check Item code availability";
-      this.deletepopBoolean = false;
-      this.rejectpopBoolean = false;
-      this.checkItemBoolean = true;
-    }
-    this.displayrejectDialog = true;
-  }
-  removeLine() {
-    this.exceptionService.removeLineData(this.item_code).subscribe((data: any) => {
-      if (data.status == "deleted") {
-        this.AlertService.addObject.detail = "Line item deleted";
-        this.messageService.add(this.AlertService.addObject);
-        this.displayrejectDialog = false;
-        this.getInvoiceFulldata();
-      }
-    }, err => {
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
-      this.displayrejectDialog = false;
-    })
-  };
 
-  CheckItemStatus(item) {
-    this.exceptionService.checkItemCode(item).subscribe((data: any) => {
-      if (data.status == "not exists") {
-        let addLineData = {
-          "documentID": this.invoiceID,
-          "itemCode": item
-        };
-        this.exceptionService.addLineItem(JSON.stringify(addLineData)).subscribe((data: any) => {
-          this.AlertService.addObject.detail = "Line item Added";
-          this.messageService.add(this.AlertService.addObject);
-          this.getInvoiceFulldata();
-        });
-        this.displayrejectDialog = false;
-      } else {
-        this.AlertService.errorObject.detail = "Item code already exist, Please try other item code";
-        this.messageService.add(this.AlertService.errorObject);
-      }
-    }, err => {
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
-      this.displayrejectDialog = false;
-    })
-  }
 
-  ngOnDestroy() {
-    // if (this.tagService.editable == true) {
-    let sessionData = {
-      session_status: false,
-    };
-    this.exceptionService
-      .updateDocumentLockInfo(sessionData)
-      .subscribe((data: any) => { });
-    clearTimeout(this.callSession);
-    // }
 
-    // this.idleTimer(0,"End");
-    this.tagService.financeApprovePermission = false;
-    this.tagService.approveBtnBoolean = false;
-    this.tagService.submitBtnBoolean = false;
-    this.vendorsSubscription.unsubscribe();
-  }
 
-  viewPdf() {
-    this.showPdf = !this.showPdf;
-    if (this.showPdf != true) {
-      this.btnText = 'View PDF';
-    } else {
-      this.btnText = 'Close';
-    }
-    this.loadImage();
-  }
 
-  changeTab(val, tab) {
+
+
+
+  changeTab(val, tabName) {
+    this.isLCMTab = false;
+    this.tabName = tabName;
     if (val === 'show') {
       this.showPdf = true;
       this.btnText = 'Close';
@@ -1189,11 +1408,465 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.showPdf = false;
       this.btnText = 'View PDF';
     }
-    if (tab == 'line') {
+    if (tabName === 'support') {
+      this.supportTabBoolean = true;
+
+    } else if (tabName === 'approver_selection') {
+
+      this.selectionTabBoolean = true;
+      this.supportTabBoolean = true;
+    } else {
+      this.supportTabBoolean = false;
+      this.selectionTabBoolean = false;
+    }
+
+    if (tabName == 'LCM') {
+      this.isLCMTab = true;
+    }
+
+    if (tabName == 'line') {
       this.lineTabBoolean = true;
     } else {
       this.lineTabBoolean = false;
     }
     this.loadImage();
+  }
+  onSelectFileApprove(event) {
+    for (let i = 0; i < event.target.files.length; i++) {
+      this.uploadFileList.push(event.target.files[i]);
+    }
+    this.uploadSupport();
+  }
+  onSelectFile(event) {
+    for (let i = 0; i < event.target.files.length; i++) {
+      this.uploadFileList.push(event.target.files[i]);
+
+    }
+  }
+  removeUploadQueue(index) {
+    this.uploadFileList.splice(index, 1);
+  }
+
+  uploadSupport() {
+    this.progress = 1;
+    const formData: any = new FormData();
+    for (const file of this.uploadFileList) {
+      formData.append('files', file, file.name);
+    }
+    this.SpinnerService.show()
+    this.SharedService.uploadSupportDoc(formData)
+      .pipe(
+        map((event: any) => {
+          if (event.type == HttpEventType.UploadProgress) {
+            this.progress = Math.round((100 / event.total) * event.loaded);
+          } else if (event.type == HttpEventType.Response) {
+            this.progress = null;
+            this.AlertService.addObject.detail = "Supporting Documents uploaded Successfully";
+            this.messageService.add(this.AlertService.addObject);
+            this.uploadFileList = [];
+            event.body?.result?.forEach(ele => {
+              this.support_doc_list.push(ele);
+            })
+            //  setTimeout(() => {
+            //  this.getInvoiceFulldata();
+            this.SpinnerService.hide()
+          }
+        }),
+        catchError((err: any) => {
+          this.progress = null;
+          this.AlertService.errorObject.detail = 'Server error';
+          this.messageService.add(this.AlertService.errorObject);
+          this.SpinnerService.hide()
+          return throwError(err.message);
+        })
+      )
+      .toPromise();
+  }
+
+  downloadDoc(doc_name) {
+    let encodeString = encodeURIComponent(doc_name);
+    this.SharedService.downloadSupportDoc(encodeString).subscribe(
+      (response: any) => {
+        let blob: any = new Blob([response]);
+        const url = window.URL.createObjectURL(blob);
+        fileSaver.saveAs(blob, doc_name);
+        this.AlertService.addObject.detail =
+          'Document downloaded successfully.';
+        this.messageService.add(this.AlertService.addObject);
+      },
+      (err) => {
+        this.AlertService.errorObject.detail = 'Server error';
+        this.messageService.add(this.AlertService.errorObject);
+      }
+    );
+  }
+  getEntity() {
+    this.dataService.getEntity().subscribe((data: any) => {
+      this.entityList = data;
+
+      this.entityList.forEach(val => {
+        if (this.dataService.entityID == val.idEntity) {
+          this.entityName = val.EntityName;
+          this.EntityName = val.EntityName;
+        }
+      })
+    });
+
+  }
+
+  readDepartment() {
+    this.SharedService.getDepartment().subscribe((data: any) => {
+      this.DepartmentList = data.department;
+      let deparmrnt_id;
+      if (this.tagService.batchProcessTab == 'editApproveBatch') {
+        deparmrnt_id = this.dataService.editableInvoiceData.approverData.hierarchy_details.DepartmentID;
+        this.DepartmentList.forEach(ele => {
+          if (ele.idDepartment == deparmrnt_id) {
+            this.selectedDepartment = ele?.DepartmentName;
+          }
+        })
+      } else {
+        deparmrnt_id = this.DepartmentList[0]?.idDepartment
+        this.selectedDepartment = this.DepartmentList[0]?.DepartmentName;
+      }
+      this.approversSendData.push({
+        EntityID: this.SharedService.selectedEntityId,
+        DepartmentID: deparmrnt_id
+      })
+      this.readApproverData();
+      // this.approversSendData[0].DepartmentID = this.DepartmentList[0]?.idDepartment ? this.DepartmentList[0]?.idDepartment : null;
+      // this.entityDeptList = this.entityBodyList[0].department
+    });
+  }
+  onSelectDepartment(val) {
+    this.DepartmentList.forEach(ele => {
+      if (ele.DepartmentName == val) {
+        this.approversSendData[0].DepartmentID = ele.idDepartment
+      }
+    })
+    this.readApproverData();
+  }
+  readCategoryData() {
+    this.SharedService.readCategory().subscribe((data: any) => {
+      this.categoryList = data;
+    })
+  }
+
+  onSelectCategory(val) {
+    this.approversSendData[0].categoryID = val;
+  }
+
+  readApproverData() {
+    this.SpinnerService.show();
+    this.approversSendData[0].approver = [];
+    this.approverList = {}
+    this.SharedService.readApprovers(JSON.stringify(this.approversSendData[0])).subscribe((data: any) => {
+      let resultData = data?.result
+      let array = [];
+      let list = [];
+      let count = 0;
+      for (const item in resultData) {
+        count = count + 1;
+        list = resultData[item].sort((a, b) => a.userPriority - b.userPriority);
+        this.approverList[`${item}_${count}`] = list;
+        array.push(resultData[item][0]?.User?.idUser);
+      }
+      this.approversSendData[0].approver = array;
+      this.SpinnerService.hide();
+    }, err => {
+      this.SpinnerService.hide();
+      if (err.status == 403) {
+        this.AlertService.errorObject.detail = 'Approvers are not available for this combination';
+      } else {
+        this.AlertService.errorObject.detail = 'Server error';
+      }
+      this.messageService.add(this.AlertService.errorObject);
+
+    })
+
+  }
+
+  onSelectApprovers(value, index) {
+    this.approversSendData[0].approver[index] = value;
+  }
+
+  onSelectPerApprove(bool) {
+    if (bool == true) {
+      this.captureComments('approve', null);
+
+    }
+  }
+
+  onSubmitApprovers() {
+    this.approversSendData[0].description = this.rejectionComments;
+    if (this.preApproveBoolean == false) {
+      this.sendApprovalAPI();
+    } else {
+      if (this.preApproveBoolean == true) {
+        this.sendApprovalAPI();
+      } else {
+        this.AlertService.errorObject.detail = 'Please add pre approval comments';
+        this.messageService.add(this.AlertService.errorObject);
+      }
+    }
+  }
+  sendApprovalAPI() {
+    this.SharedService.setApprovers(JSON.stringify(this.approversSendData[0]), this.preApproveBoolean).subscribe((data: any) => {
+      if (data?.error_status) {
+        this.AlertService.errorObject.detail = data?.error_status;
+        this.messageService.add(this.AlertService.errorObject);
+      } else {
+        this.AlertService.addObject.detail = data?.result;
+        this.messageService.add(this.AlertService.addObject);
+        setTimeout(() => {
+          this._location.back();
+        }, 1000);
+      }
+    },
+      (err) => {
+        this.AlertService.errorObject.detail = 'Server error';
+        this.messageService.add(this.AlertService.errorObject);
+      })
+  }
+  filterEnttity(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < this.entityList?.length; i++) {
+      let country = this.entityList[i];
+      if (
+        country.EntityName.toLowerCase().indexOf(query.toLowerCase()) == 0
+      ) {
+        filtered.push(country);
+      }
+    }
+    this.filteredEnt = filtered;
+  }
+  // onSelectEnt(event){
+  //   this.selectedEntity = event.EntityName;
+  // }
+  onSelectEntity(event) {
+    this.entityList.forEach(val => {
+      if (event == val.EntityName) {
+        this.readPONumbersLCM(val.idEntity);
+      }
+      this.LCMObj.EntityName = this.EntityName;
+      this.LCMLineForm.control.patchValue(this.LCMObj);
+    })
+  }
+  readPONumbersLCM(ent_id) {
+    this.SharedService.getLCMPOnum(ent_id).subscribe((data: any) => {
+      this.POlist_LCM = data.LCMPoNumbers;
+      this.LCMObj.EntityName = this.EntityName;
+      this.LCMLineForm.control.patchValue(this.LCMObj);
+    })
+  }
+
+  filterPOnumber(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < this.POlist_LCM?.length; i++) {
+      let country = this.POlist_LCM[i];
+      if (
+        country.PODocumentID.toLowerCase().indexOf(query.toLowerCase()) == 0
+      ) {
+        filtered.push(country);
+      }
+    }
+    this.filteredPO = filtered;
+  }
+
+  selectedPO(value) {
+    this.selectedPONumber = value.PODocumentID;
+    this.readLCMLines(value.PODocumentID);
+  }
+  readLCMLines(po_num) {
+    this.LCMItems = [];
+    this.SpinnerService.show();
+    this.SharedService.getLCMLines(po_num).subscribe((data: any) => {
+      let LCMLineData = data.PoLineData;
+      let count = 0;
+      for (const item in LCMLineData) {
+        count = count + 1;
+        this.LCMItems.push({ PoLineDescription: item, id: count, values: LCMLineData[item] });
+      }
+      this.voyageList = data.VoyageNumbers;
+      this.SpinnerService.hide();
+    }, err => {
+      this.SpinnerService.hide();
+      this.AlertService.errorObject.detail = 'Server error';
+      this.messageService.add(this.AlertService.errorObject);
+    })
+  }
+  filterLCMLine(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < this.LCMItems?.length; i++) {
+      let country = this.LCMItems[i];
+      if (
+        country.PoLineDescription.toLowerCase().indexOf(query.toLowerCase()) == 0
+      ) {
+        filtered.push(country);
+      }
+    }
+    this.filteredLCMLines = filtered;
+  }
+  OnSelectLine(event) {
+    this.selectedLCMLine = event.PoLineDescription;
+    this.itemId = event.values.ItemId;
+    this.selectedVoyage = event.values.Voyage;
+    this.act_val = event.values.ActualizedValue;
+    this.est_val = event.values.EstimatedValue;
+    this.max_allocation = event.values.AllocateRange;
+    this.lineNumber = event.values.LineNumber;
+    this.ContextTableId = event.values.ContextTableId;
+    this.ContextRecId = event.values.ContextRecId;
+    this.AGIVesselNumber = event.values.AGIVesselNumber;
+    this.readChargeCode(event.values.dataAreaId, this.ContextRecId, this.ContextTableId)
+  }
+  // filterVoyage(event){
+  //   let filtered: any[] = [];
+  //   let query = event.query;
+  //   for (let i = 0; i < this.voyageList.length; i++) {
+  //     let country = this.voyageList[i];
+  //     if (
+  //       country.voyage_number.toLowerCase().indexOf(query.toLowerCase()) == 0
+  //     ) {
+  //       filtered.push(country);
+  //     }
+  //   }
+  //   this.filteredVoyage = filtered;
+  // }
+  // onSelectVoyage(event){
+  //   console.log(event)
+  //   this.selectedVoyage = event.voyage_number;
+  // }
+  readChargeCode(dataArea, ContextRecId, ContextTableId) {
+    this.SpinnerService.show();
+    this.SharedService.getChargesCode(dataArea, ContextRecId, ContextTableId).subscribe((data: any) => {
+      this.chargeList = data.value;
+      this.SpinnerService.hide();
+    }, err => {
+      this.SpinnerService.hide();
+      this.AlertService.errorObject.detail = 'Server error';
+      this.messageService.add(this.AlertService.errorObject);
+    })
+  }
+  filterCost(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < this.chargeList?.length; i++) {
+      let country = this.chargeList[i];
+      if (
+        country.MarkupCode.toLowerCase().indexOf(query.toLowerCase()) == 0
+      ) {
+        filtered.push(country);
+      }
+    }
+    this.filteredCost = filtered;
+  }
+  onSelectCost(event) {
+    this.selectedCost = event.MarkupCode;
+    this.MarkupTransRecId = event.MarkupTransRecId;
+  }
+  AddLCMLine(value) {
+    let Obj = {
+      EntityName: this.EntityName,
+      PoDocumentId: this.selectedPONumber,
+      PoLineDescription: this.selectedLCMLine,
+      PoLineNumber: this.lineNumber,
+      VoyageNumber: this.selectedVoyage,
+      CostCategory: this.selectedCost,
+      EstimatedValue: this.est_val,
+      ActualizedValue: this.act_val,
+      Allocate: value.Allocate,
+      ContextTableId: this.ContextTableId,
+      ContextRecId: this.ContextRecId,
+      AGIVesselNumber: this.AGIVesselNumber,
+      MarkupTransRecId: this.MarkupTransRecId
+    }
+    console.log(Obj, this.LCMDataTable);
+
+    this.SaveLCM(Obj);
+  }
+  deleteLCMLine(index) {
+    this.LCMDataTable.splice(index, 1);
+  }
+  onChange(evt) {
+    const formData = new FormData();
+    formData.append("file", evt.target.files[0]);
+    this.uploadExcel_LCM(formData)
+  }
+
+  uploadExcel_LCM(file) {
+    this.SpinnerService.show();
+    this.SharedService.uploadLCM_xl(file).subscribe((data: any) => {
+      if (data?.data) {
+        //         data.data.forEach(ele => {
+        //           this.LCMDataTable.push(ele);
+        //         })
+        this.readSavedLCMLineData()
+        this.AlertService.addObject.detail = data.data;
+        this.messageService.add(this.AlertService.addObject);
+      } else if (data?.error) {
+        let str = data.error.toString()
+        this.AlertService.errorObject.detail = str;
+        this.messageService.add(this.AlertService.errorObject);
+      }
+      // this.LCMDataTable = data;
+      // this.readSavedLCMLineData()
+      // this.AlertService.addObject.detail="File Uploaded"
+      // this.messageService.add(this.AlertService.addObject);
+      this.SpinnerService.hide();
+    }, err => {
+      this.SpinnerService.hide();
+      this.AlertService.errorObject.detail = "Server error"
+      this.messageService.add(this.AlertService.errorObject);
+    })
+    delete this.uploadExcelValue;
+  }
+  downloadLCMTemplate() {
+    this.SharedService.downloadLCMTemplate('').subscribe((data: any) => {
+      this.excelDownload(data, 'LCM upload template');
+    })
+  }
+  excelDownload(data, type) {
+    let blob: any = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    let d = new Date();
+    let datestring = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
+      d.getHours() + ":" + d.getMinutes();
+    fileSaver.saveAs(blob, `${type}-(${datestring})`);
+  }
+  readSavedLCMLineData() {
+    this.SpinnerService.show()
+    this.SharedService.getsavedLCMLineData().subscribe((data: any) => {
+      this.LCMDataTable = data.data;
+      const sum = this.LCMDataTable.reduce((accumulator, object) => {
+        return accumulator + Number(object.Allocate);
+      }, 0);
+      this.allocateTotal = sum.toFixed(2);
+      let bal: any = Number(this.invoiceTotal) - this.allocateTotal;
+      this.balanceAmount = parseFloat(bal).toFixed(2);
+      this.SpinnerService.hide();
+    }, err => {
+      this.SpinnerService.hide();
+    })
+  }
+  ngOnDestroy() {
+    let sessionData = {
+      session_status: false,
+    };
+    this.exceptionService
+      .updateDocumentLockInfo(sessionData)
+      .subscribe((data: any) => { });
+    clearTimeout(this.callSession);
+    this.tagService.financeApprovePermission = false;
+    this.tagService.approveBtnBoolean = false;
+    this.tagService.submitBtnBoolean = false;
+    this.tagService.approval_selection_boolean = false;
+    this.tagService.LCM_boolean = false;
+    // this.dataService.entityID = undefined;
+    // this.SharedService.selectedEntityId = undefined;
+    this.vendorsSubscription.unsubscribe();
   }
 }

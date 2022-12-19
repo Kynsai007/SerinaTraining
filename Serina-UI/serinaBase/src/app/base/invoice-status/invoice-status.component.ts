@@ -71,8 +71,7 @@ export class InvoiceStatusComponent implements OnInit {
       console.log(blob)
       // window.open(url);
       //window.location.href = response.url;
-      fileSaver.saveAs(blob, `Invoice#${this.invoiceNumber}JourneyMap`);;
-      this.alertService.addObject.summary="Success";
+      fileSaver.saveAs(blob, `Invoice#${this.invoiceNumber}JourneyMap`);
       this.alertService.addObject.detail = "Document Downloaded successfully";
       this.messageService.add(this.alertService.addObject);
     }
