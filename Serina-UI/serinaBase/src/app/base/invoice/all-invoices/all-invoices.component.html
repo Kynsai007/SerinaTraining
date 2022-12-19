@@ -127,24 +127,17 @@
                     }"
                   >
                     {{ invoiceData[col.dbColumnname] }}
-                    <i
-                      *ngIf="invoiceData.documentStatusID == 1"
-                      [pTooltip]="invoiceData?.documentDescription"
-                      tooltipPosition="top"
-                      class="f-13 ml-3"
-                      style="color: red; font-weight: 800"
-                    >
-                      !</i
-                    >
-                    <i
-                      *ngIf="invoiceData.docstatus == 'Need To Review'"
-                      [pTooltip]="invoiceData?.status"
-                      tooltipPosition="top"
-                      class="f-13 ml-3"
-                      style="color: red; font-weight: 800"
-                    >
-                      !</i
-                    >
+                    <button
+                    *ngIf="invoiceData.documentStatusID == 1"
+                    [pTooltip]="invoiceData?.documentDescription"
+                    tooltipPosition="top"
+                    class="f-13 b-0 ml-4"
+                    style="color: red; font-weight: 800"
+                    (click)="triggerBatch(invoiceData.idDocument)"
+                    [disabled]="triggerBoolean && invoiceID == invoiceData.idDocument" 
+                  >
+                   <i class="fa fa-refresh" aria-hidden="true"></i> 
+                  </button>
                   </td>
                 </div>
               </div>
