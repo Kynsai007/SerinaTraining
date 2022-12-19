@@ -10,12 +10,12 @@ export const environment = {
 };
 
 export const environment1:IMqttServiceOptions  = {
-  //hostname: `${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
-  //port: 443,
-  //protocol: 'wss',
-  //path: '/console',
-  //clientId: Math.floor(Math.random() * 100000).toString(),
-  //keepalive:10,
+  hostname: `${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
+  port: 443,
+  protocol: 'wss',
+  path: '/console',
+  clientId: Math.floor(Math.random() * 100000).toString(),
+  keepalive:10,
   username: environment.userName ? environment.userName :'',
   password: environment.userData ? environment.userData.token : ''
  }
