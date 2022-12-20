@@ -10,7 +10,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableModule} from '@angular/material/table';
-import {MatSidenavModule} from '@angular/material/sidenav'
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   exports: [
@@ -24,7 +25,8 @@ import {MatSidenavModule} from '@angular/material/sidenav'
     MatIconModule,
     MatSidenavModule,
     MatTableModule,
-    CdkTableModule
+    CdkTableModule,
+    MatRadioModule
   ]
 })
 export class DemoMaterialModule {}
