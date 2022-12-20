@@ -130,6 +130,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataStoreService.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.dataStoreService.configData?.serviceInvoices;
+    // if(this.vendorInvoiceAccess){
+    //   this.exceptionRoute = 'ExceptionManagement/vendor_based';
+    // } else if(this.serviceInvoiceAccess) {
+    //   this.exceptionRoute = 'ExceptionManagement/Service_ExceptionManagement';
+    // }
     this.userDetails = this.authService.currentUserValue;
     environment1.password = this.userDetails.token;
     environment1.username = JSON.parse(localStorage.getItem('username'));
@@ -142,11 +147,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this,this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login1 = this.userDetails.last_login;
-      if(this.vendorInvoiceAccess){
-        this.exceptionRoute = 'ExceptionManagement';
-      } else if(this.serviceInvoiceAccess) {
-        this.exceptionRoute = 'ExceptionManagement/Service_ExceptionManagement';
-      }
+
     // console.log(environment1);
   }
 

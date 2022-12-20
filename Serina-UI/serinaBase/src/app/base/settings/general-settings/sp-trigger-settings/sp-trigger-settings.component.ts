@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { CronGenComponent, CronOptions } from 'ngx-cron-editor';
+// import { CronGenComponent, CronOptions } from 'ngx-cron-editor';
 
 @Component({
   selector: 'app-sp-trigger-settings',
@@ -16,32 +16,32 @@ import { CronGenComponent, CronOptions } from 'ngx-cron-editor';
 export class SpTriggerSettingsComponent implements OnInit {
   public cronExpression = ' 0 0 1/1 * *';
   public isCronDisabled = false;
-  public cronOptions: CronOptions = {
-    formInputClass: 'form-control cron-editor-input',
-    formSelectClass: 'form-control cron-editor-select',
-    formRadioClass: 'cron-editor-radio',
-    formCheckboxClass: 'cron-editor-checkbox',
+  // public cronOptions: CronOptions = {
+  //   formInputClass: 'form-control cron-editor-input',
+  //   formSelectClass: 'form-control cron-editor-select',
+  //   formRadioClass: 'cron-editor-radio',
+  //   formCheckboxClass: 'cron-editor-checkbox',
 
-    defaultTime: '00:00:00',
+  //   defaultTime: '00:00:00',
 
-    hideMinutesTab: true,
-    hideHourlyTab: false,
-    hideDailyTab: false,
-    hideWeeklyTab: false,
-    hideMonthlyTab: true,
-    hideYearlyTab: true,
-    hideAdvancedTab: true,
-    hideSpecificWeekDayTab: true,
-    hideSpecificMonthWeekTab: false,
+  //   hideMinutesTab: true,
+  //   hideHourlyTab: false,
+  //   hideDailyTab: false,
+  //   hideWeeklyTab: false,
+  //   hideMonthlyTab: true,
+  //   hideYearlyTab: true,
+  //   hideAdvancedTab: true,
+  //   hideSpecificWeekDayTab: true,
+  //   hideSpecificMonthWeekTab: false,
 
-    use24HourTime: true,
-    hideSeconds: false,
+  //   use24HourTime: true,
+  //   hideSeconds: false,
 
-    cronFlavor: 'standard'
-  };
+  //   cronFlavor: 'standard'
+  // };
 
   @ViewChild('cronEditorDemo')
-  cronEditorDemo: CronGenComponent;
+  // cronEditorDemo: CronGenComponent;
 
   cronForm: FormControl;
   scheduleTrigger = [
@@ -77,7 +77,7 @@ export class SpTriggerSettingsComponent implements OnInit {
   }
 
   cronFlavorChange() {
-    this.cronEditorDemo.options = this.cronOptions;
+    // this.cronEditorDemo.options = this.cronOptions;
   }
   backToSettings() {
     this.router.navigate(['/customer/settings/generalSettings'])

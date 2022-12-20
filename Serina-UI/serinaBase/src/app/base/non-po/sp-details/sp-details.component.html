@@ -922,6 +922,25 @@
                 </ng-template>
               </p-autoComplete> -->
             </div>
+            <div>
+              <label class="label-head"
+                >Approver </label
+              ><br />
+              <!-- <input
+                type="text"
+                formControlName="approver"
+                (change)="onSelectAppprover($event.target.value)"
+                class="form-control inputHeight w-250"
+              /> -->
+              <select formControlName="approver"
+              (change)="onSelectAppprover($event.target.value)"
+              class="form-control inputHeight w-250">
+                <option *ngFor="let data of approverList" [value]="data.ApproverID">{{data.ApproverName}}</option>
+              </select>
+              <!-- <datalist id="approver_list">
+                <option *ngFor="let data of approverList" [value]="data.ApproverName">{{data.ApproverID}}</option>
+              </datalist> -->
+            </div>
           </div>
     
           <div class="addAc" *ngIf="!disableCostAllocationBoolean">

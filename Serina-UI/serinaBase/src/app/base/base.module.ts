@@ -21,12 +21,9 @@ import { ViewInvoiceComponent } from './invoice/view-invoice/view-invoice.compon
 
 import { CanDeactivateGuard } from './can-deactivate/can-deactivate.guard';
 import { FilterPipe } from './settings/ocr-config/filter.pipe';
-import { PoComponent } from './invoice/po/po.component';
 import { GrnComponent } from './invoice/grn/grn.component';
 import { PipComponent } from './invoice/pip/pip.component';
-import { ArchivedComponent } from './invoice/archived/archived.component';
 import { AllInvoicesComponent } from './invoice/all-invoices/all-invoices.component';
-import { EditUserComponent } from './roles/edit-user/edit-user.component';
 import { SpDetailsComponent } from './non-po/sp-details/sp-details.component';
 import { InvoiceStatusComponent } from './invoice-status/invoice-status.component';
 import { SummaryComponent } from './non-po/summary/summary.component';
@@ -38,10 +35,8 @@ import { InvokeBatchComponent } from './exception-management/invoke-batch/invoke
 import { ServiceInvoiceExceptionsComponent } from './exception-management/service-invoice-exceptions/service-invoice-exceptions.component';
 import { ExceptionTableComponent } from './exception-management/exception-table/exception-table.component';
 import { Comparision3WayComponent } from './exception-management/comparision3-way/comparision3-way.component';
-import { ServiceDocStatusComponent } from './invoice/service-doc-status/service-doc-status.component';
 import { CustomerSummaryComponent } from './customer-summary/customer-summary.component';
 import { BusinessChartsComponent } from './home/business-charts/business-charts.component';
-import { SystemChartsComponent } from './home/system-charts/system-charts.component';
 import { VendorBasedChartsComponent } from './home/vendor-based-charts/vendor-based-charts.component';
 import { ServiceBasedChartsComponent } from './home/service-based-charts/service-based-charts.component';
 
@@ -69,12 +64,9 @@ import { HelpComponent } from './help/help.component';
     EditedComponent,
     NotificationsComponent,
     ViewInvoiceComponent,
-    PoComponent,
     GrnComponent,
     PipComponent,
-    ArchivedComponent,
     AllInvoicesComponent,
-    EditUserComponent,
     SpDetailsComponent,
     InvoiceStatusComponent,
     SummaryComponent,
@@ -86,10 +78,8 @@ import { HelpComponent } from './help/help.component';
     ServiceInvoiceExceptionsComponent,
     ExceptionTableComponent,
     Comparision3WayComponent,
-    ServiceDocStatusComponent,
     CustomerSummaryComponent,
     BusinessChartsComponent,
-    SystemChartsComponent,
     VendorBasedChartsComponent,
     ServiceBasedChartsComponent,
     ProcessReportsComponent,
@@ -114,10 +104,8 @@ import { HelpComponent } from './help/help.component';
     InvoiceComponent,
     NotificationsComponent,
     ViewInvoiceComponent,
-    PoComponent,
     GrnComponent,
     PipComponent,
-    ArchivedComponent,
     AllInvoicesComponent,
     TableComponent,
     ChangePasswordComponent,

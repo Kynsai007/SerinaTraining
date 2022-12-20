@@ -11,16 +11,11 @@ import { ServiceInvoicesHistoryComponent } from './non-po/service-invoices-histo
 import { SummaryComponent } from './non-po/summary/summary.component';
 import { InvoiceStatusComponent } from './invoice-status/invoice-status.component';
 import { SpDetailsComponent } from './non-po/sp-details/sp-details.component';
-import { ArchivedComponent } from './invoice/archived/archived.component';
 import { PipComponent } from './invoice/pip/pip.component';
 import { GrnComponent } from './invoice/grn/grn.component';
-import { PoComponent } from './invoice/po/po.component';
 import { AllInvoicesComponent } from './invoice/all-invoices/all-invoices.component';
-import { SettingsModule } from './settings/settings.module';
 import { ViewInvoiceComponent } from './invoice/view-invoice/view-invoice.component';
-import { SettingsComponent } from './settings/settings.component';
 import { NotificationsComponent } from './notifications/notifications.component';
-import { EditedComponent } from './edited/edited.component';
 import { ApproveComponent } from './approve/approve.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RolesComponent } from './roles/roles.component';

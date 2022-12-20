@@ -72,6 +72,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   portal_name: string;
   triggerBoolean: boolean;
   invoiceID: any;
+
   constructor(
     private tagService: TaggingService,
     public router: Router,
@@ -143,7 +144,6 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     return allInvoice ? allInvoice.idDocument : undefined;
   }
   viewInvoiceDetails(e) {
-    console.log(e)
     let route:string;
     if(e.documentStatusID == 12 || e.documentStatusID == 13){
       route = 'PODetails';
@@ -182,6 +182,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
   viewStatusPage(e) {
     this.sharedService.invoiceID = e.idDocument;
+    this.storageService.subStatusId = e.documentsubstatusID;
     this.router.navigate([`${this.portal_name}/invoice/InvoiceStatus/${e.idDocument}`]);
    
   }
@@ -228,10 +229,10 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
 
   reUpload(val){
-    console.log(val);
     this.router.navigate([`/${this.portal_name}/uploadInvoices`]);
     this.storageService.reUploadData = val;
   }
+
   triggerBatch(id){
     alert("Are you sure you want to re-trigger the batch for the Invoice?")
     this.triggerBoolean = true;
@@ -245,7 +246,6 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     },(error => {
       this.triggerBoolean = false;
-      console.log(`error ${error}`)
     }))
   }
 }

@@ -216,32 +216,10 @@ tr.mat-footer-row {
 }
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
     text-align: left;
-    border: 1px solid #f5f5f5;
-    border-width: 0 0 1px 0;
     padding: 10px;
-    color: #0f3f62;
-    font-size: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0px;
     text-align: left;
-    border: 1px solid #f5f5f5;
-    border-width: 0 0 1px 0;
-    font-weight: 700;
-    padding: 10px;
-    width: 100%;
-    font-size: 12px;
-    color: #495057;
-    background: #ffffff;
-    transition: box-shadow 0.2s;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 :host ::ng-deep .p-fluid .p-inputtext {
@@ -270,11 +248,11 @@ tr.mat-footer-row {
     right: -45px;
 }
 .searchBarInvoiceService {
-    top: 117px;
+    top: 108px;
     right: 104px;
 }
 .searchBarServiceAc {
-    top: 120px;
+    top: 110px;
     right: 70px;
 }
 .exportIcon {
@@ -586,8 +564,8 @@ label {
     //     left: 76%;
     // }
     .searchBarInvoiceService {
-        top:121px;
-        right: 50px;
+        top: 111px;
+        right: 69px;
     }
     .pos-AddAcnt {
         // height: 28px;

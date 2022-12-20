@@ -432,13 +432,13 @@ export class EditedComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleRejection(popover, comments: string[]) {
-    if (popover.isOpen()) {
-      popover.close();
-    } else {
-      popover.open({ comments: comments });
-    }
-  }
+  // toggleRejection(popover, comments: string[]) {
+  //   if (popover.isOpen()) {
+  //     popover.close();
+  //   } else {
+  //     popover.open({ comments: comments });
+  //   }
+  // }
   ngOnDestroy() {
     // this.tagService.editedTabValue = 'invoice'
   }

@@ -379,7 +379,7 @@
                         <div class="f-12 td_padding po_color doc_height">
                           <!-- <div class="error-block error-symbol"></div> -->
   
-                          <div class="f-12" *ngIf="submitBtn_boolean">
+                          <div class="f-12 d-flex" *ngIf="submitBtn_boolean">
                             <select
                               class="f-11 input_disabled form-control sel_drp"
                               name="lineSelection"
@@ -418,6 +418,7 @@
                                   data.linedetails[0].invline[0]
                                     ?.DocumentLineItems?.itemCode
                                 "
+                                [title]="description?.ItemMetaData?.description"
                               >
                                 {{ description?.ItemMetaData?.description }}
                               </span>

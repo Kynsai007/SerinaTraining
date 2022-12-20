@@ -397,6 +397,10 @@ export class SharedService {
   downloadDoc() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/journeydoc/docid/${this.invoiceID}`, { responseType: 'blob' });
   }
+  downloadJSON(){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/util/download_json/${this.invoiceID}`, { responseType: 'blob' });
+  }
+  
   // SupportDocumnet
   uploadSupportDoc(data) {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}`, data, {

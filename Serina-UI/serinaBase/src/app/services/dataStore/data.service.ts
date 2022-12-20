@@ -111,6 +111,7 @@ export class DataService {
   create_GRN_page_row_length = 10;
   searchTextException: any;
   configData: any;
+  subStatusId: number;
 
   constructor() { }
 

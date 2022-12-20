@@ -18,7 +18,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { fabric } from 'fabric';
+// import { fabric } from 'fabric';
 import { Location } from '@angular/common';
 import { FormGroup, NgForm } from '@angular/forms';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
@@ -213,6 +213,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   balanceAmount: any;
   invoiceTotal: any;
   uploadtime: string = "00:00";
+  content_type: any;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -483,6 +484,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SpinnerService.show();
     this.SharedService.getInvoiceFilePath().subscribe(
       (data: any) => {
+        this.content_type = data?.result?.content_type;
         if (
           data.result.filepath &&
           data.result.content_type == 'application/pdf'
@@ -528,13 +530,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   DownloadPDF() {
-    let a = document.createElement('a');
-    document.body.appendChild(a);
-    a.href = this.showInvoice;
-    a.download = String(`${this.vendorName}_${this.invoiceNumber}`);
-    a.click();
-    window.URL.revokeObjectURL(this.showInvoice);
-    a.remove();
+    let extension;
+    if(this.content_type == 'application/pdf'){
+      extension = '.pdf';
+    } else if(this.content_type == 'image/jpg'){
+      extension = '.jpg';
+    } else if(this.content_type == 'image/png'){
+      extension = '.png';
+    }
+    fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
   }
 
   loadImage() {
@@ -738,22 +742,22 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   // }
 
   drawrectangleonHighlight() {
-    var rect = new fabric.Rect({
-      left: 100,
-      top: 50,
-      fill: 'rgba(255,0,0,0.5)',
-      width: 100,
-      height: 30,
-      selectable: false,
-      lockMovementX: true,
-      lockMovementY: true,
-      lockRotation: true,
-      transparentCorners: true,
-      hasControls: false,
-    });
+    // var rect = new fabric.Rect({
+    //   left: 100,
+    //   top: 50,
+    //   fill: 'rgba(255,0,0,0.5)',
+    //   width: 100,
+    //   height: 30,
+    //   selectable: false,
+    //   lockMovementX: true,
+    //   lockMovementY: true,
+    //   lockRotation: true,
+    //   transparentCorners: true,
+    //   hasControls: false,
+    // });
 
-    this.canvas.add(rect);
-    this.canvas.setActiveObject(rect);
+    // this.canvas.add(rect);
+    // this.canvas.setActiveObject(rect);
     // document.getElementById(index + 1).scrollIntoView();
   }
 
@@ -787,25 +791,25 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   panning() {
-    this.removeEvents();
-    let panning = false;
-    let selectable;
-    this.canvas.on('mouse:up', (e) => {
-      panning = false;
-    });
+    // this.removeEvents();
+    // let panning = false;
+    // let selectable;
+    // this.canvas.on('mouse:up', (e) => {
+    //   panning = false;
+    // });
 
-    this.canvas.on('mouse:down', (e) => {
-      panning = true;
-      selectable = false;
-    });
-    this.canvas.on('mouse:move', (e) => {
-      if (panning && e && e.e) {
-        selectable = false;
-        var units = 10;
-        var delta = new fabric.Point(e.e.movementX, e.e.movementY);
-        this.canvas.relativePan(delta);
-      }
-    });
+    // this.canvas.on('mouse:down', (e) => {
+    //   panning = true;
+    //   selectable = false;
+    // });
+    // this.canvas.on('mouse:move', (e) => {
+    //   if (panning && e && e.e) {
+    //     selectable = false;
+    //     var units = 10;
+    //     var delta = new fabric.Point(e.e.movementX, e.e.movementY);
+    //     this.canvas.relativePan(delta);
+    //   }
+    // });
   }
 
   addVendorDetails() {

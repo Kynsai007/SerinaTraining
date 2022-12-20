@@ -13,7 +13,6 @@ export class HelpComponent implements OnInit {
   }
   downloadPdf() { 
     this.sharedService.downloadHelpDoc('AGI_Help_guide.xlsx').subscribe((data:any)=>{
-      console.log(data)
       fileSaver.saveAs(data, `Quick_upload_Help_guide.xlsx`);
     })
   }

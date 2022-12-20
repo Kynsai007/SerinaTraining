@@ -17,7 +17,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { fabric } from 'fabric';
 import { Location } from '@angular/common';
 import { FormBuilder, Validators, FormGroup, NgForm } from '@angular/forms';
 import * as $ from 'jquery';
@@ -26,6 +25,7 @@ import { comaprisionLineData } from './testingLineData';
 import { FormCanDeactivate } from '../../can-deactivate/form-can-deactivate';
 import { SettingsService } from 'src/app/services/settings/settings.service';
 import IdleTimer from '../../idleTimer/idleTimer';
+import * as fileSaver from 'file-saver';
 
 @Component({
   selector: 'app-comparision3-way',
@@ -126,6 +126,7 @@ export class Comparision3WayComponent
   callSession: any;
   invoiceNumber = '';
   vendorName: any;
+  content_type: any;
 
   constructor(
     fb: FormBuilder,
@@ -481,6 +482,7 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.exceptionService.readFilePath().subscribe(
       (data: any) => {
+        this.content_type = data?.result?.content_type;
         if (data.filepath && data.content_type == 'application/pdf') {
           this.isPdfAvailable = false;
           this.isImgBoolean = false;
@@ -522,13 +524,15 @@ export class Comparision3WayComponent
   }
 
   DownloadPDF(){
-    let a = document.createElement("a");
-    document.body.appendChild(a);
-    a.href = this.showInvoice;
-    a.download = String(`${this.vendorName}_${this.invoiceNumber}`);
-    a.click();
-    window.URL.revokeObjectURL(this.showInvoice);
-    a.remove();
+    let extension;
+    if(this.content_type == 'application/pdf'){
+      extension = '.pdf';
+    } else if(this.content_type == 'image/jpg'){
+      extension = '.jpg';
+    } else if(this.content_type == 'image/png'){
+      extension = '.png';
+    }
+    fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
   }
 
   loadImage() {
@@ -627,23 +631,23 @@ export class Comparision3WayComponent
   }
 
   drawrectangleonHighlight(index) {
-    var rect = new fabric.Rect({
-      left: 100,
-      top: 50,
-      fill: 'rgba(255,0,0,0.5)',
-      width: 100,
-      height: 30,
-      selectable: false,
-      lockMovementX: true,
-      lockMovementY: true,
-      lockRotation: true,
-      transparentCorners: true,
-      hasControls: false,
-    });
+    // var rect = new fabric.Rect({
+    //   left: 100,
+    //   top: 50,
+    //   fill: 'rgba(255,0,0,0.5)',
+    //   width: 100,
+    //   height: 30,
+    //   selectable: false,
+    //   lockMovementX: true,
+    //   lockMovementY: true,
+    //   lockRotation: true,
+    //   transparentCorners: true,
+    //   hasControls: false,
+    // });
 
-    this.canvas[index].add(rect);
-    this.canvas[index].setActiveObject(rect);
-    document.getElementById(index + 1).scrollIntoView();
+    // this.canvas[index].add(rect);
+    // this.canvas[index].setActiveObject(rect);
+    // document.getElementById(index + 1).scrollIntoView();
   }
 
   zoomin() {
@@ -671,25 +675,25 @@ export class Comparision3WayComponent
   }
 
   panning(index) {
-    this.removeEvents(index);
-    let panning = false;
-    let selectable;
-    this.canvas[index].on('mouse:up', (e) => {
-      panning = false;
-    });
+    // this.removeEvents(index);
+    // let panning = false;
+    // let selectable;
+    // this.canvas[index].on('mouse:up', (e) => {
+    //   panning = false;
+    // });
 
-    this.canvas[index].on('mouse:down', (e) => {
-      panning = true;
-      selectable = false;
-    });
-    this.canvas[index].on('mouse:move', (e) => {
-      if (panning && e && e.e) {
-        selectable = false;
-        var units = 10;
-        var delta = new fabric.Point(e.e.movementX, e.e.movementY);
-        this.canvas[index].relativePan(delta);
-      }
-    });
+    // this.canvas[index].on('mouse:down', (e) => {
+    //   panning = true;
+    //   selectable = false;
+    // });
+    // this.canvas[index].on('mouse:move', (e) => {
+    //   if (panning && e && e.e) {
+    //     selectable = false;
+    //     var units = 10;
+    //     var delta = new fabric.Point(e.e.movementX, e.e.movementY);
+    //     this.canvas[index].relativePan(delta);
+    //   }
+    // });
   }
 
   addVendorDetails() {
