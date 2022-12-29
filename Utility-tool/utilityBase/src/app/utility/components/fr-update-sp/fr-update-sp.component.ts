@@ -106,7 +106,7 @@ export class FrUpdateSpComponent implements OnInit {
       this.SPName = this.sharedService.currentSPData.ServiceProviderName;
     }
     this.getAccuracyScore();
-    this.getSPAccounts();
+    //this.getSPAccounts();
     this.getfrConfig();
     //this.getSynonyms();
     this.getModalList();
@@ -413,7 +413,7 @@ export class FrUpdateSpComponent implements OnInit {
   }
   createModel(value) {
     value.modelStatus = 1;
-    value.serviceProviderID = this.SPData.idServiceProvider;
+    value.serviceproviderID = this.SPData.idServiceProvider;
     if(value['modelName'] == ''){
       return;
     }
@@ -426,7 +426,7 @@ export class FrUpdateSpComponent implements OnInit {
     }
     this.sharedService.createNewTemplate(JSON.stringify(value)).subscribe((data: any) => {
       (<HTMLButtonElement>document.getElementById("closeBtn")).click();
-      this.getSPAccounts();
+      //this.getSPAccounts();
       this.getModalList();
       this.FolderPath = data['records']['folderPath']
       this.messageService.add({

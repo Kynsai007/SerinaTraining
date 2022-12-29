@@ -114,7 +114,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
       result_id = this.modelData.idVendorAccount;
     }else{
       modeltype = 'sp';
-      result_id = this.modelData.idServiceAccount;
+      result_id = this.modelData.serviceproviderID;
     }
     this.sharedService.getModelsByVendor(modeltype,result_id).subscribe((data:any) =>{
       this.resp = data;
@@ -243,7 +243,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
       "cnx_str": this.frConfigData[0].ConnectionString,
       "cont_name": this.frConfigData[0].ContainerName,
       "VendorAccount": this.modelStatus.idVendorAccount,
-      "ServiceAccount": this.modelData.idServiceAccount
+      "ServiceAccount": this.modelData.serviceproviderID
     }
     
     // if(this.modelStatus.modelStatus > 4){
@@ -322,8 +322,8 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
             }
           })
         }
-        if(this.modelStatus.idServiceAccount){
-          this.sharedService.checkSameSP(this.modelStatus.idServiceAccount,this.modelData.modelName).subscribe(dt => {
+        if(this.modelStatus.serviceproviderID){
+          this.sharedService.checkSameSP(this.modelStatus.serviceproviderID,this.modelData.modelName).subscribe(dt => {
             this.saving = false;
             if(dt['message'] == 'exists'){
               (<HTMLButtonElement>document.getElementById("openmodel")).click();
@@ -367,7 +367,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         this.router.navigate(['IT_Utility/vendors']);
       })
     }else{
-      this.sharedService.copymodelsSP(this.modelStatus.idServiceAccount,this.modelData.modelName).subscribe(dt=>{
+      this.sharedService.copymodelsSP(this.modelStatus.serviceproviderID,this.modelData.modelName).subscribe(dt=>{
         this.saving = false;
         this.router.navigate(['IT_Utility/service-providers']);
       })
@@ -379,7 +379,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     let updatedData = {
       "modelName": this.modelStatus.modelName,
       "idVendorAccount": this.modelStatus.idVendorAccount,
-      "idServiceAccount": this.modelStatus.idServiceAccount,
+      "idServiceAccount": this.modelStatus.serviceproviderID,
       "folderPath": this.modelStatus.folderPath,
       "modelStatus": id_status
     }
