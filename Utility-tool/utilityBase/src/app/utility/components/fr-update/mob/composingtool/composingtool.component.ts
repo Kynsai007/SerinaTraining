@@ -141,7 +141,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   async saveModel(){
     this.saving = true;
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
-    let resultobj = {'training_result':JSON.stringify(this.composeresult),'composed_name':modelName,'vendorAccountId':this.modelData.idVendorAccount,'serviceAccountId':this.modelData.serviceproviderID}
+    let resultobj = {'training_result':JSON.stringify(this.composeresult),'composed_name':modelName,'vendorAccountId':this.modelData.idVendorAccount,'serviceproviderID':this.modelData.serviceproviderID}
     this.sharedService.saveComposedModel(resultobj).subscribe((data:any) => {
       this.resp = data;
       this.saving = false;
