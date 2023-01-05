@@ -405,7 +405,7 @@ export class InvoiceComponent implements OnInit {
     this.SpinnerService.show();
     this.sharedService.getGRNdata(data).subscribe((data: any) => {
       this.GRNDispalyData = this.dataService.GRNLoadedData.concat(data.grndata);
-      this.dataService.GRNLoadedData = data.grndata;
+      this.dataService.GRNLoadedData = this.GRNDispalyData;
       this.dataService.GRNTableLength = data.grn_total;
       this.GRNArrayLength = data.grn_total;
       if (this.GRNDispalyData.length > 10) {
@@ -1021,12 +1021,10 @@ export class InvoiceComponent implements OnInit {
         this.pageCountVariablePO = event.first;
         if (this.searchPOStr == '') {
           this.offsetCountPO++;
-          console.log(this.offsetCountPO);
           this.APIParams = `?offset=${this.offsetCountPO}&limit=50`;
           this.getDisplayPOData(this.APIParams);
         } else {
           this.offsetCountPO++;
-          console.log(this.offsetCountPO);
           this.APIParams = `?offset=${this.offsetCountPO}&limit=50&uni_search=${this.searchPOStr}`;
           this.getDisplayPOData(this.APIParams);
         }

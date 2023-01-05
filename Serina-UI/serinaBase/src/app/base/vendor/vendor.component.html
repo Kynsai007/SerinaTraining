@@ -37,7 +37,7 @@
 
         <div class="bg-design-all tableDataDiv ml-2 mr-2">
           <p-table #vdRead [value]="vendorreaddata" [paginator]="showPaginator" [first]="first" [rows]="rows" selectionMode="single" [showCurrentPageReport]="true"
-          (onPage)="paginate($event)" [globalFilterFields]="['VendorName','Email','VenderCode','Contact','EntityName']"
+          (onPage)="paginate($event)" [globalFilterFields]="['VendorName','Email','VendorCode','Contact','EntityName']"
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
           [rowsPerPageOptions]="[10,25,50]" styleClass="p-datatable-striped">
 
@@ -46,7 +46,7 @@
               <th pSortableColumn="VendorName">Name</th>
               <th pSortableColumn="EntityName">Entity Name</th>
               <th pSortableColumn="Email">Email Id</th>
-              <th pSortableColumn="VenderCode">Vendor Code</th>
+              <th pSortableColumn="VendorCode">Vendor Code</th>
               <!-- <th pSortableColumn="Contact">Contact</th> -->
               <th class="action_Zindex">View</th>
               <!-- <th>Action</th> -->
@@ -79,8 +79,8 @@
               </td>
               <td>
                 <input style="text-align: left;" pInputText type="text"
-                  (input)="vdRead.filter($event.target.value, 'VenderCode', 'contains')"
-                  [value]="vdRead.filters['VenderCode']?.value" placeholder="Search"
+                  (input)="vdRead.filter($event.target.value, 'VendorCode', 'contains')"
+                  [value]="vdRead.filters['VendorCode']?.value" placeholder="Search"
                   class="p-column-filter tableSearchInput">
               </td>
               <!-- <td>

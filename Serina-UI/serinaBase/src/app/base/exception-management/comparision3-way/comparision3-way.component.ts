@@ -40,6 +40,7 @@ export class Comparision3WayComponent
   implements OnInit
 {
   @ViewChild('canvas') canvas;
+  zoomX = 1;
   @ViewChild(PdfViewerComponent, { static: false })
   private pdfViewer: PdfViewerComponent;
 
@@ -126,6 +127,7 @@ export class Comparision3WayComponent
   callSession: any;
   invoiceNumber = '';
   vendorName: any;
+  isGRNDataLoaded: boolean;
   content_type: any;
 
   constructor(
@@ -463,7 +465,7 @@ export class Comparision3WayComponent
         this.vendorName = this.vendorData['VendorName'];
         // this.selectedRule = data.ok.ruledata[0].Name;
         // this.poList = data.all_pos;
-
+        this.isGRNDataLoaded = true;
         this.SpinnerService.hide();
       },
       (error) => {
@@ -482,7 +484,7 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.exceptionService.readFilePath().subscribe(
       (data: any) => {
-        this.content_type = data?.result?.content_type;
+        this.content_type = data?.content_type;
         if (data.filepath && data.content_type == 'application/pdf') {
           this.isPdfAvailable = false;
           this.isImgBoolean = false;
@@ -537,28 +539,42 @@ export class Comparision3WayComponent
 
   loadImage() {
     if (this.isImgBoolean == true) {
-      let width, height;
       setTimeout(() => {
-
+        this.zoomVal = 1;
         (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
           'scale(' + this.zoomVal + ')';
 
-        this.canvas = <HTMLCanvasElement>document.getElementById('canvas1');
-        let ctx = <CanvasRenderingContext2D>this.canvas.getContext('2d');
-        let img = new Image();
-        let windowheight = window.innerHeight;
-        let windowWidth = window.innerWidth / 2;
-        img.onload = function () {
-          width = img.width;
-          height = img.height;
-          if(width >1000){
-            ctx.scale(windowWidth / width, windowheight / height)
+        const canvas = <HTMLCanvasElement>document.getElementById('canvas1');
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+        const ctx = canvas.getContext('2d');
+        let image = new Image();
+        image.src = this.showInvoice;
+        image.onload = function () {
+          // Calculate the aspect ratio of the image
+          const imageAspectRatio = image.width / image.height;
+          // Calculate the aspect ratio of the canvas
+          const canvasAspectRatio = canvas.width / canvas.height;
+
+          // Set the dimensions of the image to fit the canvas while maintaining the aspect ratio
+          let imageWidth, imageHeight;
+          if (imageAspectRatio > canvasAspectRatio) {
+            // The image is wider than the canvas, so set the width of the image to the width of the canvas
+            // and scale the height accordingly
+            imageWidth = canvas.width;
+            imageHeight = imageWidth / imageAspectRatio;
+          } else {
+            // The image is taller than the canvas, so set the height of the image to the height of the canvas
+            // and scale the width accordingly
+            imageHeight = canvas.height;
+            imageWidth = imageHeight * imageAspectRatio;
           }
-          ctx.drawImage(img, 0, 0); // Or at whatever offset you like
+
+          // Draw the image on the canvas
+          ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
         };
-        img.src = this.showInvoice;
-        this.canvas.height = 1300;
-        this.canvas.width = 900;
+
+
       }, 50);
     }
   }
@@ -652,20 +668,22 @@ export class Comparision3WayComponent
 
   zoomin() {
     this.zoomVal = this.zoomVal + 0.2;
-    if (this.zoomVal >= 2.0) {
+    this.zoomX = this.zoomX + 0.05;
+    if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
       this.zoomVal = 1;
+      this.zoomX = 1;
     }
-    (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
-      'scale(' + this.zoomVal + ')';
+    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
   }
 
   zoomout(index) {
     this.zoomVal = this.zoomVal - 0.2;
-    if (this.zoomVal <= 0.5) {
+    this.zoomX = this.zoomX - 0.05;
+    if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
       this.zoomVal = 1;
+      this.zoomX = 1;
     }
-    (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
-      'scale(' + this.zoomVal + ')';
+    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
   }
 
   removeEvents(index) {

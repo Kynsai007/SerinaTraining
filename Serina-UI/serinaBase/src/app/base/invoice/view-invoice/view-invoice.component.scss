@@ -3,7 +3,7 @@
   border-radius: 5px;
   border: 1px solid #ffffff;
   box-shadow: 1px 2px 20px rgb(0 0 0 / 20%);
-
+  top: 72vh;
   // left: -240px;
   display: inline-block;
 }
@@ -12,9 +12,9 @@
   top: 82vh;
 }
 .zoom_pos_pdf {
-    position: absolute;
-    top: 74vh;
-    left: -240px;
+  position: absolute;
+  top: 74vh;
+  left: -240px;
 }
 .zoom-out {
   display: inline-block;
@@ -34,10 +34,10 @@
   display: inline-block;
 }
 .rotate_text {
-    position: absolute;
-    top: 4px;
-    display: flex;
-    left: -185px;
+  position: absolute;
+  top: 4px;
+  display: flex;
+  left: -185px;
 }
 .canvasConatiner_height {
   max-height: 86vh;
@@ -182,11 +182,19 @@ a {
   padding: 5px;
 }
 .maxPage {
-  max-height: 82vh;
+  max-height: 87vh;
   overflow: auto;
   padding-right: 0px;
   top: 40px;
+  max-height: 82vh !important;
+  overflow: hidden;
 }
+#parentDiv {
+  padding-left: 110px;
+  background: white;
+  overflow: auto;
+}
+
 .invert {
   display: flex;
   // overflow: auto;

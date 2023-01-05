@@ -13,6 +13,7 @@ import { TaggingService } from './../../../services/tagging.service';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
@@ -55,10 +56,13 @@ export interface saveLCM {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewInvoiceComponent implements OnInit, OnDestroy {
-  @ViewChild('canvas') canvas;
+  @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
   @ViewChild(PdfViewerComponent, { static: false })
   private pdfViewer: PdfViewerComponent;
-
+  ctx: CanvasRenderingContext2D;
+  zoomX = 1;
+  orgX = '0px';
+  orgY = '0px';
   @ViewChild('pdfviewer') pdfviewer;
   vendorsSubscription: Subscription;
   isEditable: boolean;
@@ -214,6 +218,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   invoiceTotal: any;
   uploadtime: string = "00:00";
   content_type: any;
+  imageCanvas: HTMLImageElement;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -543,31 +548,54 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   loadImage() {
     if (this.isImgBoolean == true) {
-      let width, height;
       setTimeout(() => {
-
-        (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
+        this.zoomVal = 1;
+        (<HTMLDivElement>document.getElementById('canvas1')).style.transform =
           'scale(' + this.zoomVal + ')';
-
-        this.canvas = <HTMLCanvasElement>document.getElementById('canvas1');
-        let ctx = <CanvasRenderingContext2D>this.canvas.getContext('2d');
-        let img = new Image();
-        let windowheight = window.innerHeight;
-        let windowWidth = window.innerWidth / 2;
-        img.onload = function () {
-          width = img.width;
-          height = img.height;
-          if(width >1000){
-            ctx.scale(windowWidth / width, windowheight / height)
-          }
-          ctx.drawImage(img, 0, 0); // Or at whatever offset you like
-        };
-        img.src = this.showInvoice;
-        this.canvas.height = 1300;
-        this.canvas.width = 900;
+        this.ctx = this.canvasRef.nativeElement.getContext('2d');
+        this.canvasRef.nativeElement.width = window.innerWidth;
+        this.canvasRef.nativeElement.height = window.innerHeight;
+        this.drawImagein();
       }, 50);
+
     }
   }
+  drawImagein() {
+
+    // const canvas = <HTMLCanvasElement>document.getElementById('canvas1');
+    // canvas.height = window.innerHeight;
+    // canvas.width = window.innerWidth;
+    // const ctx = canvas.getContext('2d');
+    this.imageCanvas = new Image();
+    this.imageCanvas.src = this.showInvoice;
+    let imageWidth, imageHeight;
+    this.imageCanvas.onload = () => {
+      // Calculate the aspect ratio of the image
+      const imageAspectRatio = this.imageCanvas.width / this.imageCanvas.height;
+      // Calculate the aspect ratio of the canvas
+      const canvasAspectRatio = this.canvasRef.nativeElement.width / this.canvasRef.nativeElement.height;
+
+      // Set the dimensions of the image to fit the canvas while maintaining the aspect ratio
+
+      if (imageAspectRatio > canvasAspectRatio) {
+        // The image is wider than the canvas, so set the width of the image to the width of the canvas
+        // and scale the height accordingly
+        imageWidth = this.canvasRef.nativeElement.width;
+        imageHeight = imageWidth / imageAspectRatio;
+      } else {
+        // The image is taller than the canvas, so set the height of the image to the height of the canvas
+        // and scale the width accordingly
+        imageHeight = this.canvasRef.nativeElement.height;
+        imageWidth = imageHeight * imageAspectRatio;
+      }
+      // Draw the image on the canvas
+      this.ctx.drawImage(this.imageCanvas, 0, 0, imageWidth, imageHeight);
+
+    };
+
+  }
+
+
   onChangeValue(key, value, data) {
     // this.inputData[0][key]=value;
     let updateValue = {
@@ -633,112 +661,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     //   this.SpinnerService.hide();
     // })
   }
-  // async ngAfterViewInit() {
-  //   console.log(this.showInvoice)
-  //   if(this.showInvoice != ''){
-  //     console.log(this.showInvoice)
-  //     this.canvas = new fabric.Canvas('canvas1')
-  //   // if(this.tagService.invoicePathBoolean == true){
-  //     fabric.Image.fromURL(this.showInvoice, (img) => {
-  //       img.set({
-  //         opacity: 0.9,
-  //         scaleX: this.canvas.width/img.width,
-  //         scaleY: this.canvas.height/img.height
-  //       });
-  //       console.log(img.width,img.height)
-  //       this.canvas.setBackgroundImage(img, this.canvas.requestRenderAll.bind(this.canvas));
-  //       this.canvas.requestRenderAll();
-  //     });
-  //   // } else if(this.tagService.poPathBoolean== true){
-  //   //   fabric.Image.fromURL('assets/purchase-order-form.jpg', (img) => {
-  //   //     img.set({
-  //   //       opacity: 0.9,
-  //   //       scaleX: this.canvas.width/img.width,
-  //   //       scaleY: this.canvas.height/img.height,
-  //   //       crossOrigin: "Annoymous"
-  //   //     });
-  //   //     console.log(img.width,img.height)
-  //   //     this.canvas.setBackgroundImage(img, this.canvas.requestRenderAll.bind(this.canvas));
-  //   //     this.canvas.requestRenderAll();
-  //   //   });
-  //   // } else if (this.tagService.GRNPathBoolean == true){
-  //   //   fabric.Image.fromURL('assets/receipt-template-us-modern-red-750px.png', (img) => {
-  //   //     img.set({
-  //   //       opacity: 0.9,
-  //   //       scaleX: this.canvas.width/img.width,
-  //   //       scaleY: this.canvas.height/img.height,
-  //   //       crossOrigin: "Annoymous"
-  //   //     });
-  //   //     console.log(img.width,img.height)
-  //   //     this.canvas.setBackgroundImage(img, this.canvas.requestRenderAll.bind(this.canvas));
-  //   //     this.canvas.requestRenderAll();
-  //   //   });
-  //   // }
-  //   this.canvas.on('mouse:down', (option)=>{
-  //     this.isEditable = true;
-  //   })
-  //   this.canvas.on('mouse:wheel', (opt)=> {
-  //     this.isRect =false;
-  //     var delta = opt.e.deltaY;
-  //     var pointer = this.canvas.getPointer(opt.e);
-  //     var zoom = this.canvas.getZoom();
-  //     zoom = zoom - delta * 0.01;
-  //     if (zoom >= 20) {
-  //       zoom = 20;
-  //     }
-  //     if (zoom <= 1) {
-  //       zoom = 1;
-  //       this.canvas.viewportTransform = [1, 0, 0, 1, 0, 0]
-  //     }
-  //     this.canvas.zoomToPoint({
-  //       x: opt.e.offsetX,
-  //       y: opt.e.offsetY
-  //     }, zoom);
-  //     opt.e.preventDefault();
-  //     opt.e.stopPropagation();
-  //     this.panning();
-  //   });
-  //   }
-  //   // this.imgArray.forEach((element, index) => {
-  //   //   // this.canvas.push(new fabric.Canvas(element.id))
-  //   //   this.canvas = new fabric.Canvas(element.id);
-  //   //   fabric.Image.fromURL(element.url, (img) => {
-  //   //     img.set({
-  //   //       opacity: 0.9,
-  //   //       scaleX: this.canvas.width / img.width,
-  //   //       scaleY: this.canvas.height / img.height,
-  //   //       crossOrigin: "Annoymous"
-  //   //     });
-  //   //     console.log(img.width, img.height)
-  //   //     this.canvas.setBackgroundImage(img, this.canvas.requestRenderAll.bind(this.canvas));
-  //   //     this.canvas.requestRenderAll();
-  //   //   });
-  //   //   this.canvas.on('mouse:down', (option) => {
-  //   //     this.isEditable = true;
-  //   //   })
-  //   //   this.canvas.on('mouse:wheel', (opt) => {
-  //   //     // this.isCircle = false;
-  //   //     this.isRect = false;
-  //   //     var delta = opt.e.deltaY;
-  //   //     var pointer = this.canvas.getPointer(opt.e);
-  //   //     var zoom = this.canvas.getZoom();
-  //   //     zoom = zoom - delta * 0.01;
-  //   //     if (zoom >= 20) {
-  //   //       zoom = 20;
-  //   //     }
-  //   //     if (zoom <= 1) {
-  //   //       zoom = 1;
-  //   //       this.canvas.viewportTransform = [1, 0, 0, 1, 0, 0]
-  //   //     }
-  //   //     this.canvas.zoomToPoint({
-  //   //       x: opt.e.offsetX,
-  //   //       y: opt.e.offsetY
-  //   //     }, zoom);
-  //   //     opt.e.preventDefault();
-  //   //     opt.e.stopPropagation();
-  //   //     this.panning();
-  //   //   });
-  //   // })
+  // ngAfterViewInit(){
+  //   this.canvasRef.nativeElement.('mouse:wheel',(event){
+
+  // })
   // }
 
   drawrectangleonHighlight() {
@@ -767,27 +693,39 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // this.panning();
 
     this.zoomVal = this.zoomVal + 0.2;
-    if (this.zoomVal >= 2.0) {
+    this.zoomX = this.zoomX + 0.05;
+    this.orgX = this.orgX + '50px';
+    this.orgY = this.orgY + '50px';
+    if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
       this.zoomVal = 1;
+      this.zoomX = 1;
+      this.orgX = '0px';
+      this.orgY = '0px';
     }
-    (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
-      'scale(' + this.zoomVal + ')';
+    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
+    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
   }
   zoomout() {
     // this.isRect = false;
     // this.canvas.setZoom(this.canvas.getZoom() / 1.1);
     // this.panning();
     this.zoomVal = this.zoomVal - 0.2;
-    if (this.zoomVal <= 0.5) {
+    this.zoomX = this.zoomX - 0.05;
+    // this.orgX  = this.orgX - '50px';
+    // this.orgY  = this.orgY - '50px';
+    if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
       this.zoomVal = 1;
+      this.zoomX = 1;
+      this.orgX = '0px';
+      this.orgY = '0px';
     }
-    (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
-      'scale(' + this.zoomVal + ')';
+    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
+    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
   }
   removeEvents() {
-    this.canvas.off('mouse:down');
-    this.canvas.off('mouse:up');
-    this.canvas.off('mouse:move');
+    // this.canvas.off('mouse:down');
+    // this.canvas.off('mouse:up');
+    // this.canvas.off('mouse:move');
   }
 
   panning() {

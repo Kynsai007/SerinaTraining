@@ -610,7 +610,7 @@
             <button *ngIf="tabChangeLINEBoolean && flipBoolean" class="btn btnVender " (click)="addLine()" >Add Line</button> -->
         </div>
 
-        <div *ngIf="grnCreateBoolean" class="GRN_btn_position">
+        <div *ngIf="grnCreateBoolean && isGRNDataLoaded" class="GRN_btn_position">
           <button
           class="btn btnVender bg-btn-cancel mr-3"
           type="button"
@@ -656,25 +656,8 @@
     <div>
       <section>
         <div *ngIf="isImgBoolean" class="canvasConatiner_height">
-          <!-- *ngFor="let img of imgArray; let i = index " -->
-          <div style="visibility: hidden">
-            <div *ngIf="editable">
-              <span
-                [ngClass]="isRect ? 'btnInvoiceType1' : 'btnInvoiceType'"
-                (click)="drawrectangle()"
-                style="cursor: pointer"
-                >Tag</span
-              >
-            </div>
-            <div *ngIf="!editable">
-              <span class="btnInvoiceType" style="cursor: not-allowed"
-                >Tag</span
-              >
-            </div>
-          </div>
           <div id="parentDiv">
-            <!-- <img [src]="showInvoice"> -->
-            <canvas #canvas id="canvas1"></canvas>
+            <canvas #canvas id="canvas1" style="height: 87vh;"></canvas>
           </div>
           <span class="zoom zoom_pos_img">
             <span class="zoom-in" (click)="zoomin()"
