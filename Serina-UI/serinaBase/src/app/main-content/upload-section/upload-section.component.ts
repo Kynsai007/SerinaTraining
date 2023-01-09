@@ -925,14 +925,12 @@ export class UploadSectionComponent implements OnInit {
                 detail: 'Something went wrong, Plase try again',
               });
               this.processStage = '';
-              this.progressText = '';
               this.evtSource.close();
             };
           }
         }),
         catchError((err: any) => {
           clearInterval(timer);
-          this.progressText = '';
           this.evtSource.close();
           alert(err.message);
           return throwError(err.message);
