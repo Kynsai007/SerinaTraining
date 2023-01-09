@@ -12,8 +12,8 @@ import { DatePipe } from '@angular/common';
   templateUrl: './exception-reports.component.html',
   styleUrls: ['./exception-reports.component.scss'],
 })
-export class ExceptionReportsComponent implements OnInit,OnChanges {
-  exceptionData:any;
+export class ExceptionReportsComponent implements OnInit, OnChanges {
+  exceptionData: any;
   totalInv: number;
   OcrInv: number;
   batchInv: number;
@@ -63,7 +63,7 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
-  ) {}
+  ) { }
   ngOnChanges(changes: SimpleChanges): void {
     // if (changes.exceptionData &&  changes.exceptionData.currentValue && changes.exceptionData.currentValue.data) {
     //   this.readExceptionData(this.exceptionData);
@@ -78,21 +78,21 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
     this.dateRange();
     this.prepareColumns();
     this.readExceptionData('');
-    
+
   }
   choosepageTab(value) {
     // this.filterByDate('');
     // delete this.rangeDates;
     this.tabName = value;
     this.chartsService.exceptionVendorTab = value;
-        // this.totalTableData = this.filterDataTotal;
-        // this.totalInv = this.totalTableData.length;
-        // this.OCRTableData = this.filterDataOCR ;
-        // this.OcrInv = this.OCRTableData.length;
-        // this.batchTableData  = this.filterDataBatch;
-        // this.batchInv = this.batchTableData.length;
-        // this.ERPTableData = this.filterDataERP  ;
-        // this.ErpInv = this.ERPTableData.length;
+    // this.totalTableData = this.filterDataTotal;
+    // this.totalInv = this.totalTableData.length;
+    // this.OCRTableData = this.filterDataOCR ;
+    // this.OcrInv = this.OCRTableData.length;
+    // this.batchTableData  = this.filterDataBatch;
+    // this.batchInv = this.batchTableData.length;
+    // this.ERPTableData = this.filterDataERP  ;
+    // this.ErpInv = this.ERPTableData.length;
   }
 
   prepareColumns() {
@@ -121,7 +121,7 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
       { field: 'docheaderID', header: 'Invoice Number' },
       { field: 'PODocumentID', header: 'PO Number' },
       // { field: 'Name', header: 'Rule' },
-      { field: 'All_Status', header: 'Status' },
+      { field: 'status', header: 'Status' },
       { field: 'documentDate', header: 'Invoice Date' },
       { field: 'totalAmount', header: 'Amount' },
       // { field: 'Account', header: 'Actions' },
@@ -175,22 +175,36 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
       this.ERPTableData = [];
       this.batchTableData = [];
       data.data.documentdata.forEach(element => {
-        let combineData = {...element.Document,...element.Rule,...element.Vendor,...element.VendorAccount,...element.Entity}
+        let combineData = { ...element.Document, ...element.Vendor, ...element.VendorAccount, ...element.Entity,...element.DocumentSubStatus }
         mergedArray.push(combineData)
       });
-      
-      
+
+
       mergedArray.forEach((element) => {
-        if (element.documentStatusID == 2 && element.documentsubstatusID != 30) {
+        if (element.documentsubstatusID == 32 || element.documentsubstatusID == 40) {
           this.ERPTableData.push(element);
-        } else if (element.documentStatusID == 4 && element.documentsubstatusID != 4 && element.documentsubstatusID != 31) {
+        } else if(element.documentsubstatusID == 29) {
           this.OCRTableData.push(element);
-        } else if (
-          element.documentsubstatusID == 30 && element.documentStatusID != 14 && element.documentStatusID != 10
-        ) {
-          this.batchTableData.push(element);
-        }
+        } else {
+            this.batchTableData.push(element);
+          } 
       });
+      // (element.documentsubstatusID == 7 )&& 
+      // (element.documentsubstatusID == 8 )&& 
+      // (element.documentsubstatusID == 9 )&& 
+      // (element.documentsubstatusID == 14 )&& 
+      // (element.documentsubstatusID == 15 )&& 
+      // (element.documentsubstatusID == 16 )&& 
+      // (element.documentsubstatusID == 17 )&& 
+      // (element.documentsubstatusID == 19 )&& 
+      // (element.documentsubstatusID == 20) && 
+      // (element.documentsubstatusID == 21) && 
+      // (element.documentsubstatusID == 22) && 
+      // (element.documentsubstatusID == 27) && 
+      // (element.documentsubstatusID == 28) && 
+      // (element.documentsubstatusID == 33) && 
+      // (element.documentsubstatusID == 34)  
+      // if (element.documentStatusID == 4 && (element.documentsubstatusID != 4 && element.documentsubstatusID != 31 && element.documentsubstatusID != 35 && element.documentsubstatusID != 36 && element.documentsubstatusID != 38 && element.documentsubstatusID != 39))
       this.OcrInv = this.OCRTableData.length;
       if (this.OCRTableData.length > 10) {
         this.showPaginatorOCR = true;
@@ -209,22 +223,22 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
       } else {
         this.showPaginatorERP = false;
       }
-    // },(err)=>{
-    //   this.SpinnerService.hide();
-    // });
-    this.totalTableData = this.OCRTableData.concat(this.batchTableData, this.ERPTableData);
-    this.totalInv = this.totalTableData.length;
-    if (this.totalInv > 10) {
-      this.showPaginatortotal = true;
-    } else {
-      this.showPaginatortotal = false;
-    }
+      // },(err)=>{
+      //   this.SpinnerService.hide();
+      // });
+      this.totalTableData = this.OCRTableData.concat(this.batchTableData, this.ERPTableData);
+      this.totalInv = this.totalTableData.length;
+      if (this.totalInv > 10) {
+        this.showPaginatortotal = true;
+      } else {
+        this.showPaginatortotal = false;
+      }
       // this.filterDataTotal = this.totalTableData;
       // this.filterDataOCR = this.OCRTableData;
       // this.filterDataBatch = this.batchTableData;
       // this.filterDataERP = this.ERPTableData;
       this.SpinnerService.hide();
-    },(err)=>{
+    }, (err) => {
       this.SpinnerService.hide();
     });
   }
@@ -233,7 +247,7 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
   //   // this.chartsService.getvendorExceptionSummary().subscribe((data) => {
 
   // }
-  searchInvoiceDataV(evnt){
+  searchInvoiceDataV(evnt) {
 
   }
 
@@ -243,14 +257,14 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
     this.maxDate = this.dateFilterService.maxDate;
   }
 
-  downloadReport(){
-    if(this.tabName == 'Total') {
+  downloadReport() {
+    if (this.tabName == 'Total') {
       this.ImportExcelService.exportExcel(this.totalTableData);
-    } else if(this.tabName == 'OCR'){
+    } else if (this.tabName == 'OCR') {
       this.ImportExcelService.exportExcel(this.OCRTableData);
-    } else if(this.tabName == 'Batch'){
+    } else if (this.tabName == 'Batch') {
       this.ImportExcelService.exportExcel(this.batchTableData);
-    } else if(this.tabName == 'ERP'){
+    } else if (this.tabName == 'ERP') {
       this.ImportExcelService.exportExcel(this.ERPTableData);
     }
   }
@@ -259,68 +273,68 @@ export class ExceptionReportsComponent implements OnInit,OnChanges {
     // if(date != ''){
 
 
-      let dateFilter = '';
-      if (date != '') {
-        console.log(date)
-        const frmDate = this.datePipe.transform(date[0], 'yyyy-MM-dd');
-        const toDate = this.datePipe.transform(date[1], 'yyyy-MM-dd');
-        dateFilter = `?date=${frmDate}To${toDate}`;
-      }
-      this.readExceptionData(dateFilter);
-      // this.readInvoicedData(dateFilter);
-      // this.readTotalInvoiceData(dateFilter);
-      // this.readUnderProcessData(dateFilter);
-      // this.readCollectionsData(dateFilter);
-      // this.readRejectedData(dateFilter);
-      // this.filterData = [];
-      // if (this.tabName == 'Total') {
-      //   this.totalTableData = this.filterDataTotal;
-      //   this.totalTableData = this.totalTableData.filter((element) => {
-      //     const dateF = new Date(element.CreatedOn).toISOString().split('T');
-      //     console.log(dateF[0],frmDate,toDate)
-      //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
-      //   });
-      //   this.totalInv = this.totalTableData.length;
-      // } else if(this.tabName == 'OCR'){
-      //   this.OCRTableData = this.filterDataOCR;
-      //   this.OCRTableData = this.OCRTableData.filter((element) => {
-      //     const dateF = new Date(element.CreatedOn).toISOString().split('T');
-  
-      //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
-      //   });
-      //   this.OcrInv = this.OCRTableData.length;
-      // } else if(this.tabName == 'Batch'){
-      //   this.batchTableData = this.filterDataBatch;
-      //   this.batchTableData = this.batchTableData.filter((element) => {
-      //     const dateF = new Date(element.CreatedOn).toISOString().split('T');
-  
-      //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
-      //   });
-      //   this.batchInv = this.batchTableData.length;
-      // } else if(this.tabName == 'ERP'){
-      //   this.ERPTableData = this.filterDataERP;
-      //   this.ERPTableData = this.ERPTableData.filter((element) => {
-      //     const dateF = new Date(element.CreatedOn).toISOString().split('T');
-  
-      //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
-      //   });
-      //   this.ErpInv = this.ERPTableData.length;
-      // }
+    let dateFilter = '';
+    if (date != '') {
+      console.log(date)
+      const frmDate = this.datePipe.transform(date[0], 'yyyy-MM-dd');
+      const toDate = this.datePipe.transform(date[1], 'yyyy-MM-dd');
+      dateFilter = `?date=${frmDate}To${toDate}`;
+    }
+    this.readExceptionData(dateFilter);
+    // this.readInvoicedData(dateFilter);
+    // this.readTotalInvoiceData(dateFilter);
+    // this.readUnderProcessData(dateFilter);
+    // this.readCollectionsData(dateFilter);
+    // this.readRejectedData(dateFilter);
+    // this.filterData = [];
+    // if (this.tabName == 'Total') {
+    //   this.totalTableData = this.filterDataTotal;
+    //   this.totalTableData = this.totalTableData.filter((element) => {
+    //     const dateF = new Date(element.CreatedOn).toISOString().split('T');
+    //     console.log(dateF[0],frmDate,toDate)
+    //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
+    //   });
+    //   this.totalInv = this.totalTableData.length;
+    // } else if(this.tabName == 'OCR'){
+    //   this.OCRTableData = this.filterDataOCR;
+    //   this.OCRTableData = this.OCRTableData.filter((element) => {
+    //     const dateF = new Date(element.CreatedOn).toISOString().split('T');
+
+    //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
+    //   });
+    //   this.OcrInv = this.OCRTableData.length;
+    // } else if(this.tabName == 'Batch'){
+    //   this.batchTableData = this.filterDataBatch;
+    //   this.batchTableData = this.batchTableData.filter((element) => {
+    //     const dateF = new Date(element.CreatedOn).toISOString().split('T');
+
+    //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
+    //   });
+    //   this.batchInv = this.batchTableData.length;
+    // } else if(this.tabName == 'ERP'){
+    //   this.ERPTableData = this.filterDataERP;
+    //   this.ERPTableData = this.ERPTableData.filter((element) => {
+    //     const dateF = new Date(element.CreatedOn).toISOString().split('T');
+
+    //     return (dateF[0] >= frmDate && dateF[0] <= toDate)
+    //   });
+    //   this.ErpInv = this.ERPTableData.length;
+    // }
     // } else {
-      // console.log(this.totalTableData);
-      //   this.totalTableData = this.filterDataTotal;
-      //   this.totalInv = this.totalTableData.length;
-      //   this.OCRTableData = this.filterDataOCR ;
-      //   this.OcrInv = this.OCRTableData.length;
-      //   this.batchTableData  = this.filterDataBatch;
-      //   this.batchInv = this.batchTableData.length;
-      //   this.ERPTableData = this.filterDataERP  ;
-      //   this.ErpInv = this.ERPTableData.length;
+    // console.log(this.totalTableData);
+    //   this.totalTableData = this.filterDataTotal;
+    //   this.totalInv = this.totalTableData.length;
+    //   this.OCRTableData = this.filterDataOCR ;
+    //   this.OcrInv = this.OCRTableData.length;
+    //   this.batchTableData  = this.filterDataBatch;
+    //   this.batchInv = this.batchTableData.length;
+    //   this.ERPTableData = this.filterDataERP  ;
+    //   this.ErpInv = this.ERPTableData.length;
     // }
 
   }
 
-  clearDates(){
+  clearDates() {
     this.filterByDate('');
   }
 }

@@ -55,7 +55,7 @@
         <mat-icon class="placement" svgIcon="vendor_rm"></mat-icon>
       </div>
       <div>
-        <div class="f-12">ERP Soft push</div>
+        <div class="f-12">Batch Queue</div>
         <div class="f-15">{{ batchInv }}</div>
       </div>
     </div>
@@ -102,15 +102,15 @@
 
     <!-- Batch invoices Tab -->
     <div *ngSwitchCase="'Batch'">
-      <!-- <app-table
+      <app-table
         [tableData]="batchTableData"
         [invoiceColumns]="columnsForbatch"
         [showPaginator]="showPaginatorbatch"
         [columnsToFilter]="batchColumnField"
         [columnLength]="ColumnLengthbatch"
       >
-      </app-table> -->
-      <app-exception-table
+      </app-table>
+      <!-- <app-exception-table
         [invoiceColumns]="columnsForbatch"
         [columnsToDisplay]="batchColumnField"
         [showPaginatorAllInvoice]="showPaginatorbatch"
@@ -118,7 +118,7 @@
         (searchInvoiceData)="searchInvoiceDataV($event)"
         [columnsData]="batchTableData"
       >
-      </app-exception-table>
+      </app-exception-table> -->
     </div>
 
     <!-- ERP invoices Tab -->
