@@ -29,7 +29,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   modalList: any;
   allsynonyms: any;
   selected_template: string;
-  dateFormats = ['mm/dd/yy', 'mm/dd/yyyy', 'mm.dd.yy', 'mm.dd.yyyy','dd/mm/yy','dd-mm-yy','dd-mm-yyyy','dd.mm.yyyy','dd-mmm-yy','yyyy.mm.dd']
+  dateFormats = ['mm/dd/yy', 'mm/dd/yyyy', 'mm.dd.yy', 'mm.dd.yyyy','dd/mm/yy','dd-mm-yy','dd-mm-yyyy','dd.mm.yyyy','dd-mmm-yy','yyyy.mm.dd','yyyy mm dd']
   enableTabsBoolean: boolean = false;
   enableMetaDataBoolean: boolean = false;
   sasExpiry:any;
