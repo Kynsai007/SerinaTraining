@@ -129,7 +129,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/fr/getAccuracyByEntity/${tagtype}`,{responseType: 'blob'});
   }
   getAccuracyScore(type,name){
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getActualAccuracy/${type}/${name}`);
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/getActualAccuracy/${type}?name=${name}`);
   }
   getAllTags(tagtype):Observable<any> {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/getalltags?tagtype=${tagtype}`);
