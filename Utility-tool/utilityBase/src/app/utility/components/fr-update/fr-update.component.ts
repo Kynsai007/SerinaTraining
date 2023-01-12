@@ -451,12 +451,20 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       (<HTMLButtonElement>document.getElementById("closeBtn")).click();
       this.getVendorAccounts();
       this.getModalList();
-      this.FolderPath = data['records']['folderPath']
-      this.messageService.add({
-        severity:"info",
-        summary:"Created",
-        detail:"New model created successfully"
-      });
+      if(data["result"] == "Updated"){
+        this.FolderPath = data['records']['folderPath']
+        this.messageService.add({
+          severity:"info",
+          summary:"Created",
+          detail:"New model created successfully"
+        });
+      }else{
+        this.messageService.add({
+          severity:"error",
+          summary:"error",
+          detail:"Template Name already exists!"
+        });
+      }
     }, error=>{
       this.messageService.add({
         severity:"error",
