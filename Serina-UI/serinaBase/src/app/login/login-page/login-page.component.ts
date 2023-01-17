@@ -68,7 +68,7 @@ export class LoginPageComponent implements OnInit {
   errorMail: boolean;
   errorMailText: any;
   tokenOTP: any;
-
+  instanceInfo:any;
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
@@ -202,19 +202,29 @@ export class LoginPageComponent implements OnInit {
       .subscribe(
         data => {
           this.loading = false;
-          this.readConfig();
-          if (this.returnUrl) {
-            this.router.navigate([this.returnUrl]);
-          } else if (data.user_type === 'customer_portal') {
-            if(data.permissioninfo.NameOfRole == 'Receiver'){
-              this.router.navigate(['/customer/Create_GRN_inv_list']);
+          this.settingService.readConfig().subscribe((data:any)=>{
+            localStorage.setItem("configData", JSON.stringify(data.InstanceModel));
+            this.instanceInfo = data.InstanceModel;
+            this.dataStoreService.configData = data.InstanceModel ;
+            if(this.instanceInfo?.isActive == 1){
+              if (this.returnUrl) {
+                this.router.navigate([this.returnUrl]);
+              } else if (data.user_type === 'customer_portal') {
+                if(data.permissioninfo.NameOfRole == 'Receiver'){
+                  this.router.navigate(['/customer/Create_GRN_inv_list']);
+                } else {
+                  this.router.navigate(['/customer']);
+                }
+              } else if (data.user_type === 'vendor_portal') {
+                this.router.navigate(['/vendorPortal']);
+              }
+              environment1.username = data1.username;
             } else {
-              this.router.navigate(['/customer']);
+              alert('The instance is inactive. Please contact Service Admin.');
+              localStorage.clear();
             }
-          } else if (data.user_type === 'vendor_portal') {
-            this.router.navigate(['/vendorPortal']);
-          }
-          environment1.username = data1.username;
+          })
+
           // window.location.reload();
         },
         error => {
@@ -228,12 +238,7 @@ export class LoginPageComponent implements OnInit {
 
         });
   }
-  readConfig(){
-    this.settingService.readConfig().subscribe((data:any)=>{
-      localStorage.setItem("configData", JSON.stringify(data.InstanceModel));
-      this.dataStoreService.configData = data.InstanceModel ;
-    })
-  }
+
   storeUser(e) {
     this.keepMeLogin = e.target.checked;
     this.sharedService.keepLogin = e.target.checked;
