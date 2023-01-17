@@ -202,10 +202,10 @@ export class LoginPageComponent implements OnInit {
       .subscribe(
         data => {
           this.loading = false;
-          this.settingService.readConfig().subscribe((data:any)=>{
-            localStorage.setItem("configData", JSON.stringify(data.InstanceModel));
-            this.instanceInfo = data.InstanceModel;
-            this.dataStoreService.configData = data.InstanceModel ;
+          this.settingService.readConfig().subscribe((resp:any)=>{
+            localStorage.setItem("configData", JSON.stringify(resp.InstanceModel));
+            this.instanceInfo = resp.InstanceModel;
+            this.dataStoreService.configData = resp.InstanceModel ;
             if(this.instanceInfo?.isActive == 1){
               if (this.returnUrl) {
                 this.router.navigate([this.returnUrl]);
