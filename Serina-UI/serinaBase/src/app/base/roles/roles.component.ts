@@ -4,9 +4,8 @@ import { SettingsService } from './../../services/settings/settings.service';
 import { Location } from '@angular/common';
 import { PermissionService } from './../../services/permission.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
-  ConfirmationService,
   MessageService,
   PrimeNGConfig,
 } from 'primeng/api';
@@ -243,6 +242,7 @@ export class RolesComponent implements OnInit {
   subroleList: any[];
   isAmountBasedON: boolean;
   isEvrythingGood: boolean;
+  isVendorportalRequired: boolean;
   constructor(
     private dataService: DataService,
     private messageService: MessageService,
@@ -277,6 +277,7 @@ export class RolesComponent implements OnInit {
       this.financeapproveDisplayBoolean =
         this.settingsService.finaceApproveBoolean;
       this.addRoleBoolean = this.permissionService.addUserRoleBoolean;
+      this.isVendorportalRequired = this.dataService?.configData?.enablevendorportal;
     } else {
       this.alertBoolean = true;
       this.displayResponsive = true;

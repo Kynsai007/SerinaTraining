@@ -74,7 +74,6 @@ export class ApproveComponent implements OnInit {
     private router: Router,
     private sharedService: SharedService,
     private dateFilterService: DateFilterService,
-    private messageService: MessageService,
     private SpinnerService: NgxSpinnerService,
     private storageService: DataService,
     private permissionService: PermissionService,
@@ -215,14 +214,12 @@ export class ApproveComponent implements OnInit {
   }
 
   paginateService(event) {
-    console.log(event);
     this.first_service = event.first;
     this.storageService.approvalServicePaginationFirst = this.first_service;
     this.storageService.approvalServicePaginationRowLength = event.rows;
   }
 
   paginateVendor(event) {
-    console.log(event);
     this.first = event.first;
     this.storageService.approvalVendorPaginationFirst = this.first;
     this.storageService.approvalVendorPaginationRowLength = event.rows;

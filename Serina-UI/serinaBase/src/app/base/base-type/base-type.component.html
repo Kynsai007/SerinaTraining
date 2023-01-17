@@ -5,7 +5,7 @@
 
 <mat-drawer-container class="example-container" autosize>
   <mat-drawer #drawer class="example-sidenav sideBar d-flex" mode="side" opened>
-    <div class="d_mobile">
+    <div class="d_desk">
       <!-- <div class="tittleVendor">
               Customer Portal
           </div> -->
@@ -290,7 +290,7 @@
 
   <div class="example-sidenav-content">
     <div class="bodyContent">
-      <div class="d_mobile">
+      <div class="d_desk">
         <i
           class="fa fa-bars menu_icon f-16"
           aria-hidden="true"
@@ -321,7 +321,7 @@
             <!-- <img src="/assets/maskGroup89.png" alt="Logo" width="40" height="40" style="border-radius: 50px;"> -->
           </span>
           <span class="b-left-sky clr userName"
-            >{{ userDetails.userdetails.firstName }}
+            >{{ userDetails?.userdetails?.firstName }}
           </span>
           <!-- <span class="material-icons " title="Sign Out" >
                   power_settings_new
@@ -345,7 +345,7 @@
         </div>
       </div>
 
-      <nav class="d_desk">
+      <nav class="d_mobile">
         <div class="logotitle">
           <div class="logoPlaceholder">
             <img

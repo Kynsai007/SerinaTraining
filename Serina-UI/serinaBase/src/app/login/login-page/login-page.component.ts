@@ -1,3 +1,5 @@
+import { DataService } from 'src/app/services/dataStore/data.service';
+import { SettingsService } from 'src/app/services/settings/settings.service';
 // import { environment } from './../../../../../../Utility-tool/utilityBase/src/environments/environment';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -72,6 +74,8 @@ export class LoginPageComponent implements OnInit {
     private formBuilder: FormBuilder,
     private sharedService: SharedService,
     private route: ActivatedRoute,
+    private settingService: SettingsService,
+    private dataStoreService: DataService,
     private authenticationService: AuthenticationService) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
@@ -155,26 +159,6 @@ export class LoginPageComponent implements OnInit {
     })
   }
   verifyOtp() {
-    
-    // this.loading = true;
-    // this.sharedService.verifyotp().subscribe((data) => {
-    //   this.loading = false;
-    //   if (data['OTP'] == this.otp) {
-    //     this.loginboolean = false;
-    //     this.forgotboolean = false;
-    //     this.resetPassword = true;
-    //     this.successPassword = false;
-    //     this.showSendbtn = true;
-    //     this.showOtpPanel = true;
-    //   } else {
-    //     alert("Enter valid OTP");
-    //     this.showSendbtn = true;
-    //     this.showOtpPanel = false;
-    //   }
-    //   console.warn(data['OTP'])
-    //   this.otpData = data['OTP'];
-    // })
-    // console.log(this.otpData)
   }
   resetPass() {
     this.loading = true;
@@ -218,6 +202,7 @@ export class LoginPageComponent implements OnInit {
       .subscribe(
         data => {
           this.loading = false;
+          this.readConfig();
           if (this.returnUrl) {
             this.router.navigate([this.returnUrl]);
           } else if (data.user_type === 'customer_portal') {
@@ -242,6 +227,12 @@ export class LoginPageComponent implements OnInit {
           }
 
         });
+  }
+  readConfig(){
+    this.settingService.readConfig().subscribe((data:any)=>{
+      localStorage.setItem("configData", JSON.stringify(data.InstanceModel));
+      this.dataStoreService.configData = data.InstanceModel ;
+    })
   }
   storeUser(e) {
     this.keepMeLogin = e.target.checked;

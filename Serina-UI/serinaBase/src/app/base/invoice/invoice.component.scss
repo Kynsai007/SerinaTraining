@@ -50,7 +50,7 @@
   position: relative;
   z-index: 121;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 800px) {
   .uni_dwn_btn {
     right: -40px !important;
   }
@@ -59,7 +59,7 @@
   }
 }
 @media screen and (max-width: 1100px){
-  .tableDataDiv {
-    margin-top: 40px !important;
-}
+//   .tableDataDiv {
+//     margin-top: 40px !important;
+// }
 }

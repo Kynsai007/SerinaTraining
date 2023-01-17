@@ -970,7 +970,7 @@ export class InvoiceComponent implements OnInit {
       if (this.route.url == this.invoiceTab) {
         this.invoiceDispalyData = this.filterData;
         this.invoiceDispalyData = this.invoiceDispalyData.filter((element) => {
-          const dateF = new Date(element.documentDate).toISOString().split('T');
+          const dateF = new Date(element.CreatedOn).toISOString().split('T');
 
           return dateF[0] >= frmDate && dateF[0] <= toDate;
         });
@@ -979,7 +979,7 @@ export class InvoiceComponent implements OnInit {
         this.serviceinvoiceDispalyData = this.filterDataService;
         this.serviceinvoiceDispalyData = this.serviceinvoiceDispalyData.filter(
           (element) => {
-            const dateF = new Date(element.documentDate)
+            const dateF = new Date(element.CreatedOn)
               .toISOString()
               .split('T');
 
@@ -991,7 +991,7 @@ export class InvoiceComponent implements OnInit {
         this.archivedDisplayData = this.filterDataArchived;
         this.archivedDisplayData = this.archivedDisplayData.filter(
           (element) => {
-            const dateF = new Date(element.documentDate)
+            const dateF = new Date(element.CreatedOn)
               .toISOString()
               .split('T');
 

@@ -1,65 +1,3 @@
-<p-sidebar [(visible)]="visibleSidebar2" position="right" [baseZIndex]="10000">
-  <h6 style="font-weight: 600">Select Columns</h6>
-
-  <ul
-    class="pl-3 sidebar_height"
-    cdkDropList
-    (cdkDropListDropped)="onOptionDrop($event)"
-  >
-    <li
-      class="allCols"
-      *ngFor="let displayColumn of allColumns; let i = index"
-      cdkDrag
-    >
-      <label class="container" [for]="i" cdkDragHandle
-        >{{ displayColumn.columnName }}
-        <input
-          type="checkbox"
-          [id]="i"
-          (change)="activeColumn($event, displayColumn)"
-          [checked]="displayColumn.isActive == 1"
-        />
-        <span class="checkmark"></span>
-      </label>
-      <i class="fa fa-bars dragCols" aria-hidden="true" cdkDragHandle></i>
-    </li>
-  </ul>
-
-  <!-- <p-orderList [value]="cols" dragdrop="true" (onReorder)="order($event)" controlsPosition="">
-    <ng-template let-product pTemplate="item" let-index = "index">
-      <div class="product-item" >
-        <div class="product-list-detail">
-          <label class="container" >{{product.header}}
-            <input type="checkbox" (change)="activeColumn($event,product)" [checked]="product.isActive == 'true'" >
-            <span class="checkmark"></span>
-          </label>
-        </div>
-        <div class="product-list-action">
-          <i class="fa fa-bars dragCols" aria-hidden="true" ></i>
-        </div>
-    </div>
-      
-      </ng-template>
-      </p-orderList> -->
-
-  <div class="btnFooterSave" mat-dialog-actions>
-    <button
-      class="btn btnVender bg-btn-cancel mr-4 clor"
-      type="button"
-      (click)="visibleSidebar2 = false"
-    >
-      Cancel
-    </button>
-    <button
-      class="btn btnVender clor bg-btn-success"
-      (click)="updateColumnPosition()"
-      cdkFocusInitial
-    >
-      Save
-    </button>
-  </div>
-</p-sidebar>
-
 <mat-sidenav-container
   class="example-container"
   hasBackdrop="false"
@@ -112,7 +50,7 @@
   <mat-sidenav-content>
     <h6 class="headh6">All Documents</h6>
 
-    <div class="container-fluid" style="overflow: hidden; max-height: 100vh">
+    <div class="container-fluid" style="overflow: hidden; max-height: 92vh">
       <div>
         <div class="nav_pane_width">
           <ul class="nav nav-tabs d-inline-block">

@@ -20,7 +20,7 @@
             >Roles</a
           >
         </li>
-        <li [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
+        <li *ngIf="isVendorportalRequired" [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'vendorAdminUser'"

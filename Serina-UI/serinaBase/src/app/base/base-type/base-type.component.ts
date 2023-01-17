@@ -51,8 +51,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   menubarBoolean:boolean;
 
   GRNCreationAccess:boolean;
-  vendorInvoiceAccess:boolean;
-  serviceInvoiceAccess:boolean;
+  vendorInvoiceAccess = true;
+  serviceInvoiceAccess = true;
   exceptionRoute: string;
 
   constructor(
@@ -99,8 +99,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
   readConfig(){
     this.settingService.readConfig().subscribe((data:any)=>{
+      data.InstanceModel.vendorInvoices = true;
+      data.InstanceModel.serviceInvoices = true;
       localStorage.setItem("configData", JSON.stringify(data.InstanceModel));
       this.dataStoreService.configData = data.InstanceModel ;
+      this.ngOnInit();
     })
   }
   
@@ -128,8 +131,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.financeapproveDisplayBoolean =
     this.dataStoreService.configData?.enableApprovals;
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
-    this.vendorInvoiceAccess = this.dataStoreService.configData?.vendorInvoices;
-    this.serviceInvoiceAccess = this.dataStoreService.configData?.serviceInvoices;
+    // this.dataStoreService.configData.vendorInvoices = true;
+    // this.dataStoreService.configData.serviceInvoices = true;
     // if(this.vendorInvoiceAccess){
     //   this.exceptionRoute = 'ExceptionManagement/vendor_based';
     // } else if(this.serviceInvoiceAccess) {
@@ -357,18 +360,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   readVendorNames(){
     this.SharedService.getVendorUniqueData('?offset=1&limit=100').subscribe((data:any)=>{
       console.log(data);
-      let vendorData = [];
-      // data.vendorlist.forEach(element => {
-      //   vendorData.push(element);
-      // });
-      // const all_vendor_obj = {
-      //   VendorName : 'ALL',
-      //   idVendor : null,
-      // }
-      // vendorData.unshift(all_vendor_obj);
-      // const uniqueData = vendorData.filter((v,i,a)=>{
-      //   return a.findIndex(t=>t.VendorName === v.VendorName)===i;
-      // });
       this.dataStoreService.vendorNameList.next(data);
     });
   }
