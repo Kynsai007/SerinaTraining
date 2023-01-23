@@ -203,6 +203,8 @@ export class LoginPageComponent implements OnInit {
         data => {
           this.loading = false;
           this.settingService.readConfig().subscribe((resp:any)=>{
+            resp.InstanceModel.vendorInvoices = true;
+            resp.InstanceModel.serviceInvoices = true;
             localStorage.setItem("configData", JSON.stringify(resp.InstanceModel));
             this.instanceInfo = resp.InstanceModel;
             this.dataStoreService.configData = resp.InstanceModel ;

@@ -79,7 +79,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dataStoreService.configData = JSON.parse(localStorage.getItem('configData'));
-    console.log(this.dataStoreService.configData)
     if(!this.dataStoreService.configData){
       this.readConfig();
     }
@@ -99,8 +98,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
   readConfig(){
     this.settingService.readConfig().subscribe((data:any)=>{
-      data.InstanceModel.vendorInvoices = true;
-      data.InstanceModel.serviceInvoices = true;
+
       localStorage.setItem("configData", JSON.stringify(data.InstanceModel));
       this.dataStoreService.configData = data.InstanceModel ;
       this.ngOnInit();
