@@ -14,14 +14,16 @@ export class UplaodListenerComponent implements OnInit {
   saving:boolean=false;
   constructor(private fb:FormBuilder,private sharedService:SharedService) {
     this.configData = this.fb.group({
-       host: [''],
-       username : ['',[Validators.required,Validators.email]],
-       password : ['',Validators.required],
-       folder : [''],
-       acceptedDomains:[''],
-       acceptedEmails:[''],
-       loginuser: ['',Validators.required],
-       loginpass: ['',Validators.required]
+      host: [''],
+      email:['',[Validators.required,Validators.email]],
+      email_tenant_id : ['', Validators.required],
+      email_client_id : ['',Validators.required],
+      email_client_secret : ['',Validators.required],
+      folder : [''],
+      acceptedDomains:[''],
+      acceptedEmails:[''],
+      loginuser: ['',Validators.required],
+      loginpass: ['',Validators.required]
     })
    }
 
@@ -31,7 +33,7 @@ export class UplaodListenerComponent implements OnInit {
   getmailConfig(){
     this.sharedService.getemailconfig().subscribe(data => {
       if(data['message'] == "success"){
-       this.configData.patchValue({'username':data['config'].username,'password':data['config'].password,'host':data['config'].host,'folder':data['config'].folder,'loginuser':'','loginpass':'','acceptedDomains':data["config"]['acceptedDomains'],'acceptedEmails':data["config"]['acceptedEmails']})
+        this.configData.patchValue({'email':data['config'].email,'email_tenant_id':data['config'].email_tenant_id,'email_client_id':data['config'].email_client_id,'email_client_secret':data['config'].email_client_secret,'host':data['config'].host,'folder':data['config'].folder,'loginuser':'','loginpass':'','acceptedDomains':data["config"]['acceptedDomains'],'acceptedEmails':data["config"]['acceptedEmails']})
       }
     })
   }
@@ -43,13 +45,22 @@ export class UplaodListenerComponent implements OnInit {
     let loginpass = (<HTMLInputElement>document.getElementById("loginpass")).value;
     this.configData.patchValue({'loginuser':loginuser,'loginpass':loginpass});
     if(this.configData.invalid){
-      if(this.configData.controls['username'].value == ''){
-        this.err = "Please enter valid email!"
+      if(this.configData.controls['email'].errors?.hasOwnProperty("required")){
+        this.err = "Please enter Email Id!"
       }
-      if(this.configData.controls['password'].value == ''){
-        this.err = "Please enter email password!"
+      if(this.configData.controls['email'].errors?.hasOwnProperty("email")){
+        this.err = "Invalid Email Id!"
       }
-      if(this.configData.controls['loginpass'].value == ''){
+      if(this.configData.controls['email_tenant_id'].errors?.hasOwnProperty("required")){
+        this.err = "Please enter tenant id!"
+      }
+      if(this.configData.controls['email_client_id'].errors?.hasOwnProperty("required")){
+        this.err = "Please enter client id!"
+      }
+      if(this.configData.controls['email_client_secret'].errors?.hasOwnProperty("required")){
+        this.err = "Please enter client secret!"
+      }
+      if(this.configData.controls['loginpass'].errors?.hasOwnProperty("required")){
         this.err = "Please enter valid account credentials!"
       }
       this.exception = true;

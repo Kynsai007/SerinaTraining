@@ -499,17 +499,14 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
 
   updateMetainfo(value) {
    if((this.templateKeys !='') && this.updateMetaData.valid){
-    if(this.allsynonyms && Object.keys(this.allsynonyms).length > 0){
-      for(let key of Object.keys(this.allsynonyms)){
-        for(let s of this.templateKeys){
-          if(key != this.vendorName && this.allsynonyms[key].includes(s)){
-            alert(`Duplicate Synonym found for vendor ${key}, Synonym: ${s}, Please remove it and retry!`);
-            return;
-          }
+    for(let key of Object.keys(this.allsynonyms)){
+      for(let s of this.templateKeys){
+        if(key != this.vendorName && this.allsynonyms[key].includes(s)){
+          alert(`Duplicate Synonym found for vendor ${key}, Synonym: ${s}, Please remove it and retry!`);
+          return;
         }
       }
-    } 
-    
+    }
     if(value['FolderPath'] == ''){
       value['FolderPath'] = (<HTMLInputElement>document.getElementById("FolderPath")).value;
     }
