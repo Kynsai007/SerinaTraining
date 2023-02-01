@@ -175,6 +175,9 @@ export class SharedService {
   saveLabelsFile(frobj): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/save_labels_file`,frobj);
   }
+  deleteBlob(blobname): Observable<any> {
+    return this.http.delete(`${this.url}/${this.apiVersion}/ModelOnBoard/DeleteBlob?blob=${blobname}`);
+  }
   checkModelStatus(modelId): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/check_model_status/${modelId}`);
   }

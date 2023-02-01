@@ -192,6 +192,12 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     //   }
     // },{passive:false})
   }
+  async deleteBlob(i){
+    let filename = this.modelData.folderPath+"/"+Object.keys(this.thumbnails[i])[0];
+    this.sharedService.deleteBlob(filename).subscribe(data => {
+      this.thumbnails.splice(i,1);
+    })
+  }
   ngAfterViewInit(): void {
     sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
     sessionStorage.setItem("frConfigData",JSON.stringify(this.frConfigData));
