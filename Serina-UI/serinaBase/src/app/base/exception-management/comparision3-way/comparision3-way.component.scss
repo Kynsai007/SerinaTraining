@@ -189,7 +189,13 @@
   position: absolute; 
   z-index: 12;
 }
-
+.s-no{
+  font-size: 12px;
+  font-weight: 600;
+  height: 42px;
+  position: relative;
+  top: 11px;
+}
 @media screen and (max-width: 1200px) {
   .position_rule {
     left: 50vw;
@@ -203,7 +209,14 @@
     right: 100px;
   }
 }
-
+.count_line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.count-h {
+  min-height: 70px
+}
 @media screen and (max-width: 1000px) {
   .GRN_btn_position {
     bottom: 15px;

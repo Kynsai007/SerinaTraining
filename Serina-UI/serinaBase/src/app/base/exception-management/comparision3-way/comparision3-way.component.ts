@@ -90,6 +90,7 @@ export class Comparision3WayComponent
   givenErrors = ['Alternative', 'Identical', 'Adjustment', 'OCR Error'];
   givenRules: any;
   rejectionComments: string = '';
+  rejectReason:any;
 
   grnCreateBoolean: boolean = false;
   GRNObject = [];
@@ -107,7 +108,7 @@ export class Comparision3WayComponent
   lineItemsData: any;
   tagArray: any[];
 
-  lineCount: any;
+  lineCount = [];
   save_rule_boolean: boolean;
   selectedRuleID: any;
   approvalType: any;
@@ -129,6 +130,8 @@ export class Comparision3WayComponent
   vendorName: any;
   isGRNDataLoaded: boolean;
   content_type: any;
+  lineTabBoolean: boolean;
+  grnLineCount: any;
 
   constructor(
     fb: FormBuilder,
@@ -150,6 +153,7 @@ export class Comparision3WayComponent
   }
 
   ngOnInit(): void {
+    this.rejectReason = this.dataService.rejectReason;
     this.initialData();
     this.readFilePath();
     this.AddPermission();
@@ -260,6 +264,18 @@ export class Comparision3WayComponent
 
   changeTab(val) {
     this.currentTab = val;
+    // if (val === 'show') {
+    //   this.showPdf = true;
+    //   this.btnText = 'Close';
+    // } else {
+    //   this.showPdf = false;
+    //   this.btnText = 'View PDF';
+    // }
+    if (val == 'line') {
+      this.lineTabBoolean = true;
+    } else {
+      this.lineTabBoolean = false;
+    }
   }
 
   getInvoiceFulldata() {
@@ -270,8 +286,8 @@ export class Comparision3WayComponent
     this.exceptionService.getInvoiceInfo().subscribe(
       (data: any) => {
         this.lineDisplayData = data.linedata.Result;
-        this.lineDisplayData.forEach((element) => {
-          this.lineCount = element.items;
+        this.lineDisplayData.forEach((element,index,arr) => {
+          this.lineCount = arr[0].items
         });
 
         const pushedArrayHeader = [];
@@ -314,15 +330,18 @@ export class Comparision3WayComponent
   readGRNInvData() {
     this.SharedService.readReadyGRNInvData().subscribe(
       (data: any) => {
-        this.lineDisplayData = data.ok.linedata;
+        this.lineDisplayData = data.ok?.linedata;
+        this.grnLineCount =  this.lineDisplayData[0]?.linedata;
         let dummyLineArray = this.lineDisplayData;
         dummyLineArray.forEach((ele, i, array) => {
           if (ele.TagName == 'Quantity') {
             ele.TagName = 'Inv - Quantity';
             ele.linedata?.forEach((ele2, index) => {
-              ele.grndata?.forEach((ele3) => {
-                ele.grndata[index].old_value = ele2.Value;
-              });
+              if(ele.linedata?.length <= ele.grndata?.length){
+                ele.grndata?.forEach((ele3) => {
+                  ele.grndata[index].old_value = ele2.Value;
+                });
+              }
             });
           } else if (ele.TagName == 'UnitPrice') {
             ele.TagName = 'Inv - UnitPrice';

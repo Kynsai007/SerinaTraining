@@ -1,3 +1,4 @@
+import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
 import { DatePipe } from '@angular/common';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { Subscription } from 'rxjs';
@@ -14,7 +15,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./process-reports.component.scss'],
 })
 export class ProcessReportsComponent implements OnInit {
-  vendorsData: any[];
+  vendorsData = [];
   invoiceAmountData: any;
   invoiceAgechartData: any;
   invoiceBysourceChartdata: any;
@@ -40,13 +41,23 @@ export class ProcessReportsComponent implements OnInit {
   rangeDates: Date[];
   filterData: any[];
   filteredVendors: any;
-  invoiceByEntityChartdata: any;
-  noDataSourceEntityboolean: boolean;
+
   selectedVendor = 'ALL';
   selectedSourceValue = 'ALL';
   selectedEntityValue = 'ALL';
   selectedDateValue = '';
   selectedVendorValue: any;
+  invoiceByEntityChartdata = [];
+  noDataSourceEntityboolean: boolean;
+  pagesByEntityChartdata:any;
+  noDataSourcePagesEntityboolean: boolean;
+
+  totalTableData = [];
+  columnsForTotal = [];
+  totalColumnHeader = [];
+  totalColumnField = [];
+  ColumnLengthtotal: any;
+  showPaginatortotal: boolean;
 
   constructor(
     private chartsService: ChartsService,
@@ -55,7 +66,8 @@ export class ProcessReportsComponent implements OnInit {
     private dataService : DataService,
     private dateFilterService: DateFilterService,
     private SpinnerService: NgxSpinnerService,
-    private datePipe : DatePipe
+    private datePipe: DatePipe,
+    private ImportExcelService: ImportExcelService
   ) {}
 
   ngOnInit(): void {
@@ -64,11 +76,14 @@ export class ProcessReportsComponent implements OnInit {
     this.readSource();
     this.chartsData();
     this.dateRange();
+    this.prepareColumns();
     this.getEntitySummary();
     this.readvendorAmount('');
     this.readInvCountByVendor('');
     this.readInvCountBySource('');
     this.readInvAgeReport('');
+    this.readInvCountByEntity('');
+    // this.readPageCountByEntity('');
 
     setTimeout(() => {
       this.setConatinerForCharts();
@@ -124,6 +139,33 @@ export class ProcessReportsComponent implements OnInit {
     // } else {
     //   this.noDataSourceEntityboolean = true;
     // }
+
+    if (this.pagesByEntityChartdata.length > 1) {
+      this.noDataSourcePagesEntityboolean = false;
+        this.chartsService.drawColumnChart(
+          'column_chart_entity_pages',
+          '#ECB390',
+          'Invoice page Count by Entity',
+          this.pagesByEntityChartdata
+        );
+      } else {
+        this.noDataSourcePagesEntityboolean = true;
+      }
+  }
+
+  prepareColumns(){
+    this.columnsForTotal = [
+      { field: 'EntityName', header: 'Entity' },
+      { field: 'count', header:'Invoice Count'},
+      { field: 'pagecount', header:'Pages Count'}
+    ];
+
+    this.columnsForTotal.forEach((e) => {
+      this.totalColumnHeader.push(e.header);
+      this.totalColumnField.push(e.field);
+    });
+
+    this.ColumnLengthtotal = this.columnsForTotal.length;
   }
 
   readVendors() {
@@ -139,14 +181,6 @@ export class ProcessReportsComponent implements OnInit {
   }
 
   filterVendor(event) {
-    // let query = event.query.toLowerCase();
-    // let filteredGroups = [];
-
-    // for (let optgroup of this.vendorsData) {
-    //   this.filteredVendors = this.vendorsData.filter((val) =>
-    //     val.VendorName.toLowerCase().includes(query)
-    //   );
-    // }
     let query = event.query.toLowerCase();
     if(query != ''){
       console.log(query);
@@ -202,11 +236,17 @@ export class ProcessReportsComponent implements OnInit {
       // ['Serina Portal ', 50, 'color:#5167B2'],
       // ['Share Point', 50, 'color:#FB4953'],
     ];
-    this.invoiceByEntityChartdata = [
-      ['Source', 'Count'],
-      ['AGI', 110],
-      ['AG Masonry ', 50],
-      ['AG Nasco', 50],
+    // this.invoiceByEntityChartdata = [
+    //   ['Entity', 'Count'],
+    //   // ['AGI', 110],
+    //   // ['AG Masonry ', 50],
+    //   // ['AG Nasco', 50],
+    // ];
+    this.pagesByEntityChartdata = [
+      ['Entity', 'Count'],
+      // ['AGI', 110],
+      // ['AG Masonry ', 50],
+      // ['AG Nasco', 50],
     ]
     this.invCountByvendor = [
       ['Vendor', 'Invoices'],
@@ -266,7 +306,37 @@ export class ProcessReportsComponent implements OnInit {
     //   this.setConatinerForCharts();
     // }, 500);
   }
-
+  readInvCountByEntity(filter) {
+    this.SpinnerService.show();
+    this.chartsService.getInvoiceCountByEntity(filter).subscribe(
+      (data: any) => {
+        // data.data?.VendorBased.forEach((element) => {
+        //   this.invoiceByEntityChartdata[0] = ['Entity', 'Count'];
+        //   this.invoiceByEntityChartdata.push([element.EntityName, element.count]);
+        // });
+        this.invoiceByEntityChartdata = data.data?.VendorBased;
+        this.SpinnerService.hide();
+      },
+      (err) => {
+        this.SpinnerService.hide();
+      }
+    );
+  }
+  // readPageCountByEntity(filter) {
+  //   this.SpinnerService.show();
+  //   this.chartsService.getPagesCountByEntity(filter).subscribe(
+  //     (data: any) => {
+  //       data.data?.VendorBased?.forEach((element) => {
+  //         this.pagesByEntityChartdata[0] = ['Entity', 'Count'];
+  //         this.pagesByEntityChartdata.push([element.EntityName, element.count]);
+  //       });
+  //       this.SpinnerService.hide();
+  //     },
+  //     (err) => {
+  //       this.SpinnerService.hide();
+  //     }
+  //   );
+  // }
   readInvCountByVendor(filter) {
     this.SpinnerService.show();
     this.chartsService.getInvoiceCountByVendorData(filter).subscribe((data: any) => {
@@ -467,6 +537,8 @@ export class ProcessReportsComponent implements OnInit {
     this.readInvCountByVendor(query);
     this.readInvCountBySource(query);
     this.readInvAgeReport(query);
+    this.readInvCountByEntity(query);
+    // this.readPageCountByEntity(query);
     // this.readSource();
     // this.getEntitySummary();
     setTimeout(() => {
@@ -475,5 +547,9 @@ export class ProcessReportsComponent implements OnInit {
   }
   clearDates(){
     this.selectedDateValue = '';
+  }
+
+  downloadReport(){
+      this.ImportExcelService.exportExcel(this.invoiceByEntityChartdata);
   }
 }

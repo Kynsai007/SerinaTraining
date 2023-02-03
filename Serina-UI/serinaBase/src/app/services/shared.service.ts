@@ -14,7 +14,7 @@ export class SharedService {
   vendorID: number;
   cuserID: number;
   spID: number;
-  spAccountID: number;
+  spAccountID:number;
 
   invoiceID: any;
 
@@ -22,7 +22,7 @@ export class SharedService {
   NTtempalteId: number
   public currentUser: Observable<any>;
   userId: number;
-  ap_id: number;
+  ap_id:number;
 
   selectedEntityId: number;
   selectedEntityBodyId: number;
@@ -323,6 +323,9 @@ export class SharedService {
   }
   checkInvStatus(id, string) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/${string}/${id}`).pipe(retry(2));
+  }
+  updatePO(id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POUpdate/${id}`).pipe(retry(2));
   }
 
 

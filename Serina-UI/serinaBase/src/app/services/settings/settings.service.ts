@@ -55,4 +55,8 @@ export class SettingsService {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Customer/PortalPasswordUpdate/${this.userId}`,data).pipe(retry(2))
   }
 
+  update_profile(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Customer/ProfileUpdate/${this.userId}`,data)
+  }
+
 }

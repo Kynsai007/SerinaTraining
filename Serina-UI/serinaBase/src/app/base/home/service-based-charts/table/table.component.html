@@ -32,8 +32,8 @@
         </th>
         <th *ngIf="downloadBoolean" class="action_Zindex">Actions</th>
       </tr>
-      <tr>
-        <td *ngFor="let col of columns" class="sticky_top">
+      <tr *ngIf="!(router.url.includes('processReports') ||router.url.includes('serviceBasedReports'))">
+        <td *ngFor="let col of columns">
           <input
             pInputText
             type="text"
@@ -69,8 +69,8 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td [attr.colspan]="columnLength" class="p-t-30 text-center">
-          <img src="assets/Group 2691.png" width="260" alt="imageUrl" /> <br />
+        <td  [attr.colspan]="columnLength" class="p-t-30">
+          <img *ngIf="!(router.url.includes('processReports') ||router.url.includes('serviceBasedReports'))" src="assets/Group 2691.png" width="260" alt="imageUrl" /> <br />
           No Data found.
         </td>
       </tr>

@@ -68,11 +68,8 @@ export class RolesComponent implements OnInit {
   users: UserData[];
   usersData;
   roles = [];
-  TotalRoles = ['Admin', 'Finance Controller', 'Customer'];
   NameOfRole: any;
   Flevel: any = null;
-  FlevelData = ['level 1', 'level 2', 'level 3', 'level 4'];
-  Froles = ['admin', 'customer', 'manager'];
 
   selectedEntityName;
   selectedEntityBodyName;
@@ -226,7 +223,8 @@ export class RolesComponent implements OnInit {
   updateVenrEntityAccess = [];
   entLengthforup_vendr: any;
   approveDialog: boolean;
-  tempVendorName:string;
+  tempVendorName: string;
+  tempDisplayVName:string;
   vendorMatchList = [];
   vendorOnboarderStatus: boolean;
   approval_priority: any = null;
@@ -1525,7 +1523,13 @@ export class RolesComponent implements OnInit {
   }
   approveVendoraccess(user){
     this.approveDialog = true;
-    this.tempVendorName = user.vendor_data.VendorName;
+    this.tempDisplayVName = user?.vendor_data?.VendorName;
+    let word = user?.vendor_data?.VendorName.split(' ');
+    let splited = word[0];
+    if(word[0].length <=3 ){
+      splited = word[0]+' '+word[1]
+    }
+    this.tempVendorName = splited;
     this.createVfirstName = user.firstName;
     this.createVlastName = user.lastName;
     this.vendorUserId = user.idUser;
@@ -1554,25 +1558,30 @@ export class RolesComponent implements OnInit {
     }
 
   }
-  readVendorMatch(ven_name,type){
+  readVendorMatch(ven_name, type) {
     this.SpinnerService.show();
-    this.sharedService.getVendorMatch(ven_name,type).subscribe((data:any)=>{
-      this.vendorMatchList = data.vendorlist;
-      this.vendorMatch = this.vendorMatchList[0];
-      this.vendorCode = this.vendorMatch.VendorCode;
-      this.checkOnboardStatus(this.vendorMatch.VendorCode);
-      this.readEntityForVendorOnboard(this.vendorMatch.VendorCode, null);
+    this.sharedService.getVendorMatch(ven_name, type).subscribe((data: any) => {
+      if (data?.vendorlist?.length>0) {
+        this.vendorMatchList = data.vendorlist;
+        this.vendorMatch = this.vendorMatchList[0];
+        this.vendorCode = this.vendorMatch?.VendorCode;
+        this.checkOnboardStatus(this.vendorMatch?.VendorCode);
+        this.readEntityForVendorOnboard(this.vendorMatch?.VendorCode, null);
+      } else {
+        this.errorObject.detail = "Match not found please select";
+        this.messageService.add(this.errorObject);
+      }
       // this.onSelectedEntityCode(this.entitySelection,type);
       let arr = [];
-      
+
       setTimeout(() => {
-        this.entitySelection.forEach(ele=>{
+        this.entitySelection?.forEach(ele => {
           arr.push(ele.idEntity)
         })
         this.updateVenrEntityAccess = arr;
       }, 1000);
       this.SpinnerService.hide();
-    },err=>{
+    }, err => {
       this.SpinnerService.hide();
     })
   }
@@ -1582,7 +1591,7 @@ export class RolesComponent implements OnInit {
     this.selectedEnt_venor = [];
     this.sharedService.readVendorAccess(uid,ven_code).subscribe((data:any)=>{
       let mergeArr = [];
-      data.ent_details.forEach(ele=>{
+      data?.ent_details?.forEach(ele => {
         let mergeObj = {
           ...ele.Entity,
           ...ele.VendorUserAccess

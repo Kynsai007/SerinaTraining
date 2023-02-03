@@ -67,12 +67,10 @@ export class SignUpComponent implements OnInit {
     this.fieldTextType = !this.fieldTextType;
   }
   userCheck(name) {
-    console.log(name)
     if(name?.length > 5){
       this.sharedService.userCheck(name).subscribe((data: any) => {
         this.usernameField = data.LogName
         if (data.LogName) {
-          console.log(data.LogName)
           this.userBoolean = false;
           // this.userNotBoolean = false;
         } else {
@@ -85,7 +83,6 @@ export class SignUpComponent implements OnInit {
   // get user_name(){ return this.registrationForm.get('username');}
   savePasswordforNewuser(){
     let signup_value = this.registrationForm.getRawValue();
-    console.log(signup_value)
     let Obj = {
       "n_ven_user": {
         "tempVendorName": signup_value.vendorName,
@@ -101,15 +98,13 @@ export class SignUpComponent implements OnInit {
     }
 
     this.registrationService.signup_vendoruser( this.signupToken,JSON.stringify(Obj)).subscribe((data:any)=>{
-      // if(data.result == "Account Activated"){
+
         this.messageService.add({
           severity: "success",
           summary: "Created",
           detail: "Account created, sent for admin approval"
         });
         this.activationBoolean = false;
-        // this.router.navigate(["/"]);
-      // }
     },error=>{
       this.messageService.add({
         severity: "error",
@@ -128,6 +123,9 @@ export class SignUpComponent implements OnInit {
   }
 
   checkPattren(val){
+    this.registrationForm.patchValue({
+      reEnterPassword : ''
+    });
     let passClass:any = document.getElementsByClassName('checkColor');
     const number = new RegExp('(?=.*[0-9])');
     const lowerCase = new RegExp('(?=.*[a-z])');
@@ -226,7 +224,6 @@ export class SignUpComponent implements OnInit {
       "password": "string"
     }
     this.registrationService.verifyOTP(this.otp,obj).subscribe((data:any)=>{
-      console.log(data);
       this.registrationForm.patchValue({
         emailId: this.emailID
       });

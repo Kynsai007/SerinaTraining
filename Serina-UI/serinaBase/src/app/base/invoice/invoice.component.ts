@@ -113,6 +113,8 @@ export class InvoiceComponent implements OnInit {
   first: any;
   searchPOStr = '';
   searchGRNStr = '';
+  searchArcStr = '';
+  searchRejStr = '';
   GRNExceptionTab: any;
   GRNExcpLength: number;
   close(reason: string) {
@@ -123,6 +125,10 @@ export class InvoiceComponent implements OnInit {
   pageCountVariablePO = 0;
   offsetCountGRN = 1;
   pageCountVariableGRN = 0;
+  offsetCountArc = 1;
+  pageCountVariableArc = 0;
+  offsetCountRej = 1;
+  pageCountVariableRej = 0;
 
   GRNExcpDispalyData = [];
   GRNExcpColumns = [];
@@ -196,7 +202,7 @@ export class InvoiceComponent implements OnInit {
       this.showPaginatorGRNTable = true;
     }
     this.archivedDisplayData = this.dataService.archivedDisplayData;
-    this.archivedArrayLength = this.dataService.ARCTableLength;
+    this.archivedLength = this.dataService.ARCTableLength;
     if (this.archivedDisplayData.length > 10) {
       this.showPaginatorArchived = true;
     }
@@ -218,10 +224,10 @@ export class InvoiceComponent implements OnInit {
       this.getDisplayGRNdata(this.APIParams);
     }
     if (this.dataService.archivedDisplayData.length == 0) {
-      this.getDisplayARCData('');
+      this.getDisplayARCData(this.APIParams);
     }
     if (this.dataService.rejectedDisplayData.length == 0) {
-      this.getDisplayRejectedData('');
+      this.getDisplayRejectedData(this.APIParams);
     }
     if (this.dataService.receiptLoadedData.length == 0) {
       // this.getDisplayReceiptdata();
@@ -251,12 +257,12 @@ export class InvoiceComponent implements OnInit {
       // { dbColumnname: 'documentPaymentStatus', columnName: 'Status' },
     ];
     this.rejectedColumns = [
-      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
       { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
       { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
       { dbColumnname: 'EntityName', columnName: 'Entity' },
       { dbColumnname: 'documentdescription', columnName: 'Description' },
-      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      { dbColumnname: 'CreatedOn', columnName: 'Uploaded Date' },
       { dbColumnname: 'totalAmount', columnName: 'Amount' },
       // { dbColumnname: 'documentPaymentStatus', columnName: 'Status' },
     ];
@@ -455,9 +461,10 @@ export class InvoiceComponent implements OnInit {
       
       this.archivedDisplayData =
         this.dataService.archivedDisplayData.concat(invoicePushedArray);
-      this.dataService.ARCTableLength = this.archivedDisplayData.length;
-      this.archivedLength = this.archivedDisplayData.length;
-      if (this.archivedDisplayData.length > 10) {
+        this.dataService.archivedDisplayData = this.archivedDisplayData;
+      this.dataService.ARCTableLength = data?.result?.ser?.ok?.total_arc;
+      this.archivedLength = data?.result?.ser?.ok?.total_arc;
+      if (this.archivedLength > 10) {
         this.showPaginatorArchived = true;
       }
       this.SpinnerService.hide();
@@ -504,8 +511,9 @@ export class InvoiceComponent implements OnInit {
       });
       this.rejectedDisplayData =
         this.dataService.rejectedDisplayData.concat(invoicePushedArray);
-      this.dataService.rejectTableLength = this.rejectedDisplayData.length;
-      this.rejectedLength = this.rejectedDisplayData.length;
+      this.dataService.rejectedDisplayData = this.rejectedDisplayData;
+      this.dataService.rejectTableLength = data?.result?.ser?.ok?.total_rejected;
+      this.rejectedLength = data?.result?.ser?.ok?.total_rejected;
       if (this.rejectedDisplayData.length > 10) {
         this.showPaginatorRejected = true;
       }
@@ -580,11 +588,11 @@ export class InvoiceComponent implements OnInit {
             if (this.serviceinvoiceDispalyData.length > 10) {
               this.showPaginatorServiceInvoice = true;
             }
-            this.filterDataArchived = this.archivedDisplayData;
-            this.archivedLength = this.archivedDisplayData.length;
-            if (this.archivedDisplayData.length > 10) {
-              this.showPaginatorArchived = true;
-            }
+            // this.filterDataArchived = this.archivedDisplayData;
+            // this.archivedLength = this.archivedDisplayData.length;
+            // if (this.archivedDisplayData.length > 10) {
+            //   this.showPaginatorArchived = true;
+            // }
           }, 500);
         }
         this.SpinnerService.hide();
@@ -970,7 +978,7 @@ export class InvoiceComponent implements OnInit {
       if (this.route.url == this.invoiceTab) {
         this.invoiceDispalyData = this.filterData;
         this.invoiceDispalyData = this.invoiceDispalyData.filter((element) => {
-          const dateF = new Date(element.CreatedOn).toISOString().split('T');
+          const dateF = new Date(element.documentDate).toISOString().split('T');
 
           return dateF[0] >= frmDate && dateF[0] <= toDate;
         });
@@ -979,7 +987,7 @@ export class InvoiceComponent implements OnInit {
         this.serviceinvoiceDispalyData = this.filterDataService;
         this.serviceinvoiceDispalyData = this.serviceinvoiceDispalyData.filter(
           (element) => {
-            const dateF = new Date(element.CreatedOn)
+            const dateF = new Date(element.documentDate)
               .toISOString()
               .split('T');
 
@@ -991,7 +999,7 @@ export class InvoiceComponent implements OnInit {
         this.archivedDisplayData = this.filterDataArchived;
         this.archivedDisplayData = this.archivedDisplayData.filter(
           (element) => {
-            const dateF = new Date(element.CreatedOn)
+            const dateF = new Date(element.documentDate)
               .toISOString()
               .split('T');
 
@@ -1047,15 +1055,60 @@ export class InvoiceComponent implements OnInit {
     } else if (this.route.url == this.archivedTab) {
       this.storageService.archivedPaginationFisrt = this.first;
       this.storageService.archivedPaginationRowLength = event.rows;
+      if (this.first >= this.pageCountVariableArc) {
+        this.pageCountVariableArc = event.first;
+        if (this.searchArcStr == '') {
+          this.offsetCountArc++;
+          this.APIParams = `?offset=${this.offsetCountArc}&limit=50`;
+          this.getDisplayARCData(this.APIParams);
+        } else {
+          this.offsetCountArc++;
+          this.APIParams = `?offset=${this.offsetCountArc}&limit=50&uni_search=${this.searchArcStr}`;
+          this.getDisplayARCData(this.APIParams);
+        }
+      }
     } else if (this.route.url == this.rejectedTab) {
       this.storageService.rejectedPaginationFisrt = this.first;
       this.storageService.rejectedPaginationRowLength = event.rows;
+      if (this.first >= this.pageCountVariableRej) {
+        this.pageCountVariableRej = event.first;
+        if (this.searchRejStr == '') {
+          this.offsetCountRej++;
+          this.APIParams = `?offset=${this.offsetCountRej}&limit=50`;
+          this.getDisplayRejectedData(this.APIParams);
+        } else {
+          this.offsetCountRej++;
+          this.APIParams = `?offset=${this.offsetCountRej}&limit=50&uni_search=${this.searchRejStr}`;
+          this.getDisplayRejectedData(this.APIParams);
+        }
+      }
     } else if (this.route.url == this.GRNExceptionTab) {
       this.storageService.GRNExceptionPaginationFisrt = this.first;
       this.storageService.GRNExceptionPaginationRowLength = event.rows;
     } else if (this.route.url == this.serviceInvoiceTab) {
       this.storageService.servicePaginationFisrt = this.first;
       this.storageService.servicePaginationRowLength = event.rows;
+    }
+  }
+
+  keySearch(str){
+    if(str == ''){
+      this.APIParams = `?offset=1&limit=50`
+      if (this.route.url == this.invoiceTab) {
+      } else if (this.route.url == this.POTab) {
+        this.dataService.poLoadedData = [];
+          this.getDisplayPOData(this.APIParams);
+      } else if (this.route.url == this.GRNTab) {
+        this.dataService.GRNLoadedData = [];
+          this.getDisplayGRNdata(this.APIParams);
+      } else if (this.route.url == this.archivedTab) {
+        this.dataService.archivedDisplayData = [];
+          this.getDisplayARCData(this.APIParams);
+      } else if (this.route.url == this.rejectedTab) {
+        this.dataService.rejectedDisplayData = [];
+          this.getDisplayRejectedData(this.APIParams);
+      } else if (this.route.url == this.serviceInvoiceTab) {
+      }
     }
   }
 
@@ -1084,7 +1137,27 @@ export class InvoiceComponent implements OnInit {
         this.getDisplayGRNdata(this.APIParams);
       }
     } else if (this.route.url == this.archivedTab) {
+      this.offsetCountArc = 1;
+      this.dataService.archivedDisplayData = [];
+      this.searchArcStr = event;
+      if (this.searchArcStr == '') {
+        this.APIParams = `?offset=${this.offsetCountArc}&limit=50`;
+        this.getDisplayARCData(this.APIParams);
+      } else {
+        this.APIParams = `?offset=${this.offsetCountArc}&limit=50&uni_search=${this.searchArcStr}`;
+        this.getDisplayARCData(this.APIParams);
+      }
     } else if (this.route.url == this.rejectedTab) {
+      this.offsetCountRej = 1;
+      this.dataService.rejectedDisplayData = [];
+      this.searchRejStr = event;
+      if (this.searchRejStr == '') {
+        this.APIParams = `?offset=${this.offsetCountRej}&limit=50`;
+        this.getDisplayRejectedData(this.APIParams);
+      } else {
+        this.APIParams = `?offset=${this.offsetCountRej}&limit=50&uni_search=${this.searchRejStr}`;
+        this.getDisplayRejectedData(this.APIParams);
+      }
     } else if (this.route.url == this.serviceInvoiceTab) {
     }
   }

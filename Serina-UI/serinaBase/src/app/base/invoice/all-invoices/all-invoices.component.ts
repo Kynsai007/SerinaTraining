@@ -70,8 +70,11 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   statusText:string;
   statusText1: string;
   portal_name: string;
+  selectedFields1:any;
+  stateTable:any;
   triggerBoolean: boolean;
   invoiceID: any;
+  globalSearch:string;
 
   constructor(
     private tagService: TaggingService,
@@ -120,22 +123,29 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     if (this.router.url.includes('allInvoices')) {
       this.first = this.storageService.allPaginationFirst;
       this.rows = this.storageService.allPaginationRowLength;
+      this.globalSearch = this.storageService.invoiceGlobe;
+      this.stateTable = 'allInvoices';
     } 
     else if (this.router.url.includes('PO') ) {
       this.first = this.storageService.poPaginationFisrt;
       this.rows = this.storageService.poPaginationRowLength;
+      this.stateTable = 'PO';
     }
     else if (this.router.url.includes('archived')) {
       this.first = this.storageService.archivedPaginationFisrt;
       this.rows = this.storageService.archivedPaginationRowLength;
+      this.stateTable = 'Archived';
     } 
     else if (this.router.url.includes('rejected')) {
       this.first = this.storageService.rejectedPaginationFisrt;
       this.rows = this.storageService.rejectedPaginationRowLength;
+      this.stateTable = 'rejected';
     } 
     else if (this.router.url.includes('ServiceInvoices')) {
       this.first = this.storageService.servicePaginationFisrt;
       this.rows = this.storageService.servicePaginationRowLength;
+      this.stateTable = 'Service';
+      this.globalSearch = this.storageService.serviceGlobe;
     } 
   }
   
@@ -195,6 +205,11 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
 
   searchInvoice(value) {
+    if (this.router.url.includes('allInvoices')) {
+      this.storageService.invoiceGlobe = this.globalSearch;
+    } else if (this.router.url.includes('ServiceInvoices')) {
+      this.storageService.serviceGlobe  = this.globalSearch;
+    } 
     this.searchInvoiceData.emit(this.allInvoice);
   }
 
@@ -247,5 +262,18 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     },(error => {
       this.triggerBoolean = false;
     }))
+  }
+
+  updatePO(e){
+    this.spinnerService.show();
+    this.sharedService.updatePO(e.idDocument).subscribe((data:any)=>{
+      this.spinnerService.hide();
+      this.AlertService.addObject.detail = 'PO data updated.';
+      this.messageService.add(this.AlertService.addObject);
+    },err=>{
+      this.spinnerService.hide();
+      this.AlertService.errorObject.detail = 'Server error';
+      this.messageService.add(this.AlertService.errorObject);
+    })
   }
 }

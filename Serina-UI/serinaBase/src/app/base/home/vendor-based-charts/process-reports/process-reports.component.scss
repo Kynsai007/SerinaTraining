@@ -139,6 +139,10 @@
 //     top: 20px;
 //   }
 // }
+.tableD {
+  max-height: 190px;
+  overflow: auto;
+}
 @media screen and (max-width:1450px) {
   .filter_inputDash {
       top: 53px;

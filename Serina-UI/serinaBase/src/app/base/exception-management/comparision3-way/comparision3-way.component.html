@@ -208,7 +208,7 @@
                   "
                 >
                   <span class="old_value"
-                    >Previous Value :
+                    >Old Value :
                     <span style="color: #f38a6b"
                       >"{{ value.DocumentUpdates.OldValue }}"</span
                     >
@@ -248,6 +248,13 @@
   
             <table class="w-100 mt-2">
               <tr>
+                <td class="count_line">
+                  <span class="f-12 p-2" style="margin-top: -6px;">S.No</span>
+                  <div class="f-12 mb-3 count-h" *ngFor="let tagName of lineCount; let i =index;">
+                        {{ i+1 }}
+                  </div>
+                  
+                </td>
                 <td class="f-13" *ngFor="let tagName of lineDisplayData">
                   <span class="f-13 p-2">{{ tagName.tagname }}</span>
                   <div *ngFor="let data of tagName.items">
@@ -385,7 +392,6 @@
                               name="lineSelection"
                               placeholder="mapping"
                               ngModel
-                              [disabled]="!submitBtn_boolean"
                               (change)="
                                 lineMapping(
                                   data.linedetails[0].invline[0]
@@ -448,6 +454,14 @@
           <!-- Create GRN screen Line details -->
           <div *ngIf="grnCreateBoolean">
             <table class="invert" style="width: 100%">
+              <tr class="invert_tr">
+                <td class="lineName invert_th_td text-center" style="min-width: 50px;">S.No</td>
+                <td class="count_line" *ngFor="let item2 of grnLineCount; let ind = index">
+                  <div class="s-no">
+                    {{ ind+1 }}
+                  </div>
+                </td>
+              </tr>
               <tr
                 class="invert_tr"
                 *ngFor="let item of lineDisplayData; let i = index"

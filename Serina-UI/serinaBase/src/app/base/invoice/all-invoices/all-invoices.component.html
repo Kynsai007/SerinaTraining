@@ -1,11 +1,19 @@
 <div>
   <div class="scroll">
-    <div class="searchBar" *ngIf="!router.url.includes('PO')">
+    <div
+      class="searchBar"
+      *ngIf="
+        router.url.includes('allInvoices') ||
+        router.url.includes('GRNExceptions') ||
+        router.url.includes('ServiceInvoices')
+      "
+    >
       <input
         class="searchInput"
         pInputText
         type="text"
         placeholder="Search + Enter"
+        [(ngModel)]="globalSearch"
         (keyup)="searchInvoice($event.target.value)"
         (input)="allInvoice.filterGlobal($event.target.value, 'contains')"
       />
@@ -21,6 +29,11 @@
       styleClass="p-datatable-striped"
       responsiveLayout="scroll"
       [columns]="invoiceColumns"
+      selectionMode="single"
+      [(selection)]="selectedFields1"
+      dataKey="id"
+      stateStorage="session"
+      [stateKey]="stateTable"
       [paginator]="showPaginatorAllInvoice"
       [showFirstLastIcon]="true"
       [showCurrentPageReport]="true"
@@ -41,7 +54,12 @@
           <th class="action_Zindex">
             Actions
             <i
-              *ngIf="router.url.includes('allInvoices') || router.url.includes('PO') || router.url.includes('archived') || router.url.includes('ServiceInvoices')"
+              *ngIf="
+                router.url.includes('allInvoices') ||
+                router.url.includes('PO') ||
+                router.url.includes('archived') ||
+                router.url.includes('ServiceInvoices')
+              "
               class="fa fa-pencil-square-o actionsBtn"
               style="border: 0"
               aria-hidden="true"
@@ -134,11 +152,12 @@
                       class="f-13 b-0"
                       style="color: red; font-weight: 800"
                       (click)="triggerBatch(invoiceData.idDocument)"
-                      [disabled]="triggerBoolean && invoiceID == invoiceData.idDocument" 
+                      [disabled]="
+                        triggerBoolean && invoiceID == invoiceData.idDocument
+                      "
                     >
-                     <i class="fa fa-refresh" aria-hidden="true"></i> 
-                    </button
-                    >
+                      <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </button>
                     <i
                       *ngIf="invoiceData.docstatus == 'Need To Review'"
                       [pTooltip]="invoiceData?.status"
@@ -161,57 +180,108 @@
               class="pi pi-eye f-13 showEye mr-2 font_weight_500"
               (click)="viewInvoiceDetails(invoiceData)"
             ></i>
+            <button
+              *ngIf="router.url.includes('PO')"
+              pTooltip="Click here to update PO"
+              (click)="updatePO(invoiceData)"
+              class="f-13 b-0 pos-rel"
+            >
+              <i class="fa fa-refresh" aria-hidden="true"></i>
+            </button>
             <span *ngIf="router.url.includes('GRNExceptions')">
-              <button class="actionsBtn text-success b-0 font_weight" (click)="reUpload(invoiceData)">Re-Upload</button>
+              <button
+                class="actionsBtn text-success b-0 font_weight"
+                (click)="reUpload(invoiceData)"
+              >
+                Re-Upload
+              </button>
             </span>
             <i
-              *ngIf="router.url.includes('allInvoices') || router.url.includes('archived')"
+              *ngIf="
+                router.url.includes('allInvoices') ||
+                router.url.includes('archived')
+              "
               pTooltip="Click here to view Full Status details"
               tooltipPosition="left"
               class="fa fa-info-circle actionsBtn f-13 icon_style i_padding font_weight_500"
               (click)="viewStatusPage(invoiceData)"
             ></i>
 
-            <span *ngIf="router.url.includes('allInvoices') || router.url.includes('archived') || router.url.includes('ServiceInvoices')">
             <span
-              class="ml-2 icon_style"
-              *ngIf="invoiceData.sourcetype == 'Web'"
-              title="Uploaded through Portal"
+              *ngIf="
+                router.url.includes('allInvoices') ||
+                router.url.includes('archived') ||
+                router.url.includes('ServiceInvoices')
+              "
             >
-              <i class="fa fa-cloud-upload f-13 font_weight_500" aria-hidden="true"></i>
-            </span>
+              <span
+                class="ml-2 icon_style"
+                *ngIf="invoiceData.sourcetype == 'Web'"
+                title="Uploaded through Portal"
+              >
+                <i
+                  class="fa fa-cloud-upload f-13 font_weight_500"
+                  aria-hidden="true"
+                ></i>
+              </span>
 
-            <span
-              class="ml-2 icon_style"
-              *ngIf="invoiceData.sourcetype == 'Mail'"
-              title="Uploaded through Mail"
-            >
-              <i class="fa fa-envelope f-13 font_weight_500" aria-hidden="true"></i>
-            </span>
+              <span
+                class="ml-2 icon_style"
+                *ngIf="invoiceData.sourcetype == 'Mail'"
+                title="Uploaded through Mail"
+              >
+                <i
+                  class="fa fa-envelope f-13 font_weight_500"
+                  aria-hidden="true"
+                ></i>
+              </span>
 
-            <span style="visibility: hidden;"
-              class="ml-2 icon_style"
-              *ngIf="invoiceData.sourcetype == 'RPA'"
-              title="Uploaded through Mail"
-            >
-              <i class="fa fa-envelope f-13 font_weight_500" aria-hidden="true"></i>
-            </span>
+              <span
+                style="visibility: hidden"
+                class="ml-2 icon_style"
+                *ngIf="invoiceData.sourcetype == 'RPA'"
+                title="Uploaded through Mail"
+              >
+                <i
+                  class="fa fa-envelope f-13 font_weight_500"
+                  aria-hidden="true"
+                ></i>
+              </span>
 
-            <span
-              class="ml-2 icon_style"
-              *ngIf="invoiceData.sourcetype == 'SharePoint'"
-              title="Uploaded through SharePoint"
-            >
-              <i class="fa fa-share f-13 font_weight_500" aria-hidden="true"></i>
+              <span
+                class="ml-2 icon_style"
+                *ngIf="invoiceData.sourcetype == 'API'"
+                title="Uploaded through API"
+              >
+                <i
+                  class="fa fa-code f-13 font_weight_500"
+                  aria-hidden="true"
+                ></i>
+              </span>
+
+              <span
+                class="ml-2 icon_style"
+                *ngIf="invoiceData.sourcetype == 'SharePoint'"
+                title="Uploaded through SharePoint"
+              >
+                <i
+                  class="fa fa-share f-13 font_weight_500"
+                  aria-hidden="true"
+                ></i>
+              </span>
             </span>
-            </span>
             <span
-            *ngIf="router.url.includes('allInvoices') || router.url.includes('ServiceInvoices') || router.url.includes('payment-details-vendor')"
+              *ngIf="
+                router.url.includes('allInvoices') ||
+                router.url.includes('ServiceInvoices') ||
+                router.url.includes('payment-details-vendor')
+              "
               pTooltip="Click here to view ERP Status details"
               tooltipPosition="left"
               class="fa fa-link actionsBtn f-13 font_weight_500 icon_style link_padding"
               (click)="checkStatus(invoiceData)"
-            >  </span>
+            >
+            </span>
           </td>
         </tr>
       </ng-template>
@@ -275,8 +345,8 @@
       ></i> -->
     </div>
     <div class="deleteDivText">
-      {{ statusText }} <br>
-      <div class="f-12">{{statusText1}}</div>
+      {{ statusText }} <br />
+      <div class="f-12">{{ statusText1 }}</div>
     </div>
   </div>
   <ng-template pTemplate="footer">

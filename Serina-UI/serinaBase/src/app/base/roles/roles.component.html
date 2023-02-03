@@ -253,7 +253,8 @@
                 'firstName',
                 'lastName',
                 'NameOfRole',
-                'VendorName',
+                'vendor_data.VendorName',
+                'email',
                 'isActive'
               ]"
               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -766,7 +767,7 @@
           <div class="f-14 header_div">User Details</div>
           <div class="d_flex_wrap">
             <div *ngIf="!headerEdituserboolean">
-              <label class="label-head mb-0">User Name</label>
+              <label class="label-head">User Name</label>
               <input
                 type="text"
                 class="form-control inputForm mb-3 f-13"
@@ -804,7 +805,7 @@
             </div>
 
             <div>
-              <label class="label-head mb-0">First Name</label>
+              <label class="label-head">First Name</label>
               <input
                 type="text"
                 class="form-control inputForm mb-3 f-13"
@@ -828,7 +829,7 @@
             </div>
 
             <div>
-              <label class="label-head mb-0">Last Name</label>
+              <label class="label-head">Last Name</label>
               <input
                 type="text"
                 class="form-control inputForm mb-3 f-13"
@@ -848,7 +849,7 @@
             </div>
 
             <div>
-              <label class="label-head mb-0">User Email</label>
+              <label class="label-head">User Email</label>
               <input
                 type="email"
                 name="email"
@@ -857,7 +858,7 @@
                 class="form-control inputForm mb-3 f-13"
                 [(ngModel)]="userEmail"
                 placeholder="Email"
-                pattern="[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
+                pattern="[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,9}$"
                 required
               />
               <div
@@ -870,7 +871,7 @@
             </div>
 
             <div>
-              <label class="label-head mb-0">Role Name</label>
+              <label class="label-head">Role Name</label>
               <select
                 class="form-control inputForm f-12 mb-3"
                 name="editrole"
@@ -1351,7 +1352,7 @@
       <input
         type="email"
         id="email"
-        pattern="[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,3}$"
+        pattern="[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,9}$"
         class="form-control inputBox"
         name="EmailCreate"
         ngModel
@@ -1434,7 +1435,7 @@
         type="text"
         class="form-control inputBox"
         name="tempName"
-        [(ngModel)]="tempVendorName"
+        [(ngModel)]="tempDisplayVName"
         #tempName="ngModel"
         required
       />

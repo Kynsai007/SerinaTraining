@@ -113,6 +113,18 @@ export class DataService {
   configData: any;
   subStatusId: number;
 
+  rejectReason = [
+    { id:1, reason: 'Invoice already posted in Dynamics, no action required'},
+    { id:2, reason: 'Item Descriptions do not match LPO, please correct invoice & re-upload'},
+    { id:3, reason: 'Invoice Quantities do not match LPO, please correct invoice & re-upload'},
+    { id:4, reason: 'Invoice Price do not match LPO, please correct invoice & re-upload'},
+    { id:5, reason: 'Uploaded under wrong Entity, please re-upload under correct entity'},
+    { id:6, reason: 'Incorrect details on Invoice (LPO No, date, vendor name, TRN, etc..) , please correct invoice & re-upload'},
+    { id:7, reason: 'Multiple invoices uploaded, please upload invoice separately'}
+  ]
+  invoiceGlobe = '';
+  serviceGlobe = '';
+  
   constructor() { }
 
   getEntity():Observable<any>{
