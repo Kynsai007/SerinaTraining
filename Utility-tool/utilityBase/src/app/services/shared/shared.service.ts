@@ -36,6 +36,16 @@ export class SharedService {
     summary: "error",
     detail: "Something went wrong"
   }
+  addObject = {
+    severity: "success",
+    summary: "Success",
+    detail: "Created Successfully"
+  }
+  updateObject = {
+    severity: "info",
+    summary: "Updated",
+    detail: "Updated Successfully"
+  }
   isAdmin: boolean;
   vendorList = [];
   selectedEntityId: any = 'ALL';
@@ -173,7 +183,7 @@ export class SharedService {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/model_validate`, data);
   }
   saveLabelsFile(frobj): Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/save_labels_file`,frobj);
+    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/save_labels_file`,frobj)
   }
   deleteBlob(blobname): Observable<any> {
     return this.http.delete(`${this.url}/${this.apiVersion}/ModelOnBoard/DeleteBlob?blob=${blobname}`);
@@ -280,4 +290,40 @@ export class SharedService {
   getLabelsInfo(folderPath,filename): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_labels_info/${filename}`,{headers:new HttpHeaders({'folderpath':folderPath})});
   }
+
+
+  /*Configuration settings APIs*/
+  financeApprovalSetting(data):Observable<any> {
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Customer/enableInvoiceApprovals/${this.userId}?isenabled=${data}`,'')
+  }
+
+  readGeneralSettings():Observable<any> {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Customer/readGenSettings/${this.userId}`)
+  }
+  readServiceTriggerSettings():Observable<any> {
+    return this.http.get(`${this.url}/${this.apiVersion}/Permission/readServiceSchedule/${this.userId}`)
+  }
+  serviceBatchTriggerUpdate(data):Observable<any> {
+    return this.http.post(`${this.url}/${this.apiVersion}/Permission/updateServiceSchedule/${this.userId}`,data)
+  }
+  readApprovalSettings(){
+    return this.http.get(`${this.url}/${this.apiVersion}/Permission/readApproveSetting/${this.userId}`)
+  }
+  updateApprovalSettings(data){
+    return this.http.post(`${this.url}/${this.apiVersion}/Permission/updateApproveSetting/${this.userId}`,data)
+  }
+
+    // entity
+    getEntitybody() {
+      return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readEntity_Body_Dept/${this.userId}?ent_id=${this.selectedEntityId}`);
+    }
+    getEntityDept() {
+      return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readEntity_Dept/${this.userId}`);
+    }
+    getDepartment(){
+      return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readEntity_Dept/${this.userId}?en_id=${this.selectedEntityId}`);
+    }
+    readCategory() {
+      return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readEntityCategory/${this.userId}?ent_id=${this.selectedEntityId}`);
+    }
 }

@@ -1,10 +1,10 @@
 .title{
   position: absolute;
   left: 2%;
-  top: 5px;
+  top: 12px;
   font-size: 17px;
   font-weight: 600;
-  color: #222f3e;
+  // color: #222f3e;
 }
 .container-fluid{
   padding-left: 0px;
@@ -42,10 +42,11 @@ ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: #272727;
     display: flex;
     justify-content: flex-end;
     padding-right: 4%;
+    color: #ffffff;
   }
   
   li {
@@ -68,7 +69,7 @@ ul {
   }
   li a:not(.active){
     text-decoration: none;
-    color: #222f3e;
+    color: #ffffff;
   }
   
   .active {

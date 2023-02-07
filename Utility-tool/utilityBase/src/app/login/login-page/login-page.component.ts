@@ -34,14 +34,14 @@ export class LoginPageComponent implements OnInit {
   showOtpComponent = true;
   @ViewChild('ngOtpInput', { static: false }) ngOtpInput: any;
   config = {
-    allowNumbersOnly: false,
+    allowNumbersOnly: true,
     length: 6,
     isPasswordInput: false,
     disableAutoFocus: false,
     placeholder: '',
     inputStyles: {
-      'width': '30px',
-      'height': '30px'
+      'width': '50px',
+      'height': '35px'
     }
   };
   userDetails = [
@@ -109,9 +109,6 @@ export class LoginPageComponent implements OnInit {
     this.fieldTextTypeReset1 = !this.fieldTextTypeReset1;
   }
   test(event) {
-
-    console.log("event", event.target.value)
-
     if (this.newPassword == this.confirmPassword) {
       this.passwordMatchBoolean = false;
     } else {
@@ -231,7 +228,6 @@ export class LoginPageComponent implements OnInit {
         },
         error => {
           this.loading = false;
-          console.log(error)
           if (error.status === 401) {
           this.error = "Username or/and password are incorrect.";
             this.alertDivBoolean = true

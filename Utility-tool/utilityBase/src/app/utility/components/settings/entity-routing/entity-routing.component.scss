@@ -18,14 +18,20 @@
     font-size: 13px;
     font-weight: 600;
   }
-  
-  ::ng-deep .p-chips{
+
+
+:host ::ng-deep {
+    .p-chips .p-chips-multiple-container {
+      padding: 0 6px;
+  }
+  .p-chips-token{
+    font-size: x-small;
+    font-weight: 600;
+  }
+  .p-chips{
     width:100%;
     display: inline !important;
   }
-
-  ::ng-deep .p-chips-token{
-    font-size: x-small;
   }
   
   .pageHeader {
@@ -34,4 +40,8 @@
     position: sticky;
     top: 0;
     z-index: 10;
+  }
+  .sticky_pos {
+    position: sticky;
+    top: 56px;
   }

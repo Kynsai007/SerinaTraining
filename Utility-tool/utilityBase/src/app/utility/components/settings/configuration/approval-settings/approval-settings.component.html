@@ -1,0 +1,145 @@
+<h6 class="font_weight mt-2">
+  <span class="goBackIn" (click)="backToSettings()">
+    <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+  </span>
+
+  <span class="ml-36"> Approval Settings</span>
+</h6>
+<div class="p-2 bg-design-all">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <div class="permisionDiv">
+          <div>
+            <span class="f-13">Approvals</span>
+            <span class="f-right">
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  [checked]="approval_boolean"
+                  [(ngModel)]="approval_boolean"
+                  (change)="changeFinanceApproveSettings($event)"
+                />
+                <span class="slider round"></span>
+              </label>
+            </span>
+          </div>
+        </div>
+        <div class="permisionDivdescription">
+          If you want approvals from SERINA then turn ON this.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="approval_boolean">
+    <div class="d-flex justify-content-between">
+      <div>
+        <div class="f-13 label-head">Select Entity <span style="color: #f35353">*</span></div>
+        <p-autoComplete
+          (onSelect)="onSelectEntity($event)"
+          [suggestions]="filteredEntities"
+          (completeMethod)="filterEntity($event)"
+          field="EntityName"
+          [dropdown]="true"
+        >
+          <ng-template let-country pTemplate="item">
+            <div class="country-item">
+              <div>{{ country.EntityName }}</div>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
+      <div class="mr-2">
+        <div class="f-13 label-head">Select Department</div>
+        <p-autoComplete
+          (onSelect)="onSelectEntityBody($event)"
+          [suggestions]="filterDentityBody"
+          (completeMethod)="filterEntityBody($event)"
+          field="DepartmentName"
+          [dropdown]="true"
+        >
+          <ng-template let-country pTemplate="item">
+            <div class="country-item">
+              <div>{{ country.DepartmentName }}</div>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
+      <!-- <div>
+        <div class="f-13 label-head">Select Category</div>
+        <p-autoComplete
+          (onSelect)="onSelectEntityDept($event)"
+          [suggestions]="filterDentityDept"
+          (completeMethod)="filterEntityDept($event)"
+          field="DepartmentName"
+          [dropdown]="true"
+        >
+          <ng-template let-country pTemplate="item">
+            <div class="country-item">
+              <div>{{ country.DepartmentName }}</div>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div> -->
+      <div>
+        <div class="f-13 label-head">
+          Amount based approval required <span style="color: #f35353">*</span>
+        </div>
+        <select
+          name="amount_approval"
+          id="amount_approval"
+          class="form-control inputForm f-12"
+          [(ngModel)]="amount_approval"
+          (change)="onSelectAmountApproval(amount_approval)"
+        >
+          <option value=""></option>
+          <option *ngFor="let boolean of booleanList" [value]="boolean.value">
+            {{ boolean.text }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <div class="f-14 mt-2" style="text-decoration: underline">
+        List of Entities with workflow approval
+      </div>
+      <ul class="p-0 ul-list">
+        <li
+          *ngFor="let value of selectedEntitys; let i = index"
+          class="listEntity"
+        >
+          <span class="text_elipse"
+            >{{ value.entity }}
+            <span *ngIf="value?.entityDept">-- {{ value.entityDept }}</span>
+            <span *ngIf="value?.category">-- {{ value.category }}</span>
+            <span 
+              >-- {{ value.isAmountBased }}</span
+            >
+          </span>
+          <!-- <span><i class="fa fa-times "  aria-hidden="true"></i></span> -->
+          <span class="material-icons removeList" (click)="onRemove(i, value)">
+            cancel
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="btnAction fixed_pos">
+    <button
+      class="btn btnbg-s f-13 mr-3"
+      [disabled]="updateUsersEntityInfo?.length == 0 || updateUsersEntityInfo[updateUsersEntityInfo?.length-1]?.isAmountBased == undefined"
+      (click)="UpdateSettings()"
+    >
+      Update
+    </button>
+    <button
+      class="btn btncancel f-13"
+      (click)="backToSettings()"
+    >
+      Cancel
+    </button>
+    
+  </div>
+</div>
+<p-toast></p-toast>

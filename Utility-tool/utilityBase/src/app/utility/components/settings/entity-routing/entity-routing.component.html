@@ -1,3 +1,6 @@
+
+<div class="bg-design-all">
+
 <div class="d-flex justify-content-between pageHeader">
   <div *ngIf="showsuccess" class="alert alert-success" role="alert">
     Keyword Updated Successfully!
@@ -10,11 +13,12 @@
     </div>
     
   </div>
-<div class="flex-container" style="background-color: #313971;color:#ffffff;">
+<div class="flex-container sticky_pos" style="background-color: #313971;color:#ffffff;">
     <div><b>Entity Name : Code</b></div>
     <div style="margin-right: 30%;"><b>Routing Keywords</b></div>
 </div>
-<div *ngFor="let entity of entityList" class="flex-container">
-    <div><i>{{entity.EntityName}}</i> : <b>{{entity.EntityCode}}</b></div>
+<div *ngFor="let entity of entityList" class="flex-container pl-2">
+    <div class="f-12 d-flex align-items-center">{{entity.EntityName}} : {{entity.EntityCode}}</div>
     <div style="width: 60%;"><p-chips [(ngModel)]="entity.SynonymList" separator="," (onFocus)="hideAlert()" (onBlur)="SaveKeyWord(entity.idEntity)"></p-chips></div>
+</div>
 </div>

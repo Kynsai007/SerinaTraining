@@ -26,6 +26,10 @@ body {
     font-size: clamp(16px, 1.32vw, 30px);
     font-weight: 600;
 }
+.f-12 {
+  font-size: clamp(10px, 0.9vw, 16px);
+  font-weight: 600;
+}
 .f-13 {
     font-size: clamp(10px, 0.952vw, 17px);
     font-weight: 600;
@@ -185,6 +189,12 @@ input:checked + .slider:before {
   background-color: #ffffff;
   color: #273c75;
   border: 1px solid #273c75;
+}
+.goBackIn{
+    color: #f2be42;
+    font-size: 20px;
+    margin-left: 10px;
+    cursor: pointer;
 }
   
   /* Safari */
