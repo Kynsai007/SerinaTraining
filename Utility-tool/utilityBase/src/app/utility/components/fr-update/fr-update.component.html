@@ -366,7 +366,7 @@
                               
                                         <div id="checkBoxes" *ngIf="showCheckboxHeaderDiv" >
                                             <label *ngFor="let header of headerTags">
-                                                <input type="checkbox" (change)="selectHeader($event.target.checked,header.Name)" [checked]="header.Ismendatory" [disabled]="header.Ismendatory" />
+                                                <input type="checkbox" (change)="selectHeader($event.target.checked,header.Name)" [checked]="header.Ismendatory"/>
                                                 {{header.Name}} <span *ngIf="header.Ismendatory == 1" style="color: red;">*</span>
                                             </label>
                                               
@@ -426,7 +426,7 @@
                               
                                         <div id="checkBoxes" *ngIf="showCheckboxLineDiv" >
                                             <label *ngFor="let line of LineTags">
-                                                <input type="checkbox" (change)="selectLineTag($event.target.checked,line.Name)" [checked]="line.Ismendatory" [disabled]="line.Ismendatory" />
+                                                <input type="checkbox" (change)="selectLineTag($event.target.checked,line.Name)" [checked]="line.Ismendatory"/>
                                                 {{line.Name}} <span *ngIf="line.Ismendatory == 1" style="color: red;">*</span>
                                             </label>
                                               
