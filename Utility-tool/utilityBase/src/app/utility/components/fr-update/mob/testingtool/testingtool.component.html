@@ -71,7 +71,21 @@
                     <span class="headings">Choose an Image or Pdf</span>
                     <input type="file" (change)="getFiles($event)">
                     <div style="margin-top: 4%;"></div>
-                    <button type="button" class="btn btnbg btn-sm" style="font-size: small;" (click)="runAnalyses()"><div *ngIf="testing" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!testing" class="fa fa-flash"></i> Test Model</button> &nbsp;<small style="font-weight: bold;color: #888888;">or Skip to</small>&nbsp; <button type="button" class="btn btncancel btn-sm" style="font-size: small;" (click)="model_validate()"><div *ngIf="validating" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!validating" class="fa fa-check-square"></i> Validate Model</button>
+                    
+                    <button type="button" class="btn btnbg btn-sm" style="font-size: small;" (click)="runAnalyses()"><div *ngIf="testing" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!testing" class="fa fa-flash"></i> Test Model</button>&nbsp;<small style="font-weight: bold;color: #888888;">or Skip to Validate Model</small>&nbsp; 
+                    
+                </div>
+                <div style="margin-top: 4%;"></div>
+                <div class="col-md-12">
+                    <span>
+                        <small><b>Mandatory Field Check Validation Required?</b></small>&nbsp;
+                        <label class="switch" style="font-size: smaller;">
+                          <input type="checkbox" [checked]="mandatoryboolean" (change)="MandatoryHeaderCheck($event.target.checked)"/>
+                          <span class="slider round"></span>
+                        </label>
+                      <small>{{switchLabel}}</small>
+                      </span>
+                      <button type="button" class="btn btncancel btn-sm" style="font-size: small;" (click)="model_validate()"><div *ngIf="validating" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!validating" class="fa fa-check-square"></i> Validate Model</button>
                 </div>
                 <div style="margin-top: 4%;"></div>
                 <hr>

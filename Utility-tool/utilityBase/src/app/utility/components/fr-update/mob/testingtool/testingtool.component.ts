@@ -15,7 +15,10 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   frp_id:any;
   saving:boolean=false;
   ready:boolean=false;
+  mandatory_field_check: number = 1;
   zoomVal:number = 0.6;
+  switchLabel: string = "Yes";
+  mandatoryboolean=true;
   currentpage:string="";
   vendor:string="";
   vendorcount:Number=0;
@@ -199,7 +202,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         this.testing = false;
         this.analyzed = true;
         if(this.resp['message'] == 'success'){
-          this.model_validate();
+          //this.model_validate();
           this.jsonresult = this.resp['json_result'];
           console.log(this.jsonresult);
           this.readResults = this.jsonresult['analyzeResult']['readResults']
@@ -227,6 +230,17 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
       
     }
   }
+  MandatoryHeaderCheck(val){
+    if(val){
+      this.mandatoryboolean = true;
+      this.mandatory_field_check=1;
+      this.switchLabel = "Yes";
+    }else{
+      this.mandatoryboolean = false;
+      this.mandatory_field_check=0;
+      this.switchLabel = "No";
+    }
+  }
   model_validate() {
     this.modelStatus = this.modelData;
     this.validating = true;
@@ -239,6 +253,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
       "fr_modelid":this.defaultmodel,
       "req_fields_accuracy": 0,
       "req_model_accuracy": 10.0,
+      "mandatory_field_check": this.mandatory_field_check,
       "mand_fld_list": "PurchaseOrder,InvoiceDate,InvoiceId",
       "cnx_str": this.frConfigData[0].ConnectionString,
       "cont_name": this.frConfigData[0].ContainerName,
