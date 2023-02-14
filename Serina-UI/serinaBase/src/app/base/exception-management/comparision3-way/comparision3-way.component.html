@@ -11,6 +11,27 @@
   <h6 class="headh6 pl-80">{{ headerName }}</h6>
 </div>
 <div class="row invoice-body">
+  <div class="viewPdf" style="right: 340px"
+  *ngIf="
+        (editPermissionBoolean ||
+          changeApproveBoolean ||
+          financeApproveBoolean) &&
+        (submitBtn_boolean) &&
+        lineTabBoolean
+      ">
+      <button
+      class="btnUpload btn_extra_bg mr-2"
+      (click)="open_dialog_comp('Amend')"
+    >
+      PO Amend request
+    </button>
+<button
+  class="btnUpload btn_extra_bg"
+  (click)="open_dialog_comp('flip')"
+>
+  Flip PO
+</button>
+</div>
   <div class="viewPdf" style="right: 100px;" *ngIf="!isPdfAvailable">
     <button class="btnUpload" (click)="DownloadPDF()">
       <i class="fa fa-download" aria-hidden="true"></i>
@@ -455,10 +476,18 @@
           <div *ngIf="grnCreateBoolean">
             <table class="invert" style="width: 100%">
               <tr class="invert_tr">
-                <td class="lineName invert_th_td text-center" style="min-width: 50px;">S.No</td>
-                <td class="count_line" *ngFor="let item2 of grnLineCount; let ind = index">
+                <td
+                  class="lineName invert_th_td text-center"
+                  style="min-width: 50px"
+                >
+                  S.No
+                </td>
+                <td
+                  class="count_line"
+                  *ngFor="let item2 of grnLineCount; let ind = index"
+                >
                   <div class="s-no">
-                    {{ ind+1 }}
+                    {{ ind + 1 }}
                   </div>
                 </td>
               </tr>
@@ -705,11 +734,15 @@
               </button>
             </div>
 
-            <!-- <div class="rotate_text">
-              <button class="preBtn" (click)="rotate(-90)"><i class="fa fa-undo" aria-hidden="true"></i></button>
-              <div class="f-12 ml-1">Rotate</div>
-              <button class="preBtn mr-1" (click)="rotate(90)"><i class="fa fa-repeat" aria-hidden="true"></i></button>
-            </div> -->
+            <div class="rotate_text">
+              <button class="preBtn" (click)="rotate(-90)">
+                <i class="fa fa-undo" aria-hidden="true"></i>
+              </button>
+              <div class="f-12 ml-1 p-r-t">Rotate</div>
+              <button class="preBtn mr-1" (click)="rotate(90)">
+                <i class="fa fa-repeat" aria-hidden="true"></i>
+              </button>
+            </div>
 
             <span class="zoom zoom_pos_pdf">
               <span class="zoom-in" (click)="zoomIn()"

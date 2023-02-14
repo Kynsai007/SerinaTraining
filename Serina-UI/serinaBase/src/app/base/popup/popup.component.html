@@ -1,0 +1,117 @@
+<section>
+    <div class="d-flex justify-content-between">
+        <h6 class="f-14">
+            <span *ngIf="type == 'flip'">Please select the lines</span>
+            <span *ngIf="type != 'flip'">Please add the Email details</span> </h6>
+        <div><i class="fa fa-close" style="cursor: pointer;" mat-dialog-close></i></div>
+    </div>
+  <!-- <p-table #dt [value]="POLineData" [rows]="10" [paginator]="true" [globalFilterFields]="['name','country.name','representative.name','status']" [tableStyle]="{'min-width': '75rem'}"
+        [(selection)]="selectedPOLines" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Manage Products</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 4rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pSortableColumn="name" style="min-width:15rem">Name <p-sortIcon field="name"></p-sortIcon></th>
+                <th>Image</th>
+                <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon></th>
+                <th pSortableColumn="category" style="min-width:10rem">Category <p-sortIcon field="category"></p-sortIcon></th>
+                <th pSortableColumn="rating">Reviews <p-sortIcon field="rating"></p-sortIcon></th>
+                <th pSortableColumn="inventoryStatus" style="min-width:10rem">Status <p-sortIcon field="inventoryStatus"></p-sortIcon></th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                </td>
+                <td>{{product.name}}</td>
+                <td><img [src]="'assets/showcase/images/demo/product/' + product.image" [alt]="product.name" width="100" class="shadow-4" /></td>
+                <td>{{product.price | currency:'USD'}}</td>
+                <td>{{product.category}}</td>
+                <td><p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating></td>
+                <td><span [class]="'product-badge status-' + (product.inventoryStatus ? product.inventoryStatus.toLowerCase() : '')">{{product.inventoryStatus}}</span></td>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editProduct(product)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(product)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+                In total there are {{products ? products.length : 0 }} products.
+            </div>
+        </ng-template>
+    </p-table> -->
+
+  <form *ngIf="type =='flip'" #polines="ngForm" (ngSubmit)="onSubmit(polines.value)" >
+    <table class="table table-bordered f-11">
+      <tr class="f-12">
+        <th></th>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Unit price</th>
+      </tr>
+      <tr *ngFor="let line of POLineData">
+        <td>
+          <input
+            type="checkbox"
+            [id]="line.lineid"
+            [name]="line.lineDesc"
+            [value]="line.lineDesc"
+            (change)="onSelect($event.target.checked,line.lineid)"
+          />
+        </td>
+        <td>{{ line.lineDesc }}</td>
+        <td>{{ line.qty }}</td>
+        <td>{{ line.unitprice }}</td>
+      </tr>
+    </table>
+    <div class="mt-4 d-flex justify-content-center mb-3">
+        <button
+          class="btn btnVender bg-btn-success mr-3"
+          type="submit"
+        >
+          Flip
+        </button>
+        <button class="btn btnVender bg-btn-cancel" type="button" mat-dialog-close>
+          Cancel
+        </button>
+      </div>
+  </form>
+
+  <form *ngIf="type =='Amend'" #poAmend="ngForm" (ngSubmit)="onSubmitRequest(poAmend.value)" >
+    <label for="email" class="f-13">Please enter recipient email ID</label>
+    <input type="email" name="recipient" class="form-control f-12" ngModel required placeholder="abc@example.com">
+
+    <label for="sub" class="f-13">Please Add Subject</label>
+    <input type="text" name="subject" id="sub" class="form-control f-12" ngModel required placeholder="Regarding PO...">
+
+    <label for="body" class="f-13">Please write about the request</label>
+    <textarea name="body" id="body" class="form-control f-12" ngModel required placeholder="body">
+
+    </textarea>
+    <div class="mt-4 d-flex justify-content-center mb-3">
+        <button
+          class="btn btnVender bg-btn-success mr-3"
+          type="submit"
+        >
+          Send Email
+        </button>
+        <button class="btn btnVender bg-btn-cancel" type="button" mat-dialog-close>
+          Cancel
+        </button>
+      </div>
+  </form>
+</section>

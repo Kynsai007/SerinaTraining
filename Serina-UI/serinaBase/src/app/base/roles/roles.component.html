@@ -28,6 +28,15 @@
             >Vendor Admin</a
           >
         </li>
+
+        <li *ngIf="isVendorportalRequired" [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
+          <a
+            class="nav-link"
+            [class.active-tab]="viewType == 'vendorAdminUserApprve'"
+            (click)="viewType = 'vendorAdminUserApprve'"
+            >Admin Approval</a
+          >
+        </li>
       </ul>
     </div>
 
@@ -336,6 +345,101 @@
                       (click)="confirmationPopUp(users.idUser, 'Deactivate')"
                     >
                       Deactivate
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="5" class="p-t-30 text-center">
+                    <img
+                      src="assets/Group 2691.png"
+                      width="260"
+                      alt="imageUrl"
+                    />
+                    <br />
+                    No vendor admins found.
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+
+      <!-- vendor Admin users approval -->
+      <div *ngSwitchCase="'vendorAdminUserApprve'">
+        <div class="positionCreateUpload">
+          <button class="btnUpload mr-2" (click)="addVendorUser()">
+            <span class="f-16">+</span> Add Vendor Admin
+          </button>
+        </div>
+        <div *ngIf="initialView" class="mat-elevation-z8">
+          <div>
+            <div class="searchBar" style="right: 120px">
+              <input
+                class="searchInput"
+                pInputText
+                type="text"
+                placeholder="Search..."
+                (input)="userRole.filterGlobal($event.target.value, 'contains')"
+              />
+              <span class="material-icons searchIcon"> search </span>
+            </div>
+            <p-table
+              #userRole
+              [value]="vendorAdminReadDataAP"
+              [paginator]="showPaginatorAp"
+              [rows]="row_vendor"
+              [first]="first_vendor"
+              [showCurrentPageReport]="true"
+              styleClass="p-datatable-striped"
+              [globalFilterFields]="[
+                'LogName',
+                'firstName',
+                'lastName',
+                'NameOfRole',
+                'vendor_data.VendorName',
+                'email',
+                'isActive'
+              ]"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+              [rowsPerPageOptions]="[10, 25, 50]"
+              (onPage)="paginate($event, 'vendor')"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="LogName" style="width: 12%">User Name</th>
+                  <th pSortableColumn="firstName">Name</th>
+                  <th pSortableColumn="email">Email</th>
+
+                  <th pSortableColumn="vendor_data.VendorName">Vendor Name</th>
+                  <th pSortableColumn="isActive" style="width: 114px">Status</th>
+                  <th class="w-30" style="text-align: center">Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-users>
+                <tr>
+                  <td [title]="users.LogName">{{ users.LogName }}</td>
+                  <td>{{ users.firstName }} {{ users.lastName }}</td>
+                  <td [title]="users.email">{{ users.email }}</td>
+
+                  <td [title]="users.vendor_data.VendorName">
+                    {{ users.vendor_data.VendorName }}
+                  </td>
+                  <td class="text-center">
+                    <span *ngIf="users.isActive == 0" style="color: #ff3900"
+                      > <span *ngIf="users.vendor_data?.VendorCode == ''">Approval Pending</span></span
+                    >
+                  </td>
+                  <td>
+                    <button
+                      *ngIf="users.isActive == 0 && users.vendor_data?.VendorCode == '' "
+                      class="statusType btnUpload actveBtn"
+                      style="background-color: #8eb67f"
+                      (click)="approveVendoraccess(users)"
+                    >
+                      Activate
                     </button>
                   </td>
                 </tr>

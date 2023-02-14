@@ -16,7 +16,7 @@
       <div class="login-center">
         <div class="login-div">
           <!-- Login page -->
-          <div *ngIf="loginboolean">
+          <div *ngIf="loginboolean && !loginsuccess">
             <h5 class="log-head t-center">Log in to your account</h5>
             <form [formGroup]="loginForm" (ngSubmit)="login()">
               <div class="form-group">
@@ -86,7 +86,49 @@
               </div>
             </div>
           </div>
-
+          <div *ngIf="loginsuccess">
+            <h5 class="log-head t-center">Verify OTP</h5>
+            <!-- <form [formGroup]="otpForm" (ngSubmit)="verifyOTP()">
+              <div class="form-group">
+              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp1" id="otp1" (input)="checkValidity('otp1')" (focus)="clearValid('otp1')">
+              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp2" id="otp2" (input)="checkValidity('otp2')" (focus)="clearValid('otp2')">
+              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp3" id="otp3" (input)="checkValidity('otp3')" (focus)="clearValid('otp3')">
+              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp4" id="otp4" (input)="checkValidity('otp4')" (focus)="clearValid('otp4')">
+              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp5" id="otp5" (input)="checkValidity('otp5')" (focus)="clearValid('otp5')">
+              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp6" id="otp6" (input)="checkValidity('otp6')" (focus)="clearValid('otp6')">
+              </div>
+              <button [disabled]="verifying" class="btn btn-block bgClr mt-2">
+                <span *ngIf="verifying"
+                  class="spinner-border spinner-border-sm mr-1"
+                ></span>
+                Verify
+              </button>
+              <div class="form-group">
+              <p class="errorclass" style="text-align: center;">{{errorotp}}</p>
+              <p class="restrictclass"><b>{{restricterr}}</b></p>
+              <div style="text-align: center;"><a href="javascript:void(0);" [ngClass]="canresend ? 'clear' : 'opaque'" (click)="resendOTP()">Resend OTP</a></div>
+            </div>
+            </form> -->
+            <div class="otp">
+              <ng-otp-input
+                #ngOtpInput2
+                (onInputChange)="onOtpAdding($event)"
+                [config]="config"
+              >
+              </ng-otp-input>
+            </div>
+            <button [disabled]="verifying" class="btn btn-block bgClr mt-2" (click)="verifyOTP()">
+              <span *ngIf="verifying"
+                class="spinner-border spinner-border-sm mr-1"
+              ></span>
+              Verify
+            </button>
+            <div class="form-group">
+              <p class="errorclass" style="text-align: center;">{{errorotp}}</p>
+              <p class="restrictclass"><b>{{restricterr}}</b></p>
+              <div style="text-align: center;"><a href="javascript:void(0);" [ngClass]="canresend ? 'clear' : 'opaque'" (click)="resendOTP()">Resend OTP</a></div>
+            </div>
+          </div>
           <!-- Forgot password -->
           <div *ngIf="forgotboolean">
             <h5 class="log-head mt-2 mb-3">Forgot your Password ?</h5>

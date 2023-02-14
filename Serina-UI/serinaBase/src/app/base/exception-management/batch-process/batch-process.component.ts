@@ -1,3 +1,4 @@
+import { SharedService } from 'src/app/services/shared.service';
 import { PermissionService } from './../../../services/permission.service';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -18,10 +19,21 @@ export class BatchProcessComponent implements OnInit {
   ColumnsForBatch = [
     { field: 'docheaderID', header: 'Invoice Number' },
     { field: 'VendorName', header: 'Vendor Name' },
+    { field: 'EntityName', header: 'Entity Name' },
     { field: 'CreatedOn', header: 'Uploaded Date' },
     { field: 'PODocumentID', header: 'PO number' },
     { field: 'sender', header: 'Sender' },
     { field: 'status', header: 'Status' },
+    { field: 'totalAmount', header: 'Amount' },
+  ];
+  serviceColumns = [
+    { field: 'docheaderID', header: 'Invoice Number' },
+    { field: 'ServiceProviderName', header: 'Serviceprovider Name' },
+    { field: 'Account', header: 'Serviceprovider A/C' },
+    { field: 'EntityName', header: 'Entity Name' },
+    { field: 'status', header: 'Status' },
+    { field: 'sourcetype', header: 'Source' },
+    { field: 'CreatedOn', header: 'Uploaded Date' },
     { field: 'totalAmount', header: 'Amount' },
   ];
   columnsData = [];
@@ -48,6 +60,9 @@ export class BatchProcessComponent implements OnInit {
   batchProcessColumnLength: number;
   approvalPageColumnLength: number;
   dashboardViewBoolean: boolean;
+  heading: string;
+  isVendorBoolean:boolean;
+
   constructor(
     private tagService: TaggingService,
     private ImportExcelService: ImportExcelService,
@@ -57,20 +72,14 @@ export class BatchProcessComponent implements OnInit {
     private router: Router,
     private exceptionService: ExceptionsService,
     private permissionService : PermissionService,
-    private _location :Location
+    private sharedService :SharedService
   ) {}
 
   ngOnInit(): void {
     if(this.permissionService.excpetionPageAccess == true){
 
       this.viewType = this.tagService.batchProcessTab;
-      if (this.router.url.includes('home')) {
-        this.dashboardViewBoolean = true;
-      } else {
-        this.dashboardViewBoolean = false;
-      }
-      this.prepareColumnsArray();
-      this.getBatchInvoiceData();
+      this.findRoute();
       // this.getApprovalBatchData();
 
     } else{
@@ -80,6 +89,28 @@ export class BatchProcessComponent implements OnInit {
 
   }
 
+  findRoute() {
+    if (
+      this.router.url.includes(
+        'ExceptionManagement/Service_ExceptionManagement'
+      )
+    ) {
+      this.heading = 'Service based OCR Exceptions';
+      this.isVendorBoolean = false;
+      this.ColumnsForBatch = this.serviceColumns;
+      this.getServiceInvoiceData();
+    } else {
+      this.heading = 'Vendor based Exception';
+      this.isVendorBoolean = true;
+      this.getBatchInvoiceData();
+    }
+    if (this.router.url.includes('home')) {
+      this.dashboardViewBoolean = true;
+    } else {
+      this.dashboardViewBoolean = false;
+    }
+    this.prepareColumnsArray();
+  }
   // to prepare display columns array
   prepareColumnsArray() {
     if (this.dashboardViewBoolean == true) {
@@ -119,7 +150,7 @@ export class BatchProcessComponent implements OnInit {
           let mergeData = {
             ...element.Document,
             ...element.DocumentSubStatus,
-            ...element.Rule,
+            ...element.Entity,
             ...element.Vendor,
           };
           batchData.push(mergeData);
@@ -160,6 +191,38 @@ export class BatchProcessComponent implements OnInit {
         this.dataLengthAdmin = this.columnsDataAdmin.length;
         if (this.dataLengthAdmin > 10) {
           this.showPaginatorApproval = true;
+        }
+        this.ngxSpinner.hide();
+      },
+      (error) => {
+        this.ngxSpinner.hide();
+        this.alertService.errorObject.detail = error.statusText;
+        this.MessageService.add(this.alertService.errorObject);
+      }
+    );
+  }
+  getServiceInvoiceData() {
+    this.ngxSpinner.show();
+    this.sharedService.readEditedServiceInvoiceData().subscribe(
+      (data: any) => {
+        let invoiceArray = [];
+        data.exception_service_invoices.forEach((element) => {
+          let invoices = {
+            ...element.Document,
+            ...element.DocumentSubStatus,
+            ...element.Entity,
+            ...element.ServiceProvider,
+            ...element.ServiceAccount,
+          };
+          invoiceArray.push(invoices);
+        });
+        this.columnsData = invoiceArray.sort((a,b)=>{
+          let c = new Date(a.CreatedOn).getTime();
+          let d = new Date(b.CreatedOn).getTime();
+          return d-c });
+        this.dataLength = this.columnsData.length;
+        if (this.dataLength > 10) {
+          this.showPaginatorAllInvoice = true;
         }
         this.ngxSpinner.hide();
       },

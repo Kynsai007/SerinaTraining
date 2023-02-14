@@ -701,29 +701,34 @@ export class UploadSectionComponent implements OnInit {
   }
 
   onSelectFile(event) {
-    this.isuploadable = false;
-    this.dragfile = false;
-    this.invoiceUploadDetails = event.target.files[0];
-    if (event.target.files && event.target.files[0]) {
-      var reader = new FileReader();
-
-      reader.readAsDataURL(event.target.files[0]); // read file as data url
-
-      reader.onload = (event) => {
-        // called once readAsDataURL is completed
-        this.url = event.target.result;
-        var img = new Image();
-        img.onload = () => { };
-      };
+    let isSupportedFiletype = !!event.target.files[0].name.match(/(.png|.jpg|.pdf)/);
+    if(isSupportedFiletype){
+      this.isuploadable = false;
+      this.dragfile = false;
+      this.invoiceUploadDetails = event.target.files[0];
+      if (event.target.files && event.target.files[0]) {
+        var reader = new FileReader();
+        reader.readAsDataURL(event.target.files[0]); // read file as data url
+  
+        reader.onload = (event) => {
+          // called once readAsDataURL is completed
+          this.url = event.target.result;
+          var img = new Image();
+          img.onload = () => {};
+        };
+      }
+  
+      this.fileDataProcess(event);
+      for (var i = 0; i < event.target.files.length; i++) {
+        this.name = event.target.files[i].name;
+        this.type = event.target.files[i].type;
+        this.size = event.target.files[i].size;
+      }
+      this.size = this.size / 1024 / 1024;
+    } else {
+      this.alertService.errorObject.detail = "Please Upload mentioned file type only";
+      this.messageService.add(this.alertService.errorObject);
     }
-
-    this.fileDataProcess(event);
-    for (var i = 0; i < event.target.files?.length; i++) {
-      this.name = event.target.files[i].name;
-      this.type = event.target.files[i].type;
-      this.size = event.target.files[i].size;
-    }
-    this.size = this.size / 1024 / 1024;
   }
 
   cancelSelect() {
@@ -733,28 +738,34 @@ export class UploadSectionComponent implements OnInit {
 
   // drop file in upload file selection
   fileDrop(event) {
-    this.invoiceUploadDetails = event[0];
-    this.isuploadable = false;
-    this.dragfile = true;
-
-    if (event && event[0]) {
-      var reader = new FileReader();
-
-      reader.readAsDataURL(event[0]); // read file as data url
-
-      reader.onload = (event) => {
-        // called once readAsDataURL is completed
-        this.url = event.target;
-      };
+    let isSupportedFiletype = !!event[0].name.match(/(.png|.jpg|.pdf)/);
+    if(isSupportedFiletype){
+      this.invoiceUploadDetails = event[0];
+      this.isuploadable = false;
+      this.dragfile = true;
+  
+      if (event && event[0]) {
+        var reader = new FileReader();
+  
+        reader.readAsDataURL(event[0]); // read file as data url
+  
+        reader.onload = (event) => {
+          // called once readAsDataURL is completed
+          this.url = event.target;
+        };
+      }
+      for (var i = 0; i < event.length; i++) {
+        this.name = event[i].name;
+        this.type = event[i].type;
+        this.size = event[i].size;
+      }
+  
+      this.size = this.size / 1024 / 1024;
+      this.fileDataProcess(event);
+    } else {
+      this.alertService.errorObject.detail = "Please Upload mentioned file type only";
+      this.messageService.add(this.alertService.errorObject);
     }
-    for (var i = 0; i < event?.length; i++) {
-      this.name = event[i].name;
-      this.type = event[i].type;
-      this.size = event[i].size;
-    }
-
-    this.size = this.size / 1024 / 1024;
-    this.fileDataProcess(event);
   }
 
   //file selction from upload file section
@@ -862,7 +873,7 @@ export class UploadSectionComponent implements OnInit {
               filetype: filetype,
               filename: filename,
               source: 'Web',
-              sender: JSON.parse(localStorage.currentLoginUser).userdetails.email,
+              sender: JSON.parse(sessionStorage.currentLoginUser).userdetails.email,
               entityID: this.selectedEntityId
             };
             this.runEventSource(eventSourceObj);

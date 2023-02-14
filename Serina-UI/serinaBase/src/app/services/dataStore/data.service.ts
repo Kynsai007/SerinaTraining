@@ -120,11 +120,14 @@ export class DataService {
     { id:4, reason: 'Invoice Price do not match LPO, please correct invoice & re-upload'},
     { id:5, reason: 'Uploaded under wrong Entity, please re-upload under correct entity'},
     { id:6, reason: 'Incorrect details on Invoice (LPO No, date, vendor name, TRN, etc..) , please correct invoice & re-upload'},
-    { id:7, reason: 'Multiple invoices uploaded, please upload invoice separately'}
+    { id:7, reason: 'Multiple invoices uploaded, please upload invoice separately'},
+    { id:8, reason: 'Others'}
   ]
   invoiceGlobe = '';
   serviceGlobe = '';
-  
+  exception_G_S = '';
+  exception_A_G_S = '';
+  createGrn_G_S = '';
   constructor() { }
 
   getEntity():Observable<any>{

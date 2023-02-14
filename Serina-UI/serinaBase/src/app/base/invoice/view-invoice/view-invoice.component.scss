@@ -35,19 +35,20 @@
 }
 .rotate_text {
   position: absolute;
-  top: 4px;
+  top: 1px;
   display: flex;
-  left: -185px;
+  right: -95px;
 }
 .canvasConatiner_height {
   max-height: 86vh;
 }
 .invoice-body {
+  // box-shadow: 1px 1px 5px rgb(0 0 0 / 10%);
   margin: 10px 5px;
   border-radius: 10px;
-  padding: 2px 8px;
+  padding: 8px;
   padding-left: 0;
-  height: 89vh;
+  height: 90vh;
   overflow: auto;
   margin-top: 0;
 }
@@ -266,6 +267,7 @@ a {
     height: 82vh !important;
     background-color: white;
     border-radius: 10px;
+    max-height: 82vh;
   }
   .p-inputtext {
     margin: 0;
@@ -402,6 +404,10 @@ a {
   margin-top: -7px;
   display: block;
   font-size: 10px !important;
+}
+.p-r-t {
+  position: relative;
+  top: 2px;
 }
 @media screen and (max-width:1200px) {
   .zoom_pos_pdf {

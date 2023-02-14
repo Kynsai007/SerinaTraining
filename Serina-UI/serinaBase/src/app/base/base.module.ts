@@ -50,6 +50,7 @@ import { TableComponent } from './home/service-based-charts/table/table.componen
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { CreateGRNComponent } from './create-grn/create-grn.component';
 import { HelpComponent } from './help/help.component';
+import { PopupComponent } from './popup/popup.component';
 
 @NgModule({
   declarations: [
@@ -90,6 +91,7 @@ import { HelpComponent } from './help/help.component';
     ChangePasswordComponent,
     CreateGRNComponent,
     HelpComponent,
+    PopupComponent
   ],
   imports: [
     CommonModule,
@@ -111,7 +113,8 @@ import { HelpComponent } from './help/help.component';
     ChangePasswordComponent,
     BatchProcessComponent,
     InvoiceStatusComponent,
-    HelpComponent
+    HelpComponent,
+    PopupComponent
   ],
   providers: [
     DatePipe,

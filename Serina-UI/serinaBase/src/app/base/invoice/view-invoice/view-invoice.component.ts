@@ -104,6 +104,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   displayrejectDialog: boolean;
   rejectOption = { value: '' };
   rejectionComments: string = '';
+  rejectReason:any;
 
   vendorUplaodBoolean: boolean;
 
@@ -219,6 +220,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   uploadtime: string = "00:00";
   content_type: any;
   imageCanvas: HTMLImageElement;
+  addrejectcmtBool: boolean;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -238,6 +240,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.rejectReason = this.dataService.rejectReason;
     this.route.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;
     })
@@ -427,22 +430,24 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           let count = 0;
           let array = data.ok.linedata;
           array.forEach((val) => {
-            if (val.TagName == 'ItemId') {
+            if (val.TagName == 'LineNumber') {
               val.id = 1;
-            } else if (val.TagName == 'Name') {
+            }else if (val.TagName == 'ItemId') {
               val.id = 2;
-            } else if (val.TagName == 'ProcurementCategory') {
+            } else if (val.TagName == 'Name') {
               val.id = 3;
-            } else if (val.TagName == 'PurchQty') {
+            } else if (val.TagName == 'ProcurementCategory') {
               val.id = 4;
-            } else if (val.TagName == 'UnitPrice') {
+            } else if (val.TagName == 'PurchQty') {
               val.id = 5;
-            } else if (val.TagName == 'DiscAmount') {
+            } else if (val.TagName == 'UnitPrice') {
               val.id = 6;
-            } else if (val.TagName == 'DiscPercent') {
+            } else if (val.TagName == 'DiscAmount') {
               val.id = 7;
+            } else if (val.TagName == 'DiscPercent') {
+              val.id = 8;
             } else {
-              count = count + 8;
+              count = count + 9;
               val.id = count;
             }
           });
@@ -496,6 +501,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         ) {
           this.isPdfAvailable = false;
           this.isImgBoolean = false;
+
+          /*covert base64 to blob */
           this.byteArray = new Uint8Array(
             atob(data.result.filepath)
               .split('')
@@ -846,6 +853,16 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               count++;
               errorTypeLine = 'AmountLine';
             }
+
+            if(element.TagName == 'Quantity'){
+              if (
+                ele1.DocumentLineItems?.Value == 0 
+              ) {
+                console.log(element.TagName)
+                count++;
+                errorTypeLine = 'quntity';
+              }
+            }
           });
         }
       });
@@ -877,6 +894,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               summary: 'error',
               detail:
                 'Please verify Amount, Quntity, unitprice and AmountExcTax in Line details',
+            });
+          }, 10);
+        } else if(errorTypeLine == 'quntity'){
+          setTimeout(() => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'error',
+              detail:
+                'Please check the Quntity in the Line details',
             });
           }, 10);
         }
@@ -1159,6 +1185,17 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     );
   }
 
+  selectReason(reasn){
+    if(reasn == 'Others'){
+      this.addrejectcmtBool = true;
+    } else {
+      this.addrejectcmtBool = false;
+    }
+  }
+
+  rejectKepup(val){
+    this.rejectionComments = val;
+  }
   Reject() {
     let rejectionData = {
       documentdescription: this.rejectionComments,

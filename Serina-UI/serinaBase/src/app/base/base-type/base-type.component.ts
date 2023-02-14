@@ -78,7 +78,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataStoreService.configData = JSON.parse(localStorage.getItem('configData'));
+    this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
     if(!this.dataStoreService.configData){
       this.readConfig();
     }
@@ -99,14 +99,14 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   readConfig(){
     this.settingService.readConfig().subscribe((data:any)=>{
 
-      localStorage.setItem("configData", JSON.stringify(data.InstanceModel));
+      sessionStorage.setItem("configData", JSON.stringify(data.InstanceModel));
       this.dataStoreService.configData = data.InstanceModel ;
       this.ngOnInit();
     })
   }
   
   notification_logic() {
-    this.notifyArray = JSON.parse(localStorage.getItem('messageBox'));
+    this.notifyArray = JSON.parse(sessionStorage.getItem('messageBox'));
 
     if (this.notifyArray == null) {
       this.notifyArray = [];
@@ -136,9 +136,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     // } else if(this.serviceInvoiceAccess) {
     //   this.exceptionRoute = 'ExceptionManagement/Service_ExceptionManagement';
     // }
+    console.log(this.dataStoreService.configData)
     this.userDetails = this.authService.currentUserValue;
+    console.log(this.userDetails)
     environment1.password = this.userDetails.token;
-    environment1.username = JSON.parse(localStorage.getItem('username'));
+    environment1.username = JSON.parse(sessionStorage.getItem('username'));
     this.SharedService.userId = this.userDetails.userdetails.idUser;
     this.SharedService.isCustomerPortal = true;
     this.settingService.userId = this.userDetails.userdetails.idUser;
@@ -221,11 +223,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
 
   subscribeNewTopic(): void {
-    let name = JSON.parse(localStorage.getItem('username'));
+    let name = JSON.parse(sessionStorage.getItem('username'));
     this.subscription = this._mqttService.observe(name + 'queue').subscribe(
       (message: IMqttMessage) => {
         this.messageBox = JSON.parse(message.payload.toString());
-        if (!localStorage.getItem('messageBox') || message.retain != true) {
+        if (!sessionStorage.getItem('messageBox') || message.retain != true) {
           let pushArray = JSON.parse(message.payload.toString());
           if(pushArray.length>0){
             pushArray.forEach((element) => {
@@ -244,7 +246,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
               return unique;
             }, []);
           }
-          localStorage.setItem(
+          sessionStorage.setItem(
             'messageBox',
             JSON.stringify(this.notifyArray)
           );
@@ -273,7 +275,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   // open or close logout dropdown
   isActive() {
     this.showLogout = !this.showLogout;
-    console.log(this.showLogout)
   }
 
   // close logout dropdown if click outside
@@ -283,8 +284,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
 
   // logout
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout('');
     this.dataStoreService.invoiceLoadedData = [];
     this.dataStoreService.poLoadedData = [];
     this.dataStoreService.GRNLoadedData = [];

@@ -21,7 +21,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           if(err.status === 401 && !(request.url.includes('login'))){
             if(!this.router.url.includes("/login")){
               alert("Session Expired! Please re-login!");
-              this.authService.logout();
+              this.authService.logout('');
             }
           }else if(err.status == 502 || 0){
             // alert("System under maintenance");

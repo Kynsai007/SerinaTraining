@@ -44,7 +44,7 @@ export class NotificationsComponent implements OnInit {
   }
 
   notification_logic() {
-    this.notifyArray = JSON.parse(localStorage.getItem('messageBox'));
+    this.notifyArray = JSON.parse(sessionStorage.getItem('messageBox'));
 
     if (this.notifyArray == null) {
       this.notifyArray = [];
@@ -74,11 +74,11 @@ export class NotificationsComponent implements OnInit {
   }
 
   subscribeNewTopic(): void {
-    let name = JSON.parse(localStorage.getItem('username'));
+    let name = JSON.parse(sessionStorage.getItem('username'));
     this.subscription = this._mqttService.observe(name + 'queue').subscribe(
       (message: IMqttMessage) => {
         this.messageBox = JSON.parse(message.payload.toString());
-        if (!localStorage.getItem('messageBox') || message.retain != true) {
+        if (!sessionStorage.getItem('messageBox') || message.retain != true) {
           let pushArray = JSON.parse(message.payload.toString());
           pushArray.forEach((element) => {
             this.notifyArray.push(element);
@@ -95,7 +95,7 @@ export class NotificationsComponent implements OnInit {
               return unique;
             }, []);
           }
-          localStorage.setItem(
+          sessionStorage.setItem(
             'messageBox',
             JSON.stringify(this.notifyArray)
           );
@@ -126,7 +126,7 @@ export class NotificationsComponent implements OnInit {
     let id = `?nt_id=${value}`;
     this.SharedService.removeNotification(id).subscribe((data: any) => {
       this.notifyArray.splice(i, 1);
-      localStorage.messageBox = JSON.stringify(this.notifyArray);
+      sessionStorage.messageBox = JSON.stringify(this.notifyArray);
       this.SharedService.sendNotificationNumber(this.notifyArray.length);
     });
   }
@@ -135,7 +135,7 @@ export class NotificationsComponent implements OnInit {
     if (confirm('Are you sure you want clear all notifications?')) {
       this.SharedService.removeNotification('').subscribe((data: any) => {
         this.notifyArray = [];
-        localStorage.messageBox = JSON.stringify(this.notifyArray);
+        sessionStorage.messageBox = JSON.stringify(this.notifyArray);
         this.SharedService.sendNotificationNumber(this.notifyArray.length);
       });
     }

@@ -68,6 +68,9 @@ export class ExceptionTableComponent implements OnInit {
   portalName: string;
   confirmText: string;
   displayResponsivepopup: boolean;
+  selectedFields1:any;
+  stateTable:any
+  globalSearch:string;
 
   constructor(
     private tagService: TaggingService,
@@ -126,14 +129,20 @@ export class ExceptionTableComponent implements OnInit {
         this.batchBoolean = true;
         this.first = this.storageService.exc_batch_edit_page_first;
         this.rows = this.storageService.exc_batch_edit_page_row_length;
+        this.stateTable="Exceptions";
+        this.globalSearch = this.storageService.exception_G_S;
       } else {
         this.batchBoolean = false;
         this.first = this.storageService.exc_batch_approve_page_first;
         this.rows = this.storageService.exc_batch_approve_page_row_length;
+        this.stateTable="AprvPending";
+        this.globalSearch = this.storageService.exception_A_G_S;
       }
     } else if(this.router.url.includes('Create_GRN_inv_list')) {
       this.first = this.storageService.create_GRN_page_first;
       this.rows = this.storageService.create_GRN_page_row_length;
+      this.stateTable="GRN Creation";
+      this.globalSearch = this.storageService.createGrn_G_S;
     }
   }
 
@@ -162,7 +171,6 @@ export class ExceptionTableComponent implements OnInit {
   }
 
   paginate(event) {
-    console.log(event);
     this.first = event.first;
     // if (this.tagService.batchProcessTab == 'normal') {
     //   this.storageService.exc_batch_edit_page_first = this.first;
@@ -183,11 +191,15 @@ export class ExceptionTableComponent implements OnInit {
 
   searchInvoice(value) {
     this.searchInvoiceData.emit(this.allInvoice);
+    if (this.router.url.includes('ExceptionManagement')) {
+      this.storageService.exception_G_S = value;
+    } else if(this.router.url.includes('Create_GRN_inv_list')) {
+      this.storageService.createGrn_G_S = value;
+    }
   }
 
   // edit invoice details if something wrong
   editInvoice(e) {
-    console.log(e);
     this.storageService.editableInvoiceData = e;
     this.ExceptionsService.invoiceID = e.idDocument;
     this.tagService.editable = true;
@@ -200,27 +212,23 @@ export class ExceptionTableComponent implements OnInit {
     } else {
       this.SpinnerService.show();
       this.ExceptionsService.getDocumentLockInfo().subscribe((data: any) => {
-        console.log(data.result);
         this.SpinnerService.hide();
+        console.log(e.documentsubstatusID)
         if (data.result.Document.lock_status == false) {
           if (this.tagService.batchProcessTab == 'normal') {
             if (this.permissionService.editBoolean == true) {
-              if (e.documentsubstatusID == 29 || 
-                e.documentsubstatusID == 4 || 
-                e.documentsubstatusID == 2 || 
-                e.documentStatusID == 20 || 
-                e.documentsubstatusID == 49 || 
-                e.documentsubstatusID == 51 || 
-                e.documentsubstatusID == 54 || 
-                e.documentsubstatusID == 66 ||
-                e.documentsubstatusID == 7 ) {
-                this.ExceptionsService.selectedRuleId = e.ruleID;
-                this.router.navigate([
-                  `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
-                ]);
-              } else {
+              if (e.documentsubstatusID == 8 || 
+                e.documentsubstatusID == 16 || 
+                e.documentsubstatusID == 33 ||
+                e.documentsubstatusID == 21 ||
+                e.documentsubstatusID == 27 ) {
                 this.router.navigate([
                   `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
+                ]);
+              } else {
+                this.ExceptionsService.selectedRuleId = e.ruleID;
+                this.router.navigate([
+                  `${this.portalName}/ExceptionManagement/InvoiceDetails/${ e.idDocument}`,
                 ]);
               }
               // this.invoiceListBoolean = false;

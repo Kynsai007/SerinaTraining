@@ -44,9 +44,9 @@ export class VendorBaseComponent implements OnInit {
         console.log("message", message);
         this.numberOfNotify = message.Arraylength;
         // if (this.SharedService.keepLogin === true) {
-        //   this.userDetails = JSON.parse(localStorage.getItem('logInUser'));
+        //   this.userDetails = JSON.parse(sessionStorage.getItem('logInUser'));
         // } else {
-        //   this.userDetails = JSON.parse(localStorage.getItem('logInUser'));
+        //   this.userDetails = JSON.parse(sessionStorage.getItem('logInUser'));
         // }
       });
    
@@ -59,7 +59,7 @@ export class VendorBaseComponent implements OnInit {
     this.serviceproviderService.userId = this.userDetails.userdetails.idUser
     this.SharedService.isCustomerPortal = false;
     environment1.password = this.userDetails.token;
-    environment1.username = JSON.parse(localStorage.getItem('username'));
+    environment1.username = JSON.parse(sessionStorage.getItem('username'));
     this.exceptionService.userId = this.userDetails.userdetails.idUser;
     this.serviceproviderService.userId = this.userDetails.userdetails.idUser;
     this.chartService.userId = this.userDetails.userdetails.idUser;
@@ -147,7 +147,6 @@ export class VendorBaseComponent implements OnInit {
     this.menubarBoolean = !this.menubarBoolean
   }
   logout(){
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout('');
   }
 }

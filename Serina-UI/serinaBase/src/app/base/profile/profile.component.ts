@@ -33,7 +33,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginUser = this.authService.currentUserValue;
-    this.username = JSON.parse(localStorage.getItem('username'));
+    this.username = JSON.parse(sessionStorage.getItem('username'));
   }
   onEdit() {
     this.editable = true;

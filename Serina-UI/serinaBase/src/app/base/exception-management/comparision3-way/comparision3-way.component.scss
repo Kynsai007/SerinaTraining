@@ -120,14 +120,7 @@
   border-style: solid;
   border-width: 0px 0px 0px 3px;
 }
-.maxPage {
-  top: 40px;
-  max-height: 82vh !important;
-  overflow: hidden;
-}
-.zoom {
-  top: 72vh !important;
-}
+
 
 .textType::before {
   content: attr(data-text);

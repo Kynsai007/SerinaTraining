@@ -26,6 +26,8 @@ import { FormCanDeactivate } from '../../can-deactivate/form-can-deactivate';
 import { SettingsService } from 'src/app/services/settings/settings.service';
 import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';
+import { PopupComponent } from '../../popup/popup.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-comparision3-way',
@@ -132,7 +134,9 @@ export class Comparision3WayComponent
   content_type: any;
   lineTabBoolean: boolean;
   grnLineCount: any;
-
+  rotation = 0;
+  addrejectcmtBool: boolean;
+  
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -147,7 +151,8 @@ export class Comparision3WayComponent
     private permissionService: PermissionService,
     private dataService: DataService,
     private settingService: SettingsService,
-    private SharedService: SharedService
+    private SharedService: SharedService,
+    private mat_dlg: MatDialog,
   ) {
     super();
   }
@@ -841,7 +846,16 @@ export class Comparision3WayComponent
                 isNaN(+ele1.invline[0].DocumentLineItems?.Value)
               ) {
                 count++;
-                errorType = 'emptyHeader';
+                errorTypeLine = 'AmountLine';
+              }
+
+              if(element.tagname == 'Quantity'){
+                if (
+                  ele1.invline[0].DocumentLineItems?.Value == 0 
+                ) {
+                  count++;
+                  errorTypeLine = 'quntity';
+                }
               }
             });
           });
@@ -873,6 +887,15 @@ export class Comparision3WayComponent
               summary: 'error',
               detail:
                 'Please verify Amount, Quntity, unitprice and AmountExcTax in Line details',
+            });
+          }, 10);
+        } else if(errorTypeLine == 'quntity'){
+          setTimeout(() => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'error',
+              detail:
+                'Please check the Quntity in the Line details',
             });
           }, 10);
         }
@@ -1102,6 +1125,9 @@ export class Comparision3WayComponent
       this.loadImage();
     }
   }
+  rotate(angle: number) {
+    this.rotation += angle;
+  }
 
   filterPO(event) {
     let filtered: any[] = [];
@@ -1209,6 +1235,17 @@ export class Comparision3WayComponent
       this.mappedData = data.description;
     });
   }
+  selectReason(reasn){
+    if(reasn == 'Others'){
+      this.addrejectcmtBool = true;
+    } else {
+      this.addrejectcmtBool = false;
+    }
+  }
+
+  rejectKepup(val){
+    this.rejectionComments = val;
+  }
 
   Reject() {
     let rejectionData = {
@@ -1262,6 +1299,10 @@ export class Comparision3WayComponent
           this.AlertService.errorObject.detail =
             'Please add comments for the Line which you adjusted.';
         }
+      } else if(ele.Value == 0){
+        commentBoolean = true;
+          this.AlertService.errorObject.detail =
+            'Please check the fileds, it sholud not be 0 anywhere';
       }
     });
     if (emptyBoolean == false && commentBoolean == false) {
@@ -1311,6 +1352,16 @@ export class Comparision3WayComponent
         this.messageService.add(this.AlertService.errorObject);
       }
     );
+  }
+  open_dialog_comp(str){
+    this.mat_dlg.open(PopupComponent,{ 
+      width : '60%',
+      height: '70vh',
+      hasBackdrop: false,
+      data : { type: str, resp: [
+        {lineid: 1, lineDesc: 'CHOLULA HOT SAUCE (SALSA)- 50Z (150 ML)', qty: '20', unitprice: '300'},
+        {lineid: 2, lineDesc: 'CHOLULA HOT SAUCE (SALSA)- 50Z (250 ML)', qty: '10', unitprice: '500'}
+      ]}});
   }
 
   ngOnDestroy() {

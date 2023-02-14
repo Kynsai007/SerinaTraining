@@ -125,7 +125,7 @@ const routes: Routes = [
           },
           {
             path:"ExceptionManagement/Service_ExceptionManagement",
-            component: ServiceInvoiceExceptionsComponent
+            component: BatchProcessComponent
           },
           {
             path: 'ExceptionManagement/batchProcess',

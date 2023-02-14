@@ -102,8 +102,8 @@ export class SharedService {
   sendMail(email: any): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetPassword/?email=${email}`);
   }
-  updatepass(data: any, OTP): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/setPassword/?otp_code=${OTP}`, data);
+  updatepass(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/setPassword/`,data);
   }
 
   // notifications

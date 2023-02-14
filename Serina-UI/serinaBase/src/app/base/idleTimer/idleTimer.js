@@ -19,7 +19,7 @@ class IdleTimer {
       this.updateExpiredTime();
   
       this.interval = setInterval(() => {
-        const expiredTime = parseInt(localStorage.getItem("_expiredTime"), 10);
+        const expiredTime = parseInt(sessionStorage.getItem("_expiredTime"), 10);
         if (expiredTime < Date.now()) {
           if (this.onTimeout) {
             this.onTimeout();
@@ -34,7 +34,7 @@ class IdleTimer {
         clearTimeout(this.timeoutTracker);
       }
       this.timeoutTracker = setTimeout(() => {
-        localStorage.setItem("_expiredTime", Date.now() + this.timeout * 1000);
+        sessionStorage.setItem("_expiredTime", Date.now() + this.timeout * 1000);
       }, 300);
     }
   

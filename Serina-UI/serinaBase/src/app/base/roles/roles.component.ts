@@ -104,7 +104,8 @@ export class RolesComponent implements OnInit {
 
   roletype: string;
   CustomerUserReadData;
-  vendorAdminReadData;
+  vendorAdminReadData = [];
+  vendorAdminReadDataAP = [];
 
   userName: string;
   firstName: string;
@@ -191,6 +192,7 @@ export class RolesComponent implements OnInit {
   idVendorAccount: any;
   vendorSuperUsersReadData: any;
   showPaginatorSp: boolean;
+  showPaginatorAp:boolean;
   deleteBtnTextBoolean: boolean;
   deleteRoleBoolean: boolean;
   deactivateBoolean: boolean;
@@ -1609,6 +1611,7 @@ export class RolesComponent implements OnInit {
   getVendorSuperUserList() {
     this.sharedService.readVendorSuperUsersList().subscribe((data: any) => {
       let vendorUsersList = [];
+      let vendorUsersListAp = [];
       data.forEach((element) => {
         let mergerdObject = {
           ...element.AccessPermission,
@@ -1618,11 +1621,19 @@ export class RolesComponent implements OnInit {
         };
         // mergerdObject.idVendorUserAccess = element.idVendorUserAccess;
         mergerdObject.LogName = element.LogName;
-        vendorUsersList.push(mergerdObject);
+        if(mergerdObject.vendor_data?.VendorCode == ''){
+          vendorUsersListAp.push(mergerdObject);
+        } else {
+          vendorUsersList.push(mergerdObject);
+        }
       });
       this.vendorAdminReadData = vendorUsersList;
+      this.vendorAdminReadDataAP = vendorUsersListAp;
       if (this.vendorAdminReadData.length > 10) {
         this.showPaginatorSp = true;
+      }
+      if(this.vendorAdminReadDataAP.length >10) {
+        this.showPaginatorAp = true;
       }
     });
   }

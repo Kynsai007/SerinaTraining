@@ -943,7 +943,7 @@
             </div>
           </div>
     
-          <div class="addAc" *ngIf="!disableCostAllocationBoolean">
+          <div class="addAc">
             <button class="btnUpload" type="button" (click)="addcostDetails()">
               Add cost allocation
             </button>
@@ -1009,7 +1009,7 @@
                   </div> -->
                 </div>
                 <div>
-                  <span class="label-head">CostCenter <span class="req_clr">*</span> </span>
+                  <span class="label-head">Business Unit (BU) <span class="req_clr">*</span> </span>
                   <input
                     type="text"
                     formControlName="costCenter"
@@ -1019,7 +1019,7 @@
                   />
                 </div>
                 <div>
-                  <span class="label-head">Product</span>
+                  <span class="label-head">Sub-ledger Code</span>
                   <input
                     type="text"
                     formControlName="product"
@@ -1027,7 +1027,7 @@
                   />
                 </div>
                 <div>
-                  <span class="label-head">Project</span>
+                  <span class="label-head">Subsidiary Code</span>
                   <input
                     type="text"
                     formControlName="project"
@@ -1036,7 +1036,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >Interco </span
+                    >Company Code </span
                   >
                   <input
                     type="text"
@@ -1046,7 +1046,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >Segments </span
+                    >Sub-ledger Type </span
                   >
                   <input
                     type="text"
@@ -1066,7 +1066,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >FixedAssetDepartment </span
+                    >Non Vat Item Codes </span
                   >
                   <input
                     type="text"
@@ -1076,7 +1076,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >FixedAssetGroup </span
+                    >Item Code </span
                   >
                   <input
                     type="text"
@@ -1087,7 +1087,7 @@
                 
                 <div *ngIf="source != 'EBS'">
                   <span class="label-head"
-                    >Main Account <span class="req_clr">*</span></span
+                    >Object Code <span class="req_clr">*</span></span
                   >
                   <input
                     type="text"
