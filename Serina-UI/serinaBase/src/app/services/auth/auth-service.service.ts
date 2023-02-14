@@ -50,7 +50,6 @@ export class AuthenticationService {
                 const decoded_user = jwt_decode(user?.token);
                 user.permissioninfo= decoded_permission["sub"];
                 user.userdetails = decoded_user["sub"];
-                console.log(user)
                 // store user details and jwt token in session storage to keep user logged in between page refreshes
                 const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
                 this.sharedService.userId = user?.userdetails?.idUser;

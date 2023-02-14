@@ -213,13 +213,11 @@ export class LoginPageComponent implements OnInit {
         data => {
           this.error = "";
           this.loading = false;
-          console.log(data)
           this.settingService.readConfig().subscribe((resp:any)=>{
             resp.InstanceModel.vendorInvoices = true;
             resp.InstanceModel.serviceInvoices = true;
             this.instanceInfo = resp.InstanceModel;
             this.dataStoreService.configData = resp.InstanceModel ;
-            console.log(resp)
             if(this.instanceInfo?.enable2fa){
               if(data["status"]){
                 this.loginsuccess = true;
@@ -315,7 +313,6 @@ export class LoginPageComponent implements OnInit {
     this.verifying = true;
     let optobj = {'username':this.loginForm.controls["username"].value,'otp':this.otp_login}
     this.authenticationService.verifyOTP(optobj).subscribe(data=>{
-      console.log(data)
       this.verifying = false;
       if(data == "invalid"){
         this.errorotp = "The OTP is invalid/incorrect!";
@@ -333,7 +330,6 @@ export class LoginPageComponent implements OnInit {
   }
 
   checkInstanceData(data){
-    console.log(data)
     if(this.instanceInfo?.isActive == 1){
       sessionStorage.setItem("configData", JSON.stringify(this.instanceInfo));
         if (this.returnUrl) {
