@@ -82,7 +82,7 @@ export class SharedService {
     let options = {
       headers: new HttpHeaders( headers )
     }
-    return this.http.get(`https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com/apiv1.1/Instance/getInstanceInfo`,options)
+    return this.http.get(`https://${location.href.split("https://")[1].split("-config.serinaplus.com")[0]}.centralindia.cloudapp.azure.com/apiv1.1/Instance/getInstanceInfo`,options)
    }
    
   readVendorData():Observable<any>{
