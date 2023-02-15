@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { tap, retry } from 'rxjs/operators';
@@ -17,7 +17,15 @@ export class SettingsService {
     // this.userData = JSON.parse(localStorage.getItem('currentLoginUser'));
    }
    readConfig() {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/util/instance`)
+    let headers = {
+      "Content-Type":"application/json",
+      "X-API-Key":"bI7_OesAIGPrBIBxvYbiaxfGzRUAmRdcdMvigsmG6gh6AzFutEqx_Q=="
+    }
+
+    let options = {
+      headers: new HttpHeaders( headers )
+    }
+    return this.http.get(`https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com/apiv1.1/Instance/getInstanceInfo`,options)
    }
   financeApprovalSetting(data):Observable<any> {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Customer/switchRoleBased/${this.userId}?isenabled=${data}`,'')

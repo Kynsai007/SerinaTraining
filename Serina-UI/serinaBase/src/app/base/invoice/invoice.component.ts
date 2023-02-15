@@ -572,13 +572,13 @@ export class InvoiceComponent implements OnInit {
               allInvoicesService.push(ele);
             }
           });
-          this.archivedDisplayData.forEach((ele1) => {
-            for (let name in ele1) {
-              if (name == 'ServiceProviderName') {
-                ele1['VendorName'] = ele1['ServiceProviderName'];
-              }
-            }
-          });
+          // this.archivedDisplayData.forEach((ele1) => {
+          //   for (let name in ele1) {
+          //     if (name == 'ServiceProviderName') {
+          //       ele1['VendorName'] = ele1['ServiceProviderName'];
+          //     }
+          //   }
+          // });
           // this.filterForArchived();
           setTimeout(() => {
             this.serviceinvoiceDispalyData = allInvoicesService;

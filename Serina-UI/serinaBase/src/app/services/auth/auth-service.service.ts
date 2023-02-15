@@ -43,9 +43,9 @@ export class AuthenticationService {
     login(data) {
         return this.http.post<any>(`${this.apiUrl}/${this.apiVersion}/login`, data)
             .pipe(map(user => {
-                // if (user['status']) {
-                //     return user;
-                // }
+                if (user['status']) {
+                    return user;
+                }
                 const decoded_permission = jwt_decode(user?.x_api_token);
                 const decoded_user = jwt_decode(user?.token);
                 user.permissioninfo= decoded_permission["sub"];

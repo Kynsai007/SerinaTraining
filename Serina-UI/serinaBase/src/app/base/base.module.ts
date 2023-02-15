@@ -5,7 +5,6 @@ import { BaseTypeComponent } from './base-type/base-type.component';
 import { HomeComponent } from './home/home.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { importFilesModule } from './importFiles.module';
-import { SettingsModule } from './settings/settings.module';
 import { DatePipe } from '@angular/common';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -20,7 +19,6 @@ import { NotificationsComponent } from './notifications/notifications.component'
 import { ViewInvoiceComponent } from './invoice/view-invoice/view-invoice.component';
 
 import { CanDeactivateGuard } from './can-deactivate/can-deactivate.guard';
-import { FilterPipe } from './settings/ocr-config/filter.pipe';
 import { GrnComponent } from './invoice/grn/grn.component';
 import { PipComponent } from './invoice/pip/pip.component';
 import { AllInvoicesComponent } from './invoice/all-invoices/all-invoices.component';
@@ -55,7 +53,6 @@ import { PopupComponent } from './popup/popup.component';
 @NgModule({
   declarations: [
     BaseTypeComponent,
-    FilterPipe,
     HomeComponent,
     InvoiceComponent,
     NonPoComponent,
@@ -99,7 +96,6 @@ import { PopupComponent } from './popup/popup.component';
     FormsModule,
     ReactiveFormsModule,
     importFilesModule,
-    SettingsModule,
     PdfViewerModule,
   ],
   exports: [

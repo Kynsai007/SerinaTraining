@@ -1,7 +1,7 @@
 
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -54,7 +54,28 @@ export class AuthenticationService {
                 return user;
             }));
     }
+    resendOTP(username){
+        return this.http.post<any>(`${this.apiUrl}/${this.apiVersion}/resendOTP`,{'username':username},{headers:new HttpHeaders({'Content-Type':'application/json'})});
+    }
+    verifyOTP(otpObj){
+        return this.http.post<any>(`${this.apiUrl}/${this.apiVersion}/verifyOTP`,otpObj,{headers:new HttpHeaders({'Content-Type':'application/json'})})
+        .pipe(map(user => {
+            if(user == "invalid" || user == "otp expired"){
+                return user;
+            }
+            const decoded_permission = jwt_decode(user.x_api_token);
+            const decoded_user = jwt_decode(user.token);
+            user.permissioninfo= decoded_permission;
+            user.userdetails = decoded_user;
 
+            // store user details and jwt token in session storage to keep user logged in between page refreshes
+            const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
+            this.sharedService.userId = user.userdetails.idUser;
+            this.currentUserSubject.next(user);
+            // environment1.password = this.currentUserValue.password;
+            return user;
+        }));
+    }
     logout() {
         // remove user from local storage to log user out
         sessionStorage.removeItem('currentLoginUser');

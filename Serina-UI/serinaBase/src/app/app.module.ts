@@ -13,7 +13,6 @@ import { LoginModule } from './login/login.module';
 import {FormsModule,ReactiveFormsModule} from '@angular/forms';
 
 import {MatIconModule} from '@angular/material/icon';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorInterceptor } from './interceptor/errorInterceptor';
 import { JwtInterceptor } from './interceptor/Jwt.interceptor';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
@@ -44,7 +43,6 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = environment1;
     FormsModule,
     ReactiveFormsModule,
     MatIconModule,
-    NgbModule,
     HttpClientModule,
     MqttModule.forRoot(MQTT_SERVICE_OPTIONS),
     

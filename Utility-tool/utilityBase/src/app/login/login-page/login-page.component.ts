@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/auth/auth.service';
 import { SharedService } from 'src/app/services/shared/shared.service';
 
-
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-login-page',
@@ -13,6 +13,7 @@ import { SharedService } from 'src/app/services/shared/shared.service';
 })
 export class LoginPageComponent implements OnInit {
   loginForm: FormGroup;
+  otpForm: FormGroup;
   loading = false;
   emailId: string;
   password: any;
@@ -28,11 +29,14 @@ export class LoginPageComponent implements OnInit {
   resetPassword: boolean = false;
   successPassword: boolean = false;
   loginBooleanSend: boolean = false;
-
+  loginsuccess: boolean = false;
+  numberRegEx = /^[\d\$]+$/
   keepMeLogin: boolean = false;
   otp: string;
+  errorotp:string="";
   showOtpComponent = true;
   @ViewChild('ngOtpInput', { static: false }) ngOtpInput: any;
+  @ViewChild('ngOtpInput2', { static: false }) ngOtpInput2: any;
   config = {
     allowNumbersOnly: true,
     length: 6,
@@ -41,7 +45,7 @@ export class LoginPageComponent implements OnInit {
     placeholder: '',
     inputStyles: {
       'width': '50px',
-      'height': '35px'
+      'height': '40px'
     }
   };
   userDetails = [
@@ -53,8 +57,12 @@ export class LoginPageComponent implements OnInit {
   showVerifyBtn: boolean = false;
   otpData: any;
   paswrd: any;
-
+  seconds = "59";
+  minutes = "01";
+  restricterr:string="";
+  canresend: boolean = false;
   returnUrl: string;
+  verifying:boolean = false;
   error = '';
   token: any;
   popupText: any;
@@ -63,7 +71,10 @@ export class LoginPageComponent implements OnInit {
   User_type: string;
   errorMail: boolean;
   errorMailText: any;
-
+  otp_login:string;
+  tokenOTP: any;
+  instanceInfo:any;
+  isVendorPortalRequired: boolean;
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
@@ -83,6 +94,7 @@ export class LoginPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getInstancedata();
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -97,7 +109,7 @@ export class LoginPageComponent implements OnInit {
     // }
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'IT_Utility';
-    console.log(this.returnUrl)
+
   }
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
@@ -136,7 +148,7 @@ export class LoginPageComponent implements OnInit {
       mail: [this.sendMail]
     }
     this.sharedService.sendMail(this.sendMail).subscribe((data) => {
-      console.log(data);
+      this.tokenOTP = data.token;
       if (data.result == "successful") {
         this.loading = false;
         this.showOtpPanel = true;
@@ -154,26 +166,6 @@ export class LoginPageComponent implements OnInit {
     })
   }
   verifyOtp() {
-    
-    // this.loading = true;
-    // this.sharedService.verifyotp().subscribe((data) => {
-    //   this.loading = false;
-    //   if (data['OTP'] == this.otp) {
-    //     this.loginboolean = false;
-    //     this.forgotboolean = false;
-    //     this.resetPassword = true;
-    //     this.successPassword = false;
-    //     this.showSendbtn = true;
-    //     this.showOtpPanel = true;
-    //   } else {
-    //     alert("Enter valid OTP");
-    //     this.showSendbtn = true;
-    //     this.showOtpPanel = false;
-    //   }
-    //   console.warn(data['OTP'])
-    //   this.otpData = data['OTP'];
-    // })
-    // console.log(this.otpData)
   }
   resetPass() {
     this.loading = true;
@@ -181,9 +173,8 @@ export class LoginPageComponent implements OnInit {
       "activation_code": this.otp,
       "password": this.paswrd
     } 
-    console.log("password is: ", updatePassword)
     this.sharedService.updatepass(JSON.stringify(updatePassword)).subscribe(data => {
-      console.log(data)
+      
       this.loading = false;
       this.loginboolean = false;
       this.forgotboolean = false;
@@ -201,32 +192,72 @@ export class LoginPageComponent implements OnInit {
   // convenience getter for easy access to form fields
   get f() { return this.loginForm.controls; };
 
+  getInstancedata(){
+    this.sharedService.readConfig().subscribe((resp:any)=>{
+      resp.InstanceModel.vendorInvoices = true;
+      resp.InstanceModel.serviceInvoices = true;
+      this.instanceInfo = resp.InstanceModel;
+      // this.dataStoreService.configData = resp.InstanceModel ;
+      this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
+    })
+
+  }
   login() {
     this.submitted = true;
-
+    this.loginsuccess = false;
     // stop here if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
 
     this.loading = true;
-    let data = {
+    let data1 = {
       "username": this.f.username.value,
       "password": this.f.password.value
     }
-    this.authenticationService.login(JSON.stringify(data))
+    this.authenticationService.login(JSON.stringify(data1))
       .subscribe(
         data => {
-          console.log(data)
-            this.loading = false;
-            if(data.permissioninfo.isConfigPortal == 1){
-              this.router.navigate([this.returnUrl]);
-            } else {
-              this.error = "Sorry!, you don't have access please conatct admin"
+          this.error = "";
+          this.loading = false;
+          if(this.instanceInfo?.enable2fa){
+            if(data["status"]){
+              this.loginsuccess = true;
+              // setTimeout(() => {
+              //   this.addEvent();
+              // }, 500);
+              let int = setInterval(()=>{
+                if(Number(this.seconds) > 0){
+                  this.seconds = (Number(this.seconds) - 1).toString();
+                  if(Number(this.seconds) >= 0  && Number(this.seconds) <= 9){
+                    this.seconds = "0"+(Number(this.seconds)).toString();
+                  }
+                }else{
+                  this.seconds = "59";
+                  this.minutes = "0"+(Number(this.minutes) - 1).toString();
+                }
+                this.restricterr = `OTP Sent to Email! You can request for a new OTP after ${this.minutes}:${this.seconds}`;
+                if(Number(this.seconds) <= 0 && Number(this.minutes) <= 0){
+                  this.seconds = "59";
+                  this.minutes = "01";
+                  this.restricterr = "";
+                  clearInterval(int);
+                  this.canresend = true;
+                }
+              },1000);
+            }else{
+              this.error = "Username or/and password are incorrect.";
+              this.loginsuccess = false;
             }
+          } else {
+            this.checkInstanceData(data)
+            
+          }
+            
             
         },
         error => {
+          this.loginsuccess = false;
           this.loading = false;
           if (error.status === 401) {
           this.error = "Username or/and password are incorrect.";
@@ -244,5 +275,72 @@ export class LoginPageComponent implements OnInit {
   }
   onOtpChange(otp) {
     this.otp = otp;
+  }
+    onOtpAdding(otp){
+    this.otp_login = otp;
+  }
+  resendOTP(){
+    this.errorotp = "";
+    if(this.canresend){
+      this.authenticationService.resendOTP(this.loginForm.controls["username"].value).subscribe(data =>{
+        if(data['status'] == "success"){
+          this.canresend = false;
+          let int = setInterval(()=>{
+            if(Number(this.seconds) > 0){
+              this.seconds = (Number(this.seconds) - 1).toString();
+              if(Number(this.seconds) >= 0  && Number(this.seconds) <= 9){
+                this.seconds = "0"+(Number(this.seconds)).toString();
+              }
+            }else{
+              this.seconds = "59";
+              this.minutes = "0"+(Number(this.minutes) - 1).toString();
+            }
+            this.restricterr = `OTP Sent to Email! You can request for a new OTP after ${this.minutes}:${this.seconds}`;
+            if(Number(this.seconds) <= 0 && Number(this.minutes) <= 0){
+              this.seconds = "59";
+              this.minutes = "01";
+              this.restricterr = "";
+              clearInterval(int);
+              this.canresend = true;
+            }
+          },1000);
+        }
+      });
+    }
+  }
+
+  verifyOTP(){
+    this.errorotp = "";
+    this.verifying = true;
+    let optobj = {'username':this.loginForm.controls["username"].value,'otp':this.otp_login}
+    this.authenticationService.verifyOTP(optobj).subscribe(data=>{
+      this.verifying = false;
+      if(data == "invalid"){
+        this.errorotp = "The OTP is invalid/incorrect!";
+        return;
+      }else if(data == "otp expired"){
+        this.errorotp = "The OTP has expired! Please generate a new one";
+        return;
+      }
+
+                
+          this.checkInstanceData(data)
+            
+      //window.location.reload();
+    })
+  }
+
+  checkInstanceData(data){
+    if(this.instanceInfo?.isActive == 1){
+      sessionStorage.setItem("configData", JSON.stringify(this.instanceInfo));
+      if(data.permissioninfo.isConfigPortal == 1){
+        this.router.navigate([this.returnUrl]);
+      } else {
+        this.error = "Sorry!, you don't have access please conatct admin"
+      }
+      } else {
+        alert('The instance is inactive. Please contact Service Admin.');
+        sessionStorage.clear();
+      }
   }
 }

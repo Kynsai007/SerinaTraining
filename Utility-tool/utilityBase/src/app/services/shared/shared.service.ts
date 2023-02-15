@@ -73,7 +73,18 @@ export class SharedService {
   // getModalData(): Observable<any> {
   //   return this.modelStatusData.asObservable();
   // }
+  readConfig() {
+    let headers = {
+      "Content-Type":"application/json",
+      "X-API-Key":"bI7_OesAIGPrBIBxvYbiaxfGzRUAmRdcdMvigsmG6gh6AzFutEqx_Q=="
+    }
 
+    let options = {
+      headers: new HttpHeaders( headers )
+    }
+    return this.http.get(`https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com/apiv1.1/Instance/getInstanceInfo`,options)
+   }
+   
   readVendorData():Observable<any>{
     return this.storeVendorsList.asObservable();
   }

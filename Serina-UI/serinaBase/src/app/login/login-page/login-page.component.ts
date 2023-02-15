@@ -78,6 +78,7 @@ export class LoginPageComponent implements OnInit {
   otp_login:string;
   tokenOTP: any;
   instanceInfo:any;
+  isVendorPortalRequired: boolean;
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
@@ -98,6 +99,7 @@ export class LoginPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getInstancedata();
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -194,6 +196,16 @@ export class LoginPageComponent implements OnInit {
   // convenience getter for easy access to form fields
   get f() { return this.loginForm.controls; };
 
+  getInstancedata(){
+    this.settingService.readConfig().subscribe((resp:any)=>{
+      resp.InstanceModel.vendorInvoices = true;
+      resp.InstanceModel.serviceInvoices = true;
+      this.instanceInfo = resp.InstanceModel;
+      this.dataStoreService.configData = resp.InstanceModel ;
+      this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
+    })
+
+  }
   login() {
     this.submitted = true;
     this.loginsuccess = false;
@@ -213,15 +225,10 @@ export class LoginPageComponent implements OnInit {
         data => {
           this.error = "";
           this.loading = false;
-          this.settingService.readConfig().subscribe((resp:any)=>{
-            resp.InstanceModel.vendorInvoices = true;
-            resp.InstanceModel.serviceInvoices = true;
-            this.instanceInfo = resp.InstanceModel;
-            this.dataStoreService.configData = resp.InstanceModel ;
+
             if(this.instanceInfo?.enable2fa){
               if(data["status"]){
                 this.loginsuccess = true;
-                
                 // setTimeout(() => {
                 //   this.addEvent();
                 // }, 500);
@@ -251,7 +258,6 @@ export class LoginPageComponent implements OnInit {
             } else {
               this.checkInstanceData(data)
             }
-          })
 
         },
         error => {

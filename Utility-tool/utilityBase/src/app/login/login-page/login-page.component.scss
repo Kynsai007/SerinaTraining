@@ -9,6 +9,32 @@ background-color: #ffffff;
 min-height: 100vh;
 max-height: 100vh;
 }
+.errorclass{
+    color: #eb2f06;
+    font-size: xx-small;
+}
+.opaque{
+    opacity: 0.5;
+}
+.clear{
+    opacity: 1;
+}
+.restrictclass{
+    color:#1845ad;
+    font-size: small;
+    text-align: center;
+}
+.inputinline{
+    display:inline-flex;
+    width:15%;
+    justify-content: space-evenly;
+    flex-direction: row;
+    border-radius: 2px;
+    margin-left: 1%;
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+}
 .login-div{
     position: absolute;
     top: 73px;
@@ -31,6 +57,10 @@ max-height: 100vh;
     font-size: 11px;
     font-weight: 600;
     color: #888888;
+}
+.bt-text {
+    position: relative;
+    top: 6px;
 }
 .bgClr{
     cursor: pointer;
@@ -116,6 +146,9 @@ input::-webkit-input-placeholder {
     .wrapper {
         display: flex;
         justify-content: space-evenly;
+    }
+    .otp-input{
+        font-size: 20px;
     }
 }
 // .bgImageMask {
