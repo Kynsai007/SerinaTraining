@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { SharedService } from '../shared/shared.service';
-
+import jwt_decode from "jwt-decode";
 export interface User{
     id?: number;
     username: string;
@@ -36,8 +36,15 @@ export class AuthenticationService {
     }
 
     login(data) {
-        return this.http.post<any>(`${environment.apiUrl}/apiv1.1/login`, data)
+        return this.http.post<any>(`${this.apiUrl}/${this.apiVersion}/login`, data)
             .pipe(map(user => {
+                if (user['status']) {
+                    return user;
+                }
+                const decoded_permission = jwt_decode(user?.x_api_token);
+                const decoded_user = jwt_decode(user?.token);
+                user.permissioninfo= decoded_permission["sub"];
+                user.userdetails = decoded_user["sub"];
                 // store user details and jwt token in session storage to keep user logged in between page refreshes
                 if(user.permissioninfo.isConfigPortal === 1){
                     const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
