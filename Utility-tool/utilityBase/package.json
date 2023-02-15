@@ -32,6 +32,7 @@
     "ngx-infinite-scroll": "^10.0.1",
     "ngx-json-viewer": "^3.0.2",
     "ngx-cron-editor": "0.7.0",
+    "jwt-decode": "^3.1.2",
     "pdfjs-dist": "^2.6.347",
     "primeicons": "^4.1.0",
     "primeng": "^11.3.0-rc.1",
