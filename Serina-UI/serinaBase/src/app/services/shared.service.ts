@@ -359,7 +359,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceList/${this.userId}/edited`)
   }
   readEditedServiceInvoiceData() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceListService/${this.userId}/edited`)
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceListService/${this.userId}/exceptions`)
   }
   assignInvoiceTo(inv_id) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/assignInvoice/${this.userId}/idInvoice/${inv_id}`)
