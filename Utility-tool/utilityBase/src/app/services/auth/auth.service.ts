@@ -48,7 +48,7 @@ export class AuthenticationService {
                 // store user details and jwt token in session storage to keep user logged in between page refreshes
                 if(user.permissioninfo.isConfigPortal === 1){
                     const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
-                    this.sharedService.userId = user.userdetails.sub.idUser;
+                    this.sharedService.userId = user.userdetails?.idUser;
                     this.currentUserSubject.next(user);
                 }
                 return user;
@@ -70,7 +70,7 @@ export class AuthenticationService {
 
             // store user details and jwt token in session storage to keep user logged in between page refreshes
             const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
-            this.sharedService.userId = user.userdetails.sub.idUser;
+            this.sharedService.userId = user.userdetails?.idUser;
             this.currentUserSubject.next(user);
             // environment1.password = this.currentUserValue.password;
             return user;

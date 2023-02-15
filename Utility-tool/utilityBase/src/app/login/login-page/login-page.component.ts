@@ -331,7 +331,7 @@ export class LoginPageComponent implements OnInit {
   checkInstanceData(data){
     if(this.instanceInfo?.isActive == 1){
       sessionStorage.setItem("configData", JSON.stringify(this.instanceInfo));
-      if(data.permissioninfo.sub.isConfigPortal == 1){
+      if(data.permissioninfo.isConfigPortal == 1){
         this.router.navigate([this.returnUrl]);
       } else {
         this.error = "Sorry!, you don't have access please conatct admin"
