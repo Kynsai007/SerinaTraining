@@ -3,7 +3,6 @@ import { AlertService } from './../../services/alert/alert.service';
 import { ImportExcelService } from './../../services/importExcel/import-excel.service';
 import { DateFilterService } from './../../services/date/date-filter.service';
 import { SharedService } from 'src/app/services/shared.service';
-import { TaggingService } from './../../services/tagging.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -700,9 +699,6 @@ export class InvoiceComponent implements OnInit {
             isActive: activeBoolean,
           });
         });
-        // console.log(res)
-        // console.log(pushedPOColumnsArray);
-        // this.allColumns = pushedPOColumnsArray;
       },
       (error) => {
         alert(error.error.detail[0].msg);

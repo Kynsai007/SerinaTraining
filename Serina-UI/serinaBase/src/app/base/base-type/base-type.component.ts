@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import { IMqttMessage, MqttService } from 'ngx-mqtt';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
-import { environment, environment1 } from 'src/environments/environment.prod';
+import { environment1 } from 'src/environments/environment.prod';
 import {MatDialog} from '@angular/material/dialog';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 
@@ -136,9 +136,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     // } else if(this.serviceInvoiceAccess) {
     //   this.exceptionRoute = 'ExceptionManagement/Service_ExceptionManagement';
     // }
-    console.log(this.dataStoreService.configData)
     this.userDetails = this.authService.currentUserValue;
-    console.log(this.userDetails)
     environment1.password = this.userDetails.token;
     environment1.username = JSON.parse(sessionStorage.getItem('username'));
     this.SharedService.userId = this.userDetails.userdetails.idUser;
@@ -151,17 +149,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this,this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login1 = this.userDetails.last_login;
 
-    // console.log(environment1);
   }
 
-  convertUTCDateToLocalDate(date) {
-    // const newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
-    // console.log(newDate)
-    // const offset = date.getTimezoneOffset() / 60;
-    // const hours = date.getHours();
-    // newDate.setHours(hours - offset);
-    // return newDate;
-  }
 
   // read User permissions
   getPermissions() {
@@ -342,22 +331,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Read vendors data once data is subscribed then passing the data through observable
-  // readVendors(){
-  //   this.SharedService.readvendors().subscribe((data:any)=>{
-  //     let pushArray = [];
-  //       data.forEach(ele=>{
-  //         let mergedData = {...ele.Entity,...ele.Vendor};
-  //         pushArray.push(mergedData)
-  //       });
-
-  //     this.dataStoreService.VendorsReadData.next(pushArray);
-  //   });
-  // }
-
   readVendorNames(){
     this.SharedService.getVendorUniqueData('?offset=1&limit=100').subscribe((data:any)=>{
-      console.log(data);
       this.dataStoreService.vendorNameList.next(data);
     });
   }

@@ -46,18 +46,7 @@ export class AuthenticationService {
                 if (user['status']) {
                     return user;
                 }
-                const decoded_permission = jwt_decode(user?.x_api_token);
-                const decoded_user = jwt_decode(user?.token);
-                user.permissioninfo= decoded_permission["sub"];
-                user.userdetails = decoded_user["sub"];
-                // store user details and jwt token in session storage to keep user logged in between page refreshes
-                const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
-                this.sharedService.userId = user?.userdetails?.idUser;
-                this.docService.userId = user?.userdetails?.idUser;
-                this.chartService.userId = user?.userdetails?.idUser;
-                this.currentUserSubject.next(user);
-                environment1.password = user?.token;
-                // environment1.password = this.currentUserValue.password;
+                this.dataFunc(user);
 
                 return user
             }));
@@ -71,21 +60,24 @@ export class AuthenticationService {
             if(user == "invalid" || user == "otp expired"){
                 return user;
             }
-            const decoded_permission = jwt_decode(user.x_api_token);
-            const decoded_user = jwt_decode(user.token);
-            user.permissioninfo= decoded_permission["sub"];
-            user.userdetails = decoded_user["sub"];
-
-            // store user details and jwt token in session storage to keep user logged in between page refreshes
-            const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
-            this.sharedService.userId = user.userdetails?.idUser;
-            this.docService.userId = user.userdetails?.idUser;
-            this.chartService.userId = user.userdetails?.idUser;
-            this.currentUserSubject.next(user);
-            environment1.password = user.token;
-            // environment1.password = this.currentUserValue.password;
+           this.dataFunc(user);
             return user;
         }));
+    }
+
+    dataFunc(user){
+        const decoded_permission = jwt_decode(user.x_api_token);
+        const decoded_user = jwt_decode(user.token);
+        user.permissioninfo= decoded_permission["sub"];
+        user.userdetails = decoded_user["sub"];
+
+        // store user details and jwt token in session storage to keep user logged in between page refreshes
+        const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
+        this.sharedService.userId = user.userdetails?.idUser;
+        this.docService.userId = user.userdetails?.idUser;
+        this.chartService.userId = user.userdetails?.idUser;
+        this.currentUserSubject.next(user);
+        environment1.password = user.token;
     }
     async logout(reason) {
         let userid = JSON.parse(sessionStorage.getItem('currentLoginUser')).userdetails?.idUser;

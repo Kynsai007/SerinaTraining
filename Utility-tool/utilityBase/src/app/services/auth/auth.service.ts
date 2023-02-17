@@ -41,16 +41,7 @@ export class AuthenticationService {
                 if (user['status']) {
                     return user;
                 }
-                const decoded_permission = jwt_decode(user?.x_api_token);
-                const decoded_user = jwt_decode(user?.token);
-                user.permissioninfo= decoded_permission["sub"];
-                user.userdetails = decoded_user["sub"];
-                // store user details and jwt token in session storage to keep user logged in between page refreshes
-                if(user.permissioninfo.isConfigPortal === 1){
-                    const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
-                    this.sharedService.userId = user.userdetails?.idUser;
-                    this.currentUserSubject.next(user);
-                }
+                this.dataFunc(user);
                 return user;
             }));
     }
@@ -63,18 +54,22 @@ export class AuthenticationService {
             if(user == "invalid" || user == "otp expired"){
                 return user;
             }
-            const decoded_permission = jwt_decode(user.x_api_token);
-            const decoded_user = jwt_decode(user.token);
-            user.permissioninfo= decoded_permission["sub"];
-            user.userdetails = decoded_user["sub"];
+            this.dataFunc(user);
+            return user;
+        }));
+    }
 
-            // store user details and jwt token in session storage to keep user logged in between page refreshes
+    dataFunc(user){
+        const decoded_permission = jwt_decode(user?.x_api_token);
+        const decoded_user = jwt_decode(user?.token);
+        user.permissioninfo= decoded_permission["sub"];
+        user.userdetails = decoded_user["sub"];
+        // store user details and jwt token in session storage to keep user logged in between page refreshes
+        if(user.permissioninfo.isConfigPortal === 1){
             const userData = sessionStorage.setItem('currentLoginUser', JSON.stringify(user));
             this.sharedService.userId = user.userdetails?.idUser;
             this.currentUserSubject.next(user);
-            // environment1.password = this.currentUserValue.password;
-            return user;
-        }));
+        }
     }
     logout() {
         // remove user from local storage to log user out

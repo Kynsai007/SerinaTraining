@@ -8,7 +8,6 @@ import { ImportExcelService } from './../../../services/importExcel/import-excel
 import { TaggingService } from './../../../services/tagging.service';
 import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-batch-process',

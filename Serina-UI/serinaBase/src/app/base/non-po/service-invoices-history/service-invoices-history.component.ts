@@ -1,8 +1,6 @@
 import { MessageService } from 'primeng/api';
 import { AlertService } from './../../../services/alert/alert.service';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import * as XLSX from 'xlsx';
-import * as fileSaver from 'file-saver';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
 import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -94,7 +92,6 @@ export class ServiceInvoicesHistoryComponent implements OnInit {
     onChange(evt) {
       this.UploadDetails = evt.target.files[0];
       this.fileChoosen = evt.target.files[0].name;
-      console.log(evt.target.files[0])
       const target: DataTransfer = <DataTransfer>(evt.target);
       this.isExcelFile = !!target.files[0].name.match(/(.xls|.xlsx)/);
       if(this.isExcelFile === true) {
@@ -143,7 +140,6 @@ export class ServiceInvoicesHistoryComponent implements OnInit {
   
             } else if (event.type == HttpEventType.Response) {
               this.progress = null;
-              console.log(event.body)
               this.alertService.addObject.detail = "File is Uploaded Successfully";
               this.messageService.add(this.alertService.addObject);
               this.readCostEtisalat();

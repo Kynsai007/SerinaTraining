@@ -3,22 +3,6 @@
 </div>
 <div class="container-fluid p-0">
   <div *ngIf="vendorList">
-
-    <!-- <div *ngIf="!initialViewVendor">
-      <h6 class="headh6">Service provider Details - {{venderdetails.ServiceProviderName}}</h6>
-    </div> -->
-
-
-    <div *ngIf="initialViewVendor" class="mb-3" style="display: flex;">
-
-
-      <!-- <div class="positionCreateUpload">
-
-        <button class=" btnUpload mr-2" (click)="displayAddspDialog = true"><span class="f-16">+</span> Add Service
-          provider</button>
-      </div> -->
-    </div>
-
     <div *ngIf="initialViewVendor" class="mat-elevation-z8 table_max_height">
 
       <div class="searchBar">
@@ -114,62 +98,4 @@
 </div>
 
 
-<!--Add SP Modal -->
-<!-- <p-dialog header="Add Service Provider" [(visible)]="displayAddspDialog" [breakpoints]="{'960px': '75vw'}"
-  [style]="{width: '31vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
-  <div>
-    <label class="inviteLabel"> Service Provider Name</label>
-    <input type="email" class="form-control inputHeight mb-1" name="spName" ngModel #spName="ngModel"
-      [(ngModel)]="AddspName" required>
-      <div *ngIf="spName.errors &&(spName.touched || spName.dirty)" class ="alertDiv">        
-        <div [hidden]="!spName.errors.required">
-          **Required field
-        </div> 
-       </div> 
-
-    <label class="inviteLabel">ERPS Code</label>
-    <input type="text" class="form-control inputHeight mb-1" name="spId" ngModel #spID="ngModel" [(ngModel)]="erpsCode"
-      required>
-      <div *ngIf="spID.errors &&(spID.touched || spID.dirty)" class ="alertDiv">        
-        <div [hidden]="!spID.errors.required">
-          **Required field
-        </div> 
-       </div> 
-    <label class="inviteLabel">Location Code</label>
-    <input type="text" class="form-control inputHeight mb-1" name="spLocation" ngModel #spLocation="ngModel"
-      [(ngModel)]="LocationSp" required>
-      <div *ngIf="spLocation.errors &&(spLocation.touched || spLocation.dirty)" class ="alertDiv">        
-        <div [hidden]="!spLocation.errors.required">
-          **Required field
-        </div> 
-       </div> 
-
-    <label class="inviteLabel">City</label>
-    <input type="text" class="form-control inputHeight mb-1" name="spCity" ngModel #spCity="ngModel"
-      [(ngModel)]="citySp" required>
-      <div *ngIf="spCity.errors &&(spCity.touched || spCity.dirty)" class ="alertDiv">        
-        <div [hidden]="!spCity.errors.required">
-          **Required field
-        </div> 
-       </div> 
-
-    <label class="inviteLabel">Country</label>
-    <input type="text" class="form-control inputHeight mb-1" name="spCountry" ngModel #spCountry="ngModel"
-      [(ngModel)]="countrysp" required>
-
-      <div *ngIf="spCountry.errors &&(spCountry.touched || spCountry.dirty)" class ="alertDiv">        
-        <div [hidden]="!spCountry.errors.required">
-          **Required field
-        </div> 
-       </div> 
-  </div>
-  <ng-template pTemplate="footer">
-    <button type="button" class="btn btnVender bg-btn-cancel" (click)="displayAddspDialog = false">Cancel</button>
-    <button type="button" class="btn btnVender bg-btn-success"
-      [disabled]="spName.invalid || spID.invalid || spLocation.invalid || spCity.invalid || spCountry.invalid"
-      [ngStyle]="{'cursor':(spName.invalid || spID.invalid || spLocation.invalid || spCity.invalid || spCountry.invalid)? 'not-allowed':'pointer'}"
-      (click)="createNewSp()">Add</button>
-
-  </ng-template>
-</p-dialog> -->
 <p-toast></p-toast>

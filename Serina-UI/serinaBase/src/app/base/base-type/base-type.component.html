@@ -1,14 +1,6 @@
-<!-- <div style="display: flex">
-
-
-</div> -->
-
 <mat-drawer-container class="example-container" autosize>
   <mat-drawer #drawer class="example-sidenav sideBar d-flex" mode="side" opened>
     <div class="d_mobile">
-      <!-- <div class="tittleVendor">
-              Customer Portal
-          </div> -->
       <div class="logotitle">
         <div class="logoPlaceholder">
           <img
@@ -44,7 +36,6 @@
           data-text="Upload"
           [routerLink]="'uploadInvoices'"
         >
-          <!-- <i class="fa fa-cloud-upload f-18 ml-r-12" aria-hidden="true"></i> -->
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             upload_file
           </span>
@@ -128,7 +119,6 @@
           data-text="Approval"
           [routerLink]="'approved'"
         >
-          <!-- <i class="fa fa-certificate f-18 ml-r-12" aria-hidden="true"></i> -->
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             verified
           </span>
@@ -141,21 +131,19 @@
           [routerLink]="'Create_GRN_inv_list'"
           *ngIf="GRNCreationAccess && GRNPageAccess"
         >
-          <!-- <i class="fa fa-certificate f-18 ml-r-12" aria-hidden="true"></i> -->
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             verified
           </span>
           Create GRN
         </div>
-      <div     
-        class="navLink"
-        routerLinkActive="active"
+        <div
+          class="navLink"
+          routerLinkActive="active"
           data-text="Vendors"
           [routerLink]="'vendor'"
           *ngIf="vendorInvoiceAccess && vendor_SP_PageAccess"
           (click)="sideMenuVendor()"
         >
-          <!-- <i class="fa fa-user f-18 ml-r-12" aria-hidden="true"></i> -->
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             business_center
           </span>
@@ -195,9 +183,6 @@
             aria-hidden="true"
             routerLinkActive="ml-9"
           ></i>
-          <!-- <span class="material-icons f-18 ml-r-12">
-                      supervised_user_circle
-                      </span> -->
           Service Provider
         </div>
         <ul *ngIf="openBoolean" class="showHide f-13">
@@ -267,24 +252,11 @@
           </span>
           Roles
         </div>
-
-        <!-- <div
-          class="navLink"
-          routerLinkActive="active"
-          data-text="Settings"
-          [routerLink]="'settings'"
-          *ngIf="settingsPageAccess"
-        >
-          <i
-            class="fa fa-cogs f-18 ml-r-12"
-            aria-hidden="true"
-            routerLinkActive="ml-9"
-          ></i>
-          Settings
-        </div> -->
       </div>
 
-      <div class="copy">Copyrights <span class="cpr f-14">&#169;</span> 2023</div>
+      <div class="copy">
+        Copyrights <span class="cpr f-14">&#169;</span> 2023
+      </div>
     </div>
   </mat-drawer>
 
@@ -299,7 +271,7 @@
         <div class="f-right">
           <span class="userName last_log f-11">
             <span>Last login :&nbsp; </span>
-            {{ last_login1 | date: "medium" }} &nbsp; &nbsp;
+            {{ last_login1 | date : "medium" }} &nbsp; &nbsp;
           </span>
           <span
             class="b-right"
@@ -314,18 +286,11 @@
           ></span>
 
           <span class="ml-2 dropdown">
-            <!-- <span class="material-icons top-9 ">
-                      keyboard_arrow_down
-                  </span> -->
             <i class="fa fa-user-circle-o profileIcon" aria-hidden="true"></i>
-            <!-- <img src="/assets/maskGroup89.png" alt="Logo" width="40" height="40" style="border-radius: 50px;"> -->
           </span>
           <span class="b-left-sky clr userName"
             >{{ userDetails?.userdetails?.firstName }}
           </span>
-          <!-- <span class="material-icons " title="Sign Out" >
-                  power_settings_new
-                  </span> -->
           <span (clickOutside)="onClickedOutside($event)">
             <mat-icon
               class="sign_out dropdown"
@@ -333,7 +298,6 @@
               title="Sign Out"
               (click)="isActive()"
             ></mat-icon>
-            <!-- <i class="fa fa-power-off "  aria-hidden="true"></i> -->
             <div
               [ngStyle]="{ display: showLogout ? 'block' : 'none' }"
               class="dropdown-content"
@@ -363,7 +327,6 @@
           </div>
         </div>
         <div class="f-right mr-3 mob_menu" (click)="onClickMenu()">
-          <!-- <i class="fa fa-bars menu_icon f-16 text-light" aria-hidden="true"></i> -->
           <input type="checkbox" name="toggle-nav" />
           <label for="toggle-nav">
             <span class="menu-icon"></span>
@@ -390,7 +353,6 @@
               data-text="Upload"
               [routerLink]="'uploadInvoices'"
             >
-              <!-- <i class="fa fa-cloud-upload f-18 ml-r-12" aria-hidden="true"></i> -->
               <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
                 upload_file
               </span>
@@ -474,7 +436,6 @@
               data-text="Approval"
               [routerLink]="'approved'"
             >
-              <!-- <i class="fa fa-certificate f-18 ml-r-12" aria-hidden="true"></i> -->
               <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
                 verified
               </span>
@@ -487,7 +448,6 @@
               [routerLink]="'Create_GRN_inv_list'"
               *ngIf="GRNCreationAccess && GRNPageAccess"
             >
-              <!-- <i class="fa fa-certificate f-18 ml-r-12" aria-hidden="true"></i> -->
               <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
                 verified
               </span>
@@ -501,7 +461,6 @@
               *ngIf="vendorInvoiceAccess && vendor_SP_PageAccess"
               (click)="sideMenuVendor()"
             >
-              <!-- <i class="fa fa-user f-18 ml-r-12" aria-hidden="true"></i> -->
               <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
                 business_center
               </span>
@@ -543,9 +502,6 @@
                 aria-hidden="true"
                 routerLinkActive="ml-9"
               ></i>
-              <!-- <span class="material-icons f-18 ml-r-12">
-                          supervised_user_circle
-                          </span> -->
               Service Provider
             </div>
             <ul *ngIf="openBoolean" class="showHide f-13">
@@ -612,27 +568,11 @@
               routerLinkActive="active"
               [routerLink]="'roles'"
             >
-              <!-- <i class="fa fa-user-plus f-18 ml-r-12" aria-hidden="true"></i> -->
               <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
                 manage_accounts
               </span>
               Roles
             </div>
-
-            <!-- <div
-              class="navLink"
-              routerLinkActive="active"
-              data-text="Settings"
-              [routerLink]="'settings'"
-              *ngIf="settingsPageAccess"
-            >
-              <i
-                class="fa fa-cogs f-18 ml-r-12"
-                aria-hidden="true"
-                routerLinkActive="ml-9"
-              ></i>
-              Settings
-            </div> -->
             <div
               class="navLink"
               data-text="Change Password"

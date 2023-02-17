@@ -58,14 +58,6 @@ export class InvoiceStatusComponent implements OnInit {
     );
   }
 
-  toggleRejection(popover, comments: string[]) {
-    if (popover.isOpen()) {
-      popover.close();
-    } else {
-      popover.open({ comments: comments });
-    }
-  }
-
   backToInvoice() {
     this._location.back();
   }

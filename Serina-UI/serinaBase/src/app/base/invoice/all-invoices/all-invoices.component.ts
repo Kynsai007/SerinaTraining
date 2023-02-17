@@ -13,12 +13,10 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Table } from 'primeng/table';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { MessageService } from 'primeng/api';
-import { AlertPromise } from 'selenium-webdriver';
 
 export interface statusArray {
   name:string;
@@ -46,11 +44,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   _selectedColumns: any[];
   visibleSidebar2;
   cols;
-  status = {
-    1: 'Accepted',
-    2: 'Rejected',
-    3: 'Paid',
-  };
+  status = {};
 
   @ViewChild('allInvoice', { static: true }) allInvoice: Table;
   hasSearch: boolean = false;

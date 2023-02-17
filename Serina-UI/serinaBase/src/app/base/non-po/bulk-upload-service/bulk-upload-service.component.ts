@@ -103,7 +103,6 @@ export class BulkUploadServiceComponent implements OnInit {
   }
 
   selectedErp(val) {
-    console.log(val)
     this.selectedERPType = val;
     this.erpSelectionBoolean = true;
   }
@@ -153,7 +152,6 @@ export class BulkUploadServiceComponent implements OnInit {
 
           } else if (event.type == HttpEventType.Response) {
             this.progress = null;
-            console.log(event.body.Result.result)
             let result = event.body.Result.result.split(" ");
             if(result[0] != "0"){
               this.messageService.add({

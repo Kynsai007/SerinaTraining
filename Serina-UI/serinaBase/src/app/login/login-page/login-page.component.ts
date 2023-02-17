@@ -169,6 +169,7 @@ export class LoginPageComponent implements OnInit {
       this.loading = false;
     })
   }
+  
   resetPass() {
     this.loading = true;
     let updatePassword = {

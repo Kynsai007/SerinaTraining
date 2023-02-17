@@ -827,7 +827,6 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   }
   onSelectAppprover(val){
-    console.log(val)
   }
 
   selectOP_unit(event){

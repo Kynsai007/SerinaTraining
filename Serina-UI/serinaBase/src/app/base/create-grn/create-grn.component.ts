@@ -3,8 +3,6 @@ import { ImportExcelService } from 'src/app/services/importExcel/import-excel.se
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { AlertService } from 'src/app/services/alert/alert.service';
-import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
 import { PermissionService } from 'src/app/services/permission.service';
 import { TaggingService } from 'src/app/services/tagging.service';
 
@@ -50,13 +48,9 @@ export class CreateGRNComponent implements OnInit {
     private tagService: TaggingService,
     private ImportExcelService: ImportExcelService,
     private sharedService : SharedService,
-    // private ngxSpinner: NgxSpinnerService,
-    // private MessageService: MessageService,
-    // private alertService: AlertService,
+    private ngxSpinner: NgxSpinnerService,
     private router: Router,
-    // private exceptionService: ExceptionsService,
-    private permissionService : PermissionService,
-    // private _location :Location
+    private permissionService : PermissionService
   ) { }
 
   ngOnInit(): void {
@@ -114,8 +108,8 @@ export class CreateGRNComponent implements OnInit {
   }
 
   readTableData(){
+    this.ngxSpinner.show();
     this.sharedService.readReadyGRNData().subscribe((data:any)=>{
-      console.log(data);
       let array = [];
       data.result.forEach(ele=>{
         let mergedArray = {...ele.Document,...ele.Vendor};
@@ -127,6 +121,9 @@ export class CreateGRNComponent implements OnInit {
       if(this.dataLength >10){
         this.showPaginatorAllInvoice = true;
       }
+      this.ngxSpinner.hide();
+    },err=>{
+      this.ngxSpinner.hide();
     })
   }
 

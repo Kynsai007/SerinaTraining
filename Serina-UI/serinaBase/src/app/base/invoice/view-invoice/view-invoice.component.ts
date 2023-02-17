@@ -646,33 +646,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     }
   }
   onSubmitData() {
-    // this.SpinnerService.show();
-    // console.log(this.updateInvoiceData);
-    // this.SharedService.updateInvoiceDetails(JSON.stringify(this.updateInvoiceData)).subscribe((data: any) => {
-    //   console.log(data);
-    //   if (data.result == 'success') {
-    //     this.messageService.add({
-    //       severity: "info",
-    //       summary: "Updated",
-    //       detail: "Updated Successfully"
-    //     });
-    //     this.getInvoiceFulldata();
-    //   } else {
-    //     this.messageService.add({
-    //       severity: "error",
-    //       summary: "error",
-    //       detail: "Something went wrong"
-    //     });
-    //   }
-    //   this.updateInvoiceData = [];
-    //   this.SpinnerService.hide();
-    // })
-  }
-  // ngAfterViewInit(){
-  //   this.canvasRef.nativeElement.('mouse:wheel',(event){
 
-  // })
-  // }
+  }
+
 
   drawrectangleonHighlight() {
     // var rect = new fabric.Rect({
@@ -758,10 +734,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   addVendorDetails() {
-    console.log(this.vendorDetails.value);
   }
   onVerify(e) {
-    console.log(e);
   }
   submitChanges() {
     // if (this.vendorUplaodBoolean === false) {
@@ -858,7 +832,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               if (
                 ele1.DocumentLineItems?.Value == 0 
               ) {
-                console.log(element.TagName)
                 count++;
                 errorTypeLine = 'quntity';
               }
@@ -1763,7 +1736,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       AGIVesselNumber: this.AGIVesselNumber,
       MarkupTransRecId: this.MarkupTransRecId
     }
-    console.log(Obj, this.LCMDataTable);
 
     this.SaveLCM(Obj);
   }

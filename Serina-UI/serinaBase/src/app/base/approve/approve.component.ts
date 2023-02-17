@@ -114,8 +114,6 @@ export class ApproveComponent implements OnInit {
     });
     this.ColumnLengthVendor = this.ApprovedColumn.length + 1;
     this.ColumnLengthSP = this.ApprovedColumnSP.length + 1;
-
-    // console.log(this.ColumnLengthVendor,this.ColumnLengthSP)
   }
 
   dateRange() {

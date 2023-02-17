@@ -36,11 +36,7 @@ export class ExceptionTableComponent implements OnInit {
   _selectedColumns: any[];
   visibleSidebar2;
   cols;
-  status = {
-    1: 'Accepted',
-    2: 'Rejected',
-    3: 'Paid',
-  };
+  status = {};
 
   @ViewChild('allInvoice', { static: true }) allInvoice: Table;
   hasSearch: boolean = false;
@@ -54,13 +50,7 @@ export class ExceptionTableComponent implements OnInit {
   rows;
   bgColorCode;
 
-  public counts = [
-    'Meta data check ',
-    'Item check',
-    'Quantity check',
-    'Unit price check',
-    'Success',
-  ];
+  public counts = [];
   public orderStatus = 'Quantity check';
   dataLength: any;
   batchBoolean: boolean;
@@ -147,11 +137,6 @@ export class ExceptionTableComponent implements OnInit {
   }
 
   viewInvoice(e) {
-    // if(this.userType == 'vendor_portal'){
-    //   this.router.navigate([`/vendorPortal/invoice/InvoiceDetails/${e.idDocument}`]);
-    // } else if(this.userType == 'customer_portal'){
-    //   this.router.navigate([`customer/invoice/InvoiceDetails/${e.idDocument}`]);
-    // }
     if (this.router.url.includes('ExceptionManagement')) {
       this.router.navigate([
         `/${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
@@ -172,14 +157,6 @@ export class ExceptionTableComponent implements OnInit {
 
   paginate(event) {
     this.first = event.first;
-    // if (this.tagService.batchProcessTab == 'normal') {
-    //   this.storageService.exc_batch_edit_page_first = this.first;
-    //   this.storageService.exc_batch_edit_page_row_length = event.rows;
-    // } else {
-    //   this.storageService.exc_batch_approve_page_first = this.first;
-    //   this.storageService.exc_batch_approve_page_row_length = event.rows;
-    // }
-
     if (this.router.url.includes('ExceptionManagement')) {
       this.storageService.exc_batch_edit_page_first = this.first;
       this.storageService.exc_batch_edit_page_row_length = event.rows;
@@ -213,7 +190,6 @@ export class ExceptionTableComponent implements OnInit {
       this.SpinnerService.show();
       this.ExceptionsService.getDocumentLockInfo().subscribe((data: any) => {
         this.SpinnerService.hide();
-        console.log(e.documentsubstatusID)
         if (data.result.Document.lock_status == false) {
           if (this.tagService.batchProcessTab == 'normal') {
             if (this.permissionService.editBoolean == true) {

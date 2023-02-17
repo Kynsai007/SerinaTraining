@@ -135,17 +135,12 @@ export class NonPoComponent implements OnInit, AfterViewInit {
   }
 
 
-  constructor(private fb: FormBuilder,
-    private route: Router,
+  constructor(
     public routeIn: ActivatedRoute,
-    private confirmationService: ConfirmationService,
-    private tagService:TaggingService,
     private messageService: MessageService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
-    private datePipe: DatePipe,
     private permissionService : PermissionService,
-    private _location : Location,
     private router :Router,
     private primengConfig: PrimeNGConfig) {
 
@@ -274,36 +269,6 @@ export class NonPoComponent implements OnInit, AfterViewInit {
       this.SpinnerService.hide();
     })
   }
-  // DisplayspAccountDetails() {
-  //   this.spaccountreaddata = [];
-  //   this.finalArray = []
-  //   this.SpinnerService.show();
-  //   this.sharedService.readserviceprovideraccount().subscribe((data: any) => {
-  //     data.forEach(element => {
-  //       this.mergedData = { ...element.AccountCostAllocation, ...element.Credentials, ...element.Entity, ...element.EntityBody, ...element.ServiceAccount };
-  //       this.finalArray.push(this.mergedData)
-  //     });
-  //     this.spaccountreaddata = this.finalArray;
-  //     this.SpinnerService.hide();
-  //   })
-  // }
-  // DisplaySpDetailsById() {
-  //   this.SpinnerService.show();
-  //   this.sharedService.readserviceproviderbyid().subscribe((data) => {
-  //     this.spbyidreaddata = data;
-  //     this.spUpdateName = data[0].ServiceProviderName;
-  //     this.spUpdateCity = data[0].City;
-  //     this.spUpdateCountry = data[0].Country;
-  //     this.spUpdateLocationCode = data[0].LocationCode;
-  //     this.spUpdateEmail,
-  //       this.spUpdateContact,
-  //       this.spUpdateCompany = data[0].ServiceProviderName;
-  //     this.spUpdatezipcode,
-  //       this.spUpdatePhone,
-  //       this.spUpdateAddress
-  //     this.SpinnerService.hide();
-  //   })
-  // }
 
   createNewSp() {
     let newSpData = {

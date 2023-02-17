@@ -1,8 +1,6 @@
 import { DataService } from './../../../services/dataStore/data.service';
 import { Router } from '@angular/router';
-import { ChartsService } from './../../../services/dashboard/charts.service';
 import { Component, OnInit } from '@angular/core';
-import { SharedService } from 'src/app/services/shared.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 
 @Component({
@@ -20,7 +18,6 @@ export class BusinessChartsComponent implements OnInit {
   vendorInvoicesAccess: boolean;
   serviceInvoicesAccess: boolean;
   constructor(
-    private chartsService: ChartsService,
     private DataService: DataService,
     private router: Router,
     private dateFilterService: DateFilterService
