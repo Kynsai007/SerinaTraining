@@ -324,6 +324,9 @@ export class SharedService {
   checkInvStatus(id, string) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/${string}/${id}`).pipe(retry(2));
   }
+  changeStatus(data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateStatus/${this.userId}/idDocument/${this.invoiceID}`,data)
+  }
   updatePO(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POUpdate/${id}`).pipe(retry(2));
   }

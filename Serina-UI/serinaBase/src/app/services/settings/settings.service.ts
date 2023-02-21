@@ -25,7 +25,7 @@ export class SettingsService {
     let options = {
       headers: new HttpHeaders( headers )
     }
-    return this.http.get(`https://${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com/apiv1.1/Instance/getInstanceInfo`,options)
+    return this.http.get(`${environment.apiUrl}/apiv1.1/Instance/getInstanceInfo`,options)
    }
   financeApprovalSetting(data):Observable<any> {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Customer/switchRoleBased/${this.userId}?isenabled=${data}`,'')

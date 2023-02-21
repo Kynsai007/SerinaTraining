@@ -11,28 +11,28 @@
   <h6 class="headh6 pl-80">{{ headerName }}</h6>
 </div>
 <div class="row invoice-body">
-  <div class="viewPdf" style="right: 340px"
-  *ngIf="
-        (editPermissionBoolean ||
-          changeApproveBoolean ||
-          financeApproveBoolean) &&
-        (submitBtn_boolean) &&
-        lineTabBoolean
-      ">
-      <button
+  <!-- <div
+    class="viewPdf"
+    style="right: 340px"
+    *ngIf="
+      (editPermissionBoolean ||
+        changeApproveBoolean ||
+        financeApproveBoolean) &&
+      submitBtn_boolean &&
+      lineTabBoolean
+    "
+  >
+    <button
       class="btnUpload btn_extra_bg mr-2"
       (click)="open_dialog_comp('Amend')"
     >
       PO Amend request
     </button>
-<button
-  class="btnUpload btn_extra_bg"
-  (click)="open_dialog_comp('flip')"
->
-  Flip PO
-</button>
-</div>
-  <div class="viewPdf" style="right: 100px;" *ngIf="!isPdfAvailable">
+    <button class="btnUpload btn_extra_bg" (click)="open_dialog_comp('flip')">
+      Flip PO
+    </button>
+  </div> -->
+  <div class="viewPdf" style="right: 100px" *ngIf="!isPdfAvailable">
     <button class="btnUpload" (click)="DownloadPDF()">
       <i class="fa fa-download" aria-hidden="true"></i>
     </button>
@@ -60,10 +60,7 @@
     </div>
   </div>
 
-  <div
-    *ngIf="submitBtn_boolean"
-    class="changePOInput"
-  >
+  <div *ngIf="submitBtn_boolean" class="changePOInput">
     <p-autoComplete
       [(ngModel)]="selectedPONumber"
       (onSelect)="onSelectPO($event)"
@@ -92,14 +89,14 @@
         (click)="changeTab('vendor')"
       >
         <a
-          class="nav-link "
+          class="nav-link"
           id="vendor-tab"
           data-toggle="tab"
           href="#vendor"
           role="tab"
           aria-controls="vendor"
           aria-selected="true"
-          [ngClass]="grnCreateBoolean? '':'active'"
+          [ngClass]="grnCreateBoolean ? '' : 'active'"
           >Vendor details</a
         >
       </li>
@@ -134,7 +131,7 @@
           role="tab"
           aria-controls="line"
           aria-selected="false"
-          [ngClass]="grnCreateBoolean? 'active':''"
+          [ngClass]="grnCreateBoolean ? 'active' : ''"
           >Line details</a
         >
       </li>
@@ -147,7 +144,7 @@
         <div
           *ngIf="currentTab == 'vendor'"
           class="tab-pane fade"
-          [ngClass]="grnCreateBoolean? '':'show active'"
+          [ngClass]="grnCreateBoolean ? '' : 'show active'"
           id="vendor"
           role="tabpanel"
           aria-labelledby="vendor-tab"
@@ -173,8 +170,6 @@
               </div>
             </div>
           </div>
-
-          
         </div>
 
         <!-- header -->
@@ -187,7 +182,7 @@
         >
           <div class="displayFlex">
             <div *ngFor="let value of inputData">
-              <div>
+              <div style="position: relative;">
                 <label
                   class="label-head"
                   style="margin-bottom: -5px"
@@ -244,7 +239,7 @@
         <div
           *ngIf="currentTab == 'line'"
           class="tab-pane fade"
-          [ngClass]="grnCreateBoolean? 'show active':''"
+          [ngClass]="grnCreateBoolean ? 'show active' : ''"
           id="line"
           role="tabpanel"
           aria-labelledby="line-tab"
@@ -255,26 +250,28 @@
                 <div class="represent_color invoice_color"></div>
                 <div class="f-12">Invoice</div>
               </div>
-  
+
               <div class="d-flex mr-3">
                 <div class="represent_color po_color"></div>
                 <div class="f-12">PO</div>
               </div>
-  
+
               <!-- <div class="d-flex">
                 <div class="represent_color grn_color"></div>
                 <div class="f-12">GRN</div>
               </div> -->
             </div>
-  
+
             <table class="w-100 mt-2">
               <tr>
                 <td class="count_line">
-                  <span class="f-12 p-2" style="margin-top: -6px;">S.No</span>
-                  <div class="f-12 mb-3 count-h" *ngFor="let tagName of lineCount; let i =index;">
-                        {{ i+1 }}
+                  <span class="f-12 p-2" style="margin-top: -6px">S.No</span>
+                  <div
+                    class="f-12 mb-3 count-h"
+                    *ngFor="let tagName of lineCount; let i = index"
+                  >
+                    {{ i + 1 }}
                   </div>
-                  
                 </td>
                 <td class="f-13" *ngFor="let tagName of lineDisplayData">
                   <span class="f-13 p-2">{{ tagName.tagname }}</span>
@@ -334,7 +331,9 @@
                             class="prev_value"
                             [title]="data2.invline[0]?.DocumentUpdates.OldValue"
                             >prev:
-                            {{ data2.invline[0]?.DocumentUpdates.OldValue }}</span
+                            {{
+                              data2.invline[0]?.DocumentUpdates.OldValue
+                            }}</span
                           >
                         </div>
                         <div
@@ -362,7 +361,7 @@
                         </select>
                       </div> -->
                         </div>
-  
+
                         <!-- <div
                           class="f-12 td_padding grn_color doc_height"
                           data-text="GR"
@@ -385,7 +384,7 @@
                     </div>
                   </div>
                 </td>
-  
+
                 <td [ngStyle]="{ width: mappedData?.length == 0 ? '' : '35%' }">
                   <!-- <div class="visiblity_hidden">Dummy Data</div> -->
                   <span class="f-13 p-2 mapping_line">Line items mapping</span>
@@ -406,7 +405,7 @@
                         </div>
                         <div class="f-12 td_padding po_color doc_height">
                           <!-- <div class="error-block error-symbol"></div> -->
-  
+
                           <div class="f-12 d-flex" *ngIf="submitBtn_boolean">
                             <select
                               class="f-11 input_disabled form-control sel_drp"
@@ -500,29 +499,30 @@
                   class="linevalue invert_th_td"
                   *ngFor="let line1 of item.linedata"
                 >
-                    <div *ngIf="(item.TagName != 'GRN - Quantity' && item.TagName != 'Comments')">
-                      <span
-                      class="d-flex"
-                      >
-                        <input
-                          type="text"
-                          [ngClass]="
-                            item.TagName == 'Description' ? 'w-des' : 'w-sm'
-                          "
-                          [ngStyle]="{
-                            border:
-                            line1.is_mapped === 1
-                                ? '2px solid #f2be42'
-                                : ''
-                          }"
-                          [name]="item.TagName"
-                          [value]="line1.Value"
-                          [title]="line1.Value"
-                          [disabled]="(item.TagName != 'GRN - Quantity')"
-                          class="form-control mb-1 inputHeight"
-                        />
-                      </span>
-                      <!-- <span [ngStyle]="{'visibility':line1.POValue ? 'visible':'hidden'}">
+                  <div
+                    *ngIf="
+                      item.TagName != 'GRN - Quantity' &&
+                      item.TagName != 'Comments'
+                    "
+                  >
+                    <span class="d-flex">
+                      <input
+                        type="text"
+                        [ngClass]="
+                          item.TagName == 'Description' ? 'w-des' : 'w-sm'
+                        "
+                        [ngStyle]="{
+                          border:
+                            line1.is_mapped === 1 ? '2px solid #f2be42' : ''
+                        }"
+                        [name]="item.TagName"
+                        [value]="line1.Value"
+                        [title]="line1.Value"
+                        [disabled]="item.TagName != 'GRN - Quantity'"
+                        class="form-control mb-1 inputHeight"
+                      />
+                    </span>
+                    <!-- <span [ngStyle]="{'visibility':line1.POValue ? 'visible':'hidden'}">
                         <span
                       data-text="PO"
                       class="d-flex"
@@ -542,54 +542,59 @@
                     </span>
                         
                       </span> -->
-                    </div>
-                    <div *ngIf="(!(item.TagName != 'GRN - Quantity') && item.TagName != 'Comments')">
-                      <span>
-                        <input
-                          #inputval
-                          type="text"
-                          [ngClass]="
-                            item.TagName == 'Description' ? 'w-des' : 'w-sm'
-                          "
-                          [name] = "line1.idDocumentLineItems"
-                          [value]="line1.Value"
-                          [title]="line1.Value"
-                          class="form-control mb-1 inputHeight"
-                          (change)="onChangeGrn(line1,inputval.value)"
-                          [(ngModel)]="line1.Value"                          
-                        />
-                      </span>
-                      <!-- <span style="visibility: hidden;">
-                        <input
-                          type="text"
-                          class="form-control mb-1 inputHeight"
-                        />
-                      </span> -->
-                    </div>
-                    <div *ngIf="(item.TagName == 'Comments')">
-                      <span>
-                        <input
-                          #inputval
-                          type="text"
-                          style="width:150px ;"
-                          [ngClass]="
-                            item.TagName == 'Description' ? 'w-des' : 'w-sm'
-                          "
-                          [ngModelOptions]="{standalone: true}"
-                          [value]="line1.ErrorDesc"
-                          [title]="line1.ErrorDesc"
-                          class="form-control mb-1 inputHeight"
-                          (change)="onChangeGrn(line1,inputval.ErrorDesc)"
-                          [(ngModel)]="line1.ErrorDesc"                          
-                        />
-                      </span>
-                      <!-- <span style="visibility: hidden;">
+                  </div>
+                  <div
+                    *ngIf="
+                      !(item.TagName != 'GRN - Quantity') &&
+                      item.TagName != 'Comments'
+                    "
+                  >
+                    <span>
+                      <input
+                        #inputval
+                        type="text"
+                        [ngClass]="
+                          item.TagName == 'Description' ? 'w-des' : 'w-sm'
+                        "
+                        [name]="line1.idDocumentLineItems"
+                        [value]="line1.Value"
+                        [title]="line1.Value"
+                        class="form-control mb-1 inputHeight"
+                        (change)="onChangeGrn(line1, inputval.value)"
+                        [(ngModel)]="line1.Value"
+                      />
+                    </span>
+                    <!-- <span style="visibility: hidden;">
                         <input
                           type="text"
                           class="form-control mb-1 inputHeight"
                         />
                       </span> -->
-                    </div>
+                  </div>
+                  <div *ngIf="item.TagName == 'Comments'">
+                    <span>
+                      <input
+                        #inputval
+                        type="text"
+                        style="width: 150px"
+                        [ngClass]="
+                          item.TagName == 'Description' ? 'w-des' : 'w-sm'
+                        "
+                        [ngModelOptions]="{ standalone: true }"
+                        [value]="line1.ErrorDesc"
+                        [title]="line1.ErrorDesc"
+                        class="form-control mb-1 inputHeight"
+                        (change)="onChangeGrn(line1, inputval.ErrorDesc)"
+                        [(ngModel)]="line1.ErrorDesc"
+                      />
+                    </span>
+                    <!-- <span style="visibility: hidden;">
+                        <input
+                          type="text"
+                          class="form-control mb-1 inputHeight"
+                        />
+                      </span> -->
+                  </div>
                 </td>
               </tr>
             </table>
@@ -610,12 +615,12 @@
             Cancel
           </button>
           <button
-          *ngIf="submitBtn_boolean"
-          class="btn btnVender bg-btn-cancel mr-3"
-          (click)="displayrejectDialog = true"
-        >
-          Reject
-        </button>
+            *ngIf="submitBtn_boolean"
+            class="btn btnVender bg-btn-cancel mr-3"
+            (click)="displayrejectDialog = true"
+          >
+            Reject
+          </button>
           <button
             *ngIf="submitBtn_boolean && financeapproveDisplayBoolean"
             class="btn btnVender bg-btn-success mr-3"
@@ -653,46 +658,53 @@
             <button *ngIf="tabChangeLINEBoolean && flipBoolean" class="btn btnVender " (click)="addLine()" >Add Line</button> -->
         </div>
 
-        <div *ngIf="grnCreateBoolean && isGRNDataLoaded" class="GRN_btn_position">
+        <div
+          *ngIf="grnCreateBoolean && isGRNDataLoaded"
+          class="GRN_btn_position"
+        >
           <button
-          class="btn btnVender bg-btn-cancel mr-3"
-          type="button"
-          (click)="backToInvoice()"
+            class="btn btnVender bg-btn-cancel mr-3"
+            type="button"
+            (click)="backToInvoice()"
           >
             Cancel
           </button>
           <button
-          class="btn btnVender bg-btn-cancel mr-3"
-          type="button"
-          (click)="displayrejectDialog = true"
+            class="btn btnVender bg-btn-cancel mr-3"
+            type="button"
+            (click)="displayrejectDialog = true"
           >
             Reject
           </button>
           <button
-          class="btn btnVender bg-btn-success mr-3"
-          type="submit"
-          (click)="onSave_submit(form.value,false,'GRN data saved successfully')"
+            class="btn btnVender bg-btn-success mr-3"
+            type="submit"
+            (click)="
+              onSave_submit(form.value, false, 'GRN data saved successfully')
+            "
           >
-          Save
+            Save
           </button>
           <button
             class="btn btnVender bg-btn-success mr-3"
             type="submit"
-            (click)="onSave_submit(form.value,true,'GRN created successfully')"
+            (click)="
+              onSave_submit(form.value, true, 'GRN created successfully')
+            "
           >
             Create GRN
           </button>
         </div>
       </form>
       <ngx-spinner
-            bdColor="rgba(251, 251, 251, 0.8)"
-            size="medium"
-            color="#070900"
-            [fullScreen]="false"
-            type="ball-spin-clockwise"
-          >
-            <p style="color: rgb(0, 0, 0)"></p>
-          </ngx-spinner>
+        bdColor="rgba(251, 251, 251, 0.8)"
+        size="medium"
+        color="#070900"
+        [fullScreen]="false"
+        type="ball-spin-clockwise"
+      >
+        <p style="color: rgb(0, 0, 0)"></p>
+      </ngx-spinner>
     </div>
   </div>
   <div *ngIf="showPdf" class="col-lg-7 col-12 maxPage ShowInvoiceTypeSize">
@@ -700,7 +712,7 @@
       <section>
         <div *ngIf="isImgBoolean" class="canvasConatiner_height">
           <div id="parentDiv">
-            <canvas #canvas id="canvas1" style="height: 87vh;"></canvas>
+            <canvas #canvas id="canvas1" style="height: 87vh"></canvas>
           </div>
           <span class="zoom zoom_pos_img">
             <span class="zoom-in" (click)="zoomin()"
@@ -711,7 +723,7 @@
             ></span>
           </span>
         </div>
-        <div *ngIf="!isImgBoolean" style="position: relative;">
+        <div *ngIf="!isImgBoolean" style="position: relative">
           <div
             *ngIf="isLoaded"
             style="text-align: center; position: fixed; z-index: 100; left: 70%"

@@ -110,24 +110,26 @@ export class InvoiceComponent implements OnInit {
   rejectedTab: any;
   serviceInvoiceTab: any;
   first: any;
-  searchPOStr = '';
-  searchGRNStr = '';
-  searchArcStr = '';
-  searchRejStr = '';
+  searchStr:string;
+  
+  // searchPOStr = '';
+  // searchGRNStr = '';
+  // searchArcStr = '';
+  // searchRejStr = '';
   GRNExceptionTab: any;
   GRNExcpLength: number;
   close(reason: string) {
     this.sidenav.close();
   }
   APIParams: string;
-  offsetCountPO = 1;
-  pageCountVariablePO = 0;
-  offsetCountGRN = 1;
-  pageCountVariableGRN = 0;
-  offsetCountArc = 1;
-  pageCountVariableArc = 0;
-  offsetCountRej = 1;
-  pageCountVariableRej = 0;
+  // offsetCountPO :number;
+  // pageCountVariablePO :number;
+  // offsetCountGRN :number;
+  // pageCountVariableGRN :number;
+  // offsetCountArc :number;
+  // pageCountVariableArc :number;
+  // offsetCountRej:number;
+  // pageCountVariableRej:number;
 
   GRNExcpDispalyData = [];
   GRNExcpColumns = [];
@@ -146,7 +148,6 @@ export class InvoiceComponent implements OnInit {
     private SpinnerService: NgxSpinnerService,
     private messageService: MessageService,
     private dataService: DataService,
-    private storageService: DataService,
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
@@ -256,7 +257,7 @@ export class InvoiceComponent implements OnInit {
       // { dbColumnname: 'documentPaymentStatus', columnName: 'Status' },
     ];
     this.rejectedColumns = [
-      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
       { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
       { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
       { dbColumnname: 'EntityName', columnName: 'Entity' },
@@ -294,8 +295,13 @@ export class InvoiceComponent implements OnInit {
       this.routeName = 'allInvoices';
     } else if (this.route.url == this.POTab) {
       this.routeName = 'PO';
+      this.searchStr = this.dataService.searchPOStr;
     } else if (this.route.url == this.archivedTab) {
       this.routeName = 'archived';
+      this.searchStr = this.dataService.searchArcStr;
+    } else if( this.route.url == this.rejectedTab){
+      this.routeName = 'rejected';
+      this.searchStr = this.dataService.searchRejStr;
     }
   }
   getInvoiceData() {
@@ -461,8 +467,8 @@ export class InvoiceComponent implements OnInit {
       this.archivedDisplayData =
         this.dataService.archivedDisplayData.concat(invoicePushedArray);
         this.dataService.archivedDisplayData = this.archivedDisplayData;
-      this.dataService.ARCTableLength = data?.result?.ser?.ok?.total_arc;
-      this.archivedLength = data?.result?.ser?.ok?.total_arc;
+      this.dataService.ARCTableLength = data?.result?.ven?.ok?.total_arc;
+      this.archivedLength = data?.result?.ven?.ok?.total_arc;
       if (this.archivedLength > 10) {
         this.showPaginatorArchived = true;
       }
@@ -511,8 +517,8 @@ export class InvoiceComponent implements OnInit {
       this.rejectedDisplayData =
         this.dataService.rejectedDisplayData.concat(invoicePushedArray);
       this.dataService.rejectedDisplayData = this.rejectedDisplayData;
-      this.dataService.rejectTableLength = data?.result?.ser?.ok?.total_rejected;
-      this.rejectedLength = data?.result?.ser?.ok?.total_rejected;
+      this.dataService.rejectTableLength = data?.result?.ven?.ok?.total_rejected;
+      this.rejectedLength = data?.result?.ven?.ok?.total_rejected;
       if (this.rejectedDisplayData.length > 10) {
         this.showPaginatorRejected = true;
       }
@@ -811,8 +817,8 @@ export class InvoiceComponent implements OnInit {
     // this.tagService.activeMenuName = value;
     this.activeMenuName = value;
     // this.getInvoiceData();
-    this.storageService.allPaginationFirst = 0;
-    this.storageService.allPaginationRowLength = 10;
+    this.dataService.allPaginationFirst = 0;
+    this.dataService.allPaginationRowLength = 10;
     if (value == 'invoice') {
       this.route.navigate([this.invoiceTab]);
       this.allSearchInvoiceString = [];
@@ -821,18 +827,22 @@ export class InvoiceComponent implements OnInit {
       // this.getPOColums();
       this.route.navigate([this.POTab]);
       this.allSearchInvoiceString = [];
+      this.searchStr = this.dataService.searchPOStr;
     } else if (value == 'grn') {
       this.route.navigate([this.GRNTab]);
       this.allSearchInvoiceString = [];
+      this.searchStr = this.dataService.searchGRNStr;
     } else if (value == 'ServiceInvoices') {
       this.route.navigate([this.serviceInvoiceTab]);
       this.allSearchInvoiceString = [];
     } else if (value == 'archived') {
       this.route.navigate([this.archivedTab]);
       this.allSearchInvoiceString = [];
+      this.searchStr = this.dataService.searchArcStr;
     } else if (value == 'rejected') {
       this.route.navigate([this.rejectedTab]);
       this.allSearchInvoiceString = [];
+      this.searchStr = this.dataService.searchRejStr;
     } else if (value == 'GRNException') {
       this.route.navigate([this.GRNExceptionTab]);
       this.allSearchInvoiceString = [];
@@ -1016,74 +1026,74 @@ export class InvoiceComponent implements OnInit {
   paginate(event) {
     this.first = event.first;
     if (this.route.url == this.invoiceTab) {
-      this.storageService.allPaginationFirst = this.first;
-      this.storageService.allPaginationRowLength = event.rows;
+      this.dataService.allPaginationFirst = this.first;
+      this.dataService.allPaginationRowLength = event.rows;
     } else if (this.route.url == this.POTab) {
-      this.storageService.poPaginationFisrt = this.first;
-      this.storageService.poPaginationRowLength = event.rows;
-      if (this.first >= this.pageCountVariablePO) {
-        this.pageCountVariablePO = event.first;
-        if (this.searchPOStr == '') {
-          this.offsetCountPO++;
-          this.APIParams = `?offset=${this.offsetCountPO}&limit=50`;
+      this.dataService.poPaginationFisrt = this.first;
+      this.dataService.poPaginationRowLength = event.rows;
+      if (this.first >= this.dataService.pageCountVariablePO) {
+        this.dataService.pageCountVariablePO = event.first;
+        if (this.dataService.searchPOStr == '') {
+          this.dataService.offsetCountPO++;
+          this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50`;
           this.getDisplayPOData(this.APIParams);
         } else {
-          this.offsetCountPO++;
-          this.APIParams = `?offset=${this.offsetCountPO}&limit=50&uni_search=${this.searchPOStr}`;
+          this.dataService.offsetCountPO++;
+          this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50&uni_search=${this.dataService.searchPOStr}`;
           this.getDisplayPOData(this.APIParams);
         }
       }
     } else if (this.route.url == this.GRNTab) {
-      this.storageService.GRNPaginationFisrt = this.first;
-      this.storageService.GRNPaginationRowLength = event.rows;
-      if (this.first >= this.pageCountVariableGRN) {
-        this.pageCountVariableGRN = event.first;
-        if (this.searchGRNStr == '') {
-          this.offsetCountGRN++;
-          this.APIParams = `?offset=${this.offsetCountGRN}&limit=50`;
+      this.dataService.GRNPaginationFisrt = this.first;
+      this.dataService.GRNPaginationRowLength = event.rows;
+      if (this.first >= this.dataService.pageCountVariableGRN) {
+        this.dataService.pageCountVariableGRN = event.first;
+        if (this.dataService.searchGRNStr == '') {
+          this.dataService.offsetCountGRN++;
+          this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50`;
           this.getDisplayGRNdata(this.APIParams);
         } else {
-          this.offsetCountGRN++;
-          this.APIParams = `?offset=${this.offsetCountGRN}&limit=50&uni_search=${this.searchGRNStr}`;
+          this.dataService.offsetCountGRN++;
+          this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50&uni_search=${this.dataService.searchGRNStr}`;
           this.getDisplayGRNdata(this.APIParams);
         }
       }
     } else if (this.route.url == this.archivedTab) {
-      this.storageService.archivedPaginationFisrt = this.first;
-      this.storageService.archivedPaginationRowLength = event.rows;
-      if (this.first >= this.pageCountVariableArc) {
-        this.pageCountVariableArc = event.first;
-        if (this.searchArcStr == '') {
-          this.offsetCountArc++;
-          this.APIParams = `?offset=${this.offsetCountArc}&limit=50`;
+      this.dataService.archivedPaginationFisrt = this.first;
+      this.dataService.archivedPaginationRowLength = event.rows;
+      if (this.first >= this.dataService.pageCountVariableArc) {
+        this.dataService.pageCountVariableArc = event.first;
+        if (this.dataService.searchArcStr == '') {
+          this.dataService.offsetCountArc++;
+          this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50`;
           this.getDisplayARCData(this.APIParams);
         } else {
-          this.offsetCountArc++;
-          this.APIParams = `?offset=${this.offsetCountArc}&limit=50&uni_search=${this.searchArcStr}`;
+          this.dataService.offsetCountArc++;
+          this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}`;
           this.getDisplayARCData(this.APIParams);
         }
       }
     } else if (this.route.url == this.rejectedTab) {
-      this.storageService.rejectedPaginationFisrt = this.first;
-      this.storageService.rejectedPaginationRowLength = event.rows;
-      if (this.first >= this.pageCountVariableRej) {
-        this.pageCountVariableRej = event.first;
-        if (this.searchRejStr == '') {
-          this.offsetCountRej++;
-          this.APIParams = `?offset=${this.offsetCountRej}&limit=50`;
+      this.dataService.rejectedPaginationFisrt = this.first;
+      this.dataService.rejectedPaginationRowLength = event.rows;
+      if (this.first >= this.dataService.pageCountVariableRej) {
+        this.dataService.pageCountVariableRej = event.first;
+        if (this.dataService.searchRejStr == '') {
+          this.dataService.offsetCountRej++;
+          this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50`;
           this.getDisplayRejectedData(this.APIParams);
         } else {
-          this.offsetCountRej++;
-          this.APIParams = `?offset=${this.offsetCountRej}&limit=50&uni_search=${this.searchRejStr}`;
+          this.dataService.offsetCountRej++;
+          this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50&uni_search=${this.dataService.searchRejStr}`;
           this.getDisplayRejectedData(this.APIParams);
         }
       }
     } else if (this.route.url == this.GRNExceptionTab) {
-      this.storageService.GRNExceptionPaginationFisrt = this.first;
-      this.storageService.GRNExceptionPaginationRowLength = event.rows;
+      this.dataService.GRNExceptionPaginationFisrt = this.first;
+      this.dataService.GRNExceptionPaginationRowLength = event.rows;
     } else if (this.route.url == this.serviceInvoiceTab) {
-      this.storageService.servicePaginationFisrt = this.first;
-      this.storageService.servicePaginationRowLength = event.rows;
+      this.dataService.servicePaginationFisrt = this.first;
+      this.dataService.servicePaginationRowLength = event.rows;
     }
   }
 
@@ -1111,49 +1121,53 @@ export class InvoiceComponent implements OnInit {
   filterString(event) {
     if (this.route.url == this.invoiceTab) {
     } else if (this.route.url == this.POTab) {
-      this.offsetCountPO = 1;
+      this.dataService.offsetCountPO = 1;
       this.dataService.poLoadedData = [];
-      this.searchPOStr = event;
-      if (this.searchPOStr == '') {
-        this.APIParams = `?offset=${this.offsetCountPO}&limit=50`;
+      this.dataService.searchPOStr = event;
+      if (this.dataService.searchPOStr == '') {
+        this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50`;
         this.getDisplayPOData(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.offsetCountPO}&limit=50&uni_search=${this.searchPOStr}`;
+        this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50&uni_search=${this.dataService.searchPOStr}`;
         this.getDisplayPOData(this.APIParams);
       }
+      this.dataService.poPaginationFisrt = 1;
     } else if (this.route.url == this.GRNTab) {
-      this.offsetCountGRN = 1;
+      this.dataService.offsetCountGRN = 1;
       this.dataService.GRNLoadedData = [];
-      this.searchGRNStr = event;
-      if (this.searchGRNStr == '') {
-        this.APIParams = `?offset=${this.offsetCountGRN}&limit=50`;
+      this.dataService.searchGRNStr = event;
+      if (this.dataService.searchGRNStr == '') {
+        this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50`;
         this.getDisplayGRNdata(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.offsetCountGRN}&limit=50&uni_search=${this.searchGRNStr}`;
+        this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50&uni_search=${this.dataService.searchGRNStr}`;
         this.getDisplayGRNdata(this.APIParams);
       }
+      this.dataService.GRNPaginationFisrt = 1;
     } else if (this.route.url == this.archivedTab) {
-      this.offsetCountArc = 1;
+      this.dataService.offsetCountArc = 1;
       this.dataService.archivedDisplayData = [];
-      this.searchArcStr = event;
-      if (this.searchArcStr == '') {
-        this.APIParams = `?offset=${this.offsetCountArc}&limit=50`;
+      this.dataService.searchArcStr = event;
+      if (this.dataService.searchArcStr == '') {
+        this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50`;
         this.getDisplayARCData(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.offsetCountArc}&limit=50&uni_search=${this.searchArcStr}`;
+        this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}`;
         this.getDisplayARCData(this.APIParams);
       }
+      this.dataService.archivedPaginationFisrt = 1;
     } else if (this.route.url == this.rejectedTab) {
-      this.offsetCountRej = 1;
+      this.dataService.offsetCountRej = 1;
       this.dataService.rejectedDisplayData = [];
-      this.searchRejStr = event;
-      if (this.searchRejStr == '') {
-        this.APIParams = `?offset=${this.offsetCountRej}&limit=50`;
+      this.dataService.searchRejStr = event;
+      if (this.dataService.searchRejStr == '') {
+        this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50`;
         this.getDisplayRejectedData(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.offsetCountRej}&limit=50&uni_search=${this.searchRejStr}`;
+        this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50&uni_search=${this.dataService.searchRejStr}`;
         this.getDisplayRejectedData(this.APIParams);
       }
+      this.dataService.rejectedPaginationFisrt = 1;
     } else if (this.route.url == this.serviceInvoiceTab) {
     }
   }

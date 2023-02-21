@@ -139,7 +139,7 @@
 
         <div class="positionCreateUpload ">
           <div class="input-group  uni_dwn_btn" style="left: -45px;" *ngIf="!route.url.includes('allInvoices') && !route.url.includes('GRNExceptions') && !route.url.includes('ServiceInvoices')">
-            <input #serachStr type="text" class="searchInput b-r-right-0" placeholder="Search" (keyup)="keySearch(serachStr.value)">
+            <input #serachStr type="text" class="searchInput b-r-right-0" placeholder="Search" (keyup)="keySearch(serachStr.value)" [(ngModel)]="searchStr">
             <button class="btnUpload b-r-left-0 mr-2" (click)="filterString(serachStr.value)">
               <i class="fa fa-search" aria-hidden="true"></i>
             </button>

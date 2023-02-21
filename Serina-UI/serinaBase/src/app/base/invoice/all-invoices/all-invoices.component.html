@@ -46,7 +46,7 @@
             *ngFor="let col of columns"
             [pTooltip]="col.columnDescription"
             tooltipPosition="top"
-            [ngStyle]="{ width: col.columnName === 'Status' ? '18%' : '' }"
+            [ngStyle]="{ width: col.columnName === 'Status' ? '20%' : '' }"
             [pSortableColumn]="col.dbColumnname"
           >
             {{ col.columnName }}
@@ -157,6 +157,16 @@
                       "
                     >
                       <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      *ngIf="invoiceData.documentStatusID == 1 && isAdmin"
+                      pTooltip="Status roll back"
+                      tooltipPosition="top"
+                      class="f-13 b-0"
+                      style="color: red; font-weight: 800"
+                      (click)="changeStatus(invoiceData.idDocument)"
+                    >
+                      <i class="fa fa-undo" aria-hidden="true"></i>
                     </button>
                     <i
                       *ngIf="invoiceData.docstatus == 'Need To Review'"

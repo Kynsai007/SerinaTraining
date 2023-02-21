@@ -128,6 +128,20 @@ export class DataService {
   exception_G_S = '';
   exception_A_G_S = '';
   createGrn_G_S = '';
+
+  offsetCountPO = 1;
+  pageCountVariablePO = 0;
+  offsetCountGRN = 1;
+  pageCountVariableGRN = 0;
+  offsetCountArc = 1;
+  pageCountVariableArc = 0;
+  offsetCountRej = 1;
+  pageCountVariableRej = 0;
+
+  searchPOStr = '';
+  searchGRNStr = '';
+  searchArcStr = '';
+  searchRejStr = '';
   constructor() { }
 
   getEntity():Observable<any>{

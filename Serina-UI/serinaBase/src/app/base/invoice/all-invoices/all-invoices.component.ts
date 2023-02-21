@@ -69,6 +69,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   triggerBoolean: boolean;
   invoiceID: any;
   globalSearch:string;
+  isAdmin: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -93,6 +94,12 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.userType = this.authService.currentUserValue['user_type'];
+    let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
+    if(userRole == 'customer super admin' || userRole == 'ds it admin'){
+      this.isAdmin = true;
+    } else {
+      this.isAdmin = false;
+    }
     this.bgColorCode = this.storageService.bgColorCode;
     this.visibleSidebar2 = this.sharedService.sidebarBoolean;
     this.getRowsData();
@@ -117,29 +124,51 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     if (this.router.url.includes('allInvoices')) {
       this.first = this.storageService.allPaginationFirst;
       this.rows = this.storageService.allPaginationRowLength;
-      this.globalSearch = this.storageService.invoiceGlobe;
       this.stateTable = 'allInvoices';
+      let stItem:any = JSON.parse(sessionStorage?.getItem('allInvoices'));
+      if(stItem){
+        this.globalSearch = stItem?.filters?.global?.value;
+      } else {
+        this.globalSearch = this.storageService.invoiceGlobe;
+      }
     } 
     else if (this.router.url.includes('PO') ) {
       this.first = this.storageService.poPaginationFisrt;
       this.rows = this.storageService.poPaginationRowLength;
       this.stateTable = 'PO';
+      let stItem:any = JSON.parse(sessionStorage?.getItem('PO'));
+      if(stItem){
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
     }
     else if (this.router.url.includes('archived')) {
       this.first = this.storageService.archivedPaginationFisrt;
       this.rows = this.storageService.archivedPaginationRowLength;
       this.stateTable = 'Archived';
+      let stItem:any = JSON.parse(sessionStorage?.getItem('Archived'));
+      if(stItem){
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
     } 
     else if (this.router.url.includes('rejected')) {
       this.first = this.storageService.rejectedPaginationFisrt;
       this.rows = this.storageService.rejectedPaginationRowLength;
       this.stateTable = 'rejected';
+      let stItem:any = JSON.parse(sessionStorage?.getItem('rejected'));
+      if(stItem){
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
     } 
     else if (this.router.url.includes('ServiceInvoices')) {
       this.first = this.storageService.servicePaginationFisrt;
       this.rows = this.storageService.servicePaginationRowLength;
       this.stateTable = 'Service';
-      this.globalSearch = this.storageService.serviceGlobe;
+      let stItem:any = JSON.parse(sessionStorage?.getItem('Service'));
+      if(stItem){
+        this.globalSearch = stItem?.filters?.global?.value;
+      } else {
+        this.globalSearch = this.storageService.serviceGlobe;
+      }
     } 
   }
   
@@ -231,6 +260,26 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       this.checkstatusPopupBoolean = true;
       this.spinnerService.hide();
     }, (err)=>{
+      this.spinnerService.hide();
+      this.AlertService.errorObject.detail = 'Server error';
+      this.messageService.add(this.AlertService.errorObject);
+    })
+  }
+
+  changeStatus(id){
+    this.spinnerService.show();
+    this.invoiceID = id;
+    this.sharedService.invoiceID = id;
+    let obj = {
+      "documentStatusID": 4,
+      "documentsubstatusID": 29
+    }
+    this.sharedService.changeStatus(obj).subscribe((data:any)=>{
+      this.AlertService.addObject.detail = data.result;
+      this.messageService.add(this.AlertService.addObject);
+      window.location.reload();
+      this.spinnerService.hide();
+    },err=>{
       this.spinnerService.hide();
       this.AlertService.errorObject.detail = 'Server error';
       this.messageService.add(this.AlertService.errorObject);
