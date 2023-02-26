@@ -61,7 +61,7 @@ export class DataService {
     { id:0, name :'All', bgcolor: '#FEF9EC', textColor :'#F3BC45'},
     { id:1, name :'System Check In - Progress', bgcolor: '#FEF9EC', textColor :'#F3BC45'},
     { id:2, name :'Processing Document', bgcolor: '#F3F4FF', textColor :'#747BC8'},
-    { id:3, name :'Finance Approval Completed', bgcolor: '#E0FFEF', textColor :'#1EAC60'},
+    { id:3, name :'Approval Pending', bgcolor: '#E0FFEF', textColor :'#1EAC60'},
     { id:4, name :'Need To Review', bgcolor: '#FEFFD6', textColor :'#CDD100'},
     { id:5, name :'Edit in Progress', bgcolor: '#FFE8FD', textColor :'#AE5BA7'},
     { id:6, name :'Awaiting Edit Approval', bgcolor: '#F7FFC8', textColor :'#8EA01F'},
@@ -75,7 +75,7 @@ export class DataService {
     { id:16, name :'ERP Exception', bgcolor: '#fff3e0', textColor :'#b7925b'},
     { id:15, name :'Mismatch value/s', bgcolor: '#ddebc5', textColor :'#818549'},
     { id:14, name :'Posted In ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
-    { id:20, name :'Set Approval', bgcolor: '#ECF9ED', textColor :'#3EB948'},
+    { id:24, name :'Set Approval', bgcolor: '#ECF9ED', textColor :'#3EB948'},
   ]
   serviceinvoiceLoadedData: any[];
   approvalServicePaginationRowLength = 10;
