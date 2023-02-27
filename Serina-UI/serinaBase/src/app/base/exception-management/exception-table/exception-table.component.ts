@@ -58,9 +58,9 @@ export class ExceptionTableComponent implements OnInit {
   portalName: string;
   confirmText: string;
   displayResponsivepopup: boolean;
-  selectedFields1:any;
-  stateTable:any
-  globalSearch:string;
+  selectedFields1: any;
+  stateTable: any
+  globalSearch: string;
 
   constructor(
     private tagService: TaggingService,
@@ -71,7 +71,7 @@ export class ExceptionTableComponent implements OnInit {
     private storageService: DataService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initialData();
@@ -119,19 +119,19 @@ export class ExceptionTableComponent implements OnInit {
         this.batchBoolean = true;
         this.first = this.storageService.exc_batch_edit_page_first;
         this.rows = this.storageService.exc_batch_edit_page_row_length;
-        this.stateTable="Exceptions";
+        this.stateTable = "Exceptions";
         this.globalSearch = this.storageService.exception_G_S;
       } else {
         this.batchBoolean = false;
         this.first = this.storageService.exc_batch_approve_page_first;
         this.rows = this.storageService.exc_batch_approve_page_row_length;
-        this.stateTable="AprvPending";
+        this.stateTable = "AprvPending";
         this.globalSearch = this.storageService.exception_A_G_S;
       }
-    } else if(this.router.url.includes('Create_GRN_inv_list')) {
+    } else if (this.router.url.includes('Create_GRN_inv_list')) {
       this.first = this.storageService.create_GRN_page_first;
       this.rows = this.storageService.create_GRN_page_row_length;
-      this.stateTable="GRN Creation";
+      this.stateTable = "GRN Creation";
       this.globalSearch = this.storageService.createGrn_G_S;
     }
   }
@@ -158,9 +158,16 @@ export class ExceptionTableComponent implements OnInit {
   paginate(event) {
     this.first = event.first;
     if (this.router.url.includes('ExceptionManagement')) {
-      this.storageService.exc_batch_edit_page_first = this.first;
-      this.storageService.exc_batch_edit_page_row_length = event.rows;
-    } else if(this.router.url.includes('Create_GRN_inv_list')) {
+
+      if (this.tagService.batchProcessTab != 'normal') {
+        this.storageService.exc_batch_approve_page_first = this.first;
+        this.storageService.exc_batch_approve_page_row_length = event.rows;
+      } else {
+        this.storageService.exc_batch_edit_page_first = this.first;
+        this.storageService.exc_batch_edit_page_row_length = event.rows;
+
+      }
+    } else if (this.router.url.includes('Create_GRN_inv_list')) {
       this.storageService.create_GRN_page_first = this.first;
       this.storageService.create_GRN_page_row_length = event.rows;
     }
@@ -169,14 +176,19 @@ export class ExceptionTableComponent implements OnInit {
   searchInvoice(value) {
     this.searchInvoiceData.emit(this.allInvoice);
     if (this.router.url.includes('ExceptionManagement')) {
-      this.storageService.exception_G_S = value;
-    } else if(this.router.url.includes('Create_GRN_inv_list')) {
+      if (this.tagService.batchProcessTab == 'normal') {
+        this.storageService.exception_G_S = value;
+      } else {
+        this.storageService.exception_A_G_S = value;
+      }
+    } else if (this.router.url.includes('Create_GRN_inv_list')) {
       this.storageService.createGrn_G_S = value;
     }
   }
 
   // edit invoice details if something wrong
   editInvoice(e) {
+    console.log(e)
     this.storageService.editableInvoiceData = e;
     this.ExceptionsService.invoiceID = e.idDocument;
     this.tagService.editable = true;
@@ -193,19 +205,29 @@ export class ExceptionTableComponent implements OnInit {
         if (data.result.Document.lock_status == false) {
           if (this.tagService.batchProcessTab == 'normal') {
             if (this.permissionService.editBoolean == true) {
-              if (e.documentsubstatusID == 8 || 
-                e.documentsubstatusID == 16 || 
+              if (e.documentsubstatusID == 8 ||
+                e.documentsubstatusID == 16 ||
                 e.documentsubstatusID == 33 ||
                 e.documentsubstatusID == 21 ||
-                e.documentsubstatusID == 27 ) {
+                e.documentsubstatusID == 27) {
                 this.router.navigate([
                   `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
                 ]);
               } else {
                 this.ExceptionsService.selectedRuleId = e.ruleID;
                 this.router.navigate([
-                  `${this.portalName}/ExceptionManagement/InvoiceDetails/${ e.idDocument}`,
+                  `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
                 ]);
+                this.storageService.entityID = e.entityID;
+                this.sharedService.selectedEntityId = e.entityID;
+                if (e.documentsubstatusID == 29) {
+
+                } else if (e.documentStatusID == 24) {
+                  this.tagService.approval_selection_boolean = true;
+                } else if (e.documentStatusID == 49 || e.documentsubstatusID == 51) {
+                  this.tagService.LCM_boolean = true;
+                  this.tagService.approval_selection_boolean = true;
+                }
               }
               // this.invoiceListBoolean = false;
               let sessionData = {
