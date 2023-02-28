@@ -281,6 +281,9 @@ export class SharedService {
   updateSpInvoiceColumns(data) {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateServiceProviderColumnPos/${this.userId}`, data)
   }
+  getaccntLogs(acc_id) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/readServiceAccountEditHistory/${this.userId}?ser_acc_id=${acc_id}`)
+  }
 
   readOPUnits(): Observable<object> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/getoperationalUnits`)

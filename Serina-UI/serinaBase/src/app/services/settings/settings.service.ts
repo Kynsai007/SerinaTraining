@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment.prod';
 export class SettingsService {
   userId:number;
   userData:any;
-  finaceApproveBoolean = false;
+  finaceApproveBoolean;
   generalSettingsData: any = new Subject<any>();
 
   constructor(private http : HttpClient) {

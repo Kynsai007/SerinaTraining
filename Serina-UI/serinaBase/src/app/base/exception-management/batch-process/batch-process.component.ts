@@ -8,6 +8,7 @@ import { ImportExcelService } from './../../../services/importExcel/import-excel
 import { TaggingService } from './../../../services/tagging.service';
 import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { DataService } from 'src/app/services/dataStore/data.service';
 
 @Component({
   selector: 'app-batch-process',
@@ -61,6 +62,7 @@ export class BatchProcessComponent implements OnInit {
   dashboardViewBoolean: boolean;
   heading: string;
   isVendorBoolean:boolean;
+  apprveBool: any;
 
   constructor(
     private tagService: TaggingService,
@@ -71,15 +73,16 @@ export class BatchProcessComponent implements OnInit {
     private router: Router,
     private exceptionService: ExceptionsService,
     private permissionService : PermissionService,
-    private sharedService :SharedService
+    private sharedService :SharedService,
+    private ds: DataService
   ) {}
 
   ngOnInit(): void {
+    this.apprveBool = this.ds.configData?.enableApprovals;
     if(this.permissionService.excpetionPageAccess == true){
 
       this.viewType = this.tagService.batchProcessTab;
       this.findRoute();
-      // this.getApprovalBatchData();
 
     } else{
       alert("Sorry!, you do not have access");
@@ -102,6 +105,10 @@ export class BatchProcessComponent implements OnInit {
       this.heading = 'Vendor based Exception';
       this.isVendorBoolean = true;
       this.getBatchInvoiceData();
+      if(this.apprveBool){
+        this.getApprovalBatchData();
+      }
+
     }
     if (this.router.url.includes('home')) {
       this.dashboardViewBoolean = true;

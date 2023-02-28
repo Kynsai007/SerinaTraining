@@ -206,6 +206,9 @@
                 Re-Upload
               </button>
             </span>
+            <span *ngIf="router.url.includes('ServiceInvoices')">
+              <button [disabled]="!invoiceData.json_download_path" class="fa fa-download b-0" (click)="downloadJSON(invoiceData)"></button>
+            </span>
             <i
               *ngIf="
                 router.url.includes('allInvoices') ||

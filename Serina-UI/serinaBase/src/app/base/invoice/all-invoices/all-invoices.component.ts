@@ -17,7 +17,7 @@ import { Table } from 'primeng/table';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { MessageService } from 'primeng/api';
-
+import * as fileSaver from 'file-saver';
 export interface statusArray {
   name:string;
 }
@@ -70,6 +70,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   invoiceID: any;
   globalSearch:string;
   isAdmin: boolean;
+  ERP: string;
 
   constructor(
     private tagService: TaggingService,
@@ -253,6 +254,15 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
         } else {
           this.statusText1 = 'Not Posted to ERP'
         }
+      } else if(urlStr == 'InvoiceStatus' && this.ERP == 'JDE'){
+        // this.statusText = data.Message;
+        if(data.ErrCode == 'S'){
+          this.statusText = data.JDEInvoiceNo;
+          this.statusText1 = data.Remarks;
+        } else {
+          this.statusText = data.ErrMessage;
+          this.statusText1 = data.Remarks;
+        }
       } else {
         this.statusText = data['Payment Status'];
         this.statusText1 = `Payment date : ${data['Payment Date']}`;
@@ -318,5 +328,19 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       this.AlertService.errorObject.detail = 'Server error';
       this.messageService.add(this.AlertService.errorObject);
     })
+  }
+  downloadJSON(e){
+    this.sharedService.invoiceID = e.idDocument;
+    let invoiceNumber = e.docheaderID
+    this.sharedService.downloadJSON().subscribe((response:any)=>{
+      fileSaver.saveAs(response, `Invoice#${invoiceNumber}_JSON`);
+      this.AlertService.addObject.summary="Success";
+      this.AlertService.addObject.detail = "Document Downloaded successfully";
+      this.messageService.add(this.AlertService.addObject);
+    }
+      ,err=>{
+        this.AlertService.errorObject.detail = "Server error";
+        this.messageService.add(this.AlertService.errorObject);
+      })
   }
 }

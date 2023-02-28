@@ -276,6 +276,7 @@ export class RolesComponent implements OnInit {
       this.getVendorSuperUserList();
       this.financeapproveDisplayBoolean =
         this.settingsService.finaceApproveBoolean;
+        console.log( this.financeapproveDisplayBoolean,this.entityBaseApproveBoolean)
       this.addRoleBoolean = this.permissionService.addUserRoleBoolean;
       this.isVendorportalRequired = this.dataService?.configData?.enablevendorportal;
     } else {
@@ -825,7 +826,6 @@ export class RolesComponent implements OnInit {
   }
   checkStatus(e,type) {
       this.updateUsersEntityInfo.forEach((value) => {
-        console.log(value)
         if (value.EntityID == this.selectedEntityId) {
             value.userPriority = e;
         }
@@ -840,6 +840,7 @@ export class RolesComponent implements OnInit {
         if(data.status == 1){
           this.entityBaseApproveBoolean = true;
           this.isAmountBasedON = data.isAmountBased;
+          console.log( this.financeapproveDisplayBoolean,this.entityBaseApproveBoolean)
         } else {
           this.entityBaseApproveBoolean = false;
         }

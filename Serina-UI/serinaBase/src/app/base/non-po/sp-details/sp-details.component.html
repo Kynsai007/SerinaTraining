@@ -1,7 +1,7 @@
 
 <p-toast></p-toast>
 
-<p-sidebar [(visible)]="visibleSPColumns" position="right" [baseZIndex]="10000">
+<!-- <p-sidebar [(visible)]="visibleSPColumns" position="right" [baseZIndex]="10000">
   <h6 style="font-weight: 600">Select Columns</h6>
 
   <ul
@@ -44,7 +44,7 @@
       Save
     </button>
   </div>
-</p-sidebar>
+</p-sidebar> -->
 
 <mat-sidenav-container class="example-container" hasBackdrop = "false" (backdropClick)="close('backdrop')">
   <mat-sidenav #sidenav mode="over"  position="end"  >
@@ -490,6 +490,14 @@
                               (click)="updateSpAccount(spAccount)"
                               aria-hidden="true"
                             ></i>
+
+                            <i
+                              class="fa fa-info-circle actionsBtn ml-2"
+                              (click)="checkLogs(spAccount?.idServiceAccount,spAccount?.Account)"
+                              pTooltip = "Click here to view log history"
+                              tooltipPosition="left"
+                              aria-hidden="true"
+                            ></i>
                           </td>
                         </tr>
                       </ng-template>
@@ -793,12 +801,20 @@
               />
             </div>
             <div>
-              <label class="label-head">Meter number</label>
-              <input
+              <label class="label-head">Account Category</label>
+              <!-- <input
                 type="text"
-                formControlName="MeterNumber"
+                formControlName="accountCategory"
                 class="form-control w-250 inputHeight"
-              />
+              /> -->
+              <select
+                class="form-control inputHeight w-250"
+                formControlName="MeterNumber"
+              >
+                <option value="NA"> NA </option>
+                <option value="mobile"> Mobile </option>
+                \<option value="fixed"> Fixed </option>
+              </select>
             </div>
             <div>
               <label class="label-head"
@@ -1076,7 +1092,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >Item Code </span
+                    >VAT Item Code </span
                   >
                   <input
                     type="text"
@@ -1226,3 +1242,47 @@
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+<p-dialog
+  header="Account Log History "
+  [(visible)]="historyPopBool"
+  [breakpoints]="{ '960px': '75vw' }"
+  [style]="{ width: '50vw' }"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="text-center">
+    <div class="bg-design-all b-top-left p-2">
+      <div class="f-13 mb-2">Account number : <span style="color:blue">{{acc_num}}</span></div>
+      <span *ngFor="let item of statusData; let i = index">
+        <span
+          [ngStyle]="{
+            visibility: item.update_on
+              ? 'visible'
+              : 'hidden'
+          }"
+          class="date_box"
+        >
+          <span *ngIf="item.update_on">{{
+            item.update_on + "Z" | date: "medium"
+          }}</span>
+        </span>
+        <span
+          class="circles"
+        ></span>
+
+        <div
+          class="circle-desc"
+        >
+          <div class="row">
+            <div class="col-sm-4 status_text">{{ item.updated_by }}</div>
+          </div>
+        </div>
+        <span class="bar" *ngIf="i != statusData.length - 1"></span>
+      </span>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+  </ng-template>
+</p-dialog>

@@ -107,7 +107,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   p1: number = 1;
   last: number;
-  mergedData: any[];
+  mergedData: any;
   finalArray = [];
   spAccountname: any;
   SpAccountDatails: FormGroup;
@@ -190,10 +190,13 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   filteredOP_unit: any[];
   OPUnits: any;
   approverList: any;
+  acc_num: any;
   close(reason: string) {
     this.sidenav.close();
   }
   elementList = [];
+  statusData = [];
+  historyPopBool:boolean;
 
   constructor(
     private fb: FormBuilder,
@@ -243,7 +246,8 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       { field: 'EntityName', header: 'Entity' },
       // { field: 'EntityBodyName', header: 'Entity site' },
       // { field: 'noOfInvoices', header: 'Narrative' },
-      { field: 'downloadDate', header: 'Download Date' },
+      { field: 'UpdatedOn', header: 'Last updated' },
+      { field: 'updated_by', header: 'Updated By' },
     ];
     this.mask = [
       /\d/,
@@ -290,7 +294,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       URL: ['', Validators.required],
       subKeyWords: [''],
       Account: ['', Validators.required],
-      MeterNumber: [''],
+      MeterNumber: ['NA'],
       Address: '',
       ScheduleDateTime: Date,
       isActive: [true],
@@ -413,11 +417,11 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toCreateNewAccount() {
-    if(this.spDetails.idServiceProvider == 14){
-      this.disableCostAllocationBoolean = true;
-    } else {
-      this.disableCostAllocationBoolean = false;
-    }
+    // if(this.spDetails.idServiceProvider == 14){
+    //   this.disableCostAllocationBoolean = true;
+    // } else {
+    //   this.disableCostAllocationBoolean = false;
+    // }
     this.vendorList = false;
     this.createspAccount = true;
     this.addSpAccountBoolean = true;
@@ -526,6 +530,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
           ...element.EntityBody,
           ...element.ServiceAccount,
         };
+        this.mergedData['updated_by'] = element?.updated_by;
         this.finalArray.push(this.mergedData);
       });
       this.spaccountreaddata = this.finalArray;
@@ -702,11 +707,11 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateSpAccount(data) {
-    if(data.serviceProviderID == 14){
-      this.disableCostAllocationBoolean = true;
-    } else {
-      this.disableCostAllocationBoolean = false;
-    }
+    // if(data.serviceProviderID == 14){
+    //   this.disableCostAllocationBoolean = true;
+    // } else {
+    //   this.disableCostAllocationBoolean = false;
+    // }
     this.sharedService.spAccountID = data.idServiceAccount;
     this.selectedEntityBodyId = data.entityBodyID;
     this.selectedEntityDeptId = data.departmentID;
@@ -1012,6 +1017,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.readColumnsSpInvoice();
       });
     this.visibleSPColumns = false;
+    this.sidenav.close();
   }
 
   searchInvoiceDataV(value) {
@@ -1025,6 +1031,18 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       alert('No Data to import');
     }
+  }
+  checkLogs(id,accnt){
+    this.historyPopBool = true;
+    this.acc_num = accnt;
+    this.readAccLogs(id);
+  }
+  readAccLogs(id){
+    this.sharedService.getaccntLogs(id).subscribe((data:any)=>{
+      this.statusData = data.result;
+    },err=>{
+      this.messageService.add(this.errorObject)
+    })
   }
 
   ngOnDestroy(): void {

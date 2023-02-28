@@ -128,6 +128,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   servicesData() {
     this.financeapproveDisplayBoolean =
     this.dataStoreService.configData?.enableApprovals;
+    this.settingService.finaceApproveBoolean = this.dataStoreService.configData?.enableApprovals;
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
     // this.dataStoreService.configData.vendorInvoices = true;
     // this.dataStoreService.configData.serviceInvoices = true;

@@ -12,7 +12,7 @@
             >Exception Invoices({{ dataLength }})</a
           >
         </li>
-        <li class="nav-item ml-1" *ngIf="isVendorBoolean">
+        <li class="nav-item ml-1" *ngIf="isVendorBoolean && this.apprveBool">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'editApproveBatch'"

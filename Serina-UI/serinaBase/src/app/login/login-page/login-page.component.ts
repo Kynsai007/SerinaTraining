@@ -340,11 +340,17 @@ export class LoginPageComponent implements OnInit {
         if (this.returnUrl) {
           this.router.navigate([this.returnUrl]);
         } else if (data.user_type === 'customer_portal') {
-          // if(data.permissioninfo.NameOfRole == 'Receiver'){
-          //   this.router.navigate(['/customer/Create_GRN_inv_list']);
-          // } else {
-            this.router.navigate(['/customer']);
-          // }
+          let route = '';
+            if(data.userdetails?.landingPage == 'Upload'){
+              route = '/uploadInvoices'
+            } else if(data.userdetails?.landingPage == 'Document Status'){
+              route = '/invoice/allInvoices'
+            } else if(data.userdetails?.landingPage == 'Dashboard'){
+              route = '/home'
+            } else if(data.userdetails?.landingPage == 'Exception'){
+              route = '/ExceptionManagement'
+            }
+            this.router.navigate([`/customer${route}`]);
         } else if (data.user_type === 'vendor_portal') {
           this.router.navigate(['/vendorPortal']);
         }
