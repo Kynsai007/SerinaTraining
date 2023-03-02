@@ -20,6 +20,7 @@ export class BatchProcessComponent implements OnInit {
     { field: 'docheaderID', header: 'Invoice Number' },
     { field: 'VendorName', header: 'Vendor Name' },
     { field: 'EntityName', header: 'Entity Name' },
+   
     { field: 'CreatedOn', header: 'Uploaded Date' },
     { field: 'PODocumentID', header: 'PO number' },
     { field: 'sender', header: 'Sender' },

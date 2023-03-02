@@ -25,10 +25,7 @@
   border: 1px solid lightgray;
   border-left: hidden;
 }
-.helpSection {
-  position: absolute;
-  right: 20px;
-}
+
 .upload-time{
   font-weight: bold;
   color: #2980b9
@@ -36,11 +33,6 @@
 
 :host ::ng-deep .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
   padding: 5px 1rem;
-  border: 0 none;
-  color: #495057;
-  background: transparent;
-  transition: box-shadow 0.2s;
-  border-radius: 0;
   font-size: 12px;
   font-weight: 400;
 }
@@ -324,4 +316,69 @@ input[type="checkbox"] {
   display: flex;
   width: 18vw;
   align-items: center;
+}
+.circles {
+  height: 12px;
+  width: 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.active1 {
+  background-color: #03755a;
+  border-color: #03755a;
+}
+.current {
+  background-color: orangered;
+  border-color: orangered;
+}
+
+.circle-desc-active1 {
+  font-weight: bold;
+}
+
+.bar {
+  width: 25%;
+  height: 0.063em;
+  margin-bottom: 4.6px;
+  border: 0.1px dashed #2d2d2d54;
+  color: #2d2d2d;
+  display: inline-block;
+  text-align: center;
+}
+
+.container {
+  min-width: 320px;
+  margin: "0px auto";
+  text-align: center;
+  position: relative;
+}
+
+.circle-desc {
+  position: absolute;
+  top: 13px;
+  font-size: 10px;
+  width: auto;
+  max-width: 9.375em;
+  margin-left: -0.75em;
+}
+.helpSection {
+  position: absolute;
+  right: 20px;
+}
+:host ::ng-deep {
+  .p-multiselect-panel .p-multiselect-header {
+      display: none;
+  }
+  .p-multiselect {
+      width: 18vw;
+      font-size: 12px;
+      font-weight: 600;
+      height: 35px;
+  }
+  .p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+      font-size: 12px;
+      font-weight: 600;
+  }
 }

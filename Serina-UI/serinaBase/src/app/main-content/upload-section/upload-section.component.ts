@@ -147,12 +147,13 @@ export class UploadSectionComponent implements OnInit {
   approverDialog: boolean;
   uploadInvoicesListData = [];
   quickUploadTable = [
-    { header: "Entity", field: 'EntityName' },
+    { header: "Entity", field: 'EntityName'},
     { header: "Vendor name", field: 'VendorName' },
-    { header: "Invoice Type", field: 'invoiceType' },
+    { header: "Invoice Type", field: 'invoiceType'},
     { header: "PO Number", field: 'PONumber' },
-    { header: "Department", field: 'departmentName' },
-    { header: "Invoices", field: 'attchedInvoice' },
+    { header: "GRN Data", field: 'po_grn_data' },
+    { header: "Department", field: 'departmentName'},
+    { header: "Invoices", field: 'attchedInvoice'},
     { header: "Supprot Docs", field: 'attchedSupport' },
     { header: "Approvers", field: 'approvers' },
   ]
@@ -176,10 +177,18 @@ export class UploadSectionComponent implements OnInit {
   touchedApproveBoolean: boolean;
   filteredEnt: any[];
   afVendor: boolean;
-  viewType: any = 'ideal';
+  viewType: any;
   userDetails: any;
-  isQuickUploadbool: boolean= false;
-  bothOptBoolean: boolean =  true;
+  isQuickUploadbool: boolean;
+  bothOptBoolean: boolean;
+  progressBarObj = [
+    { statusName: 'Initializing', status : '', percent:''},
+    { statusName: 'Pre-Processing', status : '',percent:''},
+    { statusName: 'Post-Processing', status : '',percent:''},
+    { statusName: 'Completed', status : '',percent:''},
+  ]
+  po_grn_list = [];
+  filteredPO_GRN = [];
   constructor(
     private http: HttpClient,
     public route: Router,
@@ -198,7 +207,21 @@ export class UploadSectionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // if(this.PS.uploadPermissionBoolean){
+    this.userDetails = this.authenticationService.currentUserValue['userdetails'];
+    if(this.PS.uploadPermissionBoolean){
+      if(this.userDetails?.uploadOpt == 'Quick Upload'){
+        this.viewType = 'quick';
+        this.isQuickUploadbool = true;
+        this.bothOptBoolean = false;
+      } else if (this.userDetails?.uploadOpt == 'Both'){
+        this.viewType = 'ideal';
+        this.isQuickUploadbool = false;
+        this.bothOptBoolean = true;
+      } else {
+        this.viewType = 'ideal';
+        this.isQuickUploadbool = false;
+        this.bothOptBoolean = false;
+      }
     this.seconds = "00";
     this.minutes = "00";
     this.isCustomerPortal = this.sharedService.isCustomerPortal;
@@ -214,10 +237,10 @@ export class UploadSectionComponent implements OnInit {
     } else {
       this.reuploadBoolean = false;
     }
-    // } else {
-    //   // alert("Sorry, you don't have access!")
-    //   this.route.navigate(['customer/invoice/allInvoices']);
-    // }
+    } else {
+      // alert("Sorry, you don't have access!")
+      this.route.navigate(['customer/invoice/allInvoices']);
+    }
 
   }
 
@@ -270,7 +293,12 @@ export class UploadSectionComponent implements OnInit {
 
   getEntitySummary() {
     this.serviceProviderService.getSummaryEntity().subscribe((data: any) => {
-      this.entity = data.result;
+      let arr = [];
+      data?.result?.forEach(ele=>{
+        ele.EntityName1 = `${ele.EntityName} - ${ele.EntityCode}`;
+        arr.push({ EntityName: ele.EntityName1, idEntity: ele.idEntity })
+      })
+      this.entity = arr;
     });
   }
 
@@ -465,10 +493,24 @@ export class UploadSectionComponent implements OnInit {
   }
 
   selectedPO(event) {
-    if (this.mutliPODailog) {
+    // if (this.mutliPODailog) {
       this.readPOLines(event.PODocumentID);
-    }
+    // }
     this.selectedPONumber = event.PODocumentID;
+  }
+  filterPO_GRNnumber(event){
+    let filtered: any[] = [];
+    let query = event.query;
+
+    if (this.po_grn_list?.length > 0) {
+      for (let i = 0; i < this.po_grn_list?.length; i++) {
+        let PO: any = this.po_grn_list[i];
+        if (PO.GRNField.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(PO);
+        }
+      }
+    }
+    this.filteredPO_GRN = filtered;
   }
   filterEntity(event) {
     let filtered: any[] = [];
@@ -509,7 +551,7 @@ export class UploadSectionComponent implements OnInit {
         let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
         arr.push({PackingSlip:val.PackingSlip,POLineNumber:val.POLineNumber,GRNField:ele});
       })
-      // this.po_grn_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
+      this.po_grn_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
     }, err => {
       this.alertService.errorObject.detail = "Server error";
       this.messageService.add(this.alertService.errorObject);
@@ -672,8 +714,7 @@ export class UploadSectionComponent implements OnInit {
   }
   readSavedLines() {
     this.spinnerService.show();
-    this.sharedService.readSavedLines(this.multiPO_filepath).subscribe((data: any) => {
-      console.log(data);
+    this.sharedService.readSavedLines(this.multiPO_filepath).subscribe((data:any)=>{
       this.spinnerService.hide();
     }, err => {
       this.spinnerService.hide();
@@ -1098,6 +1139,7 @@ export class UploadSectionComponent implements OnInit {
   }
   addFunction(val) {
     let Approver;
+    let po_grn_data = [];
     let pre_approved = false;
     let multiPath = this.multiPO_filepath;
     if (val.preApprove) {
@@ -1107,6 +1149,9 @@ export class UploadSectionComponent implements OnInit {
       Approver = this.approverNameListFinal
 
     }
+    val?.PO_GRN_Number?.forEach(el=>{
+      po_grn_data.push(el.GRNField)
+    })
     let obj = {
       EntityName: this.entityName,
       VendorName: val.vendor?.VendorName,
@@ -1115,8 +1160,8 @@ export class UploadSectionComponent implements OnInit {
       attchedInvoice: this.invoiceFilename,
       attchedSupport: this.supportFileNamelist,
       departmentName: val.departmentName,
-      approvers: Approver
-
+      approvers: Approver,
+      po_grn_data: po_grn_data
     }
     let APIObj = {
       "ven_acc_id": this.vendorAccountId,
@@ -1128,7 +1173,8 @@ export class UploadSectionComponent implements OnInit {
       "invoice_name": this.invoiceFilename,
       "po_number": val.PONumber?.PODocumentID,
       "multi_po_path": multiPath,
-      "supporting_doc_names": this.supportFileNamelist
+      "supporting_doc_names": this.supportFileNamelist,
+      "po_grn_data":val?.PO_GRN_Number
     }
     this.uploadInvoicesListData.push(obj);
     this.APIPostData.push(APIObj);

@@ -360,7 +360,7 @@
             field="VendorName"
             [dropdown]="true"
             [completeOnFocus]="true"
-            [autofocus]="afVendor"
+            [autofocus]="true"
             name="vendor"
             ngModel
             required
@@ -428,6 +428,44 @@
             </ng-template>
           </p-autoComplete>
         </div>
+
+        <!-- select PO Number -->
+        <div *ngIf="POnumberBoolean">
+          <label class="f-13 mb-0">Select GRN</label><br />
+          <p-multiSelect
+            [options]="po_grn_list"
+            placeholder="Number-line-description"
+            filter="false"
+            inputStyleClass="form-control"
+            optionLabel="GRNField"
+            [maxSelectedLabels]="3"
+            [selectedItemsLabel]="'{0} items selected'"
+            name="PO_GRN_Number"
+            ngModel
+            required
+          >
+          </p-multiSelect>
+          <!-- <p-autoComplete
+                    placeholder="Select GRN"
+                    (onSelect)="selectedPO_GRN($event)"
+                    [group]="false"
+                    [forceSelection]="true"
+                    [suggestions]="filteredPO_GRN"
+                    (completeMethod)="filterPO_GRNnumber($event)"
+                    field="GRNField"
+                    [dropdown]="true"
+                    name="PO_GRN_Number"
+                    ngModel
+                    required
+                  >
+                    <ng-template let-group pTemplate="group">
+                      <div class="flex align-items-center">
+                        <span class="f-12">{{ group.GRNField }}</span>
+                      </div>
+                    </ng-template>
+                  </p-autoComplete> -->
+        </div>
+
         <div>
           <label class="f-13 mb-0">Select Department</label>
           <select
