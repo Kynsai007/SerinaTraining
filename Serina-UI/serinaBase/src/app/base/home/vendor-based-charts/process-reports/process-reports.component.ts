@@ -213,6 +213,7 @@ export class ProcessReportsComponent implements OnInit {
     //   this.setConatinerForCharts();
     // }, 800);
   }
+  
 
   chartsData() {
     this.invoiceAmountData = [

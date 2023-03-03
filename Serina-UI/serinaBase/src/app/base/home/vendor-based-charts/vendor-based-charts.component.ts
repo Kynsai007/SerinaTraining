@@ -60,6 +60,7 @@ export class VendorBasedChartsComponent implements OnInit {
       // this.readExceptionData();
       this.prepareColumns();
       this.readEmailExceptionData('');
+      this.readOnboardedData('');
       this.dateRange();
       if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
         this.viewType = 'Process';
