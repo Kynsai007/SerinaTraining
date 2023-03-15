@@ -300,6 +300,10 @@ a {
   margin-right: 10px;
   position: absolute;
   margin-top: -5px;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 // .form-control:disabled, .form-control[readonly]{

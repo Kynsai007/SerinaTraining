@@ -14,7 +14,7 @@ export class SharedService {
   vendorID: number;
   cuserID: number;
   spID: number;
-  spAccountID:number;
+  spAccountID: number;
 
   invoiceID: any;
 
@@ -22,7 +22,7 @@ export class SharedService {
   NTtempalteId: number
   public currentUser: Observable<any>;
   userId: number;
-  ap_id:number;
+  ap_id: number;
 
   selectedEntityId: number;
   selectedEntityBodyId: number;
@@ -63,6 +63,8 @@ export class SharedService {
   }
   isCustomerPortal: boolean;
 
+  spAccountSub = new BehaviorSubject<any>([])
+
   constructor(private http: HttpClient) { }
 
   sendMessage(isLogin: boolean) {
@@ -73,6 +75,10 @@ export class SharedService {
   }
   sendNotificationNumber(Arraylength) {
     this.subject.next({ Arraylength });
+  }
+
+  getSpAccnt(){
+    return this.spAccountSub.asObservable();
   }
 
   getNotifyArraylength(): Observable<any> {
@@ -260,8 +266,8 @@ export class SharedService {
   readserviceproviderbyid() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceprovider/` + this.spID)
   }
-  readserviceprovideraccount() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceprovideraccount/${this.userId}/idService/${this.spID}`)
+  readserviceprovideraccount(data) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceprovideraccount/${this.userId}?${data}`)
   }
   createserviceprovideraccount(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/newSPAccount/${this.userId}/serviceId/` + this.spID, data)

@@ -37,7 +37,7 @@ export class ProcessReportserviceComponent implements OnInit {
 
   selectedEntityValue = 'ALL';
   selectedDateValue = '';
-  selectedServiceValue: any;
+  selectedServiceValue = 'ALL';
 
   invoiceByEntityChartdata = [];
   noDataSourceEntityboolean: boolean;

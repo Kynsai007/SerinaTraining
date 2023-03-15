@@ -139,6 +139,24 @@
           >Line details</a
         >
       </li>
+      <li
+        *ngIf="isServiceData"
+        class="nav-item ml-2"
+        pTooltip="Cost allocation"
+        tooltipPosition="top"
+        (click)="changeTab('show', 'cost')"
+      >
+        <a
+          class="nav-link"
+          id="cost-tab"
+          data-toggle="tab"
+          href="#cost"
+          role="tab"
+          aria-controls="cost"
+          aria-selected="true"
+          >Allocation</a
+        >
+      </li>
 
       <li
         class="nav-item"
@@ -259,7 +277,7 @@
                 <label class="label-head" style="margin-bottom: -5px"
                   >{{ value.TagLabel }}
                   <span
-                    *ngIf="value.isError == 1"
+                    *ngIf="value.isError >= 1"
                     [pTooltip]="value.ErrorDesc"
                     tooltipPosition="top"
                     ><i
@@ -276,7 +294,7 @@
                   [disabled]="!editable || fin_boolean"
                   [ngStyle]="{
                     border:
-                      value.isError === 1
+                      value.isError >= 1
                         ? '2px solid red'
                         : value.isError === 0 && value.IsUpdated === 0
                         ? '1px solid lightgray'
@@ -290,12 +308,12 @@
                 />
                 <span
                   *ngIf="
-                    value.DocumentUpdates && value.DocumentUpdates.OldValue
+                    value.DocumentUpdates && value?.DocumentUpdates?.OldValue
                   "
                 >
                   <span class="old_value"
                     >Prev:
-                    <span style="color: #f38a6b"
+                    <span style="color: #f38a6b" [title]="value?.DocumentUpdates?.OldValue"
                       >"{{ value.DocumentUpdates.OldValue }}"</span
                     ></span
                   >
@@ -382,7 +400,7 @@
                         "
                         [ngStyle]="{
                           border:
-                            line.value.isError === 1
+                            line.value.isError >= 1
                               ? '2px solid red'
                               : line.value.isError === 0 &&
                                 line.value.IsUpdated === 0
@@ -399,7 +417,7 @@
                   </div>
                   <div
                     *ngIf="
-                      line.value?.isError == 1 &&
+                      line.value?.isError >= 1 &&
                       item.TagName != 'S.No' &&
                       item.TagName != 'Actions'
                     "
@@ -421,7 +439,7 @@
                   >
                     <span class="old_value"
                       >Prev:
-                      <span style="color: #f38a6b"
+                      <span style="color: #f38a6b" [title]="line?.value?.OldValue"
                         >"{{ line.value.OldValue }}"</span
                       ></span
                     >
@@ -430,6 +448,35 @@
               </td>
             </tr>
           </table>
+        </div>
+        <!-- Cost -->
+        <div
+          class="tab-pane fade"
+          id="cost"
+          role="tabpanel"
+          aria-labelledby="cost-tab"
+        >
+        <div  *ngFor="let a of costAllocation; let i = index">
+          <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
+          <div class="displayFlex">
+            <div *ngFor="let b of allocationFileds">
+            
+              <div style="position: relative">
+                <label class="label-head" style="margin-bottom: -5px"
+                  >{{ b.header }}             </label>
+                <input
+                  #inputv
+                  type="text"
+                  [value]="a[b.field]"
+                  [title]="a[b.field]"
+                  disabled
+                  class="form-control mb-1 inputHeight"
+                />
+              </div>
+            </div>
+          </div>
+          
+        </div>
         </div>
 
         <!--LCM-->

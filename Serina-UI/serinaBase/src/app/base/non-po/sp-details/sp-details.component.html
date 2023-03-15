@@ -813,7 +813,7 @@
               >
                 <option value="NA"> NA </option>
                 <option value="mobile"> Mobile </option>
-                \<option value="fixed"> Fixed </option>
+                <option value="fixed"> Fixed </option>
               </select>
             </div>
             <div>
@@ -889,7 +889,7 @@
               </div> -->
             <div>
               <label class="label-head"
-                >Location <span class="req_clr">*</span></label
+                >Location </label
               ><br />
               <input
                 type="text"
@@ -1025,7 +1025,7 @@
                   </div> -->
                 </div>
                 <div>
-                  <span class="label-head">Business Unit (BU) <span class="req_clr">*</span> </span>
+                  <span class="label-head">{{allocationFileds.costCenter}} <span class="req_clr">*</span> </span>
                   <input
                     type="text"
                     formControlName="costCenter"
@@ -1035,7 +1035,7 @@
                   />
                 </div>
                 <div>
-                  <span class="label-head">Sub-ledger Code</span>
+                  <span class="label-head">{{allocationFileds.product}}</span>
                   <input
                     type="text"
                     formControlName="product"
@@ -1043,7 +1043,7 @@
                   />
                 </div>
                 <div>
-                  <span class="label-head">Subsidiary Code</span>
+                  <span class="label-head">{{allocationFileds.project}}</span>
                   <input
                     type="text"
                     formControlName="project"
@@ -1052,7 +1052,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >Company Code </span
+                    >{{allocationFileds.interco}} </span
                   >
                   <input
                     type="text"
@@ -1062,7 +1062,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >Sub-ledger Type </span
+                    >{{allocationFileds.segments}}</span
                   >
                   <input
                     type="text"
@@ -1072,7 +1072,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >BSMovements </span
+                    >{{allocationFileds.bsMovements}} </span
                   >
                   <input
                     type="text"
@@ -1082,7 +1082,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >Non Vat Item Codes </span
+                    >{{allocationFileds.fixedAssetDepartment}}</span
                   >
                   <input
                     type="text"
@@ -1092,7 +1092,7 @@
                 </div>
                 <div>
                   <span class="label-head"
-                    >VAT Item Code </span
+                    >{{allocationFileds.fixedAssetGroup}}</span
                   >
                   <input
                     type="text"
@@ -1103,7 +1103,7 @@
                 
                 <div *ngIf="source != 'EBS'">
                   <span class="label-head"
-                    >Object Code <span class="req_clr">*</span></span
+                    >{{allocationFileds.mainAccount}}<span class="req_clr">*</span></span
                   >
                   <input
                     type="text"

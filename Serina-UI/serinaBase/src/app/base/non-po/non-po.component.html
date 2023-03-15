@@ -3,6 +3,25 @@
 </div>
 <div class="container-fluid p-0">
   <div *ngIf="vendorList">
+
+    <!-- <div *ngIf="!initialViewVendor">
+      <h6 class="headh6">Service provider Details - {{venderdetails.ServiceProviderName}}</h6>
+    </div> -->
+
+
+    <div *ngIf="initialViewVendor" class="mb-3" style="display: flex;">
+
+
+      <div class="positionCreateUpload" style="top:44px;right: 130px;">
+        <div class="input-group  uni_dwn_btn" style="left: -45px;">
+          <input #serachStr type="text" class="searchInput b-r-right-0" placeholder="Search Account">
+          <button class="btnUpload b-r-left-0 mr-2 relate" (click)="accntSearch(serachStr.value)">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="initialViewVendor" class="mat-elevation-z8 table_max_height">
 
       <div class="searchBar">

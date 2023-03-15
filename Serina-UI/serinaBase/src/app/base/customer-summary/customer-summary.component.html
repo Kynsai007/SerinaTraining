@@ -41,7 +41,7 @@
         (change)="selectEntityFilter($event.target.value)"
       >
         <option value="">Select Entity</option>
-        <option value="ALL">ALL</option>
+        <option value="ALL" selected>ALL</option>
         <option *ngFor="let entity of entity" [value]="entity.idEntity">
           {{ entity.EntityName }}
         </option>

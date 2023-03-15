@@ -16,7 +16,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {
@@ -27,6 +27,7 @@ import { TaggingService } from 'src/app/services/tagging.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { MatSidenav } from '@angular/material/sidenav';
+import { take } from 'rxjs/operators';
 
 export interface UserData {
   name: string;
@@ -46,7 +47,7 @@ export interface costData {
   naturalAccountWater?: string;
   naturalAccountHousing?: string;
   costCenter: string;
-  Element:string;
+  Element: string;
   project: string;
   product: string;
   segments: string,
@@ -184,7 +185,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   allSearchInvoiceString: any;
   disableCostAllocationBoolean: boolean;
 
-  @ViewChild('sidenav') sidenav :MatSidenav;
+  @ViewChild('sidenav') sidenav: MatSidenav;
   events: string[] = [];
   opened: boolean;
   filteredOP_unit: any[];
@@ -196,7 +197,9 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   elementList = [];
   statusData = [];
-  historyPopBool:boolean;
+  historyPopBool: boolean;
+  allocationFileds = {};
+  ERP: string = 'Dynamics';
 
   constructor(
     private fb: FormBuilder,
@@ -211,15 +214,25 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     private datePipe: DatePipe,
     private primengConfig: PrimeNGConfig
   ) {
+    this.sharedService.getSpAccnt().pipe(take(1)).subscribe((data) => {
+      if (data.length > 0) {
+        setTimeout(() => {
+          this.updateSpAccount(data[0])
+        }, 1000);
+      }
+    });
     routeIn.params.subscribe((params) => {
       this.setupComponent(params['someParam']);
     });
   }
 
   ngOnInit(): void {
+    this.ERP = this.storageService.configData.erpname;
+    console.log(this.ERP)
     this.toGetEntity();
     this.getOPunits();
     this.getApprover();
+    this.ERPCostAllocation();
     this.bgColorCode = this.storageService.bgColorCode;
     this.initialViewVendor = this.sharedService.initialViewSpBoolean;
     this.vendorList = this.sharedService.spListBoolean;
@@ -227,7 +240,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.SpAccountDatails = this.initialForm();
     this.primengConfig.ripple = true;
     // this.DisplayServiceProviderDetails();
-    
+
     this.prepareCostData();
     // this.viewFullDetails(e);
     this.DisplayspAccountDetails();
@@ -237,6 +250,45 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.Inputmask();
     this.getElementData(this.spDetails);
 
+  }
+  ERPCostAllocation() {
+    if (this.ERP == 'JD') {
+      this.allocationFileds = {
+        costCenter: 'Business Unit',
+        product: 'Sub-ledger Code',
+        project: 'Subsidiary Code',
+        interco: 'Company Code',
+        segments: 'Sub-ledger Type',
+        bsMovements: 'BSMovements',
+        fixedAssetDepartment: 'Non Vat Item Codes',
+        fixedAssetGroup: 'Vat ItemCode',
+        mainAccount: 'Object Code'
+      }
+    } else if (this.ERP == 'Dynamics') {
+      this.allocationFileds = {
+        costCenter: 'Cost Center',
+        product: 'Product',
+        project: 'Project',
+        interco: 'Interco',
+        segments: 'Segments',
+        bsMovements: 'BSMovements',
+        fixedAssetDepartment: 'fixedAssetDepartment',
+        fixedAssetGroup: 'fixedAssetGroup',
+        mainAccount: 'mainAccount'
+      }
+    } else if (this.ERP == 'SAP') {
+      this.allocationFileds = {
+        costCenter: 'Cost Center',
+        product: 'Product',
+        project: 'Project',
+        interco: 'Interco',
+        segments: 'Segments',
+        bsMovements: 'BSMovements',
+        fixedAssetDepartment: 'fixedAssetDepartment',
+        fixedAssetGroup: 'fixedAssetGroup',
+        mainAccount: 'mainAccount'
+      }
+    }
   }
   Inputmask() {
     this.columnSPAccont = [
@@ -286,7 +338,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.fb.group({
       entityID: [{ value: this.spDetails.idEntity }],
       serviceProviderNameAccount: [
-        { value: this.spDetails.ServiceProviderName},
+        { value: this.spDetails.ServiceProviderName },
       ],
       Email: [''],
       UserName: ['', Validators.required],
@@ -298,9 +350,9 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       Address: '',
       ScheduleDateTime: Date,
       isActive: [true],
-      LocationCode: ['', Validators.required],
+      LocationCode: [''],
       operatingUnit: '',
-      approver: [{ value: this.spDetails.ApproverID}],
+      approver: [{ value: this.spDetails.ApproverID }],
       costDetails: this.fb.array([]),
     });
   }
@@ -406,9 +458,9 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     if (input.value > 100) input.value = 100;
   }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() { }
 
-  submitAccountdata() {}
+  submitAccountdata() { }
 
   toCreateNew() {
     this.vendorList = false;
@@ -429,7 +481,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.SpAccountDatails.patchValue({
       serviceProviderNameAccount: this.spDetails.ServiceProviderName,
       serviceProviderID: this.sharedService.spID,
-      entityID : this.spDetails.idEntity,
+      entityID: this.spDetails.idEntity,
       isActive: true,
     });
     this.selectedEntity(this.spDetails.idEntity);
@@ -446,31 +498,31 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getElementData(e);
   }
 
-  getElementData(e){
-    if((e.ServiceProviderName =='Dubai Electricity & Water Authority') || e.ServiceProviderName =='DUBAI ELECTRICITY AND WATER AUTHORITY'){
+  getElementData(e) {
+    if ((e.ServiceProviderName == 'Dubai Electricity & Water Authority') || e.ServiceProviderName == 'DUBAI ELECTRICITY AND WATER AUTHORITY') {
       this.elementList = [
-        { id: 1, name: 'Water'},
-        { id: 2, name: 'Electricity'},
-        { id: 3, name: 'Housing'},
-        { id: 4, name: 'Sewerage'},
-        { id: 5, name: 'Others'},
+        { id: 1, name: 'Water' },
+        { id: 2, name: 'Electricity' },
+        { id: 3, name: 'Housing' },
+        { id: 4, name: 'Sewerage' },
+        { id: 5, name: 'Others' },
       ]
-    } else if(e.ServiceProviderName =='EMIRATES INTEGRATED TELECOMMUNICATIONS PJSC(DU)'){
+    } else if (e.ServiceProviderName == 'EMIRATES INTEGRATED TELECOMMUNICATIONS PJSC(DU)') {
       this.elementList = [
-        { id: 1, name: 'Usage charges'},
-        { id: 2, name: 'Monthly Fixed Charges'},
-        { id: 3, name: 'TV Channels'},
-        { id: 4, name: 'Others'}
+        { id: 1, name: 'Usage charges' },
+        { id: 2, name: 'Monthly Fixed Charges' },
+        { id: 3, name: 'TV Channels' },
+        { id: 4, name: 'Others' }
       ]
-    } else if(e.ServiceProviderName =='ETISALAT'){
+    } else if (e.ServiceProviderName == 'ETISALAT') {
       this.elementList = [
-        { id: 1, name: 'Usage_Credit'},
-        { id: 2, name: 'International_Calls'},
-        { id: 3, name: 'Others'}
+        { id: 1, name: 'Usage_Credit' },
+        { id: 2, name: 'International_Calls' },
+        { id: 3, name: 'Others' }
       ]
     } else {
       this.elementList = [
-        { id: 1, name: 'Others'}
+        { id: 1, name: 'Others' }
       ]
     }
   }
@@ -522,7 +574,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.spaccountreaddata = [];
     this.finalArray = [];
     this.SpinnerService.show();
-    this.sharedService.readserviceprovideraccount().subscribe((data: any) => {
+    this.sharedService.readserviceprovideraccount(`sp_id=${this.sharedService.spID}`).subscribe((data: any) => {
       data.forEach((element) => {
         this.mergedData = {
           ...element.Credentials,
@@ -820,25 +872,25 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.SpAccountDatails.controls['Account'].disable();
   }
 
-  getOPunits(){
-    this.sharedService.readOPUnits().subscribe((data:any)=>{
+  getOPunits() {
+    this.sharedService.readOPUnits().subscribe((data: any) => {
       this.OPUnits = data;
     })
   }
 
-  getApprover(){
-    this.sharedService.readSPApprovers().subscribe((data:any)=>{
+  getApprover() {
+    this.sharedService.readSPApprovers().subscribe((data: any) => {
       this.approverList = data;
     })
   }
-  onSelectAppprover(val){
+  onSelectAppprover(val) {
   }
 
-  selectOP_unit(event){
+  selectOP_unit(event) {
 
   }
 
-  filterOP_unit(event){
+  filterOP_unit(event) {
     // let filtered: any[] = [];
     // let query = event.query;
     // for (let i = 0; i < this.entityList.length; i++) {
@@ -886,7 +938,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     let item = this.entityList.filter((item) => {
       return value == item.idEntity;
     });
-    this.source = item[0].sourceSystemType;
+    this.source = item[0]?.sourceSystemType;
     this.sharedService.selectedEntityId = value;
     this.selectedEntityId = value;
     this.sharedService.getEntitybody().subscribe((data: any) => {
@@ -1032,20 +1084,22 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       alert('No Data to import');
     }
   }
-  checkLogs(id,accnt){
+  checkLogs(id, accnt) {
     this.historyPopBool = true;
     this.acc_num = accnt;
     this.readAccLogs(id);
   }
-  readAccLogs(id){
-    this.sharedService.getaccntLogs(id).subscribe((data:any)=>{
+  readAccLogs(id) {
+    this.sharedService.getaccntLogs(id).subscribe((data: any) => {
       this.statusData = data.result;
-    },err=>{
+    }, err => {
       this.messageService.add(this.errorObject)
     })
   }
 
   ngOnDestroy(): void {
     this.vendorList = false;
+    this.sharedService.spAccountSub.next([]);
+
   }
 }

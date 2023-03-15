@@ -118,6 +118,7 @@ export class InvoiceComponent implements OnInit {
   // searchRejStr = '';
   GRNExceptionTab: any;
   GRNExcpLength: number;
+  GRNCreateBool: boolean;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -156,6 +157,7 @@ export class InvoiceComponent implements OnInit {
 
   ngOnInit(): void {
     this.userDetails = this.authService.currentUserValue;
+    this.GRNCreateBool = this.dataService.configData?.enableGRN;
     this.APIParams = `?offset=1&limit=50`;
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;

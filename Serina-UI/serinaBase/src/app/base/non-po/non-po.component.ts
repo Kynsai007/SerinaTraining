@@ -1,13 +1,10 @@
-import { TaggingService } from './../../services/tagging.service';
-import { element } from 'protractor';
+
 import { SharedService } from 'src/app/services/shared.service';
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { ControlContainer, FormArray, FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
+import { Component, OnInit} from '@angular/core';
+import { FormArray, FormGroup,} from '@angular/forms';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { DatePipe, Location } from '@angular/common';
 import { NgxSpinnerService } from "ngx-spinner";
 import {
-  ConfirmationService,
   MessageService,
   PrimeNGConfig
 } from "primeng/api";
@@ -40,9 +37,9 @@ export function matcherFunction(url: UrlSegment[]) {
   templateUrl: './non-po.component.html',
   styleUrls: ['./non-po.component.scss']
 })
-export class NonPoComponent implements OnInit, AfterViewInit {
-  viewType= 'invoice'
-  users: UserData[] ;
+export class NonPoComponent implements OnInit {
+  viewType = 'invoice'
+  users: UserData[];
 
   openFilter: boolean = false;
 
@@ -57,15 +54,6 @@ export class NonPoComponent implements OnInit, AfterViewInit {
   createSp: boolean;
   createspAccount: boolean = false;
 
-  AddspName: string;
-  erpsCode: any;
-  LocationSp: any;
-  addressSp: any;
-
-  LocationCode;
-  spName;
-  citySp;
-  countrysp;
 
   providerDetailsForm: FormGroup;
   accounts: FormArray;
@@ -81,14 +69,7 @@ export class NonPoComponent implements OnInit, AfterViewInit {
   mergedData: any[];
   finalArray = [];
   serviceproviderreaddata: Object;
-  spbyidreaddata: Object;
-  spaccountreaddata: Object;
-  showPaginator: boolean;
-  spAccountname: any;
-  spinvoicereaddata: Object;
-  SpAccountDatails: FormGroup;
-  addSpAccountBoolean: boolean;
-  EditSpAccountBoolean: boolean;
+
 
   entityList: any[];
   entityBodyList: any[];
@@ -97,16 +78,6 @@ export class NonPoComponent implements OnInit, AfterViewInit {
   editable: boolean = false;
   savebooleansp = false;
 
-  spUpdateName: string = '';
-  spUpdateCity: string = '';
-  spUpdateCountry: string = '';
-  spUpdateLocationCode: string = '';
-  spUpdateEmail: string = '';
-  spUpdateContact: string = '';
-  spUpdateCompany: string = '';
-  spUpdatezipcode: string = '';
-  spUpdatePhone: string = '';
-  spUpdateAddress: string = '';
 
   selectedEntityId: number;
   selectedEntityBodyId: number;
@@ -133,6 +104,7 @@ export class NonPoComponent implements OnInit, AfterViewInit {
     summary: "Updated",
     detail: "Updated Successfully"
   }
+  showPaginator: boolean;
 
 
   constructor(
@@ -140,48 +112,28 @@ export class NonPoComponent implements OnInit, AfterViewInit {
     private messageService: MessageService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
-    private permissionService : PermissionService,
-    private router :Router,
+    private permissionService: PermissionService,
+    private router: Router,
     private primengConfig: PrimeNGConfig) {
-
-      // if (this.route.url.endsWith('serviceProvider/invoice')) {
-      //   this.viewType = 'invoice';
-      // } else if (this.route.url.endsWith('serviceProvider/accountDetails')) {
-      //   this.viewType = 'accountDetails'
-      // } else if (this.route.url.endsWith('serviceProvider/itemList')) {
-      //   this.viewType = 'itemList'
-      // } else if (this.route.url.endsWith('serviceProvider/spDetails')) {
-      //   this.viewType = 'spDetails'
-      // } 
-
-      // this.routeIn.url.subscribe(params => {
-      //   console.log(params[0].path);
-      // })
   }
 
   ngOnInit(): void {
-    if(this.permissionService.vendor_SP_PageAccess == true){
+    if (this.permissionService.vendor_SP_PageAccess == true) {
       this.initialViewVendor = this.sharedService.initialViewSpBoolean;
       this.vendorList = this.sharedService.spListBoolean;
       this.venderdetails = this.sharedService.spDetailsArray;
       this.primengConfig.ripple = true;
       this.DisplayServiceProviderDetails();
       this.toGetEntity();
-      if(this.initialViewVendor == false){
+      if (this.initialViewVendor == false) {
         // this.DisplayspAccountDetails();
         // this.DisplaySpDetailsById();
         // this.DisplaySpInvoice();
       }
-    } else{
+    } else {
       alert("Sorry!, you do not have access");
       this.router.navigate(['customer/invoice/allInvoices'])
     }
-    
-  }
-
-
-  ngAfterViewInit() {
-
 
   }
 
@@ -192,68 +144,35 @@ export class NonPoComponent implements OnInit, AfterViewInit {
     this.sharedService.spListBoolean = false;
     this.savedatabooleansp = true;
   }
-  toCreateNewAccount() {
-    this.vendorList = false;
-    this.sharedService.spListBoolean = false;
-    this.createspAccount = true;
-    this.addSpAccountBoolean = true;
-    this.EditSpAccountBoolean = false;
-  }
+
   viewFullDetails(e) {
-    // this.route.navigate([`/customer/serviceProvider/SpDetails/${e.idServiceProvider}`])
-    // this.activerow = "activeSp";
     this.sharedService.initialViewSpBoolean = false
     this.initialViewVendor = this.sharedService.initialViewSpBoolean;
-    // this.sharedService.vendorFullDetails = e;
     this.venderdetails = e;
     this.sharedService.spDetailsArray = e;
     this.sharedService.spID = e.idServiceProvider;
-    // this.DisplayspAccountDetails();
-    // this.DisplaySpDetailsById();
-    // this.DisplaySpInvoice();
-
   }
   colseDiv() {
     this.sharedService.initialViewSpBoolean = true;
     this.initialViewVendor = this.sharedService.initialViewSpBoolean;
   }
-  getDisplayInitialBoolean(value){
+  getDisplayInitialBoolean(value) {
     this.initialViewVendor = value;
-    if(value === true){
+    if (value === true) {
       this.ngOnInit();
     }
   }
-  displayAddspDialogmethod(value){
+  displayAddspDialogmethod(value) {
     this.displayAddspDialog = value;
   }
 
-  get f() { return this.providerDetailsForm.controls; }
-
-  onEdit() {
-    this.editable = true;
-    this.savebooleansp = true;
-  }
-  onCancelAccount() {
-    this.vendorList = true;
-    this.sharedService.spListBoolean = true;
-    this.createspAccount = false;
-    this.SpAccountDatails.reset();
-  }
-  onCancel() {
-    this.editable = false;
-    this.savebooleansp = false;
-    // this.initialViewVendor = true;
-    // this.vendorList = true;
-    // this.createspAccount = false;
-    // this.SpAccountDatails.reset();
-  }
   DisplayServiceProviderDetails() {
     this.SpinnerService.show();
-    this.sharedService.readserviceprovider().subscribe((data:any) => {
+    this.sharedService.readserviceprovider().subscribe((data: any) => {
 
       let mergerdArray = [];
       data.forEach(element => {
-        let spData = {...element.Entity,...element.ServiceProvider};
+        let spData = { ...element.Entity, ...element.ServiceProvider };
         mergerdArray.push(spData);
       });
       this.serviceproviderreaddata = mergerdArray;
@@ -265,31 +184,9 @@ export class NonPoComponent implements OnInit, AfterViewInit {
       if (res.length > 10) {
         this.showPaginator = true;
       }
-    }, err =>{
+    }, err => {
       this.SpinnerService.hide();
     })
-  }
-
-  createNewSp() {
-    let newSpData = {
-      "ServiceProviderName": this.AddspName,
-      "ServiceProviderCode": this.erpsCode,
-      "City": this.citySp,
-      "Country": this.countrysp,
-      "LocationCode": this.LocationSp
-    }
-    this.sharedService.createserviceprovider(JSON.stringify(newSpData)).subscribe((data) => {
-      if (data.result == 'saved to db') {
-        this.messageService.add(this.addObject);
-        // this.vendorList=true;
-        this.DisplayServiceProviderDetails();
-        // this.DisplaySpDetailsById();
-        // this.venderdetails = data.record.ServiceProviderName;
-        this.displayAddspDialog = false;
-      } else {
-        this.messageService.add(this.errorObject);
-      }
-    });
   }
 
   toGetEntity() {
@@ -299,7 +196,32 @@ export class NonPoComponent implements OnInit, AfterViewInit {
     })
   }
 
-
-
+  accntSearch(val) {
+    this.SpinnerService.show();
+    let spAccount = []
+    this.sharedService.readserviceprovideraccount(`sp_acc_number=${val}`).subscribe((data: any) => {
+      data.forEach((element) => {
+        let mergedData = {
+          ...element.Credentials,
+          ...element.Entity,
+          ...element.EntityBody,
+          ...element.ServiceAccount,
+          ...element.ServiceProvider
+        };
+        spAccount.push(mergedData)
+      });
+      if (spAccount.length > 0) {
+        this.viewFullDetails(spAccount[0])
+        this.sharedService.spAccountSub.next(spAccount);
+      } else {
+        this.errorObject.detail = `${val} account is not exist in the Serina`;
+        this.messageService.add(this.errorObject);
+      }
+      this.SpinnerService.hide();
+    });
+  }
+  ngOnDestroy() {
+    this.sharedService.spAccountSub.next([]);
+  }
 
 }

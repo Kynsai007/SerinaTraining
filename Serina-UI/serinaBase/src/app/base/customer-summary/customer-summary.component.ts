@@ -54,7 +54,7 @@ export class CustomerSummaryComponent implements OnInit {
   ColumnLengthVendor: number;
   ColumnLengthSP: number;
   entity: any;
-  selectedEntityValue: any;
+  selectedEntityValue = 'ALL';
   selectedDateValue: string;
 
   constructor(

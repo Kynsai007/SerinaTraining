@@ -221,6 +221,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   content_type: any;
   imageCanvas: HTMLImageElement;
   addrejectcmtBool: boolean;
+
+  costAllocation = [];
+  allocationFileds = [];
+  ERP:string;
+
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -241,10 +246,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.rejectReason = this.dataService.rejectReason;
+    this.ERP = this.dataService.configData.erpname;
     this.route.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;
     })
     this.init();
+    this.ERPCostAllocation();
     this.AddPermission();
     this.readVendors();
     if (this.tagService.editable == true) {
@@ -323,6 +330,48 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
   }
 
+  ERPCostAllocation(){
+    if(this.ERP == 'JD'){
+      this.allocationFileds= [
+        { header: 'Element', field: 'Element' },
+        { header: 'Business Unit', field: 'costCenter' },
+        { header: 'Company Code', field: 'interco' },
+        { header: 'Non Vat ItemCodes', field: 'fixedAssetDepartment' },
+        { header: 'Vat ItemCode', field: 'fixedAssetGroup' },
+        { header: 'Object Code', field: 'mainAccount' },
+        { header: 'Element Factor', field: 'elementFactor' },
+      ]
+    } else if( this.ERP == 'Dynamics'){
+      this.allocationFileds= [
+        { header: 'Element', field: 'Element' },
+        { header: 'Cost Center', field: 'costCenter' },
+        { header: 'Product', field: 'product' },
+        { header: 'Project', field: 'project' },
+        { header: 'Interco', field: 'interco' },
+        { header: 'Segments', field: 'segments' },
+        { header: 'BSMovements', field: 'bsmovements' },
+        { header: 'fixedAssetDepartment', field: 'fixedAssetDepartment' },
+        { header: 'fixedAssetGroup', field: 'fixedAssetGroup' },
+        { header: 'Main Account', field: 'mainAccount' },
+        { header: 'Element Factor', field: 'elementFactor' },
+      ]
+    } else if( this.ERP == 'SAP'){
+      this.allocationFileds= [
+        { header: 'Element', field: 'Element' },
+        { header: 'Cost Center', field: 'costCenter' },
+        { header: 'Product', field: 'product' },
+        { header: 'Project', field: 'project' },
+        { header: 'Interco', field: 'interco' },
+        { header: 'Segments', field: 'segments' },
+        { header: 'BSMovements', field: 'bsmovements' },
+        { header: 'fixedAssetDepartment', field: 'fixedAssetDepartment' },
+        { header: 'fixedAssetGroup', field: 'fixedAssetGroup' },
+        { header: 'Main Account', field: 'mainAccount' },
+        { header: 'Element Factor', field: 'elementFactor' },
+      ]
+    }
+  }
+
   idleTimer(time, str) {
     this.timer = new IdleTimer({
       timeout: time, //expired after 180 secs
@@ -386,7 +435,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SharedService.getInvoiceInfo().subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
-        if (data.ok.uploadtime) {
+        data?.ok?.cost_alloc?.forEach(cost=>{
+          let merge = {...cost.AccountCostAllocation }
+          this.costAllocation.push(merge);
+        })
+    
+        if(data?.ok?.uploadtime){
           this.uploadtime = data.ok.uploadtime;
         }
         data.ok.headerdata.forEach((element) => {

@@ -199,8 +199,8 @@ export class LoginPageComponent implements OnInit {
     this.settingService.readConfig().subscribe((resp:any)=>{
       resp.InstanceModel.vendorInvoices = true;
       resp.InstanceModel.serviceInvoices = true;
-      this.instanceInfo = resp.InstanceModel;
-      this.dataStoreService.configData = resp.InstanceModel ;
+      this.instanceInfo = {...resp.InstanceModel,...resp.ERPModel };
+      this.dataStoreService.configData = this.instanceInfo ;
       this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
     })
 
