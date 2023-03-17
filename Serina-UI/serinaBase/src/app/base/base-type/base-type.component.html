@@ -45,30 +45,6 @@
         <div
           class="navLink"
           routerLinkActive="active"
-          data-text="Summary"
-          [routerLink]="'documentSummary'"
-        >
-          <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
-            receipt
-          </span>
-          Summary
-        </div>
-
-        <div
-          class="navLink"
-          routerLinkActive="active"
-          data-text="Document Status"
-          [routerLink]="'invoice'"
-        >
-          <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
-            receipt
-          </span>
-          Document Status
-        </div>
-
-        <div
-          class="navLink"
-          routerLinkActive="active"
           data-text="Exceptions"
           [routerLink]="exceptionRoute"
           (click)="showInnerException()"
@@ -136,6 +112,32 @@
           </span>
           Create GRN
         </div>
+
+        <div
+          class="navLink"
+          routerLinkActive="active"
+          data-text="Document Status"
+          [routerLink]="'invoice'"
+        >
+          <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
+            receipt
+          </span>
+          Document Status
+        </div>
+
+        <div
+        class="navLink"
+        routerLinkActive="active"
+        data-text="Summary"
+        [routerLink]="'documentSummary'"
+      >
+        <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
+          receipt
+        </span>
+        Summary
+      </div>
+
+        
         <div
           class="navLink"
           routerLinkActive="active"
@@ -347,7 +349,7 @@
             </div>
 
             <div
-              *ngIf="uploadPermissionBoolean"
+              *ngIf="uploadPermissionBoolean &&vendorInvoiceAccess"
               class="navLink"
               routerLinkActive="active"
               data-text="Upload"
@@ -358,19 +360,77 @@
               </span>
               Upload
             </div>
-
             <div
-              class="navLink"
-              routerLinkActive="active"
-              data-text="Summary"
-              [routerLink]="'documentSummary'"
-            >
-              <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
-                receipt
-              </span>
-              Summary
-            </div>
+            class="navLink"
+            routerLinkActive="active"
+            data-text="Exceptions"
+            [routerLink]="exceptionRoute"
+            (click)="showInnerException()"
+            *ngIf="excpetionPageAccess"
+          >
+            <i
+              class="fa fa-pencil-square-o f-18 ml-r-12"
+              aria-hidden="true"
+              routerLinkActive="ml-9"
+            ></i>
 
+            Exceptions
+          </div>
+          <ul *ngIf="openBooleanException" class="showHide f-13">
+            <li
+              class="navLink"
+              *ngIf="vendorInvoiceAccess"
+              id="ex_sub"
+              [routerLink]="'ExceptionManagement'"
+              [ngClass]="
+                router.url == '/customer/ExceptionManagement'
+                  ? 'active'
+                  : 'navLink'
+              "
+            >
+              Vendor Based
+            </li>
+            <li
+              class="navLink"
+              id="ex_sub"
+              *ngIf="serviceInvoiceAccess"
+              [routerLink]="'ExceptionManagement/Service_ExceptionManagement'"
+              [ngClass]="
+                router.url ==
+                '/customer/ExceptionManagement/Service_ExceptionManagement'
+                  ? 'active'
+                  : 'navLink'
+              "
+            >
+              Service Based OCR
+            </li>
+          </ul>
+
+          <div
+            *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess"
+            class="navLink"
+            routerLinkActive="active"
+            data-text="Approval"
+            [routerLink]="'approved'"
+          >
+            <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
+              verified
+            </span>
+            Approval
+          </div>
+          <div
+            class="navLink"
+            routerLinkActive="active"
+            data-text="Create GRN"
+            [routerLink]="'Create_GRN_inv_list'"
+            *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
+          >
+            <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
+              verified
+            </span>
+            Create GRN
+          </div>
+      
             <div
               class="navLink"
               routerLinkActive="active"
@@ -386,73 +446,15 @@
             <div
               class="navLink"
               routerLinkActive="active"
-              data-text="Exceptions"
-              [routerLink]="'ExceptionManagement'"
-              (click)="showInnerException()"
-              *ngIf="excpetionPageAccess"
-            >
-              <i
-                class="fa fa-pencil-square-o f-18 ml-r-12"
-                aria-hidden="true"
-                routerLinkActive="ml-9"
-              ></i>
-
-              Exceptions
-            </div>
-            <ul *ngIf="openBooleanException" class="showHide f-13">
-              <li
-                class="navLink"
-                *ngIf="vendorInvoiceAccess"
-                id="ex_sub"
-                [routerLink]="'ExceptionManagement'"
-                [ngClass]="
-                  router.url == '/customer/ExceptionManagement'
-                    ? 'active'
-                    : 'navLink'
-                "
-              >
-                Vendor Based
-              </li>
-              <li
-                class="navLink"
-                id="ex_sub"
-                *ngIf="serviceInvoiceAccess"
-                [routerLink]="'ExceptionManagement/Service_ExceptionManagement'"
-                [ngClass]="
-                  router.url ==
-                  '/customer/ExceptionManagement/Service_ExceptionManagement'
-                    ? 'active'
-                    : 'navLink'
-                "
-              >
-                Service Based OCR
-              </li>
-            </ul>
-
-            <div
-              *ngIf="financeapproveDisplayBoolean"
-              class="navLink"
-              routerLinkActive="active"
-              data-text="Approval"
-              [routerLink]="'approved'"
+              data-text="Summary"
+              [routerLink]="'documentSummary'"
             >
               <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
-                verified
+                receipt
               </span>
-              Approval
+              Summary
             </div>
-            <div
-              class="navLink"
-              routerLinkActive="active"
-              data-text="Create GRN"
-              [routerLink]="'Create_GRN_inv_list'"
-              *ngIf="GRNCreationAccess && GRNPageAccess"
-            >
-              <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
-                verified
-              </span>
-              Create GRN
-            </div>
+
             <div
               class="navLink"
               routerLinkActive="active"

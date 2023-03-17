@@ -198,8 +198,6 @@ export class LoginPageComponent implements OnInit {
 
   getInstancedata(){
     this.settingService.readConfig().subscribe((resp:any)=>{
-      resp.InstanceModel.vendorInvoices = true;
-      resp.InstanceModel.serviceInvoices = true;
       this.instanceInfo = {...resp.InstanceModel,...resp.ERPModel };
       this.dataStoreService.configData = this.instanceInfo ;
       this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
@@ -365,5 +363,13 @@ export class LoginPageComponent implements OnInit {
         alert('The instance is inactive. Please contact Service Admin.');
         sessionStorage.clear();
       }
+  }
+
+  signUpLink(){
+    if(this.vendorInvoiceAccess && this.isVendorPortalRequired){
+      this.router.navigate(['/registration-page/signUp'])
+    } else {
+      alert('Sorry! Vendor portal is not opted by the Admin, Please contact Service Admin to enable.');
+    }
   }
 }

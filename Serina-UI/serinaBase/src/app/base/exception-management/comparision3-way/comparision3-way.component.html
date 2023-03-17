@@ -273,7 +273,13 @@
                     {{ i + 1 }}
                   </div>
                 </td>
-                <td class="f-13" *ngFor="let tagName of lineDisplayData">
+                <td class="f-13" *ngFor="let tagName of lineDisplayData"
+                    [ngStyle]="{
+                      width:
+                        tagName?.tagname == 'Description'
+                          ? '-webkit-fill-available'
+                          : '200px'
+                    }">
                   <span class="f-13 p-2">{{ tagName.tagname }}</span>
                   <div *ngFor="let data of tagName.items">
                     <div *ngFor="let data2 of data.linedetails" class="mb-3">
@@ -323,7 +329,7 @@
                               width:
                                 tagName.tagname == 'Description'
                                   ? '-webkit-fill-available'
-                                  : 'auto'
+                                  : '60px'
                             }"
                           />
                           <span
@@ -352,6 +358,12 @@
                             style="text-transform: lowercase"
                             disabled
                             [ngClass]="!editable ? 'input_disabled' : ''"
+                            [ngStyle]="{
+                              width:
+                                tagName?.tagname == 'Description'
+                                  ? '-webkit-fill-available'
+                                  : '60px'
+                            }"
                           />
                           <!-- <span *ngIf="(approveBtn_boolean)" class="prev_value">prev: 345</span> -->
                           <!-- <div class="f-12">
