@@ -79,6 +79,7 @@ export class LoginPageComponent implements OnInit {
   tokenOTP: any;
   instanceInfo:any;
   isVendorPortalRequired: boolean;
+  vendorInvoiceAccess: any;
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
@@ -202,6 +203,7 @@ export class LoginPageComponent implements OnInit {
       this.instanceInfo = {...resp.InstanceModel,...resp.ERPModel };
       this.dataStoreService.configData = this.instanceInfo ;
       this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
+      this.vendorInvoiceAccess = this.instanceInfo?.vendorInvoices;
     })
 
   }
@@ -342,7 +344,11 @@ export class LoginPageComponent implements OnInit {
         } else if (data.user_type === 'customer_portal') {
           let route = '';
             if(data.userdetails?.landingPage == 'Upload'){
-              route = '/uploadInvoices'
+              if(this.vendorInvoiceAccess){
+                route = '/uploadInvoices'
+              } else {
+                route = '/invoice/allInvoices'
+              }
             } else if(data.userdetails?.landingPage == 'Document Status'){
               route = '/invoice/allInvoices'
             } else if(data.userdetails?.landingPage == 'Dashboard'){

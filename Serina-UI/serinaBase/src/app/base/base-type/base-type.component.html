@@ -30,7 +30,7 @@
         </div>
 
         <div
-          *ngIf="uploadPermissionBoolean"
+          *ngIf="uploadPermissionBoolean && vendorInvoiceAccess"
           class="navLink"
           routerLinkActive="active"
           data-text="Upload"
@@ -70,7 +70,7 @@
           class="navLink"
           routerLinkActive="active"
           data-text="Exceptions"
-          [routerLink]="'ExceptionManagement'"
+          [routerLink]="exceptionRoute"
           (click)="showInnerException()"
           *ngIf="excpetionPageAccess"
         >
@@ -113,7 +113,7 @@
         </ul>
 
         <div
-          *ngIf="financeapproveDisplayBoolean"
+          *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess"
           class="navLink"
           routerLinkActive="active"
           data-text="Approval"
@@ -129,7 +129,7 @@
           routerLinkActive="active"
           data-text="Create GRN"
           [routerLink]="'Create_GRN_inv_list'"
-          *ngIf="GRNCreationAccess && GRNPageAccess"
+          *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
         >
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             verified

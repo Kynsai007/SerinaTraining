@@ -243,6 +243,7 @@ export class RolesComponent implements OnInit {
   isAmountBasedON: boolean;
   isEvrythingGood: boolean;
   isVendorportalRequired: boolean;
+  vendorInvoiceAccess: boolean;
   constructor(
     private dataService: DataService,
     private messageService: MessageService,
@@ -279,6 +280,8 @@ export class RolesComponent implements OnInit {
         console.log( this.financeapproveDisplayBoolean,this.entityBaseApproveBoolean)
       this.addRoleBoolean = this.permissionService.addUserRoleBoolean;
       this.isVendorportalRequired = this.dataService?.configData?.enablevendorportal;
+      this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
+
     } else {
       this.alertBoolean = true;
       this.displayResponsive = true;

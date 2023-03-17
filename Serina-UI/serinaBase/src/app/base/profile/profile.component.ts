@@ -1,3 +1,4 @@
+import { DataService } from 'src/app/services/dataStore/data.service';
 import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { SettingsService } from 'src/app/services/settings/settings.service';
@@ -14,26 +15,25 @@ export class ProfileComponent implements OnInit {
   loginUser: any;
   editable: boolean = false;
   @ViewChild('profile') profile: NgForm;
-  landingPageObj = [
-    { id: 1, page: 'Upload' },
-    { id: 2, page: 'Document Status' },
-    { id: 3, page: 'Dashboard' },
-    { id: 4, page: 'Exception' },
-  ];
+  landingPageObj = [];
   uploadOpt = [
     { id: 1, page: 'Ideal Upload' },
     { id: 2, page: 'Quick Upload' },
     { id: 3, page: 'Both' },
-  ];
+  ];;
   username: string;
+  vendorInvoiceAccess: any;
   constructor(private authService: AuthenticationService,
     private settingService: SettingsService,
     private alert: AlertService,
-    private ms: MessageService) { }
+    private ms: MessageService,
+    private dataStoreService: DataService) { }
 
   ngOnInit(): void {
     this.loginUser = this.authService.currentUserValue;
     this.username = JSON.parse(sessionStorage.getItem('username'));
+    this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
+    this.config();
   }
   onEdit() {
     this.editable = true;
@@ -52,6 +52,22 @@ export class ProfileComponent implements OnInit {
   }
   onCancel() {
     this.editable = false;
+  }
+  config(){
+    if(this.vendorInvoiceAccess){
+      this.landingPageObj = [
+        { id: 1, page: 'Upload' },
+        { id: 2, page: 'Document Status' },
+        { id: 3, page: 'Dashboard' },
+        { id: 4, page: 'Exception' },
+      ];
+    } else {
+      this.landingPageObj = [
+        { id: 2, page: 'Document Status' },
+        { id: 3, page: 'Dashboard' },
+        { id: 4, page: 'Exception' },
+      ];
+    }
   }
 
 }

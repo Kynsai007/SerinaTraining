@@ -1,3 +1,4 @@
+import { DataService } from 'src/app/services/dataStore/data.service';
 import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
 import { AlertService } from './../../services/alert/alert.service';
 
@@ -56,6 +57,8 @@ export class CustomerSummaryComponent implements OnInit {
   entity: any;
   selectedEntityValue = 'ALL';
   selectedDateValue: string;
+  vendorInvoiceAccess: boolean;
+  serviceInvoiceAccess: boolean;
 
   constructor(
     private dateFilterService: DateFilterService,
@@ -64,7 +67,8 @@ export class CustomerSummaryComponent implements OnInit {
     private messageService: MessageService,
     private SpinnerService: NgxSpinnerService,
     private alertService: AlertService,
-    private ImportExcelService: ImportExcelService
+    private ImportExcelService: ImportExcelService,
+    private dataStoreService: DataService
   ) {}
 
   ngOnInit(): void {
@@ -72,6 +76,8 @@ export class CustomerSummaryComponent implements OnInit {
     this.readSummary('');
     this.findColumns();
     this.getEntitySummary();
+    this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
+    this.serviceInvoiceAccess = this.dataStoreService.configData.serviceInvoices;
   }
 
   // display columns

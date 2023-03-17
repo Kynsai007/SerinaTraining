@@ -105,7 +105,8 @@
                 </select>
               </td>
             </tr>
-            <tr class="trHeight">
+            <tr class="trHeight"
+              [ngStyle]="{'visibility':vendorInvoiceAccess ? 'visible':'hidden'}">
               <td class="tdLeft">
                 <label for="email" class="f-13">Upload Option</label
                 ><span class="colon">:</span>

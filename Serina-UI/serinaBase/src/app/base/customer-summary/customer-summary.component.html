@@ -5,27 +5,30 @@
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li class="nav-item mr-1">
         <a
-          class="nav-link active"
+          class="nav-link"
+          [ngClass]="vendorInvoiceAccess ? 'active':''"
           id="vendor-tab"
           data-toggle="tab"
           href="#vendor"
           role="tab"
           aria-controls="vendor"
           aria-selected="true"
+          *ngIf="vendorInvoiceAccess"
           >Vendor Based</a
         >
       </li>
       <li class="nav-item">
         <a
           class="nav-link"
+          [ngClass]="!vendorInvoiceAccess ? 'active':''"
           id="vendor-tab"
           data-toggle="tab"
           href="#service"
           role="tab"
           aria-controls="service"
           aria-selected="true"
-          >Service Based</a
-        >
+          *ngIf="serviceInvoiceAccess"
+          >Service Based</a>
       </li>
     </ul>
   </div>
@@ -71,7 +74,8 @@
     id="myTabContent"
   >
     <div
-      class="tab-pane fade show active"
+      class="tab-pane fade"
+      [ngClass]="vendorInvoiceAccess ? 'show active':''"
       id="vendor"
       role="tabpanel"
       aria-labelledby="vendor-tab"
@@ -127,6 +131,7 @@
       id="service"
       role="tabpanel"
       aria-labelledby="service-tab"
+      [ngClass]="!vendorInvoiceAccess ? 'show active':''"
     >
       <div class="d-flex">
         <div class="card-div card1-bg d-flex mr-3 ml-2">

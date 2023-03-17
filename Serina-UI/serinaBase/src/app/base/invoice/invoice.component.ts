@@ -119,6 +119,8 @@ export class InvoiceComponent implements OnInit {
   GRNExceptionTab: any;
   GRNExcpLength: number;
   GRNCreateBool: boolean;
+  vendorInvoiceAccess: boolean;
+  serviceInvoiceAccess: boolean;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -158,10 +160,15 @@ export class InvoiceComponent implements OnInit {
   ngOnInit(): void {
     this.userDetails = this.authService.currentUserValue;
     this.GRNCreateBool = this.dataService.configData?.enableGRN;
+    this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
+    this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
     this.APIParams = `?offset=1&limit=50`;
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
+      if(!this.vendorInvoiceAccess){
+        this.route.navigate(['/customer/invoice/ServiceInvoices'])
+      }
     } else if (this.userDetails.user_type == 'vendor_portal') {
       this.usertypeBoolean = false;
       this.portal_name = 'vendorPortal';

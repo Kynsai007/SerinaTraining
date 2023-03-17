@@ -51,8 +51,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   menubarBoolean:boolean;
 
   GRNCreationAccess:boolean;
-  vendorInvoiceAccess = true;
-  serviceInvoiceAccess = true;
+  vendorInvoiceAccess:boolean;
+  serviceInvoiceAccess:boolean;
   exceptionRoute: string;
 
   constructor(
@@ -130,13 +130,13 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.dataStoreService.configData?.enableApprovals;
     this.settingService.finaceApproveBoolean = this.dataStoreService.configData?.enableApprovals;
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
-    // this.dataStoreService.configData.vendorInvoices = true;
-    // this.dataStoreService.configData.serviceInvoices = true;
-    // if(this.vendorInvoiceAccess){
-    //   this.exceptionRoute = 'ExceptionManagement/vendor_based';
-    // } else if(this.serviceInvoiceAccess) {
-    //   this.exceptionRoute = 'ExceptionManagement/Service_ExceptionManagement';
-    // }
+    this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
+    this.serviceInvoiceAccess = this.dataStoreService.configData.serviceInvoices;
+    if(this.vendorInvoiceAccess){
+      this.exceptionRoute = 'ExceptionManagement';
+    } else if(this.serviceInvoiceAccess) {
+      this.exceptionRoute = 'ExceptionManagement/Service_ExceptionManagement';
+    }
     this.userDetails = this.authService.currentUserValue;
     environment1.password = this.userDetails.token;
     environment1.username = JSON.parse(sessionStorage.getItem('username'));
