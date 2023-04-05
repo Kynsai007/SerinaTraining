@@ -108,8 +108,8 @@ export class SharedService {
   sendMail(email: any): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetPassword/?email=${email}`);
   }
-  updatepass(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/setPassword/`,data);
+  updatepass(data: any,OTP): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/setPassword/?otp_code=${OTP}`,data);
   }
 
   // notifications
@@ -349,6 +349,15 @@ export class SharedService {
   }
   saveGRNData(boolean_value, value): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/saveCustomGRNData/${this.userId}?inv_id=${this.invoiceID}&submit_type=${boolean_value}`, value).pipe(retry(2))
+  }
+  getPo_numbers(idVen){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_numbers/${this.userId}/${idVen}`).pipe(retry(2))
+  }
+  getPO_Lines(po_num){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_Lines/${this.userId}/${po_num}`).pipe(retry(2))
+  }
+  checkGRN_PO_duplicates(po_num){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/checkGRN_PO_availability/${this.userId}/${po_num}`)
   }
 
   // view Invoice

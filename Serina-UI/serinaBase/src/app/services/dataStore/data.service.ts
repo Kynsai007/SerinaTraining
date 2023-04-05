@@ -142,6 +142,11 @@ export class DataService {
   searchGRNStr = '';
   searchArcStr = '';
   searchRejStr = '';
+  portalName: string;
+  isAdmin: boolean;
+  ipAddress: string;
+  grnWithPOBoolean: boolean;
+  GRN_PO_Data = [];
   constructor() { }
 
   getEntity():Observable<any>{

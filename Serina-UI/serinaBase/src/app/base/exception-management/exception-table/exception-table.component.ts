@@ -195,14 +195,19 @@ export class ExceptionTableComponent implements OnInit {
     this.sharedService.invoiceID = e.idDocument;
     this.tagService.documentType = e.UploadDocType;
     if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`) {
+      this.storageService.grnWithPOBoolean = false;
       this.router.navigate([
         `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
       ]);
     } else {
       this.SpinnerService.show();
-      this.ExceptionsService.getDocumentLockInfo().subscribe((data: any) => {
+      let session = {
+        "session_status": false,
+        "client_address": this.storageService.ipAddress
+      }
+      this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
         this.SpinnerService.hide();
-        if (data.result.Document.lock_status == false) {
+        if (data.result?.lock_info?.lock_status == 0) {
           if (this.tagService.batchProcessTab == 'normal') {
             if (this.permissionService.editBoolean == true) {
               if (e.documentsubstatusID == 8 ||

@@ -12,14 +12,14 @@
             >Invoices({{ dataLength }})</a
           >
         </li>
-        <!-- <li class="nav-item ml-1">
+        <li class="nav-item ml-1">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'editApproveGRN'"
             (click)="chooseEditedpageTab('editApproveGRN')"
-            >Edit Approval({{ dataLengthAdmin }})</a
+            >GRN Creation with PO</a
           >
-        </li> -->
+        </li>
       </ul>
 
       <div class="positionCreateUpload">
@@ -56,7 +56,7 @@
       <!-- Inprogress Tab -->
       <div *ngSwitchCase="'editApproveGRN'">
         <div class="tableDiv">
-          <div>
+          <!-- <div>
             <app-exception-table
               [invoiceColumns]="ColumnsForGRNApproval"
               [columnsToDisplay]="columnsToDisplayGRNApproval"
@@ -66,7 +66,113 @@
               [columnsData]="columnsDataAdmin"
             >
             </app-exception-table>
+          </div> -->
+          <form
+          #PO_GRNForm="ngForm"
+          (ngSubmit)="addPODetailsToQueue(PO_GRNForm.value)"
+          class="d-flex flex-wrap ml-2"
+          style="gap: 5px"
+        >
+          <div>
+            <label class="f-13 mb-0">Select Entity</label><br />
+            <p-autoComplete
+              placeholder="Select Entity"
+              (onSelect)="selectEntity($event)"
+              [group]="false"
+              [suggestions]="filteredEnt"
+              (completeMethod)="filterEntity($event)"
+              field="EntityName"
+              [dropdown]="true"
+              [completeOnFocus]="true"
+              [autofocus]="true"
+              name="EntityName"
+              ngModel
+              required
+            >
+            </p-autoComplete>
           </div>
+  
+          <!--Vendor Selection-->
+          <div>
+            <label class="f-13 mb-0">Select Vendor</label><br />
+            <p-autoComplete
+              placeholder="Select vendor"
+              (onSelect)="selectedVendor($event)"
+              [group]="false"
+              [suggestions]="filteredVendors"
+              (completeMethod)="filterVendor($event)"
+              field="VendorName"
+              [dropdown]="true"
+              [completeOnFocus]="true"
+              [autofocus]="true"
+              name="vendor"
+              ngModel
+              required
+            >
+            <ng-template let-group pTemplate="group">
+              <div class="flex align-items-center">
+                <span class="f-12">{{ group.VendorName }}</span>
+              </div>
+            </ng-template>
+            </p-autoComplete>
+          </div>
+  
+          <!-- select PO Number -->
+          <div>
+            <label class="f-13 mb-0">Select PO Number</label><br />
+            <p-autoComplete
+              placeholder="Select PO Number"
+              (onSelect)="selectedPO($event)"
+              [group]="false"
+              [forceSelection]="true"
+              [suggestions]="filteredPO"
+              (completeMethod)="filterPOnumber($event)"
+              field="PODocumentID"
+              [dropdown]="true"
+              name="PONumber"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.PODocumentID }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+  
+           <!-- select GRN Line -->
+           <div>
+            <label class="f-13 mb-0">Select PO Line</label><br />
+            <p-multiSelect
+              [options]="poLineData"
+              placeholder="line-description"
+              filter="false"
+              inputStyleClass="form-control"
+              optionLabel="Name"
+              [maxSelectedLabels]="3"
+              [selectedItemsLabel]="'{0} items selected'"
+              name="PO_GRN_Number_line"
+              ngModel
+              required
+              [(ngModel)]="PO_GRN_Number_line"
+            >
+            </p-multiSelect>
+          </div>
+  
+          
+          <div>
+            <div style="visibility: hidden">visible</div>
+            <button
+              class="btnUpload b-0 mt-0 f-13"
+              style="background: royalblue !important"
+              [disabled]="PO_GRNForm.invalid"
+              [ngClass]="PO_GRNForm.invalid ? 'disable' : ''"
+            >
+              Go to GRN creation page
+            </button>
+          </div>
+        </form>
         </div>
       </div>
 

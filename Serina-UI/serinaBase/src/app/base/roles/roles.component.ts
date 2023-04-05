@@ -244,6 +244,10 @@ export class RolesComponent implements OnInit {
   isEvrythingGood: boolean;
   isVendorportalRequired: boolean;
   vendorInvoiceAccess: boolean;
+  APIParam:any
+  offsetCount = 1;
+  serachStr = '';
+  totalC_users: any;
   constructor(
     private dataService: DataService,
     private messageService: MessageService,
@@ -271,7 +275,7 @@ export class RolesComponent implements OnInit {
       this.someParameterValue = 'createdUsers';
       this.primengConfig.ripple = true;
       this.DisplayCustomerUserDetails();
-      // this.toGetEntity();
+      this.toGetEntity();
       this.getDisplayTotalRoles();
       this.getVendorsListTocreateNewVendorLogin();
       this.getVendorSuperUserList();
@@ -633,7 +637,7 @@ export class RolesComponent implements OnInit {
     let query = event.query;
     for (let i = 0; i < this.entityList.length; i++) {
       let country = this.entityList[i];
-      if (country.EntityName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+      if (country.EntityName.toLowerCase().includes(query.toLowerCase())) {
         filtered.push(country);
       }
     }
@@ -644,7 +648,7 @@ export class RolesComponent implements OnInit {
       let query = event.query;
       this.filterDentityBody = this.entityBodyList.filter((element) => {
         return (
-          element.DepartmentName.toLowerCase().indexOf(query.toLowerCase()) == 0
+          element.DepartmentName.toLowerCase().includes(query.toLowerCase())
         );
       });
     } else {
@@ -658,7 +662,7 @@ export class RolesComponent implements OnInit {
       let query = event.query;
       this.filterDentityDept = this.entityDeptList.filter((element) => {
         return (
-          element.DepartmentName.toLowerCase().indexOf(query.toLowerCase()) == 0
+          element.DepartmentName.toLowerCase().includes(query.toLowerCase())
         );
       });
     } else {
@@ -1109,10 +1113,7 @@ export class RolesComponent implements OnInit {
         let mergedData = {
           ...element.AccessPermission,
           ...element.AccessPermissionDef,
-          ...element.rnk,
-          ...element.User,
-          ...element.AmountApproveLevel,
-          ...element.rnk,
+          ...element.User
         };
         mergedData.LogName = element?.LogName;
         usersList.push(mergedData);

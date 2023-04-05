@@ -85,8 +85,8 @@ export class ExceptionsService {
 
 
   // lock feature
-  getDocumentLockInfo():Observable<any> {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getDocumentLockInfo/${this.userId}/idDocument/${this.invoiceID}`)
+  getDocumentLockInfo(data):Observable<any> {
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getDocumentLockInfo/${this.userId}/idDocument/${this.invoiceID}`,data)
   }
   updateDocumentLockInfo(data):Observable<any> {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/updateDocumentLockInfo/${this.userId}/idDocument/${this.invoiceID}`,data)

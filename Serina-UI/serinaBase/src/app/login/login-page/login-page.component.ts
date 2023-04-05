@@ -49,7 +49,7 @@ export class LoginPageComponent implements OnInit {
     placeholder: '',
     inputStyles: {
       'width': '50px',
-      'height': '40px'
+      'height': '35px'
     }
   };
   userDetails = [
@@ -174,11 +174,10 @@ export class LoginPageComponent implements OnInit {
   resetPass() {
     this.loading = true;
     let updatePassword = {
-      "activation_code": this.otp,
+      "activation_code": this.tokenOTP,
       "password": this.paswrd
     } 
-    this.sharedService.updatepass(JSON.stringify(updatePassword)).subscribe(data => {
-      
+    this.sharedService.updatepass(JSON.stringify(updatePassword),this.otp).subscribe(data => {
       this.loading = false;
       this.loginboolean = false;
       this.forgotboolean = false;
@@ -372,4 +371,5 @@ export class LoginPageComponent implements OnInit {
       alert('Sorry! Vendor portal is not opted by the Admin, Please contact Service Admin to enable.');
     }
   }
+  
 }

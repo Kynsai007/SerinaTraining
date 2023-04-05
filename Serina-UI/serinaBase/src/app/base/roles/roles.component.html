@@ -1007,8 +1007,7 @@
                   placeholder="Financial Level" >
               </div> -->
 
-            <div>
-              <label class="label-head mb-0" style="visibility: hidden;">Role Name</label>
+            <!-- <div>
               <button
                 *ngIf="headerEdituserboolean"
                 class="f-12 bg-btn inputForm"
@@ -1016,7 +1015,7 @@
               >
                 {{ resetBtnText }}
               </button>
-            </div>
+            </div> -->
           </div>
         </div>
         <hr />
@@ -1076,7 +1075,9 @@
             </div> -->
             <div
               *ngIf="
-                AccessPermissionTypeId == 4 && financeapproveDisplayBoolean && entityBaseApproveBoolean
+                AccessPermissionTypeId == 4 &&
+                financeapproveDisplayBoolean &&
+                entityBaseApproveBoolean
               "
             >
               <div class="f-13 label-head">
@@ -1089,15 +1090,28 @@
                 [(ngModel)]="subRole"
                 (change)="onSelectsubRole(subRole)"
               /> -->
-              <select name="subRole" id="subRole" class="form-control inputForm f-12" [(ngModel)]="subRole" (change)="onSelectsubRole(subRole)">
+              <select
+                name="subRole"
+                id="subRole"
+                class="form-control inputForm f-12"
+                [(ngModel)]="subRole"
+                (change)="onSelectsubRole(subRole)"
+              >
                 <option value=""></option>
-                <option *ngFor="let val of subroleList" [value]="val.idAccessPermissionDef">{{val.NameOfRole}}</option>
+                <option
+                  *ngFor="let val of subroleList"
+                  [value]="val.idAccessPermissionDef"
+                >
+                  {{ val.NameOfRole }}
+                </option>
               </select>
             </div>
 
             <div
               *ngIf="
-                AccessPermissionTypeId == 4 && financeapproveDisplayBoolean && entityBaseApproveBoolean
+                AccessPermissionTypeId == 4 &&
+                financeapproveDisplayBoolean &&
+                entityBaseApproveBoolean
               "
             >
               <div class="f-13 label-head">
@@ -1118,7 +1132,9 @@
 
             <div
               *ngIf="
-                AccessPermissionTypeId == 4 && isAmountBasedON && entityBaseApproveBoolean
+                AccessPermissionTypeId == 4 &&
+                isAmountBasedON &&
+                entityBaseApproveBoolean
               "
             >
               <div>
@@ -1135,7 +1151,9 @@
               </div>
             </div>
 
-            <div *ngIf="financeapproveDisplayBoolean && entityBaseApproveBoolean">
+            <div
+              *ngIf="financeapproveDisplayBoolean && entityBaseApproveBoolean"
+            >
               <div class="f-13 label-head">
                 Skip Approval Process <span style="color: #f35353">*</span>
               </div>
