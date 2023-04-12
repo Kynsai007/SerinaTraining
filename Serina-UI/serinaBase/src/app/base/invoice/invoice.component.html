@@ -55,7 +55,7 @@
         <div class="nav_pane_width">
           <ul class="nav nav-tabs d-inline-block"
               [ngStyle]="{'order':!vendorInvoiceAccess ? '1':''}">
-            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess">
+            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess && invoceDoctype">
               <a
                 [ngClass]="
                   route.url == invoiceTab ? 'active-tab' : ''
@@ -75,7 +75,7 @@
                 >PO({{ poArrayLength }})</a
               >
             </li>
-            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess">
+            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess && invoceDoctype">
               <a
                 [ngClass]="
                   route.url == GRNTab ? 'active-tab' : ''
@@ -108,7 +108,7 @@
                 >Rejected({{ rejectedLength }})</a
               >
             </li>
-            <li class="nav-item mr-1" *ngIf="GRNCreateBool && vendorInvoiceAccess">
+            <li class="nav-item mr-1" *ngIf="GRNCreateBool && vendorInvoiceAccess && invoceDoctype">
               <a
                 [ngClass]="
                   route.url == GRNExceptionTab ? 'active-tab' : ''
@@ -119,7 +119,7 @@
               >
             </li>
           </ul>
-          <ul class="nav nav-tabs d-inline-block" *ngIf="usertypeBoolean && serviceInvoiceAccess"
+          <ul class="nav nav-tabs d-inline-block" *ngIf="usertypeBoolean && serviceInvoiceAccess && invoceDoctype "
               [ngClass]="!vendorInvoiceAccess ? 'mr-2':'ml-2'">
             <li class="nav-item service">
               <a

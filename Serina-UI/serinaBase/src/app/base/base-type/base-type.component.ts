@@ -54,6 +54,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   vendorInvoiceAccess:boolean;
   serviceInvoiceAccess:boolean;
   exceptionRoute: string;
+  DocumentPageRoute: string;
+  invoceDoctype: boolean;
 
   constructor(
     public router: Router,
@@ -79,6 +81,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
+    console.log(this.dataStoreService.configData)
     if(!this.dataStoreService.configData){
       this.readConfig();
     }
@@ -98,7 +101,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
   readConfig(){
     this.settingService.readConfig().subscribe((data:any)=>{
-
       sessionStorage.setItem("configData", JSON.stringify(data.InstanceModel));
       this.dataStoreService.configData = data.InstanceModel ;
       this.ngOnInit();
@@ -132,6 +134,12 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
     this.serviceInvoiceAccess = this.dataStoreService.configData.serviceInvoices;
+    if(this.dataStoreService.configData.documentTypes.includes('Invoice')){
+      this.DocumentPageRoute = 'invoice/allInvoices';
+      this.invoceDoctype = true;
+    } else {
+      this.DocumentPageRoute = 'invoice/PO';
+    }
     if(this.vendorInvoiceAccess){
       this.exceptionRoute = 'ExceptionManagement';
     } else if(this.serviceInvoiceAccess) {

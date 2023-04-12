@@ -76,10 +76,15 @@
 
             <!--Customer Portal Upload-->
             <div
-              
               class="d-flex flex-wrap"
               style="gap: 0px 10px"
             >
+            <div>
+              <label class="f-13 mb-0">Select Document Type</label><br />
+              <select class="form-control accountSelect f-12">
+                <option *ngFor="let type of DocumentTypes" [value]="type">{{type}}</option>
+              </select>
+            </div>
               <div>
                 <label class="f-13 mb-0">Select Entity</label><br />
                 <p-autoComplete

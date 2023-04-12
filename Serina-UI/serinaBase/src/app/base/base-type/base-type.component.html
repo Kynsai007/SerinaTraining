@@ -117,7 +117,7 @@
           class="navLink"
           routerLinkActive="active"
           data-text="Document Status"
-          [routerLink]="'invoice'"
+          [routerLink]="DocumentPageRoute"
         >
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             receipt
@@ -161,6 +161,7 @@
             List
           </li>
           <li
+            *ngIf="invoceDoctype"
             class="navLink"
             id="ex_sub"
             [routerLink]="'vendor/item_master'"

@@ -64,6 +64,7 @@ export class BatchProcessComponent implements OnInit {
   heading: string;
   isVendorBoolean:boolean;
   apprveBool: any;
+  invoceDoctype: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -80,10 +81,18 @@ export class BatchProcessComponent implements OnInit {
 
   ngOnInit(): void {
     this.apprveBool = this.ds.configData?.enableApprovals;
+    
     if(this.permissionService.excpetionPageAccess == true){
 
       this.viewType = this.tagService.batchProcessTab;
       this.findRoute();
+      if(this.ds.configData.documentTypes.includes('Invoice')){
+        this.invoceDoctype = true;
+        this.viewType = 'normal';
+      } else {
+        this.viewType = 'PODoc';
+      }
+      console.log(this.viewType)
 
     } else{
       alert("Sorry!, you do not have access");

@@ -11,6 +11,8 @@ import { ChangePasswordComponent } from 'src/app/base/change-password/change-pas
 import { environment1 } from 'src/environments/environment.prod';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
 import { ChartsService } from 'src/app/services/dashboard/charts.service';
+import { DataService } from 'src/app/services/dataStore/data.service';
+import { SettingsService } from 'src/app/services/settings/settings.service';
 
 @Component({
   selector: 'app-vendor-base',
@@ -31,7 +33,7 @@ export class VendorBaseComponent implements OnInit {
   excpetionPageAccess: boolean;
 
   constructor(private router:Router,
-    private route : ActivatedRoute,
+    private settingService : SettingsService,
     private SharedService:SharedService,
     private permissionService: PermissionService,
     private authService: AuthenticationService,
@@ -39,9 +41,9 @@ export class VendorBaseComponent implements OnInit {
     public dialog: MatDialog,
     private chartService: ChartsService,
     private exceptionService: ExceptionsService,
-    private serviceproviderService : ServiceInvoiceService) { 
+    private serviceproviderService : ServiceInvoiceService,
+    private DS : DataService) { 
       this.subscription = this.SharedService.getMessage().subscribe(message => {
-        console.log("message", message);
         this.numberOfNotify = message.Arraylength;
         // if (this.SharedService.keepLogin === true) {
         //   this.userDetails = JSON.parse(sessionStorage.getItem('logInUser'));
@@ -55,6 +57,9 @@ export class VendorBaseComponent implements OnInit {
   ngOnInit(): void {
     this.userDetails = this.authService.currentUserValue;
     this.docService.userId = this.userDetails.userdetails.idUser;
+    if(!this.DS.configData){
+      this.readConfig();
+    }
     this.SharedService.userId = this.userDetails.userdetails.idUser;
     this.serviceproviderService.userId = this.userDetails.userdetails.idUser
     this.SharedService.isCustomerPortal = false;
@@ -69,6 +74,13 @@ export class VendorBaseComponent implements OnInit {
     this.getPermissions();
     // this.getNotification();
     
+  }
+  readConfig(){
+    this.settingService.readConfig().subscribe((data:any)=>{
+      sessionStorage.setItem("configData", JSON.stringify(data.InstanceModel));
+      this.DS.configData = data.InstanceModel ;
+      this.ngOnInit();
+    })
   }
 
   readVendor(){

@@ -336,6 +336,10 @@ export class LoginPageComponent implements OnInit {
   checkInstanceData(data){
     if(this.instanceInfo?.isActive == 1){
       sessionStorage.setItem("configData", JSON.stringify(this.instanceInfo));
+      let invoceDoctype = false;
+      if(this.dataStoreService.configData.documentTypes.includes('Invoice')){
+        invoceDoctype = true;
+      }
         if (this.returnUrl) {
           this.router.navigate([this.returnUrl]);
         } else if (data.user_type === 'customer_portal') {
@@ -344,10 +348,18 @@ export class LoginPageComponent implements OnInit {
               if(this.vendorInvoiceAccess){
                 route = '/uploadInvoices'
               } else {
-                route = '/invoice/allInvoices'
+                if(invoceDoctype){
+                  route = '/invoice/allInvoices'
+                } else {
+                  route = '/invoice/PO'
+                }
               }
             } else if(data.userdetails?.landingPage == 'Document Status'){
-              route = '/invoice/allInvoices'
+              if(invoceDoctype){
+                route = '/invoice/allInvoices'
+              } else {
+                route = '/invoice/PO'
+              }
             } else if(data.userdetails?.landingPage == 'Dashboard'){
               route = '/home'
             } else if(data.userdetails?.landingPage == 'Exception'){

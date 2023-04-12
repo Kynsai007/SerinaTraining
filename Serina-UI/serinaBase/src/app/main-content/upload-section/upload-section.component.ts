@@ -189,6 +189,7 @@ export class UploadSectionComponent implements OnInit {
   ]
   po_grn_list = [];
   filteredPO_GRN = [];
+  DocumentTypes = [];
   constructor(
     private http: HttpClient,
     public route: Router,
@@ -208,6 +209,7 @@ export class UploadSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.userDetails = this.authenticationService.currentUserValue['userdetails'];
+    this.DocumentTypes = this.dataService.configData.documentTypes;
     if(this.PS.uploadPermissionBoolean){
       if(this.userDetails?.uploadOpt == 'Quick Upload'){
         this.viewType = 'quick';
