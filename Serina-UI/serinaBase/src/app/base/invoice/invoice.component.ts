@@ -163,8 +163,13 @@ export class InvoiceComponent implements OnInit {
     this.GRNCreateBool = this.dataService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
-    if(this.dataService.configData.documentTypes.includes('Invoice')){
-      this.invoceDoctype = true;
+    if(this.vendorInvoiceAccess){
+      if(this.dataService.configData.documentTypes.includes('Invoice')){
+        this.invoceDoctype = true;
+        this.route.navigate(['/customer/invoice/allInvoices']);
+      } else {
+        this.route.navigate(['/customer/invoice/PO']);
+      }
     }
     this.APIParams = `?offset=1&limit=50`;
     if (this.userDetails.user_type == 'customer_portal') {

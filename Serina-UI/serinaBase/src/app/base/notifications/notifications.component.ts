@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs';
 import { AlertService } from './../../services/alert/alert.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Component, OnInit } from '@angular/core';
-import { IMqttMessage, MqttService } from 'ngx-mqtt';
+// import { IMqttMessage, MqttService } from 'ngx-mqtt';
 
 @Component({
   selector: 'app-notifications',
@@ -27,7 +27,7 @@ export class NotificationsComponent implements OnInit {
   ];
   constructor(
     private SharedService: SharedService,
-    private _mqttService: MqttService,
+    // private _mqttService: MqttService,
     private alertService: AlertService
   ) {
     // this.messageData = this.alertService.currentUserMsgBox;
@@ -74,43 +74,43 @@ export class NotificationsComponent implements OnInit {
   }
 
   subscribeNewTopic(): void {
-    let name = JSON.parse(sessionStorage.getItem('username'));
-    this.subscription = this._mqttService.observe(name + 'queue').subscribe(
-      (message: IMqttMessage) => {
-        this.messageBox = JSON.parse(message.payload.toString());
-        if (!sessionStorage.getItem('messageBox') || message.retain != true) {
-          let pushArray = JSON.parse(message.payload.toString());
-          pushArray.forEach((element) => {
-            this.notifyArray.push(element);
-          });
-          if (pushArray.length > 1) {
-            this.notifyArray = pushArray.reduce((unique, o) => {
-              if (
-                !unique.some(
-                  (obj) => obj.idPullNotification === o.idPullNotification
-                )
-              ) {
-                unique.push(o);
-              }
-              return unique;
-            }, []);
-          }
-          sessionStorage.setItem(
-            'messageBox',
-            JSON.stringify(this.notifyArray)
-          );
-          // this.arrayLengthNotify = this.notifyArray.length
-          this.notification_logic();
+    // let name = JSON.parse(sessionStorage.getItem('username'));
+    // this.subscription = this._mqttService.observe(name + 'queue').subscribe(
+    //   (message: IMqttMessage) => {
+    //     this.messageBox = JSON.parse(message.payload.toString());
+    //     if (!sessionStorage.getItem('messageBox') || message.retain != true) {
+    //       let pushArray = JSON.parse(message.payload.toString());
+    //       pushArray.forEach((element) => {
+    //         this.notifyArray.push(element);
+    //       });
+    //       if (pushArray.length > 1) {
+    //         this.notifyArray = pushArray.reduce((unique, o) => {
+    //           if (
+    //             !unique.some(
+    //               (obj) => obj.idPullNotification === o.idPullNotification
+    //             )
+    //           ) {
+    //             unique.push(o);
+    //           }
+    //           return unique;
+    //         }, []);
+    //       }
+    //       sessionStorage.setItem(
+    //         'messageBox',
+    //         JSON.stringify(this.notifyArray)
+    //       );
+    //       // this.arrayLengthNotify = this.notifyArray.length
+    //       this.notification_logic();
 
-          // this.playAudio();
-        }
-      },
-      (error) => {
-        console.log(error);
-        this._mqttService.disconnect();
-        this.subscription.unsubscribe();
-      }
-    );
+    //       // this.playAudio();
+    //     }
+    //   },
+    //   (error) => {
+    //     console.log(error);
+    //     this._mqttService.disconnect();
+    //     this.subscription.unsubscribe();
+    //   }
+    // );
   }
 
   // for sound

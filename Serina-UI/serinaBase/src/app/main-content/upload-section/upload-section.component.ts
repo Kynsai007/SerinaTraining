@@ -190,6 +190,8 @@ export class UploadSectionComponent implements OnInit {
   po_grn_list = [];
   filteredPO_GRN = [];
   DocumentTypes = [];
+  document_type: string;
+
   constructor(
     private http: HttpClient,
     public route: Router,
@@ -210,6 +212,8 @@ export class UploadSectionComponent implements OnInit {
   ngOnInit(): void {
     this.userDetails = this.authenticationService.currentUserValue['userdetails'];
     this.DocumentTypes = this.dataService.configData.documentTypes;
+    this.document_type = this.DocumentTypes[0];
+    console.log(this.document_type);
     if(this.PS.uploadPermissionBoolean){
       if(this.userDetails?.uploadOpt == 'Quick Upload'){
         this.viewType = 'quick';
@@ -917,7 +921,8 @@ export class UploadSectionComponent implements OnInit {
               filename: filename,
               source: 'Web',
               sender: JSON.parse(sessionStorage.currentLoginUser).userdetails.email,
-              entityID: this.selectedEntityId
+              entityID: this.selectedEntityId,
+              document_type: this.document_type
             };
             this.runEventSource(eventSourceObj);
             this.evtSource.addEventListener('update', (event: any) => {

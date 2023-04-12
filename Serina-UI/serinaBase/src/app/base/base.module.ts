@@ -38,8 +38,6 @@ import { BusinessChartsComponent } from './home/business-charts/business-charts.
 import { VendorBasedChartsComponent } from './home/vendor-based-charts/vendor-based-charts.component';
 import { ServiceBasedChartsComponent } from './home/service-based-charts/service-based-charts.component';
 
-import { MqttModule, IMqttServiceOptions } from 'ngx-mqtt';
-import { environment, environment1 } from 'src/environments/environment.prod';
 import { ProcessReportsComponent } from './home/vendor-based-charts/process-reports/process-reports.component';
 import { ExceptionReportsComponent } from './home/vendor-based-charts/exception-reports/exception-reports.component';
 import { ProcessReportserviceComponent } from './home/service-based-charts/process-reportservice/process-reportservice.component';

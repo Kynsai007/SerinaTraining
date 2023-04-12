@@ -81,7 +81,7 @@
             >
             <div>
               <label class="f-13 mb-0">Select Document Type</label><br />
-              <select class="form-control accountSelect f-12">
+              <select class="form-control accountSelect f-12" name="document_type" [(ngModel)]="document_type">
                 <option *ngFor="let type of DocumentTypes" [value]="type">{{type}}</option>
               </select>
             </div>

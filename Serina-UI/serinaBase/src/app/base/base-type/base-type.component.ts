@@ -8,7 +8,7 @@ import { SharedService } from './../../services/shared.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { IMqttMessage, MqttService } from 'ngx-mqtt';
+// import { IMqttMessage, MqttService } from 'ngx-mqtt';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
 import { environment1 } from 'src/environments/environment.prod';
@@ -65,7 +65,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     private settingService: SettingsService,
     private serviceBased: ServiceInvoiceService,
     private exceptionService: ExceptionsService,
-    private _mqttService: MqttService,
+    // private _mqttService: MqttService,
     private chartService: ChartsService,
     private alertService: AlertService,
     private authService: AuthenticationService,
@@ -81,7 +81,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
-    console.log(this.dataStoreService.configData)
     if(!this.dataStoreService.configData){
       this.readConfig();
     }
@@ -221,44 +220,44 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
 
   subscribeNewTopic(): void {
-    let name = JSON.parse(sessionStorage.getItem('username'));
-    this.subscription = this._mqttService.observe(name + 'queue').subscribe(
-      (message: IMqttMessage) => {
-        this.messageBox = JSON.parse(message.payload.toString());
-        if (!sessionStorage.getItem('messageBox') || message.retain != true) {
-          let pushArray = JSON.parse(message.payload.toString());
-          if(pushArray.length>0){
-            pushArray.forEach((element) => {
-              this.notifyArray.push(element);
-            });
-          }
-          if (pushArray.length > 1) {
-            this.notifyArray = pushArray.reduce((unique, o) => {
-              if (
-                !unique.some(
-                  (obj) => obj.idPullNotification === o.idPullNotification
-                )
-              ) {
-                unique.push(o);
-              }
-              return unique;
-            }, []);
-          }
-          sessionStorage.setItem(
-            'messageBox',
-            JSON.stringify(this.notifyArray)
-          );
-          // this.arrayLengthNotify = this.notifyArray.length
-          this.notification_logic();
+    // let name = JSON.parse(sessionStorage.getItem('username'));
+    // this.subscription = this._mqttService.observe(name + 'queue').subscribe(
+    //   (message: IMqttMessage) => {
+    //     this.messageBox = JSON.parse(message.payload.toString());
+    //     if (!sessionStorage.getItem('messageBox') || message.retain != true) {
+    //       let pushArray = JSON.parse(message.payload.toString());
+    //       if(pushArray.length>0){
+    //         pushArray.forEach((element) => {
+    //           this.notifyArray.push(element);
+    //         });
+    //       }
+    //       if (pushArray.length > 1) {
+    //         this.notifyArray = pushArray.reduce((unique, o) => {
+    //           if (
+    //             !unique.some(
+    //               (obj) => obj.idPullNotification === o.idPullNotification
+    //             )
+    //           ) {
+    //             unique.push(o);
+    //           }
+    //           return unique;
+    //         }, []);
+    //       }
+    //       sessionStorage.setItem(
+    //         'messageBox',
+    //         JSON.stringify(this.notifyArray)
+    //       );
+    //       // this.arrayLengthNotify = this.notifyArray.length
+    //       this.notification_logic();
 
-          // this.playAudio();
-        }
-      },
-      (error) => {
-        this._mqttService.disconnect();
-        this.subscription.unsubscribe();
-      }
-    );
+    //       // this.playAudio();
+    //     }
+    //   },
+    //   (error) => {
+    //     this._mqttService.disconnect();
+    //     this.subscription.unsubscribe();
+    //   }
+    // );
     // this.send_msg();
   }
 

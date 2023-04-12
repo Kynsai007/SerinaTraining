@@ -16,8 +16,8 @@ import {MatIconModule} from '@angular/material/icon';
 import { ErrorInterceptor } from './interceptor/errorInterceptor';
 import { JwtInterceptor } from './interceptor/Jwt.interceptor';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
-export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = environment1;
+// import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
+// export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = environment1;
 
 // import { MqttModule, IMqttServiceOptions } from "ngx-mqtt";
 // export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
@@ -43,8 +43,7 @@ export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = environment1;
     FormsModule,
     ReactiveFormsModule,
     MatIconModule,
-    HttpClientModule,
-    MqttModule.forRoot(MQTT_SERVICE_OPTIONS),
+    HttpClientModule
     
   ],
   providers: [,
