@@ -9,7 +9,7 @@ export const environment = {
   userName: JSON.parse(localStorage.getItem('username'))
 };
 
-export const environment1:IMqttServiceOptions  = {
+export const environment1  = {
   // hostname: `${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
   // port: 443,
   // protocol: 'wss',
