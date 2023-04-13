@@ -853,19 +853,21 @@ export class UploadSectionComponent implements OnInit {
   // }
 
   uploadInvoice() {
+    this.seconds = "00";
+    this.minutes = "00";
     this.processStage = '0/2 (step 1) : Uploading document started';
     this.progress = 1;
     const formData = new FormData();
     formData.append('file', this.invoiceUploadDetails);
     let timer = setInterval(() => {
-      if (Number(this.seconds) < 10) {
+      if (Number(this.seconds) < 9) {
         this.seconds = "0" + (Number(this.seconds) + 1).toString();
       } else {
         this.seconds = (Number(this.seconds) + 1).toString();
       }
       if (Number(this.seconds) > 59) {
         this.seconds = "00";
-        if (Number(this.minutes) < 10) {
+        if (Number(this.minutes) < 9) {
           this.minutes = "0" + (Number(this.minutes) + 1).toString();
         } else {
           this.minutes = (Number(this.minutes) + 1).toString();
