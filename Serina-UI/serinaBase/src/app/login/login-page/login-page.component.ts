@@ -223,7 +223,7 @@ export class LoginPageComponent implements OnInit {
         data => {
           this.error = "";
           this.loading = false;
-
+          this.getIPAddress();
             if(this.instanceInfo?.enable2fa){
               if(data["status"]){
                 this.loginsuccess = true;
@@ -383,5 +383,10 @@ export class LoginPageComponent implements OnInit {
       alert('Sorry! Vendor portal is not opted by the Admin, Please contact Service Admin to enable.');
     }
   }
+  async getIPAddress() {
+    const response = await fetch('https://ip.seeip.org/jsonip?');
+    const data = await response.json();
+    localStorage.setItem('userIp',JSON.stringify(data.ip));
+}
   
 }

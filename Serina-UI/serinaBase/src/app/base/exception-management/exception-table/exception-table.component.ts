@@ -203,7 +203,7 @@ export class ExceptionTableComponent implements OnInit {
       this.SpinnerService.show();
       let session = {
         "session_status": false,
-        "client_address": this.storageService.ipAddress
+        "client_address": JSON.parse(localStorage.getItem('userIp'))
       }
       this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
         this.SpinnerService.hide();

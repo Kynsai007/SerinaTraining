@@ -188,6 +188,7 @@ export class Comparision3WayComponent
   updateSessionTime() {
     let sessionData = {
       session_status: true,
+      "client_address": JSON.parse(localStorage.getItem('userIp'))
     };
     this.exceptionService
       .updateDocumentLockInfo(JSON.stringify(sessionData))
@@ -1368,6 +1369,7 @@ export class Comparision3WayComponent
     if( this.grnCreateBoolean == false){
       let sessionData = {
         session_status: false,
+        "client_address": JSON.parse(localStorage.getItem('userIp'))
       };
       this.exceptionService
         .updateDocumentLockInfo(sessionData)

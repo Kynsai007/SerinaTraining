@@ -302,7 +302,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
 
   triggerBatch(id){
-    alert("Are you sure you want to re-trigger the batch for the Invoice?")
+    alert("Are you sure you want to re-trigger the batch for the Document?")
     this.triggerBoolean = true;
     let query = `?re_upload=false`;
     this.invoiceID = id;

@@ -394,6 +394,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   updateSessionTime() {
     let sessionData = {
       session_status: true,
+      "client_address": JSON.parse(localStorage.getItem('userIp'))
     };
     this.exceptionService
       .updateDocumentLockInfo(JSON.stringify(sessionData))
@@ -1285,7 +1286,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     } else {
       if (
         confirm(
-          ` Are you sure you want cancel process ? \n if you click OK you will lost your invoice meta data.`
+          ` Are you sure you want cancel process ? \n if you click OK you will lost your document meta data.`
         )
       ) {
         this._location.back();
@@ -1860,6 +1861,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     let sessionData = {
       session_status: false,
+      "client_address": JSON.parse(localStorage.getItem('userIp'))
     };
     this.exceptionService
       .updateDocumentLockInfo(sessionData)
