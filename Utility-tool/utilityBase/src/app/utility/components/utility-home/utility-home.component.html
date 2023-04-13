@@ -10,7 +10,7 @@
             <ul>
               <li><a routerLink="/IT_Utility/home" routerLinkActive="active">Home</a></li>
               <li><a routerLink="/IT_Utility/vendors" routerLinkActive="active">Vendors</a></li>
-              <li><a routerLink="/IT_Utility/service-providers" routerLinkActive="active">Service Providers</a></li>
+              <li *ngIf="showServiceTab"><a routerLink="/IT_Utility/service-providers" routerLinkActive="active">Service Providers</a></li>
               <li *ngIf="isAdmin"><a routerLink="/IT_Utility/settings" routerLinkActive="active">Settings</a></li>
               <li><a routerLink="/IT_Utility/guide" routerLinkActive="active">Guide</a></li>
               <li title="Sign Out"  data-toggle="modal" data-target="#exampleModal"><a style="cursor: pointer;">

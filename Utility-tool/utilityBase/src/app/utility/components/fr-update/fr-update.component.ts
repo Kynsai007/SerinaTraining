@@ -26,7 +26,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   trainingResult: any;
   testingResult:any;
   FRMetaData: any;
-  modalList: any;
+  modalList: any[] = [];
   allsynonyms: any;
   selected_template: string;
   dateFormats = ['mm/dd/yy', 'mm/dd/yyyy', 'mm.dd.yy', 'mm.dd.yyyy','dd/mm/yy','dd-mm-yy','dd-mm-yyyy','dd.mm.yyyy','dd-mmm-yy','dd-mmm-yyyy','yyyy mm dd','mmm-dd-yyyy','dd/mm/yyyy','dd mmm yyyy','mmm dd yyyy','yyyy/mm/dd']
@@ -82,10 +82,13 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   selectedGRNType:any;
   batchBoolean: any;
   isPObasedVendor: boolean;
+  selecteddocType:string="";
   trnMandatoryValue: Number = 1;
   trnboolean: boolean = true;
   switchLabel:string = "Yes";
   documentCount:number = 0;
+  showRule:boolean=true;
+  docTypes: any[] = [];
   @ViewChild('updateMetaData')
   updateMetaData:NgForm;
 
@@ -96,6 +99,14 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     private _location: Location) { }
 
   ngOnInit(): void {
+    if(sessionStorage.getItem("documentType")){
+      this.docTypes = JSON.parse(sessionStorage.getItem("documentType"))
+    }else{
+      this.docTypes = [];
+    }
+    if(this.docTypes.length > 0){
+      this.selecteddocType = this.docTypes[0];
+    }
     if(sessionStorage.getItem("currentFolder")){
       sessionStorage.removeItem("currentFolder");
     }
@@ -107,6 +118,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       this.vendorData = this.sharedService.currentVendorData;
       this.vendorName = this.sharedService.currentVendorData.VendorName;
     }
+    this.changeMetaData();
     this.getAccuracyScore();
     this.getVendorAccounts();
     this.getfrConfig();
@@ -115,7 +127,20 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     this.getRules();
     this.getAmountRules();
   }
-  
+  changeMetaData(){
+    if(this.selecteddocType == "Purchase Orders"){
+      this.showRule=false;
+      this.isPObasedVendor = true;
+      this.selectErpRule = 1;
+      this.selectedVendorType = "PO based";
+      this.selectedGRNType = 1;
+      this.selectedRuleId = 8;
+    }else{
+      this.showRule = true;
+      this.isPObasedVendor = true;
+      this.selectedVendorType = "PO based";
+    }
+  }
   ngAfterContentInit() : void {
     let _this = this;
     setTimeout(() => {
@@ -202,10 +227,15 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   closeNotify(){
     (<HTMLDivElement>document.getElementById("notify")).style.opacity = "0";
   }
+  selectDocType(docType){
+    this.selecteddocType = docType;
+    this.changeMetaData();
+    this.getAllTags(this.currentTemplate,docType);
+  }
 
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
-    this.getAllTags(modal_id);
+    this.getAllTags(modal_id,this.docTypes[0]);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
     this.outletRef.createEmbeddedView(this.contentRef);
@@ -527,7 +557,10 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     }
     if(this.isPObasedVendor){
       if(!value['ruleID'] || value['ruleID'] == ''){
+        if((<HTMLInputElement>document.getElementById("ruleID")))
         value['ruleID'] = (<HTMLInputElement>document.getElementById("ruleID")).value;
+        else
+        value['ruleID'] = this.selectedRuleId;
       }
     }
 
@@ -545,7 +578,10 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
      if(value["vendorType"] == "PO based"){
        value["batchmap"] = 1;
        if(!value['erprule'] || value['erprule'] == ''){
+        if((<HTMLInputElement>document.getElementById("erprule")))
         value['erprule'] = (<HTMLInputElement>document.getElementById("erprule")).value;
+        else
+        value['erprule'] = this.selectErpRule;
       }
      } else {
         value["batchmap"] = 0;
@@ -590,7 +626,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   getAmountRules() {
     this.sharedService.getAmountRules().subscribe((data:any)=>{
       this.amountRulesData = data;
-      console.log("rules",data);
     })
   }
   onCancel() {
@@ -622,8 +657,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       return "Tagged Optional";
     }
   }
-  getAllTags(modal_id) {
-    this.sharedService.getAllTags('vendor').subscribe((data:any)=>{
+  getAllTags(modal_id,docType) {
+    this.sharedService.getAllTags('vendor',docType).subscribe((data:any)=>{
       this.headerTags = data.header;
       this.headerTags.forEach((el)=>{
         if(el['Ismendatory'] == 1){

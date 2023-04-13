@@ -592,7 +592,7 @@ export class FrUpdateSpComponent implements OnInit {
     }
   }
   getAllTags() {
-    this.sharedService.getAllTags('sp').subscribe((data:any)=>{
+    this.sharedService.getAllTags('sp',"Invoice").subscribe((data:any)=>{
       this.headerTags = data.header;
       this.headerTags.forEach((el)=>{
         if(el['Ismendatory'] == 1){

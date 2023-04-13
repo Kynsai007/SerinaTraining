@@ -152,8 +152,8 @@ export class SharedService {
   getAccuracyScore(type,name){
     return this.http.get(`${this.url}/${this.apiVersion}/fr/getActualAccuracy/${type}?name=${name}`);
   }
-  getAllTags(tagtype):Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getalltags?tagtype=${tagtype}`);
+  getAllTags(tagtype,docType):Observable<any> {
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/getalltags?tagtype=${tagtype}&docType=${docType}`);
   }
   updateFrConfig(data): Observable<any> {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/updatefrconfig/${this.userId}`, data);

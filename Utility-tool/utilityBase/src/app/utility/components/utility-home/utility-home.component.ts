@@ -11,11 +11,18 @@ import { SharedService } from 'src/app/services/shared/shared.service';
 })
 export class UtilityHomeComponent implements OnInit {
   isAdmin: any;
+  showServiceTab:boolean=true;
   constructor(private router : Router,private authService:AuthenticationService,
     private sharedService : SharedService) { }
 
   ngOnInit(): void {
     this.isAdmin = this.sharedService.isAdmin;
+    let docTypes = JSON.parse(sessionStorage.getItem("documentType"))
+    if(docTypes.length == 1 && docTypes[0]=="Purchase Orders"){
+      this.showServiceTab = false;
+    }else{
+      this.showServiceTab = true;
+    }
   }
 
   startTemplate(){

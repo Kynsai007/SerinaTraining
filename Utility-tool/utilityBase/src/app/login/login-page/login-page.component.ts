@@ -192,6 +192,7 @@ export class LoginPageComponent implements OnInit {
 
   getInstancedata(){
     this.sharedService.readConfig().subscribe((resp:any)=>{
+      sessionStorage.setItem("documentType",JSON.stringify(resp.InstanceModel.documentTypes));
       resp.InstanceModel.vendorInvoices = true;
       resp.InstanceModel.serviceInvoices = true;
       this.instanceInfo = resp.InstanceModel;

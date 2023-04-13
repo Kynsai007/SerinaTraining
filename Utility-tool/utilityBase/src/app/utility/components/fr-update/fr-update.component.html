@@ -43,6 +43,16 @@
                         <form #updateFrConfig = "ngForm" (ngSubmit)="updateFr(updateFrConfig.value)">
                             <table style="width: 80%;">
                                 <tr class="trHeight">
+                                    <td class="tdLeft f-13">Document Type<span class="colon">:</span></td>
+                                    <td class="tdRight">
+                                        <select  id="doctype" class="form-control f-13"
+                                            (change)="selectDocType($event.target.value)">
+                                            <option [value]="doc" *ngFor="let doc of docTypes">
+                                                {{doc}}</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="trHeight">
                                     <td class="tdLeft f-13">Template Name<span class="colon">:</span></td>
                                     <td class="tdRight">
                                         <select  id="template" class="form-control f-13"
@@ -283,7 +293,7 @@
                                 </td>
                             </tr>
 
-                            <tr class="trHeight">
+                            <tr class="trHeight" *ngIf="showRule">
                                 <td class="tdLeft f-13">Select Vendor type <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">
                                     <select name="vendorType" id="vendorType" ngModel #vendorType="ngModel" class="form-control max_width f-13" [(ngModel)]="selectedVendorType" (change)="onChangeVndrType(selectedVendorType)"
@@ -293,7 +303,7 @@
                                     </select>
                                 </td>
                             </tr>
-                            <tr class="trHeight" *ngIf="isPObasedVendor">
+                            <tr class="trHeight" *ngIf="isPObasedVendor && showRule">
                                 <td class="tdLeft f-13">Select ERP API Rule <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">
                                     <select name="erprule" id="erprule" ngModel #erprule="ngModel" class="form-control max_width f-13" [(ngModel)]="selectErpRule"
@@ -303,7 +313,7 @@
                                     </select>
                                 </td>
                             </tr>
-                            <tr class="trHeight" *ngIf="isPObasedVendor">
+                            <tr class="trHeight" *ngIf="isPObasedVendor && showRule">
                                 <td class="tdLeft f-13">Select GRN type <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">
                                     <select name="GrnCreationType" id="GRN_TYPE" ngModel #GrnCreationType="ngModel" class="form-control max_width f-13" [(ngModel)]="selectedGRNType" (change)="onSelectGRNType(selectedGRNType)"
@@ -313,7 +323,7 @@
                                     </select>
                                 </td>
                             </tr>
-                            <tr class="trHeight" *ngIf="isPObasedVendor">
+                            <tr class="trHeight" *ngIf="isPObasedVendor && showRule">
                                 <td class="tdLeft f-13">Select Rule <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">
                                     <select name="ruleID" id="ruleID" ngModel #ruleID="ngModel" class="form-control max_width f-13" [(ngModel)]="selectedRuleId" required
@@ -323,7 +333,7 @@
                                     </select>
                                 </td>
                             </tr>
-                            <tr class="trHeight">
+                            <tr *ngIf="showRule" class="trHeight">
                                 <td class="tdLeft f-13">
                                     <div> <span class="f-13 mr-3">TRN is Mandatory? <span class="req_clr">*</span> </span>
                                         <span class="f-right">
@@ -516,7 +526,7 @@
                         (change)="selectVendorAccont($event.target.value)" required>
                         <option value="" selected disabled>Select vendor account</option>
                         <option *ngFor="let vendor of vendorAccountList" [value]="vendor.idVendorAccount">
-                            {{vendor.AccountType}}</option>
+                            {{vendor.Account}}</option>
                     </select>
 
                     <label class="f-14 mt-2">Template Name</label>

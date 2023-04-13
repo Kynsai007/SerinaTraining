@@ -12,10 +12,17 @@ export class HomeComponent implements OnInit {
   userDetails:any;
   displaypopup:boolean = false;
   isAdmin: boolean;
+  showServiceTab:boolean = true;
   constructor(private authService : AuthenticationService,
     private sharedService : SharedService,public router:Router) { }
 
   ngOnInit(): void {
+    let docTypes = JSON.parse(sessionStorage.getItem("documentType"))
+    if(docTypes.length == 1 && docTypes[0]=="Purchase Orders"){
+      this.showServiceTab = false;
+    }else{
+      this.showServiceTab = true;
+    }
     this.userDetails = this.authService.currentUserValue;
     this.sharedService.userId = this.userDetails.userdetails.idUser;
     console.log(this.userDetails);
