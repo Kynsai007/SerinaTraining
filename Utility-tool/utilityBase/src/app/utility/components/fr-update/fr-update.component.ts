@@ -105,7 +105,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       this.docTypes = [];
     }
     if(this.docTypes.length > 0){
-      this.selecteddocType = this.docTypes[0];
+      this.selecteddocType = this.selecteddocType && this.selecteddocType == "" ? this.docTypes[0] : this.selecteddocType;
     }
     if(sessionStorage.getItem("currentFolder")){
       sessionStorage.removeItem("currentFolder");
@@ -197,7 +197,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       this.trnMandatoryValue = 0;
       this.switchLabel = "No";
     }
-    console.log(this.headerTags);
   }
   getSynonyms(){
     this.sharedService.getemailconfig().subscribe(data => {
@@ -235,7 +234,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
 
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
-    this.getAllTags(modal_id,this.docTypes[0]);
+    this.getMetaData(modal_id);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
     this.outletRef.createEmbeddedView(this.contentRef);
@@ -252,13 +251,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
   getTrainingTestingRes(modal_id){
     this.sharedService.getTrainingTestRes(modal_id).subscribe((data: any) =>{
-      this.trainingResult = data['training_result'] ? JSON.parse(data['training_result']) : "{}";
-      this.testingResult = data['test_result'] ? JSON.parse(data['test_result']) : "{}";
-      console.log(this.trainingResult,this.testingResult);
+      this.trainingResult = data['training_result'] ? JSON.parse(data['training_result']) : {};
+      this.testingResult = data['test_result'] ? JSON.parse(data['test_result']) : {};
       this.trainingAverageAccuracy = data['training_result'] ? (this.trainingResult['trainResult']['averageModelAccuracy'] * 100).toFixed(1)+"%" : "Not Trained!";
       this.testingAverageAccuracy = data['test_result'] ? (this.testingResult['documentResults'][0]['docTypeConfidence'] *100).toFixed(1)+"%" : "Not Tested!";
-      this.trainingFields = this.trainingResult['trainResult']['fields'];
-      this.testingFields = this.testingResult['documentResults'][0]['fields'];
+      this.trainingFields = 'trainResult' in this.trainingResult ? this.trainingResult['trainResult']['fields'] : {};
+      this.testingFields = 'documentResults' in this.testingResult ? this.testingResult['documentResults'][0]['fields'] : {};
     })
   }
   getValue(field){
@@ -325,7 +323,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       this.LineArray = [];
       if(this.FRMetaData?.mandatoryheadertags){
         this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
-        if(!this.headerArray.includes("TRN")){
+        if(!this.headerArray.includes("TRN") && this.headerTags.filter(v => v.Name == 'TRN').length > 0){
           this.headerTags.filter(v => v.Name == 'TRN')[0]["Ismendatory"] = 0;
           this.headerMandetory.splice(this.headerMandetory.indexOf("TRN"),1);
           this.trnboolean = false;
@@ -457,6 +455,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       if(this.modalList.length == 0){
         this.checkselect = true;
       }else{
+        this.currentTemplate = this.modalList[0];
         this.selectTemplate(this.modalList[0].idDocumentModel);
         this.checkselect = false;
       }
@@ -587,7 +586,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
      } else {
         value["batchmap"] = 0;
      }
-     console.log(value);
     let _this = this;
     _this.saving = true;
     if (window.confirm("Are you sure you want to update the metadata?")) {
@@ -695,11 +693,9 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         })
       })
       this.LineArrayOptinal =[...new Set(this.LineArrayOptinal)];
-      this.getMetaData(modal_id);
     })
   }
   showHeaderCheckboxes() {
-    // console.log(val.value)
     this.showCheckboxLineDiv = false;
     this.showCheckboxOptHeaderDiv = false;
     this.showCheckboxLineOptDiv = false;
@@ -779,7 +775,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   
   selectLineTag(val,val1) {
     if(val == true){
-      console.log(val1)
       this.LineArray.push(val1);
       const index = this.LineArrayOptinal.indexOf(val1);
         if (index > -1) {
