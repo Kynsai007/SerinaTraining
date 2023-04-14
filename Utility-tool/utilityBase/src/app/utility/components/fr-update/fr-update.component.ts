@@ -467,6 +467,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
   createModel(value) {
     value.modelStatus = 1;
+    value.docType = this.selecteddocType;
     if(value['modelName'] == ''){
       return;
     }
