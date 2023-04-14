@@ -191,7 +191,7 @@
               (click)="viewInvoiceDetails(invoiceData)"
             ></i>
             <button
-              *ngIf="router.url.includes('PO')"
+              *ngIf="router.url.includes('PO') && invoceDoctype"
               pTooltip="Click here to update PO"
               (click)="updatePO(invoiceData)"
               class="f-13 b-0 pos-rel"
@@ -212,7 +212,8 @@
             <i
               *ngIf="
                 router.url.includes('allInvoices') ||
-                router.url.includes('archived')
+                router.url.includes('archived') ||
+                (router.url.includes('PO') && !invoceDoctype)
               "
               pTooltip="Click here to view Full Status details"
               tooltipPosition="left"
@@ -224,7 +225,8 @@
               *ngIf="
                 router.url.includes('allInvoices') ||
                 router.url.includes('archived') ||
-                router.url.includes('ServiceInvoices')
+                router.url.includes('ServiceInvoices') ||
+                (router.url.includes('PO') && !invoceDoctype)
               "
             >
               <span
@@ -308,7 +310,7 @@
               alt="imageUrl"
             />
             <br />
-            No invoices found.
+            No Records found.
           </td>
         </tr>
       </ng-template>

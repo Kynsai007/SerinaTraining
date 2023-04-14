@@ -85,14 +85,13 @@ export class BatchProcessComponent implements OnInit {
     if(this.permissionService.excpetionPageAccess == true){
 
       this.viewType = this.tagService.batchProcessTab;
-      this.findRoute();
       if(this.ds.configData.documentTypes.includes('Invoice')){
         this.invoceDoctype = true;
         this.viewType = 'normal';
       } else {
         this.viewType = 'PODoc';
       }
-      console.log(this.viewType)
+      this.findRoute();
 
     } else{
       alert("Sorry!, you do not have access");
@@ -132,6 +131,11 @@ export class BatchProcessComponent implements OnInit {
     if (this.dashboardViewBoolean == true) {
       this.ColumnsForBatch = this.ColumnsForBatch.filter((ele) => {
         return ele.header != 'Status';
+      });
+    } 
+    if(this.viewType == "PODoc") {
+      this.ColumnsForBatch = this.ColumnsForBatch.filter((ele) => {
+        return ele.header != 'Invoice Number';
       });
     }
     this.ColumnsForBatch.filter((element) => {

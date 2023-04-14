@@ -147,6 +147,7 @@ export class DataService {
   ipAddress: string;
   grnWithPOBoolean: boolean;
   GRN_PO_Data = [];
+  idDocumentType: number;
   constructor() { }
 
   getEntity():Observable<any>{

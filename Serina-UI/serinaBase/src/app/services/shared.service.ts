@@ -412,6 +412,9 @@ export class SharedService {
   triggerBatch(query): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/triggerbatch/${this.invoiceID}${query}`, '')
   }
+  vendorSubmitPO(query, uploadtime){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorPO/${this.userId}?re_upload=${query}&po_id=${this.invoiceID}&uploadtime=${uploadtime}`)
+  }
 
   // invoiceStatusHistory
 

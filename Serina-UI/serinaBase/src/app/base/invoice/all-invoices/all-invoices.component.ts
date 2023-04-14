@@ -71,6 +71,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   globalSearch:string;
   isAdmin: boolean;
   ERP: string;
+  invoceDoctype = false;
 
   constructor(
     private tagService: TaggingService,
@@ -100,6 +101,9 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       this.isAdmin = true;
     } else {
       this.isAdmin = false;
+    }
+    if(this.storageService.configData.documentTypes.includes('Invoice')){
+      this.invoceDoctype = true;
     }
     this.bgColorCode = this.storageService.bgColorCode;
     this.visibleSidebar2 = this.sharedService.sidebarBoolean;

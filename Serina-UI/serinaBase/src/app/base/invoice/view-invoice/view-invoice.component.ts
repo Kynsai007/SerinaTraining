@@ -104,7 +104,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   displayrejectDialog: boolean;
   rejectOption = { value: '' };
   rejectionComments: string = '';
-  rejectReason:any;
+  rejectReason: any;
 
   vendorUplaodBoolean: boolean;
 
@@ -121,7 +121,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   timer: any;
   callSession: any;
   GRNUploadID: any;
-  reuploadBoolean: boolean;
+  reuploadBoolean = false;
   vendorName: any;
   invoiceNumber = '';
   rejectpopBoolean: boolean;
@@ -224,7 +224,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   costAllocation = [];
   allocationFileds = [];
-  ERP:string;
+  ERP: string;
+  documentTypeId: number
 
   constructor(
     private tagService: TaggingService,
@@ -257,7 +258,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     if (this.tagService.editable == true) {
       this.updateSessionTime();
       this.getEntity();
-    this.approval_setting_boolean = this.settingsService.finaceApproveBoolean;
+      this.approval_setting_boolean = this.settingsService.finaceApproveBoolean;
       this.idleTimer(180, 'Start');
       this.callSession = setTimeout(() => {
         this.updateSessionTime();
@@ -296,43 +297,44 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.headerName = this.tagService.headerName;
     this.userDetails = this.authService.currentUserValue;
     this.approval_selection_boolean =
-    this.tagService.approval_selection_boolean;
-  this.isLCMInvoice = this.tagService.LCM_boolean;
-  this.documentType = this.tagService.documentType
-  if (this.tagService.documentType == 'lcm' || this.tagService.documentType == 'multipo') {
-    this.isLinenonEditable = true;
+      this.tagService.approval_selection_boolean;
+    this.isLCMInvoice = this.tagService.LCM_boolean;
+    this.documentType = this.tagService.documentType;
+    this.documentTypeId = this.dataService.idDocumentType;
+    if (this.tagService.documentType == 'lcm' || this.tagService.documentType == 'multipo') {
+      this.isLinenonEditable = true;
+    }
+
+    if (this.approval_selection_boolean == true && this.isLCMInvoice == true) {
+
+      this.supportTabBoolean = false;
+      this.isLCMTab = true;
+      this.readPONumbersLCM(this.dataService.entityID);
+      this.showPdf = false;
+      this.btnText = 'View PDF';
+
+      // this.selectionTabBoolean = true;
+      // this.supportTabBoolean = true;
+    } else if (this.approval_selection_boolean == true && this.isLCMInvoice == false) {
+      this.readDepartment();
+      this.readCategoryData();
+      this.showPdf = false;
+      this.btnText = 'View PDF';
+      this.tabName = "approver_selection";
+      this.selectionTabBoolean = true;
+      this.supportTabBoolean = true;
+      this.isLCMCompleted = true;
+
+    } else {
+      this.showPdf = true;
+      this.btnText = 'Close';
+      this.selectionTabBoolean = false;
+    }
   }
 
-  if (this.approval_selection_boolean == true && this.isLCMInvoice == true) {
-
-    this.supportTabBoolean = false;
-    this.isLCMTab = true;
-    this.readPONumbersLCM(this.dataService.entityID);
-    this.showPdf = false;
-    this.btnText = 'View PDF';
-
-    // this.selectionTabBoolean = true;
-    // this.supportTabBoolean = true;
-  } else if (this.approval_selection_boolean == true && this.isLCMInvoice == false) {
-    this.readDepartment();
-    this.readCategoryData();
-    this.showPdf = false;
-    this.btnText = 'View PDF';
-    this.tabName = "approver_selection";
-    this.selectionTabBoolean = true;
-    this.supportTabBoolean = true;
-    this.isLCMCompleted = true;
-
-  } else {
-    this.showPdf = true;
-    this.btnText = 'Close';
-    this.selectionTabBoolean = false;
-  }
-  }
-
-  ERPCostAllocation(){
-    if(this.ERP == 'JD'){
-      this.allocationFileds= [
+  ERPCostAllocation() {
+    if (this.ERP == 'JD') {
+      this.allocationFileds = [
         { header: 'Element', field: 'Element' },
         { header: 'Business Unit', field: 'costCenter' },
         { header: 'Company Code', field: 'interco' },
@@ -341,8 +343,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         { header: 'Object Code', field: 'mainAccount' },
         { header: 'Element Factor', field: 'elementFactor' },
       ]
-    } else if( this.ERP == 'Dynamics'){
-      this.allocationFileds= [
+    } else if (this.ERP == 'Dynamics') {
+      this.allocationFileds = [
         { header: 'Element', field: 'Element' },
         { header: 'Cost Center', field: 'costCenter' },
         { header: 'Product', field: 'product' },
@@ -355,8 +357,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         { header: 'Main Account', field: 'mainAccount' },
         { header: 'Element Factor', field: 'elementFactor' },
       ]
-    } else if( this.ERP == 'SAP'){
-      this.allocationFileds= [
+    } else if (this.ERP == 'SAP') {
+      this.allocationFileds = [
         { header: 'Element', field: 'Element' },
         { header: 'Cost Center', field: 'costCenter' },
         { header: 'Product', field: 'product' },
@@ -436,12 +438,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SharedService.getInvoiceInfo().subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
-        data?.ok?.cost_alloc?.forEach(cost=>{
-          let merge = {...cost.AccountCostAllocation }
+        data?.ok?.cost_alloc?.forEach(cost => {
+          let merge = { ...cost.AccountCostAllocation }
           this.costAllocation.push(merge);
         })
-    
-        if(data?.ok?.uploadtime){
+
+        if (data?.ok?.uploadtime) {
           this.uploadtime = data.ok.uploadtime;
         }
         data.ok.headerdata.forEach((element) => {
@@ -487,7 +489,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           array.forEach((val) => {
             if (val.TagName == 'LineNumber') {
               val.id = 1;
-            }else if (val.TagName == 'ItemId') {
+            } else if (val.TagName == 'ItemId') {
               val.id = 2;
             } else if (val.TagName == 'Name') {
               val.id = 3;
@@ -598,11 +600,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   DownloadPDF() {
     let extension;
-    if(this.content_type == 'application/pdf'){
+    if (this.content_type == 'application/pdf') {
       extension = '.pdf';
-    } else if(this.content_type == 'image/jpg'){
+    } else if (this.content_type == 'image/jpg') {
       extension = '.jpg';
-    } else if(this.content_type == 'image/png'){
+    } else if (this.content_type == 'image/png') {
       extension = '.png';
     }
     fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
@@ -833,119 +835,126 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     //     this.messageService.add(this.AlertService.errorObject);
     //   })
     // } else {
-    if (this.isLCMInvoice == false) {
-    this.getInvoiceFulldata();
-    this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
-    if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
-      this.reuploadBoolean = true;
-    } else {
-      this.reuploadBoolean = false;
-    }
-    setTimeout(() => {
-      let count = 0;
-      let errorType: string;
-      let errorTypeHead: string;
-      let errorTypeLine: string;
-      /* header Validation starts*/
-      this.inputData.forEach((data: any) => {
-        if (data.TagLabel == 'InvoiceTotal' || data.TagLabel == 'SubTotal') {
-          if (data.Value == '' || isNaN(+data.Value)) {
-            count++;
-            errorTypeHead = 'AmountHeader';
-          }
-        } else if (
-          data.TagLabel == 'PurchaseOrder' ||
-          data.TagLabel == 'InvoiceDate' ||
-          data.TagLabel == 'InvoiceId'
-        ) {
-          if (data.Value == '') {
-            errorType = 'emptyHeader';
-            count++;
-          }
+    if(this.documentTypeId == 3){
+      if (this.isLCMInvoice == false) {
+        this.getInvoiceFulldata();
+        this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
+        if (this.GRNUploadID != undefined && this.GRNUploadID != null) {
+          this.reuploadBoolean = true;
+        } else {
+          this.reuploadBoolean = false;
         }
-      });
-      /* header Validation end*/
-
-      /* Line Details Validation starts*/
-      this.lineDisplayData.forEach((element) => {
-        if (
-          element.TagName == 'Quantity' ||
-          element.TagName == 'UnitPrice' ||
-          element.TagName == 'AmountExcTax' ||
-          element.TagName == 'Amount'
-        ) {
-          element.linedata.forEach((ele1) => {
-            if (
-              ele1.DocumentLineItems?.Value == '' ||
-              isNaN(+ele1.DocumentLineItems?.Value)
-            ) {
-              count++;
-              errorTypeLine = 'AmountLine';
-            }
-
-            if(element.TagName == 'Quantity'){
-              if (
-                ele1.DocumentLineItems?.Value == 0 
-              ) {
+        setTimeout(() => {
+          let count = 0;
+          let errorType: string;
+          let errorTypeHead: string;
+          let errorTypeLine: string;
+          /* header Validation starts*/
+          this.inputData.forEach((data: any) => {
+            if (data.TagLabel == 'InvoiceTotal' || data.TagLabel == 'SubTotal') {
+              if (data.Value == '' || isNaN(+data.Value)) {
                 count++;
-                errorTypeLine = 'quntity';
+                errorTypeHead = 'AmountHeader';
+              }
+            } else if (
+              data.TagLabel == 'PurchaseOrder' ||
+              data.TagLabel == 'InvoiceDate' ||
+              data.TagLabel == 'InvoiceId'
+            ) {
+              if (data.Value == '') {
+                errorType = 'emptyHeader';
+                count++;
               }
             }
           });
-        }
-      });
-      /* Line Details Validation end*/
-
-      if (count == 0) {
-        this.vendorSubmit();
+          /* header Validation end*/
+  
+          /* Line Details Validation starts*/
+          this.lineDisplayData.forEach((element) => {
+            if (
+              element.TagName == 'Quantity' ||
+              element.TagName == 'UnitPrice' ||
+              element.TagName == 'AmountExcTax' ||
+              element.TagName == 'Amount'
+            ) {
+              element.linedata.forEach((ele1) => {
+                if (
+                  ele1.DocumentLineItems?.Value == '' ||
+                  isNaN(+ele1.DocumentLineItems?.Value)
+                ) {
+                  count++;
+                  errorTypeLine = 'AmountLine';
+                }
+  
+                if (element.TagName == 'Quantity') {
+                  if (
+                    ele1.DocumentLineItems?.Value == 0
+                  ) {
+                    count++;
+                    errorTypeLine = 'quntity';
+                  }
+                }
+              });
+            }
+          });
+          /* Line Details Validation end*/
+  
+          if (count == 0) {
+            this.vendorSubmit();
+          } else {
+            /* Error reponse starts*/
+            if (errorTypeHead == 'AmountHeader') {
+              setTimeout(() => {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'error',
+                  detail:
+                    'Please verify SubTotal and InvoiceTotal in Header details',
+                });
+              }, 50);
+            }
+            if (errorType == 'emptyHeader') {
+              this.AlertService.errorObject.detail =
+                'Please Check PO Number, Invoice Date, InvoiceId fileds in header details';
+              this.messageService.add(this.AlertService.errorObject);
+            }
+            if (errorTypeLine == 'AmountLine') {
+              setTimeout(() => {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'error',
+                  detail:
+                    'Please verify Amount, Quntity, unitprice and AmountExcTax in Line details',
+                });
+              }, 10);
+            } else if (errorTypeLine == 'quntity') {
+              setTimeout(() => {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'error',
+                  detail:
+                    'Please check the Quntity in the Line details',
+                });
+              }, 10);
+            }
+            /* Error reponse end*/
+          }
+        }, 2000);
       } else {
-        /* Error reponse starts*/
-        if (errorTypeHead == 'AmountHeader') {
-          setTimeout(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'error',
-              detail:
-                'Please verify SubTotal and InvoiceTotal in Header details',
-            });
-          }, 50);
-        }
-        if (errorType == 'emptyHeader') {
-          this.AlertService.errorObject.detail =
-            'Please Check PO Number, Invoice Date, InvoiceId fileds in header details';
+        if (this.LCMDataTable.length > 0) {
+          this.captureComments('LCM', null);
+        } else {
+          this.AlertService.errorObject.detail = 'Please add LCM lines';
           this.messageService.add(this.AlertService.errorObject);
         }
-        if (errorTypeLine == 'AmountLine') {
-          setTimeout(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'error',
-              detail:
-                'Please verify Amount, Quntity, unitprice and AmountExcTax in Line details',
-            });
-          }, 10);
-        } else if(errorTypeLine == 'quntity'){
-          setTimeout(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'error',
-              detail:
-                'Please check the Quntity in the Line details',
-            });
-          }, 10);
-        }
-        /* Error reponse end*/
       }
-    }, 2000);
-  } else {
-    if (this.LCMDataTable.length > 0) {
-      this.captureComments('LCM', null);
-    } else {
-      this.AlertService.errorObject.detail = 'Please add LCM lines';
-      this.messageService.add(this.AlertService.errorObject);
+    } else if(this.documentTypeId == 1) {
+      this.getInvoiceFulldata();
+      setTimeout(() => {
+      this.vendorSubmitPO();
+      }, 2000);
     }
   }
-}
   SaveLCM(obj) {
     this.SharedService.saveLCMdata(JSON.stringify([obj]), true).subscribe((data: any) => {
       if (data?.result) {
@@ -1054,6 +1063,38 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             }
           }
         }, 4000);
+      },
+      (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'error',
+          detail: error.statusText,
+        });
+      }
+    );
+  }
+
+  vendorSubmitPO() {
+    console.log('hi PO')
+    this.SharedService.vendorSubmitPO(this.reuploadBoolean, this.uploadtime).subscribe(
+      (data: any) => {
+        this.SpinnerService.hide();
+        // if (this.router.url.includes('ExceptionManagement')) {
+          this.AlertService.addObject.detail = 'Document submitted successfully';
+          this.AlertService.addObject.summary = 'sent';
+          this.messageService.add(this.AlertService.addObject);
+        // } 
+         setTimeout(() => {
+          if (this.router.url.includes('ExceptionManagement')) {
+            this._location.back();
+          } else {
+            if (this.userDetails.user_type == 'vendor_portal') {
+              this.router.navigate(['vendorPortal/invoice/allInvoices']);
+            } else {
+              this.router.navigate(['customer/invoice/allInvoices']);
+            }
+          }
+        }, 2000);
       },
       (error) => {
         this.messageService.add({
@@ -1213,15 +1254,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     );
   }
 
-  selectReason(reasn){
-    if(reasn == 'Others'){
+  selectReason(reasn) {
+    if (reasn == 'Others') {
       this.addrejectcmtBool = true;
     } else {
       this.addrejectcmtBool = false;
     }
   }
 
-  rejectKepup(val){
+  rejectKepup(val) {
     this.rejectionComments = val;
   }
   Reject() {

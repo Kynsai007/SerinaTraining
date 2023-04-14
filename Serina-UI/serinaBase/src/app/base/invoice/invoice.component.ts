@@ -110,8 +110,8 @@ export class InvoiceComponent implements OnInit {
   rejectedTab: any;
   serviceInvoiceTab: any;
   first: any;
-  searchStr:string;
-  
+  searchStr: string;
+
   // searchPOStr = '';
   // searchGRNStr = '';
   // searchArcStr = '';
@@ -156,17 +156,25 @@ export class InvoiceComponent implements OnInit {
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
     private authService: AuthenticationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.userDetails = this.authService.currentUserValue;
     this.GRNCreateBool = this.dataService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
-    if(this.vendorInvoiceAccess){
-      if(this.dataService.configData.documentTypes.includes('Invoice')){
+    if (this.vendorInvoiceAccess) {
+      if (this.dataService.configData.documentTypes.includes('Invoice')) {
         this.invoceDoctype = true;
         this.route.navigate(['/customer/invoice/allInvoices']);
+        this.getInvoiceColumns();
+        if(this.GRNCreateBool){
+          this.readGRNExceptionData();
+        }
+        if(this.serviceInvoiceAccess){
+          this.getServiceColumns();
+          this.getDisplayServiceInvoicedata();
+        }
       } else {
         this.route.navigate(['/customer/invoice/PO']);
       }
@@ -175,29 +183,24 @@ export class InvoiceComponent implements OnInit {
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
-      if(!this.vendorInvoiceAccess){
+      if (!this.vendorInvoiceAccess) {
         this.route.navigate(['/customer/invoice/ServiceInvoices'])
       }
     } else if (this.userDetails.user_type == 'vendor_portal') {
       this.usertypeBoolean = false;
       this.portal_name = 'vendorPortal';
-      
+
     }
     this.routeForTabs();
     this.dateRange();
     this.findActiveRoute();
     this.restoreData();
-    this.readGRNExceptionData();
     // this.getInvoiceData();
     // this.getDisplayPOData();
     // this.getDisplayGRNdata();
     // this.getDisplayReceiptdata();
-    this.getInvoiceColumns();
     this.getPOColums();
     this.getArchivedColumns();
-    this.getServiceColumns();
-    this.getDisplayServiceInvoicedata();
-    
     this.prepareColumns();
   }
 
@@ -232,13 +235,13 @@ export class InvoiceComponent implements OnInit {
     this.receiptDispalyData = this.dataService.receiptLoadedData;
     this.receiptArrayLength = this.dataService.receiptLoadedData.length;
     this.visibleSidebar2 = this.sharedService.sidebarBoolean;
-    if (this.dataService.invoiceLoadedData.length == 0) {
+    if (this.dataService.invoiceLoadedData.length == 0 && this.invoceDoctype) {
       this.getInvoiceData();
     }
     if (this.dataService.poLoadedData.length == 0) {
       this.getDisplayPOData(this.APIParams);
     }
-    if (this.dataService.GRNLoadedData.length == 0) {
+    if (this.dataService.GRNLoadedData.length == 0 && this.invoceDoctype) {
       this.getDisplayGRNdata(this.APIParams);
     }
     if (this.dataService.archivedDisplayData.length == 0) {
@@ -317,7 +320,7 @@ export class InvoiceComponent implements OnInit {
     } else if (this.route.url == this.archivedTab) {
       this.routeName = 'archived';
       this.searchStr = this.dataService.searchArcStr;
-    } else if( this.route.url == this.rejectedTab){
+    } else if (this.route.url == this.rejectedTab) {
       this.routeName = 'rejected';
       this.searchStr = this.dataService.searchRejStr;
     }
@@ -456,7 +459,7 @@ export class InvoiceComponent implements OnInit {
           ...element.VendorAccount,
           ...element.Vendor,
         };
-        
+
         // invoiceData.append('docStatus',element.docStatus)
 
         invoiceData['docstatus'] = element.docstatus;
@@ -481,10 +484,10 @@ export class InvoiceComponent implements OnInit {
           }
         }
       });
-      
+
       this.archivedDisplayData =
         this.dataService.archivedDisplayData.concat(invoicePushedArray);
-        this.dataService.archivedDisplayData = this.archivedDisplayData;
+      this.dataService.archivedDisplayData = this.archivedDisplayData;
       this.dataService.ARCTableLength = data?.result?.ven?.ok?.total_arc;
       this.archivedLength = data?.result?.ven?.ok?.total_arc;
       if (this.archivedLength > 10) {
@@ -519,7 +522,7 @@ export class InvoiceComponent implements OnInit {
           ...element.ServiceProvider,
           ...element.ServiceAccount
         };
-        
+
         // invoiceData.append('docStatus',element.docStatus)
 
         invoiceData['docstatus'] = element.docstatus;
@@ -544,8 +547,8 @@ export class InvoiceComponent implements OnInit {
     });
   }
 
-  readGRNExceptionData(){
-    this.sharedService.getGRNExceptionData('').subscribe((data:any)=>{
+  readGRNExceptionData() {
+    this.sharedService.getGRNExceptionData('').subscribe((data: any) => {
       const invoicePushedArray = [];
       data?.result?.ok?.Documentdata?.forEach((element) => {
         let invoiceData = {
@@ -628,7 +631,7 @@ export class InvoiceComponent implements OnInit {
     );
   }
 
-  getColumnsData() {}
+  getColumnsData() { }
 
   getInvoiceColumns() {
     this.SpinnerService.show();
@@ -924,7 +927,7 @@ export class InvoiceComponent implements OnInit {
       });
     });
   }
-  order(v) {}
+  order(v) { }
   activeColumn(e, value) {
     // if (this.route.url == '/customer/invoice/allInvoices') {
     this.updateColumns.forEach((val) => {
@@ -1115,22 +1118,22 @@ export class InvoiceComponent implements OnInit {
     }
   }
 
-  keySearch(str){
-    if(str == ''){
+  keySearch(str) {
+    if (str == '') {
       this.APIParams = `?offset=1&limit=50`
       if (this.route.url == this.invoiceTab) {
       } else if (this.route.url == this.POTab) {
         this.dataService.poLoadedData = [];
-          this.getDisplayPOData(this.APIParams);
+        this.getDisplayPOData(this.APIParams);
       } else if (this.route.url == this.GRNTab) {
         this.dataService.GRNLoadedData = [];
-          this.getDisplayGRNdata(this.APIParams);
+        this.getDisplayGRNdata(this.APIParams);
       } else if (this.route.url == this.archivedTab) {
         this.dataService.archivedDisplayData = [];
-          this.getDisplayARCData(this.APIParams);
+        this.getDisplayARCData(this.APIParams);
       } else if (this.route.url == this.rejectedTab) {
         this.dataService.rejectedDisplayData = [];
-          this.getDisplayRejectedData(this.APIParams);
+        this.getDisplayRejectedData(this.APIParams);
       } else if (this.route.url == this.serviceInvoiceTab) {
       }
     }

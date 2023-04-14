@@ -960,6 +960,13 @@ export class UploadSectionComponent implements OnInit {
                   // this.tagService.createInvoice = true;
                   // this.tagService.invoicePathBoolean = true;
                   this.tagService.documentType = this.progressEvent.UploadDocType;
+                  let id:number
+                  if(this.document_type == 'Purchase Orders'){
+                    id = 1;
+                  } else {
+                    id = 3
+                  }
+                  this.dataService.idDocumentType = id;
                   this.tagService.isUploadScreen = true;
                   this.tagService.displayInvoicePage = false;
                   this.tagService.editable = true;
