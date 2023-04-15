@@ -256,7 +256,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       this.testingResult = data['test_result'] ? JSON.parse(data['test_result']) : {};
       this.trainingAverageAccuracy = data['training_result'] ? (this.trainingResult['trainResult']['averageModelAccuracy'] * 100).toFixed(1)+"%" : "Not Trained!";
       this.testingAverageAccuracy = data['test_result'] ? (this.testingResult['documentResults'][0]['docTypeConfidence'] *100).toFixed(1)+"%" : "Not Tested!";
-      this.trainingFields = 'trainResult' in this.trainingResult ? this.trainingResult['trainResult']['fields'] : {};
+      this.trainingFields = 'trainResult' in this.trainingResult ? this.trainingResult['trainResult']['fields'] : [];
       this.testingFields = 'documentResults' in this.testingResult ? this.testingResult['documentResults'][0]['fields'] : {};
     })
   }
@@ -319,123 +319,126 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
   getMetaData(documentId) {
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
-      this.FRMetaData = data;
-      this.headerArray = [];
-      this.LineArray = [];
-      if(this.FRMetaData?.mandatoryheadertags){
-        this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
-        if(!this.headerArray.includes("TRN") && this.headerTags.filter(v => v.Name == 'TRN').length > 0){
-          this.headerTags.filter(v => v.Name == 'TRN')[0]["Ismendatory"] = 0;
-          this.headerMandetory.splice(this.headerMandetory.indexOf("TRN"),1);
-          this.trnboolean = false;
-          this.switchLabel = "No";
+        this.FRMetaData = data;
+        if(this.FRMetaData?.mandatoryheadertags){
+          this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
+          if(!this.headerArray.includes("TRN") && this.headerTags.filter(v => v.Name == 'TRN').length > 0){
+            this.headerTags.filter(v => v.Name == 'TRN')[0]["Ismendatory"] = 0;
+            this.headerMandetory.splice(this.headerMandetory.indexOf("TRN"),1);
+            this.trnboolean = false;
+            this.switchLabel = "No";
+          }
+          setTimeout(() => {
+            this.headerArray.forEach((ele)=>{
+              const index = this.headerOptionalArray.indexOf(ele);
+            if (index > -1) {
+              this.headerOptionalArray.splice(index, 1);
+            }
+            })
+          }, 1000);
+        }else{
+          this.headerArray = [];
+          this.headerTags.forEach((el)=>{
+            //this.headerArray.push(el['Name']);
+            if(el['Ismendatory'] == 1){
+              this.headerMandetory.push(el['Name']);
+            } else {
+              this.headerOptionalArray.push(el['Name'])
+            }
+          });
         }
-        setTimeout(() => {
-          this.headerArray.forEach((ele)=>{
-            const index = this.headerOptionalArray.indexOf(ele);
+        if(this.FRMetaData?.mandatorylinetags){
+          this.LineArray = this.FRMetaData['mandatorylinetags'].split(',');
+          setTimeout(() => {
+          this.LineArray.forEach((ele)=>{
+            const index = this.LineArrayOptinal.indexOf(ele);
           if (index > -1) {
-            this.headerOptionalArray.splice(index, 1);
+            this.LineArrayOptinal.splice(index, 1);
           }
           })
-        }, 1000);
-      }else{
-        this.headerTags.forEach((el)=>{
-          if(el['Ismendatory'] == 1){
-            this.headerArray.push(el['Name']);
-          } 
-        });
-        this.headerArray=[...new Set(this.headerArray)];
-      }
-      if(this.FRMetaData?.mandatorylinetags){
-        this.LineArray = this.FRMetaData['mandatorylinetags'].split(',');
-        setTimeout(() => {
-        this.LineArray.forEach((ele)=>{
-          const index = this.LineArrayOptinal.indexOf(ele);
-        if (index > -1) {
-          this.LineArrayOptinal.splice(index, 1);
+          }, 1000);
+        }else{
+          this.LineArray = [];
+          this.LineTags.forEach((el)=>{
+            //this.LineArray.push(el['Name']);
+            if(el['Ismendatory'] == 1){
+              this.lineMandetory.push(el['Name']);
+            } else {
+              this.LineArrayOptinal.push(el['Name'])
+            }
+          });
         }
-        })
-        }, 1000);
-      }else{
-        this.LineTags.forEach((el)=>{
-          if(el['Ismendatory'] == 1){
-            this.LineArray.push(el['Name']);
-          }
-        });
-        this.LineArray=[...new Set(this.LineArray)];
-      }
-    
-      if(this.FRMetaData?.optionalheadertags){
-        this.headerOptTags = this.FRMetaData?.optionalheadertags?.split(',');
-      }else{
-        this.headerOptTags = [];
-      }
-      if(this.FRMetaData?.optionallinertags){
-        this.LineOptTags = this.FRMetaData?.optionallinertags?.split(',');
-        this.LineOptTags.forEach((ele)=>{
-          this.selectLineTag(false,ele);
-        })
-      }else{
-        this.LineOptTags = [];
-      }
-      if(this.FRMetaData){
-        if(!this.FRMetaData['DateFormat'] || this.FRMetaData['DateFormat'] == ''){
-          this.FRMetaData['DateFormat'] = 'dd/mm/yy';
-        }
-        (<HTMLSelectElement>document.getElementById("DateFormat")).value = this.FRMetaData['DateFormat'];
-        if(!this.FRMetaData['AccuracyOverall'] || this.FRMetaData['AccuracyOverall'] == ''){
-          this.FRMetaData['AccuracyOverall'] = '90';
-        }
-        (<HTMLInputElement>document.getElementById("AccuracyOverall")).value = this.FRMetaData['AccuracyOverall'];
-        if(!this.FRMetaData['AccuracyFeild'] || this.FRMetaData['AccuracyFeild'] == ''){
-          this.FRMetaData['AccuracyFeild'] = '90';
-        }
-        (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = this.FRMetaData['AccuracyFeild'];
-        (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = this.FRMetaData['InvoiceFormat'];
-        
-        (<HTMLInputElement>document.getElementById("unitprice_tol")).value = this.FRMetaData['UnitPriceTol_percent'];
-        (<HTMLInputElement>document.getElementById("quantity_tol")).value = this.FRMetaData['QtyTol_percent'];
-        if(!this.FRMetaData['Units'] || this.FRMetaData['Units'] == ''){
-          this.FRMetaData['Units'] = 'USD';
-        }
-        (<HTMLInputElement>document.getElementById("Units")).value = this.FRMetaData['Units'];
-        this.selectedRuleId= this.FRMetaData['ruleID'];
-
-        if(!this.FRMetaData['erprule']){
-          this.selectErpRule = '';
-        } else {
-          this.selectErpRule = this.FRMetaData['erprule'];
-        }
-        this.batchBoolean = this.FRMetaData['batchmap'];
-
-        if(!this.FRMetaData['vendorType']){
-          this.selectedVendorType = '';
-        } else {
-          this.selectedVendorType = this.FRMetaData['vendorType'];
-          if(this.selectedVendorType == "PO based"){
-            this.isPObasedVendor = true;
-          } else {
-            this.isPObasedVendor = false;
-          }
-        }
-        if(!this.FRMetaData['GrnCreationType']){
-          this.selectedGRNType = '';
-        } else {
-          this.selectedGRNType = this.FRMetaData['GrnCreationType'];
-          this.onSelectGRNType(this.selectedGRNType);
-        }
-       
-        
-      }else{
-        (<HTMLSelectElement>document.getElementById("DateFormat")).value = '';
-        (<HTMLInputElement>document.getElementById("AccuracyOverall")).value = '90';
-        (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = '90';
-        (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = 'pdf,jpg';
-        (<HTMLInputElement>document.getElementById("Units")).value = 'USD';
-        if((<HTMLSelectElement>document.getElementById("ruleID")))
-        (<HTMLSelectElement>document.getElementById("ruleID")).value = '';
-      }
       
+        if(this.FRMetaData?.optionalheadertags){
+          this.headerOptTags = this.FRMetaData?.optionalheadertags?.split(',');
+        }else{
+          this.headerOptTags = [];
+        }
+        if(this.FRMetaData?.optionallinertags){
+          this.LineOptTags = this.FRMetaData?.optionallinertags?.split(',');
+          this.LineOptTags.forEach((ele)=>{
+            this.selectLineTag(false,ele);
+          })
+        }else{
+          this.LineOptTags = [];
+        }
+        if(this.FRMetaData){
+          if(!this.FRMetaData['DateFormat'] || this.FRMetaData['DateFormat'] == ''){
+            this.FRMetaData['DateFormat'] = 'dd/mm/yy';
+          }
+          (<HTMLSelectElement>document.getElementById("DateFormat")).value = this.FRMetaData['DateFormat'];
+          if(!this.FRMetaData['AccuracyOverall'] || this.FRMetaData['AccuracyOverall'] == ''){
+            this.FRMetaData['AccuracyOverall'] = '90';
+          }
+          (<HTMLInputElement>document.getElementById("AccuracyOverall")).value = this.FRMetaData['AccuracyOverall'];
+          if(!this.FRMetaData['AccuracyFeild'] || this.FRMetaData['AccuracyFeild'] == ''){
+            this.FRMetaData['AccuracyFeild'] = '90';
+          }
+          (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = this.FRMetaData['AccuracyFeild'];
+          (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = this.FRMetaData['InvoiceFormat'];
+          
+          (<HTMLInputElement>document.getElementById("unitprice_tol")).value = this.FRMetaData['UnitPriceTol_percent'];
+          (<HTMLInputElement>document.getElementById("quantity_tol")).value = this.FRMetaData['QtyTol_percent'];
+          if(!this.FRMetaData['Units'] || this.FRMetaData['Units'] == ''){
+            this.FRMetaData['Units'] = 'USD';
+          }
+          (<HTMLInputElement>document.getElementById("Units")).value = this.FRMetaData['Units'];
+          this.selectedRuleId= this.FRMetaData['ruleID'];
+
+          if(!this.FRMetaData['erprule']){
+            this.selectErpRule = '';
+          } else {
+            this.selectErpRule = this.FRMetaData['erprule'];
+          }
+          this.batchBoolean = this.FRMetaData['batchmap'];
+
+          if(!this.FRMetaData['vendorType']){
+            this.selectedVendorType = '';
+          } else {
+            this.selectedVendorType = this.FRMetaData['vendorType'];
+            if(this.selectedVendorType == "PO based"){
+              this.isPObasedVendor = true;
+            } else {
+              this.isPObasedVendor = false;
+            }
+          }
+          if(!this.FRMetaData['GrnCreationType']){
+            this.selectedGRNType = '';
+          } else {
+            this.selectedGRNType = this.FRMetaData['GrnCreationType'];
+            this.onSelectGRNType(this.selectedGRNType);
+          }
+        
+          
+        }else{
+          (<HTMLSelectElement>document.getElementById("DateFormat")).value = '';
+          (<HTMLInputElement>document.getElementById("AccuracyOverall")).value = '90';
+          (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = '90';
+          (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = 'pdf,jpg';
+          (<HTMLInputElement>document.getElementById("Units")).value = 'USD';
+          if((<HTMLSelectElement>document.getElementById("ruleID")))
+          (<HTMLSelectElement>document.getElementById("ruleID")).value = '';
+        }    
     })
   }
 
@@ -478,7 +481,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     this.sharedService.createNewTemplate(JSON.stringify(value)).subscribe((data: any) => {
       (<HTMLButtonElement>document.getElementById("closeBtn")).click();
       this.getVendorAccounts();
-      this.getModalList(this.selecteddocType);
       if(data["result"] == "Updated"){
         this.FolderPath = data['records']['folderPath']
         this.messageService.add({
@@ -655,12 +657,18 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     }
   }
   getAllTags(modal_id,docType) {
+    this.headerArray = [];
+    this.headerMandetory = [];
+    this.headerOptionalArray = [];
+    this.LineArray = [];
+    this.lineMandetory = [];
+    this.LineArrayOptinal = [];
     this.sharedService.getAllTags('vendor',docType).subscribe((data:any)=>{
       this.headerTags = data.header;
       this.headerTags.forEach((el)=>{
         if(el['Ismendatory'] == 1){
-          this.headerArray.push(el['Name']);
           this.headerMandetory.push(el['Name']);
+          this.headerArray.push(el['Name']);
         } else {
           this.headerOptionalArray.push(el['Name'])
         }
@@ -676,8 +684,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       this.LineTags = data.line;
       this.LineTags.forEach((el)=>{
         if(el['Ismendatory'] == 1){
-          this.LineArray.push(el['Name']);
           this.lineMandetory.push(el['Name']);
+          this.LineArray.push(el['Name']);
         } else {
           this.LineArrayOptinal.push(el['Name'])
         }
@@ -692,7 +700,9 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       })
       this.LineArrayOptinal =[...new Set(this.LineArrayOptinal)];
     })
-    this.getMetaData(modal_id);
+    setTimeout(() => {
+      this.getMetaData(modal_id);    
+    }, 500);
   }
   showHeaderCheckboxes() {
     this.showCheckboxLineDiv = false;

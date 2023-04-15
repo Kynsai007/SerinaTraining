@@ -418,10 +418,6 @@
                                 <td class="tdRight" style="position: relative;">
                                     <div class="multipleSelection">
                                         <div class="selectBox w-100">
-                                            <!-- <select class="form-control f-13">
-                                                <option>{{Linestr}}</option>
-                                            </select>
-                                            <div class="overSelect"></div> -->
                                             <ul class="ulTags max_width" [title]="LineArray.toString()">
                                                 <li class="listData" *ngFor="let tag of LineArray; let i = index;">{{tag}} 
                                                     <span  (click)="removeLineTag(i,tag)">
@@ -450,10 +446,6 @@
                                 <td class="tdRight" style="position: relative;">
                                     <div class="multipleSelection">
                                         <div class="selectBox w-100">
-                                            <!-- <select class="form-control f-13">
-                                                <option>{{Linestr}}</option>
-                                            </select>
-                                            <div class="overSelect"></div> -->
                                             <ul class="ulTags max_width">
                                                 <li class="listData" *ngFor="let tag of LineOptTags; let i = index;">{{tag}} 
                                                     <span  (click)="removeLineOptTag(i,tag)">
