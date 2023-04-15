@@ -104,9 +104,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     }else{
       this.docTypes = [];
     }
-    if(this.docTypes.length > 0){
-      this.selecteddocType = this.selecteddocType && this.selecteddocType == "" ? this.docTypes[0] : this.selecteddocType;
-    }
     if(sessionStorage.getItem("currentFolder")){
       sessionStorage.removeItem("currentFolder");
     }
@@ -118,12 +115,16 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       this.vendorData = this.sharedService.currentVendorData;
       this.vendorName = this.sharedService.currentVendorData.VendorName;
     }
+    if(this.docTypes.length > 0){
+      this.selecteddocType = !this.selecteddocType || this.selecteddocType == "" ? this.docTypes[0] : this.selecteddocType;
+      this.getModalList(this.selecteddocType);
+      this.selectDocType(this.selecteddocType);
+    }
     this.changeMetaData();
     this.getAccuracyScore();
     this.getVendorAccounts();
     this.getfrConfig();
     this.getSynonyms();
-    this.getModalList();
     this.getRules();
     this.getAmountRules();
   }
@@ -228,6 +229,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
   selectDocType(docType){
     this.selecteddocType = docType;
+    this.getModalList(this.selecteddocType);
     this.changeMetaData();
   }
 
@@ -430,6 +432,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = '90';
         (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = 'pdf,jpg';
         (<HTMLInputElement>document.getElementById("Units")).value = 'USD';
+        if((<HTMLSelectElement>document.getElementById("ruleID")))
         (<HTMLSelectElement>document.getElementById("ruleID")).value = '';
       }
       
@@ -441,20 +444,16 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
 
   statusUpdate(value){
-    if(value == true){
-      //this.getModalList();
-    }
   }
   enableMetaDataTab(value){
     this.enableMetaDataBoolean = value;
   }
-  getModalList() {
-    this.sharedService.getModalList(this.vendorData.idVendor).subscribe((data: any) => {
+  getModalList(doctype:string) {
+    this.sharedService.getModalList(this.vendorData.idVendor,doctype).subscribe((data: any) => {
       this.modalList = data;
       if(this.modalList.length == 0){
         this.checkselect = true;
       }else{
-        this.currentTemplate = this.modalList[0];
         this.selectTemplate(this.modalList[0].idDocumentModel);
         this.checkselect = false;
       }
@@ -479,7 +478,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     this.sharedService.createNewTemplate(JSON.stringify(value)).subscribe((data: any) => {
       (<HTMLButtonElement>document.getElementById("closeBtn")).click();
       this.getVendorAccounts();
-      this.getModalList();
+      this.getModalList(this.selecteddocType);
       if(data["result"] == "Updated"){
         this.FolderPath = data['records']['folderPath']
         this.messageService.add({

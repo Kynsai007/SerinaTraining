@@ -413,6 +413,7 @@ export class FrUpdateSpComponent implements OnInit {
   }
   createModel(value) {
     value.modelStatus = 1;
+    value.docType = "Invoice";
     value.serviceproviderID = this.SPData.idServiceProvider;
     if(value['modelName'] == ''){
       return;

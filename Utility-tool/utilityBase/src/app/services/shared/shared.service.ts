@@ -167,8 +167,8 @@ export class SharedService {
   updateFrMetaData(documentId,data): Observable<any> {
     return this.http.put(`${this.url}/${this.apiVersion}/fr/update_metadata/${documentId}`,data);
   }
-  getModalList(v_id): Observable<any> {
-    return this.http.get(`${this.url}/${this.apiVersion}/fr/getmodellist/${v_id}`);
+  getModalList(v_id,doctype): Observable<any> {
+    return this.http.get(`${this.url}/${this.apiVersion}/fr/getmodellist/${v_id}?doctype=${doctype}`);
   }
   getModalListSP(s_id): Observable<any> {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/getmodellistsp/${s_id}`);
