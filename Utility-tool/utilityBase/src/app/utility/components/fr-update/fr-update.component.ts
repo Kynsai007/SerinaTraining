@@ -229,12 +229,11 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   selectDocType(docType){
     this.selecteddocType = docType;
     this.changeMetaData();
-    this.getAllTags(this.currentTemplate,docType);
   }
 
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
-    this.getMetaData(modal_id);
+    this.getAllTags(this.currentTemplate,this.selecteddocType);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
     this.outletRef.createEmbeddedView(this.contentRef);
@@ -694,6 +693,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       })
       this.LineArrayOptinal =[...new Set(this.LineArrayOptinal)];
     })
+    this.getMetaData(modal_id);
   }
   showHeaderCheckboxes() {
     this.showCheckboxLineDiv = false;
