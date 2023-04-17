@@ -99,8 +99,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     private _location: Location) { }
 
   ngOnInit(): void {
-    if(sessionStorage.getItem("documentType")){
-      this.docTypes = JSON.parse(sessionStorage.getItem("documentType"))
+    if(sessionStorage.getItem("instanceConfig")){
+      this.docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
     }else{
       this.docTypes = [];
     }

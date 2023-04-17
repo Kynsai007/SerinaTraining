@@ -13,15 +13,23 @@ export class HomeComponent implements OnInit {
   displaypopup:boolean = false;
   isAdmin: boolean;
   showServiceTab:boolean = true;
+  showVendorsTab:boolean=true;
   constructor(private authService : AuthenticationService,
     private sharedService : SharedService,public router:Router) { }
 
   ngOnInit(): void {
-    let docTypes = JSON.parse(sessionStorage.getItem("documentType"))
-    if(docTypes.length == 1 && docTypes[0]=="Purchase Orders"){
+    let docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
+    let serviceTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.serviceInvoices;
+    let vendorTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.vendorInvoices;
+    if(docTypes.length == 1 && docTypes[0]=="Purchase Orders" || serviceTemplates == 0){
       this.showServiceTab = false;
     }else{
       this.showServiceTab = true;
+    }
+    if(vendorTemplates == 0){
+      this.showVendorsTab = false;
+    }else{
+      this.showVendorsTab = true;
     }
     this.userDetails = this.authService.currentUserValue;
     this.sharedService.userId = this.userDetails.userdetails.idUser;
