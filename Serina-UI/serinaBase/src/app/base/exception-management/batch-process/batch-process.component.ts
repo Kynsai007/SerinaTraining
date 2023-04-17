@@ -27,6 +27,17 @@ export class BatchProcessComponent implements OnInit {
     { field: 'status', header: 'Status' },
     { field: 'totalAmount', header: 'Amount' },
   ];
+  ColumnsForBatchPO = [
+    // { field: 'docheaderID', header: 'Invoice Number' },
+    { field: 'VendorName', header: 'Vendor Name' },
+    { field: 'EntityName', header: 'Entity Name' },
+   
+    { field: 'CreatedOn', header: 'Uploaded Date' },
+    { field: 'PODocumentID', header: 'PO number' },
+    { field: 'sender', header: 'Sender' },
+    { field: 'status', header: 'Status' },
+    { field: 'totalAmount', header: 'Amount' },
+  ];
   serviceColumns = [
     { field: 'docheaderID', header: 'Invoice Number' },
     { field: 'ServiceProviderName', header: 'Serviceprovider Name' },
@@ -38,8 +49,10 @@ export class BatchProcessComponent implements OnInit {
     { field: 'totalAmount', header: 'Amount' },
   ];
   columnsData = [];
+  columnsDataPO = [];
   showPaginatorAllInvoice: boolean;
   columnsToDisplay = [];
+  columnsToDisplayPO = [];
 
   ColumnsForBatchApproval = [
     { field: 'docheaderID', header: 'Invoice Number' },
@@ -60,11 +73,14 @@ export class BatchProcessComponent implements OnInit {
   dataLengthAdmin: number;
   batchProcessColumnLength: number;
   approvalPageColumnLength: number;
+  batchProcessPOColumnLength : number
   dashboardViewBoolean: boolean;
   heading: string;
   isVendorBoolean:boolean;
   apprveBool: any;
   invoceDoctype: boolean;
+  datalengthPO: number;
+  showPaginatorAllPO: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -83,14 +99,19 @@ export class BatchProcessComponent implements OnInit {
     this.apprveBool = this.ds.configData?.enableApprovals;
     
     if(this.permissionService.excpetionPageAccess == true){
-
-      this.viewType = this.tagService.batchProcessTab;
       if(this.ds.configData.documentTypes.includes('Invoice')){
         this.invoceDoctype = true;
-        this.viewType = 'normal';
-      } else {
-        this.viewType = 'PODoc';
       }
+      if(!this.tagService.batchProcessTab){
+        if(this.invoceDoctype){
+          this.viewType = 'normal';
+        } else {
+          this.viewType = 'PODoc';
+        }
+      } else {
+        this.viewType = this.tagService.batchProcessTab;
+      }
+      
       this.findRoute();
 
     } else{
@@ -133,13 +154,12 @@ export class BatchProcessComponent implements OnInit {
         return ele.header != 'Status';
       });
     } 
-    if(this.viewType == "PODoc") {
-      this.ColumnsForBatch = this.ColumnsForBatch.filter((ele) => {
-        return ele.header != 'Invoice Number';
-      });
-    }
     this.ColumnsForBatch.filter((element) => {
       this.columnsToDisplay.push(element.field);
+      // this.invoiceColumnField.push(element.field)
+    });
+    this.ColumnsForBatchPO.filter((element) => {
+      this.columnsToDisplayPO.push(element.field);
       // this.invoiceColumnField.push(element.field)
     });
     this.ColumnsForBatchApproval.filter((ele) => {
@@ -148,6 +168,7 @@ export class BatchProcessComponent implements OnInit {
 
     this.batchProcessColumnLength = this.ColumnsForBatch.length + 1;
     this.approvalPageColumnLength = this.ColumnsForBatchApproval.length + 1;
+    this.batchProcessPOColumnLength = this.ColumnsForBatchPO.length + 1;
   }
 
   chooseEditedpageTab(value) {
@@ -175,13 +196,25 @@ export class BatchProcessComponent implements OnInit {
           };
           batchData.push(mergeData);
         });
-        this.columnsData = batchData.sort((a,b)=>{
-          let c = new Date(a.CreatedOn).getTime();
-          let d = new Date(b.CreatedOn).getTime();
-          return d-c });
+        // this.columnsData = batchData.sort((a,b)=>{
+        //   let c = new Date(a.CreatedOn).getTime();
+        //   let d = new Date(b.CreatedOn).getTime();
+        //   return d-c });
+        batchData.forEach(ele=>{
+          if(ele.idDocumentType == 3){
+            this.columnsData.push(ele);
+          } else if (ele.idDocumentType == 1){
+            this.columnsDataPO.push(ele);
+          }
+        })
         this.dataLength = this.columnsData.length;
         if (this.dataLength > 10) {
           this.showPaginatorAllInvoice = true;
+        }
+
+        this.datalengthPO = this.columnsDataPO.length;
+        if (this.datalengthPO > 10) {
+          this.showPaginatorAllPO = true;
         }
         this.ngxSpinner.hide();
       },

@@ -209,7 +209,7 @@ export class ExceptionTableComponent implements OnInit {
       this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
         this.SpinnerService.hide();
         if (data.result?.lock_info?.lock_status == 0) {
-          if (this.tagService.batchProcessTab == 'normal') {
+          if (this.tagService.batchProcessTab == 'normal' || this.tagService.batchProcessTab == 'PODoc') {
             if (this.permissionService.editBoolean == true) {
               if (e.documentsubstatusID == 8 ||
                 e.documentsubstatusID == 16 ||

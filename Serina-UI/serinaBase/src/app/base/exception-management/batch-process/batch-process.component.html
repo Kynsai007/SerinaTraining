@@ -17,7 +17,7 @@
             class="nav-link"
             [class.active-tab]="viewType == 'PODoc'"
             (click)="chooseEditedpageTab('PODoc')"
-            >Exception PO's({{ dataLength }})</a
+            >Exception PO's({{ datalengthPO }})</a
           >
         </li>
         <li class="nav-item ml-1" *ngIf="isVendorBoolean && this.apprveBool">
@@ -67,12 +67,12 @@
         <div class="tableDiv">
           <div>
             <app-exception-table
-              [invoiceColumns]="ColumnsForBatch"
-              [columnsToDisplay]="columnsToDisplay"
-              [showPaginatorAllInvoice]="showPaginatorAllInvoice"
-              [ColumnLength]="batchProcessColumnLength"
+              [invoiceColumns]="ColumnsForBatchPO"
+              [columnsToDisplay]="columnsToDisplayPO"
+              [showPaginatorAllInvoice]="showPaginatorAllPO"
+              [ColumnLength]="batchProcessPOColumnLength"
               (searchInvoiceData)="searchInvoiceDataV($event)"
-              [columnsData]="columnsData"
+              [columnsData]="columnsDataPO"
             >
             </app-exception-table>
           </div>
