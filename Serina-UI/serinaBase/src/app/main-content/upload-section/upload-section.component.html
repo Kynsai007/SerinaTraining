@@ -129,10 +129,9 @@
 
               <!--Vendor Selection-->
               <div *ngIf="isCustomerPortal">
-                <label class="f-13 mb-0">Select Vendor</label><br />
+                <label class="f-13 mb-0">Select <span *ngIf="document_type !='Purchase Orders'">Vendor</span> <span *ngIf="document_type =='Purchase Orders'">Customer</span></label><br />
                 <p-autoComplete
                   #vdropdown
-                  placeholder="Select vendor"
                   (onSelect)="selectVendorAccount($event)"
                   [group]="false"
                   [suggestions]="filteredVendors"
@@ -207,12 +206,12 @@
               >
                 <div style="margin: 30px" *ngIf="isuploadable">
                   <span class="material-icons f-80"> filter_none </span>
-                  <div class="underdropIcon">Drag and drop an Invoice copy</div>
+                  <div class="underdropIcon">Drag and drop an Document copy</div>
                   <small class="f-12"
                     >File type must be in .jpg .png .pdf</small
                   >
                   <div class="fileText">Or</div>
-                  <label for="img" class="img-browse"> Attach Invoice </label>
+                  <label for="img" class="img-browse"> Attach Document </label>
                   <input
                     ng2FileSelect
                     accept=".png, .jpg, .pdf"

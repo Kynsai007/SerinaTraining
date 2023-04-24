@@ -241,7 +241,11 @@ export class ExceptionTableComponent implements OnInit {
               };
               // this.ExceptionsService.updateDocumentLockInfo(JSON.stringify(sessionData)).subscribe((data:any)=>{})
               this.tagService.submitBtnBoolean = true;
-              this.tagService.headerName = 'Edit Invoice';
+              if(this.tagService.batchProcessTab == 'PODoc'){
+                this.tagService.headerName = 'Edit PO';
+              } else {
+                this.tagService.headerName = 'Edit Invoice';
+              }
             } else {
               this.displayResponsivepopup = true;
               this.confirmText = 'Sorry, you do not have access to edit';

@@ -108,6 +108,8 @@ export class BatchProcessComponent implements OnInit {
         } else {
           this.viewType = 'PODoc';
         }
+        this.tagService.batchProcessTab = this.viewType
+
       } else {
         this.viewType = this.tagService.batchProcessTab;
       }

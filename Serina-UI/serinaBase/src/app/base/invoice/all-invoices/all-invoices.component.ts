@@ -183,7 +183,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
   viewInvoiceDetails(e) {
     let route:string;
-    if(e.documentStatusID == 12 || e.documentStatusID == 13){
+    if(this.stateTable == 'PO' ){
       route = 'PODetails';
     } else {
       route = 'InvoiceDetails';
