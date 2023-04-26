@@ -64,6 +64,7 @@ export class VendorsComponent implements OnInit {
       Country: [''],
       City: [''],
       LocationCode: [''],
+      vendorType: ['vendor']
     });
     if (this.sharedService.storeVendorsList) {
       this.sharedService.readVendorData().subscribe((data: any) => {
@@ -73,7 +74,7 @@ export class VendorsComponent implements OnInit {
     }
     // this.vendorsList = this.sharedService.vendorList;
     if (this.vendorsList.length == 0) {
-      this.APIParams = `?offset=1&limit=100`;
+      this.APIParams = `?offset=1&limit=100&partyType=vendor`;
       this.getVendorsData(this.APIParams);
       // this.readOnboardedVendorsList();
     } else {
@@ -163,6 +164,7 @@ export class VendorsComponent implements OnInit {
       TradeLicense: this.vendorForm.controls['TradeLicense'].value,
       VATLicense: this.vendorForm.controls['VATLicense'].value,
       TRNNumber: this.vendorForm.controls['TRNNumber'].value,
+      vendorType: 'vendor'
     };
     let vu_id = JSON.parse(sessionStorage.getItem('currentLoginUser'))[
       'userdetails'
@@ -239,18 +241,18 @@ export class VendorsComponent implements OnInit {
 
   filtersForAPI() {
     if (this.selectedEntityId != 'ALL' && this.onboard_status == 'ALL') {
-      this.APIParams = `?ent_id=${this.selectedEntityId}&offset=${this.offsetCount}&limit=100`;
+      this.APIParams = `?partyType=vendor&ent_id=${this.selectedEntityId}&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
     } else if (this.onboard_status != 'ALL' && this.selectedEntityId == 'ALL') {
-      this.APIParams = `?onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
+      this.APIParams = `?partyType=vendor&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
     } else if (this.selectedEntityId != 'ALL' && this.onboard_status != 'ALL') {
-      this.APIParams = `?ent_id=${this.selectedEntityId}&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
+      this.APIParams = `?partyType=vendor&ent_id=${this.selectedEntityId}&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
     } else if (this.vendorNameForSearch) {
-      this.APIParams = `?ven_code=${this.vendorNameForSearch}&offset=${this.offsetCount}&limit=100`;
+      this.APIParams = `?partyType=vendor&ven_code=${this.vendorNameForSearch}&offset=${this.offsetCount}&limit=100`;
     } else {
-      this.APIParams = `?offset=${this.offsetCount}&limit=100`;
+      this.APIParams = `?partyType=vendor&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
     }
   }
@@ -261,7 +263,7 @@ export class VendorsComponent implements OnInit {
     this.sharedService.selectedEntityId = 'ALL';
     this.vendorsList = [];
     this.offsetCount = 1;
-    this.APIParams = `?ven_code=${this.vendorNameForSearch}&offset=${this.offsetCount}&limit=100`;
+    this.APIParams = `?partyType=vendor&ven_code=${this.vendorNameForSearch}&offset=${this.offsetCount}&limit=100`;
     this.getVendorsData(this.APIParams);
     this.sharedService.vendorNameForSearch = this.vendorNameForSearch;
   }

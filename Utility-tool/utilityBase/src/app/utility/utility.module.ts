@@ -28,9 +28,10 @@ import { MobmainComponent } from './components/fr-update/mob/mobmain/mobmain.com
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { ServiceProvidersComponent } from './components/service-providers/service-providers.component';
 import { FrUpdateSpComponent } from './components/fr-update-sp/fr-update-sp.component';
+import { CustomersComponent } from './components/customers/customers.component';
 
 @NgModule({
-  declarations: [HomeComponent, VendorsComponent, UtilityHomeComponent, GuideComponent, FrUpdateComponent, ModalOnBoardComponent, MobComponent, TaggingtoolComponent, TrainingtoolComponent, ComposingtoolComponent, TestingtoolComponent, MobmainComponent, ServiceProvidersComponent, FrUpdateSpComponent],
+  declarations: [HomeComponent, VendorsComponent, UtilityHomeComponent, GuideComponent, FrUpdateComponent, ModalOnBoardComponent, MobComponent, TaggingtoolComponent, TrainingtoolComponent, ComposingtoolComponent, TestingtoolComponent, MobmainComponent, ServiceProvidersComponent, FrUpdateSpComponent, CustomersComponent],
   imports: [
     CommonModule,
     UtilityRoutingModule,

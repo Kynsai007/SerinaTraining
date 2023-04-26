@@ -14,6 +14,7 @@ export class HomeComponent implements OnInit {
   isAdmin: boolean;
   showServiceTab:boolean = true;
   showVendorsTab:boolean=true;
+  showCustomersTab:boolean=true;
   constructor(private authService : AuthenticationService,
     private sharedService : SharedService,public router:Router) { }
 
@@ -26,10 +27,15 @@ export class HomeComponent implements OnInit {
     }else{
       this.showServiceTab = true;
     }
-    if(vendorTemplates == 0){
-      this.showVendorsTab = false;
-    }else{
+    if(docTypes.includes("Invoice") && vendorTemplates == 1){
       this.showVendorsTab = true;
+    }else{
+      this.showVendorsTab = false;
+    }
+    if(docTypes.includes("Purchase Orders")){
+      this.showCustomersTab = true;
+    }else{
+      this.showCustomersTab = false;
     }
     this.userDetails = this.authService.currentUserValue;
     this.sharedService.userId = this.userDetails.userdetails.idUser;

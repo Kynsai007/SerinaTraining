@@ -16,13 +16,17 @@ export class SharedService {
   headers_object;
   httpOptions;
   storeVendorsList = new BehaviorSubject<any>([]);
+  storeCustomersList = new BehaviorSubject<any>([]);
   storeServiceProviderList = new BehaviorSubject<any>([]);
   storeEntityList = new Subject();
   vendorDetails: any;
+  customerDetails:any;
   SPDetails:any;
   private vendorDataSubject: BehaviorSubject<any>;
+  private customerDataSubject: BehaviorSubject<any>;
   private SPDataSubject: BehaviorSubject<any>;
   private vendorData: Observable<any>;
+  private customerData: Observable<any>; 
   private SPData: Observable<any>;
   finalJsonData = new Subject();
 
@@ -48,14 +52,20 @@ export class SharedService {
   }
   isAdmin: boolean;
   vendorList = [];
+  customerList = [];
   selectedEntityId: any = 'ALL';
   onboard_status: any = 'ALL';
   vendorNameForSearch: any;
+  customerNameForSearch:any;
   spNameForSearch:any;
   constructor(private http: HttpClient) {
     if (sessionStorage.getItem('vendorData')) {
       this.vendorDataSubject = new BehaviorSubject<any>(JSON.parse(sessionStorage.getItem('vendorData')));
       this.vendorData = this.vendorDataSubject.asObservable();
+    }
+    if (sessionStorage.getItem('customerData')){
+      this.customerDataSubject = new BehaviorSubject<any>(JSON.parse(sessionStorage.getItem('customerData')));
+      this.customerData = this.customerDataSubject.asObservable();
     }
     if(sessionStorage.getItem('spData')){
       this.SPDataSubject = new BehaviorSubject<any>(JSON.parse(sessionStorage.getItem('spData')));
@@ -88,7 +98,9 @@ export class SharedService {
   readVendorData():Observable<any>{
     return this.storeVendorsList.asObservable();
   }
-
+  readCustomerData():Observable<any>{
+    return this.storeCustomersList.asObservable();
+  }
   readSPData():Observable<any>{
     return this.storeServiceProviderList.asObservable();
   }
@@ -277,6 +289,9 @@ export class SharedService {
     return this.http.post(`${this.url}/${this.apiVersion}/Vendor/newVendor/${vu_id}`,spobj); 
   }
   addVendorAccount(vendoraccobj,vu_id,v_id): Observable<any>{
+    return this.http.post(`${this.url}/${this.apiVersion}/Vendor/newVendorAccount/${vu_id}/idVendor/${v_id}`,vendoraccobj);
+  }
+  addCustomerAccount(vendoraccobj,vu_id,v_id): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/Vendor/newVendorAccount/${vu_id}/idVendor/${v_id}`,vendoraccobj);
   }
   addSPAccount(vendoraccobj,vu_id,v_id): Observable<any>{

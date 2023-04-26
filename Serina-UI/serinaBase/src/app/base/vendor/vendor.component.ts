@@ -97,7 +97,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
       this.vendorreaddata = this.dataService.vendorsListData;
       this.entityFilterData = this.dataService.vendorsListData;
       if(this.vendorreaddata.length <= 0){
-        this.APIParams = `?offset=1&limit=50`;
+        this.APIParams = `?partyType=vendor&offset=1&limit=50`;
         this.DisplayVendorDetails(this.APIParams);
       }
       if(this.vendorreaddata.length > 10){
@@ -225,13 +225,13 @@ export class VendorComponent implements OnInit, AfterViewInit {
   }
   filtersForAPI(limit) {
     if (this.selectedEntityId != 'All' && this.selectedEntityId) {
-      this.APIParams = `?ent_id=${this.selectedEntityId}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=vendor&ent_id=${this.selectedEntityId}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     }else if (this.vendorNameForSearch && this.vendorNameForSearch != '') {
-      this.APIParams = `?ven_code=${this.vendorNameForSearch}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=vendor&ven_code=${this.vendorNameForSearch}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     } else {
-      this.APIParams = `?offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=vendor&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     }
   }

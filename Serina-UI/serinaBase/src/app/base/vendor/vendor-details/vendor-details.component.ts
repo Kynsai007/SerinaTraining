@@ -203,7 +203,7 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   }
   DisplayVendorDetails(offset,limit) {
     this.SpinnerService.show();
-    this.sharedService.readvendors(`?offset=${offset}&limit=${limit}`).subscribe((data: any) => {
+    this.sharedService.readvendors(`?partyType=vendor&offset=${offset}&limit=${limit}`).subscribe((data: any) => {
       if (data) {
         let pushArray = [];
         let onboardBoolean:boolean;
