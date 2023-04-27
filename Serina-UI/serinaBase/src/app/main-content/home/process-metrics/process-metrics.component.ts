@@ -191,12 +191,12 @@ export class ProcessMetricsComponent implements OnInit {
 
   readTotalInvoiceData(filter){
     this.chartsService.getTotalInvoiceData(filter).subscribe((data:any)=>{
-      let mergedArr = [];
-      data.data.forEach(ele=>{
-        let arr = {...ele.Document,...ele.Entity};
-        mergedArr.push(arr);
-      });
-      this.totalTableData = mergedArr;
+      // let mergedArr = [];
+      // data.data.forEach(ele=>{
+      //   let arr = {...ele.Document,...ele.Entity};
+      //   mergedArr.push(arr);
+      // });
+      this.totalTableData = data.data;
       this.totalInv = this.totalTableData.length;
       if(this.totalInv>10){
         this.showPaginatortotal = true;
@@ -205,12 +205,12 @@ export class ProcessMetricsComponent implements OnInit {
   }
   readUnderProcessData(filter){
     this.chartsService.getUnderprocessInvoiceData(filter).subscribe((data:any)=>{
-      let mergedArr = [];
-      data.data.forEach(ele=>{
-        let arr = {...ele.Document,...ele.Entity};
-        mergedArr.push(arr);
-      });
-      this.UnderProcessTableData = mergedArr;
+      // let mergedArr = [];
+      // data.data.forEach(ele=>{
+      //   let arr = {...ele.Document,...ele.Entity};
+      //   mergedArr.push(arr);
+      // });
+      this.UnderProcessTableData = data.data;
       this.UnderProcessInv = this.UnderProcessTableData.length;
       if(this.UnderProcessInv>10){
         this.showPaginatorUnderProcess = true;
@@ -219,12 +219,12 @@ export class ProcessMetricsComponent implements OnInit {
   }
   readInvoicedData(filter){
     this.chartsService.getInvoicedData(filter).subscribe((data:any)=>{
-      let mergedArr = [];
-      data.data.forEach(ele=>{
-        let arr = {...ele.Document,...ele.Entity};
-        mergedArr.push(arr);
-      });
-      this.PostedTableData = mergedArr;
+      // let mergedArr = [];
+      // data.data.forEach(ele=>{
+      //   let arr = {...ele.Document,...ele.Entity};
+      //   mergedArr.push(arr);
+      // });
+      this.PostedTableData = data.data;
       this.PostedInv = this.PostedTableData.length;
       if(this.PostedInv>10){
         this.showPaginatorPosted = true;
@@ -233,12 +233,12 @@ export class ProcessMetricsComponent implements OnInit {
   }
   readCollectionsData(filter){
     this.chartsService.getCollectionData(filter).subscribe((data:any)=>{
-      let mergedArr = [];
-      data.data.forEach(ele=>{
-        let arr = {...ele.Document,...ele.Entity};
-        mergedArr.push(arr);
-      });
-      this.CollectionsTableData = mergedArr;
+      // let mergedArr = [];
+      // data.data.forEach(ele=>{
+      //   let arr = {...ele.Document,...ele.Entity};
+      //   mergedArr.push(arr);
+      // });
+      this.CollectionsTableData = data.data;
       this.CollectionsInv = this.CollectionsTableData.length;
       if(this.CollectionsInv>10){
         this.showPaginatorCollections = true;
@@ -247,12 +247,12 @@ export class ProcessMetricsComponent implements OnInit {
   }
   readRejectedData(filter){
     this.chartsService.getRejectedData(filter).subscribe((data:any)=>{
-      let mergedArr = [];
-      data.data.forEach(ele=>{
-        let arr = {...ele.Document,...ele.Entity};
-        mergedArr.push(arr);
-      });
-      this.RejectedTableData = mergedArr;
+      // let mergedArr = [];
+      // data.data.forEach(ele=>{
+      //   let arr = {...ele.Document,...ele.Entity};
+      //   mergedArr.push(arr);
+      // });
+      this.RejectedTableData = data.data;
       this.RejectedInv = this.RejectedTableData.length;
       if(this.RejectedInv>10){
         this.showPaginatorCollections = true;
