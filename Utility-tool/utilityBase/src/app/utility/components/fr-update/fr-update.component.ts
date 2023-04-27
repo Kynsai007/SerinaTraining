@@ -88,7 +88,6 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   switchLabel:string = "Yes";
   documentCount:number = 0;
   showRule:boolean=true;
-  docTypes: any[] = [];
   @ViewChild('updateMetaData')
   updateMetaData:NgForm;
 
@@ -99,27 +98,38 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     private _location: Location) { }
 
   ngOnInit(): void {
-    if(sessionStorage.getItem("instanceConfig")){
-      this.docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
-    }else{
-      this.docTypes = [];
-    }
     if(sessionStorage.getItem("currentFolder")){
       sessionStorage.removeItem("currentFolder");
     }
     if (this.sharedService.vendorDetails) {
       this.vendorData = this.sharedService.vendorDetails;
       this.vendorName = this.sharedService.vendorDetails.VendorName;
+      this.selecteddocType = 'Invoice';
     }
-    if (!this.vendorName) {
-      this.vendorData = this.sharedService.currentVendorData;
-      this.vendorName = this.sharedService.currentVendorData.VendorName;
+    if(this.sharedService.customerDetails){
+      this.vendorData = this.sharedService.customerDetails;
+      this.vendorName = this.sharedService.customerDetails.VendorName;
+      this.selecteddocType = 'Purchase Orders';
     }
-    if(this.docTypes.length > 0){
-      this.selecteddocType = !this.selecteddocType || this.selecteddocType == "" ? this.docTypes[0] : this.selecteddocType;
-      this.getModalList(this.selecteddocType);
-      this.selectDocType(this.selecteddocType);
+    if (!this.sharedService.vendorDetails && !this.vendorName) {
+      try{
+        this.vendorData = this.sharedService.currentVendorData;
+        this.vendorName = this.sharedService.currentVendorData.VendorName;
+        this.selecteddocType = 'Invoice';
+      }catch(ex){
+
+      }
     }
+    if (!this.sharedService.customerDetails && !this.vendorName) {
+      try{
+        this.vendorData = this.sharedService.currentCustomerData;
+        this.vendorName = this.sharedService.currentCustomerData.VendorName;
+        this.selecteddocType = 'Purchase Orders';
+      }catch(ex){
+
+      }
+    }
+    this.getModalList(this.selecteddocType);
     this.changeMetaData();
     this.getAccuracyScore();
     this.getVendorAccounts();
@@ -227,12 +237,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   closeNotify(){
     (<HTMLDivElement>document.getElementById("notify")).style.opacity = "0";
   }
-  selectDocType(docType){
-    this.selecteddocType = docType;
-    this.getModalList(this.selecteddocType);
-    this.changeMetaData();
-  }
-
+  
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
     this.getAllTags(this.currentTemplate,this.selecteddocType);
@@ -480,6 +485,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     }
     this.sharedService.createNewTemplate(JSON.stringify(value)).subscribe((data: any) => {
       (<HTMLButtonElement>document.getElementById("closeBtn")).click();
+      this.getModalList(this.selecteddocType);
       this.getVendorAccounts();
       if(data["result"] == "Updated"){
         this.FolderPath = data['records']['folderPath']

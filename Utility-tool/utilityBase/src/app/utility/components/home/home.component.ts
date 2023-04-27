@@ -39,7 +39,6 @@ export class HomeComponent implements OnInit {
     }
     this.userDetails = this.authService.currentUserValue;
     this.sharedService.userId = this.userDetails.userdetails.idUser;
-    console.log(this.userDetails);
     if(this.userDetails.permissioninfo.User == 1){
       this.sharedService.isAdmin = true;
     } else {

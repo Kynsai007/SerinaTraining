@@ -43,16 +43,6 @@
                         <form #updateFrConfig = "ngForm" (ngSubmit)="updateFr(updateFrConfig.value)">
                             <table style="width: 80%;">
                                 <tr class="trHeight">
-                                    <td class="tdLeft f-13">Document Type<span class="colon">:</span></td>
-                                    <td class="tdRight">
-                                        <select  id="doctype" class="form-control f-13"
-                                            (change)="selectDocType($event.target.value)">
-                                            <option [value]="doc" *ngFor="let doc of docTypes">
-                                                {{doc}}</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr class="trHeight">
                                     <td class="tdLeft f-13">Template Name<span class="colon">:</span></td>
                                     <td class="tdRight">
                                         <select  id="template" class="form-control f-13"

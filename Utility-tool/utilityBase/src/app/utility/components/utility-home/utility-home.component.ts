@@ -11,36 +11,23 @@ import { SharedService } from 'src/app/services/shared/shared.service';
 })
 export class UtilityHomeComponent implements OnInit {
   isAdmin: any;
-  showServiceTab:boolean=true;
-  showVendorsTab:boolean=true;
-  showCustomersTab:boolean=true;
+  docTypes: any;
   constructor(private router : Router,private authService:AuthenticationService,
     private sharedService : SharedService) { }
 
   ngOnInit(): void {
     this.isAdmin = this.sharedService.isAdmin;
-    let docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
-    let serviceTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.serviceInvoices;
-    let vendorTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.vendorInvoices;
-    if(docTypes.length == 1 && docTypes[0]=="Purchase Orders" || serviceTemplates == 0){
-      this.showServiceTab = false;
-    }else{
-      this.showServiceTab = true;
-    }
-    if(docTypes.includes("Invoice") && vendorTemplates == 1){
-      this.showVendorsTab = true;
-    }else{
-      this.showVendorsTab = false;
-    }
-    if(docTypes.includes("Purchase Orders")){
-      this.showCustomersTab = true;
-    }else{
-      this.showCustomersTab = false;
-    }
+    this.docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
   }
 
   startTemplate(){
-    this.router.navigate(['IT_Utility/vendors'])
+    if(this.docTypes.includes("Purchase Orders")){
+      this.router.navigate(['IT_Utility/customers'])
+    }else if(this.docTypes.includes("Invoice")){
+      this.router.navigate(['IT_Utility/vendors'])
+    }else{
+      this.router.navigate(['IT_Utility/service-providers'])
+    }
   }
   signOut(){
     this.authService.logout();

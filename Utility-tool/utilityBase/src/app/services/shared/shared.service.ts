@@ -117,6 +117,9 @@ export class SharedService {
   public get currentVendorData(): any {
     return this.vendorDataSubject.value;
   }
+  public get currentCustomerData(): any{
+    return this.customerDataSubject.value;
+  }
 
   public get configData(): any {
     return this.configDataSubject.value;
