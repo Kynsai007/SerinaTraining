@@ -148,7 +148,12 @@ export class DataService {
   grnWithPOBoolean: boolean;
   GRN_PO_Data = [];
   idDocumentType: number;
-  constructor() { }
+  ap_boolean:any;
+  constructor(
+  ) { 
+    // this.ap_boolean = sessionStorage.getItem("ap_boolean");
+    // console.log(this.ap_boolean)
+  }
 
   getEntity():Observable<any>{
     return this.entityData.asObservable();

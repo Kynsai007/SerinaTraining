@@ -102,7 +102,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     } else {
       this.isAdmin = false;
     }
-    if(this.storageService.configData.documentTypes.includes('Invoice')){
+    if(this.storageService.ap_boolean){
       this.invoceDoctype = true;
     }
     this.bgColorCode = this.storageService.bgColorCode;

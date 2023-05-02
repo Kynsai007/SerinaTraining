@@ -192,6 +192,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   OPUnits: any;
   approverList: any;
   acc_num: any;
+  ap_boolean: any;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -228,6 +229,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.ERP = this.storageService.configData.erpname;
+    this.ap_boolean = this.storageService.ap_boolean;
     console.log(this.ERP)
     this.toGetEntity();
     this.getOPunits();

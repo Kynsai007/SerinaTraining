@@ -26,6 +26,7 @@
             pTooltip="PO Number"
             tooltipPosition="top"
             pSortableColumn="PODocumentID"
+            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
           >
             PO Number
           </th>
@@ -33,6 +34,7 @@
             pTooltip="Received GRN No"
             tooltipPosition="top"
             pSortableColumn="docheaderID"
+            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
           >
             Received GRN No
           </th>
@@ -40,6 +42,7 @@
             pTooltip="Received Date"
             tooltipPosition="top"
             pSortableColumn="documentDate"
+            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
           >
             Received Date
           </th>
@@ -47,11 +50,12 @@
             pTooltip="GRN Amount"
             tooltipPosition="top"
             pSortableColumn="totalAmount"
+            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
           >
             GRN Amount
           </th>
 
-          <th>Actions</th>
+          <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions</th>
         </tr>
         <tr class="sticky_top">
           <td>

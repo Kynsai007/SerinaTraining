@@ -17,6 +17,7 @@ export class BusinessChartsComponent implements OnInit {
   rangeDates: Date[];
   vendorInvoicesAccess: boolean;
   serviceInvoicesAccess: boolean;
+  partyType:string;
   constructor(
     private DataService: DataService,
     private router: Router,
@@ -26,6 +27,11 @@ export class BusinessChartsComponent implements OnInit {
   ngOnInit(): void {
     this.vendorInvoicesAccess = this.DataService.configData?.vendorInvoices;
     this.serviceInvoicesAccess = this.DataService.configData?.serviceInvoices;
+    if(this.DataService.ap_boolean){
+      this.partyType = 'Vendor';
+    } else {
+      this.partyType = 'Customer';
+    }
     if(this.vendorInvoicesAccess){
       this.viewType = 'vendor';
       this.router.navigate(['/customer/home/vendorBasedReports']);

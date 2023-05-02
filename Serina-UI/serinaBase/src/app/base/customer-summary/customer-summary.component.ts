@@ -59,6 +59,7 @@ export class CustomerSummaryComponent implements OnInit {
   selectedDateValue: string;
   vendorInvoiceAccess: boolean;
   serviceInvoiceAccess: boolean;
+  partyType:string;
 
   constructor(
     private dateFilterService: DateFilterService,
@@ -72,6 +73,11 @@ export class CustomerSummaryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if(this.dataStoreService.ap_boolean){
+      this.partyType = 'Vendor'
+    } else {
+      this.partyType = 'Customer'
+    }
     this.dateRange();
     this.readSummary('');
     this.findColumns();
@@ -83,6 +89,9 @@ export class CustomerSummaryComponent implements OnInit {
   // display columns
   findColumns() {
     this.summaryColumn.forEach((e) => {
+      if(!this.dataStoreService.ap_boolean && e.header == 'Vendor Name'){
+        e.header = 'Customer Name'
+      }
       this.summaryColumnHeader.push(e.header);
       this.summaryColumnField.push(e.field);
     });

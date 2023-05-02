@@ -122,6 +122,7 @@ export class InvoiceComponent implements OnInit {
   vendorInvoiceAccess: boolean;
   serviceInvoiceAccess: boolean;
   invoceDoctype = false;
+  partyType: string;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -164,7 +165,8 @@ export class InvoiceComponent implements OnInit {
     this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
     if (this.vendorInvoiceAccess) {
-      if (this.dataService.configData.documentTypes.includes('Invoice')) {
+      if (this.dataService.ap_boolean) {
+        this.partyType = 'Vendor';
         this.invoceDoctype = true;
         this.route.navigate(['/customer/invoice/allInvoices']);
         this.getInvoiceColumns();
@@ -176,6 +178,7 @@ export class InvoiceComponent implements OnInit {
           this.getDisplayServiceInvoicedata();
         }
       } else {
+        this.partyType = 'Customer';
         this.route.navigate(['/customer/invoice/PO']);
       }
     }
@@ -291,7 +294,7 @@ export class InvoiceComponent implements OnInit {
     if (this.portal_name == 'customer') {
       this.rejectedColumns.unshift({
         dbColumnname: 'VendorName',
-        columnName: 'Vendor Name',
+        columnName: `${this.partyType} Name`,
       });
     }
     this.GRNExcpColumns.forEach((val) => {
@@ -299,6 +302,9 @@ export class InvoiceComponent implements OnInit {
     });
 
     this.rejectedColumns.forEach((e) => {
+      if(!this.dataService.ap_boolean && e.columnName == 'Invoice Number'){
+        e.columnName = 'Document Number'
+      }
       this.columnstodisplayrejected.push(e.dbColumnname);
     });
 
@@ -699,6 +705,9 @@ export class InvoiceComponent implements OnInit {
           pushedPOColumnsArray.push(arrayColumn);
         });
         this.poColumns = pushedPOColumnsArray.filter((element) => {
+          if(element.columnName == 'Vendor Name' && !this.dataService.ap_boolean){
+            element.columnName = 'Customer Name'
+          }
           return element.isActive == 1;
         });
         const arrayOfColumnIdPO = [];
@@ -746,6 +755,12 @@ export class InvoiceComponent implements OnInit {
           pushedArchivedColumnsArray.push(arrayColumn);
         });
         this.archivedColumns = pushedArchivedColumnsArray.filter((element) => {
+          if(element.columnName == 'Vendor Name' && !this.dataService.ap_boolean){
+            element.columnName = 'Customer Name'
+          } 
+          if(!this.dataService.ap_boolean && element.columnName == 'Invoice Number'){
+            element.columnName = 'Document Number'
+          }
           return element.isActive == 1;
         });
         const arrayOfColumnIdArchived = [];

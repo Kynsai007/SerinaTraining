@@ -212,8 +212,11 @@ export class UploadSectionComponent implements OnInit {
   ngOnInit(): void {
     this.userDetails = this.authenticationService.currentUserValue['userdetails'];
     this.DocumentTypes = this.dataService.configData.documentTypes;
-    this.document_type = this.DocumentTypes[0];
-    console.log(this.document_type);
+    if(this.dataService.ap_boolean){
+      this.document_type = 'Invoice';
+    } else {
+      this.document_type = 'Purchase Orders'
+    }
     if(this.PS.uploadPermissionBoolean){
       if(this.userDetails?.uploadOpt == 'Quick Upload'){
         this.viewType = 'quick';

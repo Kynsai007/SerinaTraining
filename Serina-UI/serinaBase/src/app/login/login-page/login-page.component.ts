@@ -337,9 +337,12 @@ export class LoginPageComponent implements OnInit {
     if(this.instanceInfo?.isActive == 1){
       sessionStorage.setItem("configData", JSON.stringify(this.instanceInfo));
       let invoceDoctype = false;
+      this.dataStoreService.ap_boolean = false;
       if(this.dataStoreService.configData.documentTypes.includes('Invoice')){
         invoceDoctype = true;
+        this.dataStoreService.ap_boolean = true;
       }
+      sessionStorage.setItem("ap_boolean", JSON.stringify(invoceDoctype));
         if (this.returnUrl) {
           this.router.navigate([this.returnUrl]);
         } else if (data.user_type === 'customer_portal') {

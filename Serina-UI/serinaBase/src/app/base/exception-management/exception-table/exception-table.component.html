@@ -42,25 +42,25 @@
               width:
                 col.header === 'Status' && router.url.includes('home')
                   ? '42%'
-                  : ''
+                  : '',backgroundColor : ap_boolean ? '#313971' : '#a72845'
             }"
             [pSortableColumn]="col.field"
           >
             {{ col.header }}
           </th>
-          <th class="action_Zindex">Actions</th>
+          <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" class="action_Zindex">Actions</th>
         </tr>
         <tr *ngIf="!batchBoolean">
           <th
             *ngFor="let col of columns"
             [pTooltip]="col.columnDescription"
             tooltipPosition="top"
-            [ngStyle]="{ width: col.header === 'Rule' ? '40%' : '' }"
+            [ngStyle]="{ width: col.header === 'Rule' ? '40%' : '' ,backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
             [pSortableColumn]="col.field"
           >
             {{ col.header }}
           </th>
-          <th class="action_Zindex">Actions</th>
+          <th class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions</th>
         </tr>
         <tr>
           <td *ngFor="let col of columns" class="sticky_top">

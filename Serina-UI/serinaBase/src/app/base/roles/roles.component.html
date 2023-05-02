@@ -84,15 +84,15 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th pSortableColumn="LogName">User Name</th>
-                  <th pSortableColumn="firstName">Name</th>
-                  <th pSortableColumn="NameOfRole">Role</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="LogName">User Name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="firstName">Name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="NameOfRole">Role</th>
 
-                  <th pSortableColumn="entity_site_count">
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="entity_site_count">
                     No of Entity sites
                   </th>
-                  <th pSortableColumn="isActive">Status</th>
-                  <th class="w-30" style="text-align: center">Actions</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="isActive">Status</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" class="w-30" style="text-align: center">Actions</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-users>
@@ -181,13 +181,13 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <th style="text-align: left" pSortableColumn="NameOfRole">
+              <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" style="text-align: left" pSortableColumn="NameOfRole">
                 Role Name
               </th>
-              <th style="text-align: left" pSortableColumn="Priority">
+              <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" style="text-align: left" pSortableColumn="Priority">
                 Priority
               </th>
-              <th style="text-align: center">Actions</th>
+              <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" style="text-align: center">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-users>
@@ -272,13 +272,13 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th pSortableColumn="LogName" style="width: 12%">User Name</th>
-                  <th pSortableColumn="firstName">Name</th>
-                  <th pSortableColumn="email">Email</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="LogName" style="width: 12%">User Name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="firstName">Name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="email">Email</th>
 
-                  <th pSortableColumn="vendor_data.VendorName">Vendor Name</th>
-                  <th pSortableColumn="isActive" style="width: 114px">Status</th>
-                  <th class="w-30" style="text-align: center">Actions</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="vendor_data.VendorName">Vendor Name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="isActive" style="width: 114px">Status</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" class="w-30" style="text-align: center">Actions</th>
                   <!-- <th pSortableColumn="rnk">Financial Approval Level</th> -->
                   <!-- <th>Action</th> -->
                 </tr>
@@ -409,13 +409,13 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th pSortableColumn="LogName" style="width: 12%">User Name</th>
-                  <th pSortableColumn="firstName">Name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="LogName" style="width: 12%">User Name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="firstName">Name</th>
                   <th pSortableColumn="email">Email</th>
 
-                  <th pSortableColumn="vendor_data.VendorName">Vendor Name</th>
-                  <th pSortableColumn="isActive" style="width: 114px">Status</th>
-                  <th class="w-30" style="text-align: center">Actions</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="vendor_data.VendorName">Vendor Name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="isActive" style="width: 114px">Status</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" class="w-30" style="text-align: center">Actions</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-users>

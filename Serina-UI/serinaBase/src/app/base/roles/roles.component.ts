@@ -248,6 +248,7 @@ export class RolesComponent implements OnInit {
   offsetCount = 1;
   serachStr = '';
   totalC_users: any;
+  ap_boolean: any;
   constructor(
     private dataService: DataService,
     private messageService: MessageService,
@@ -266,6 +267,7 @@ export class RolesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.ap_boolean = this.dataService.ap_boolean;
     this.inIt();
   }
 

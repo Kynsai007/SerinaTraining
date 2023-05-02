@@ -42,6 +42,7 @@ export class VendorBasedChartsComponent implements OnInit {
   selectDate: Date;
   displayYear;
   lastYear: number;
+  partyType: string;
 
   constructor(
     private chartsService: ChartsService,
@@ -57,6 +58,11 @@ export class VendorBasedChartsComponent implements OnInit {
   ngOnInit(): void {
     if(this.dataStoreService.configData?.vendorInvoices){
       this.viewType = this.chartsService.vendorTabs;
+      if(this.dataStoreService.ap_boolean){
+        this.partyType = 'Vendor';
+      } else {
+        this.partyType = 'Customer';
+      }
       // this.readExceptionData();
       this.prepareColumns();
       this.readEmailExceptionData('');
@@ -102,7 +108,7 @@ export class VendorBasedChartsComponent implements OnInit {
     ];
 
     this.columnsForonboard = [
-      { field: 'VendorName', header: 'Vendor Name' },
+      { field: 'VendorName', header: `${this.partyType} Name` },
       { field: 'EntityName', header: 'Entity' },
       { field: 'CreatedOn', header: 'Onboarded Date' },
       { field: 'UpdatedOn', header: 'Last updated' },

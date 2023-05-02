@@ -79,6 +79,8 @@ export class VendorComponent implements OnInit, AfterViewInit {
   APIParams: string;
   selectedEntityId: any = 'All';
   vendorNameForSearch: any;
+  partyType:string;
+  ap_boolean: any;
 
   constructor(private fb: FormBuilder,
     private route: Router,
@@ -94,10 +96,16 @@ export class VendorComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     if(this.permissionService.vendor_SP_PageAccess == true){
       this.initialViewVendor = this.sharedService.initialViewVendorBoolean;
+      this.ap_boolean = this.dataService.ap_boolean;
+      if(this.dataService.ap_boolean){
+        this.partyType = 'vendor';
+      } else {
+        this.partyType = 'customer';
+      }
       this.vendorreaddata = this.dataService.vendorsListData;
       this.entityFilterData = this.dataService.vendorsListData;
       if(this.vendorreaddata.length <= 0){
-        this.APIParams = `?partyType=vendor&offset=1&limit=50`;
+        this.APIParams = `?partyType=${this.partyType}&offset=1&limit=50`;
         this.DisplayVendorDetails(this.APIParams);
       }
       if(this.vendorreaddata.length > 10){
@@ -225,13 +233,13 @@ export class VendorComponent implements OnInit, AfterViewInit {
   }
   filtersForAPI(limit) {
     if (this.selectedEntityId != 'All' && this.selectedEntityId) {
-      this.APIParams = `?partyType=vendor&ent_id=${this.selectedEntityId}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=${this.partyType}&ent_id=${this.selectedEntityId}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     }else if (this.vendorNameForSearch && this.vendorNameForSearch != '') {
-      this.APIParams = `?partyType=vendor&ven_code=${this.vendorNameForSearch}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=${this.partyType}&ven_code=${this.vendorNameForSearch}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     } else {
-      this.APIParams = `?partyType=vendor&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=${this.partyType}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     }
   }

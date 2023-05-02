@@ -58,6 +58,7 @@ export class ProcessReportsComponent implements OnInit {
   totalColumnField = [];
   ColumnLengthtotal: any;
   showPaginatortotal: boolean;
+  partyType:string;
 
   constructor(
     private chartsService: ChartsService,
@@ -71,6 +72,11 @@ export class ProcessReportsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if(this.dataService.ap_boolean){
+      this.partyType = 'Vendor';
+    } else {
+      this.partyType = 'Customer';
+    }
     this.readInvSummmary('');
     this.readVendors();
     this.readSource();

@@ -29,7 +29,7 @@ export class BatchProcessComponent implements OnInit {
   ];
   ColumnsForBatchPO = [
     // { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'VendorName', header: 'Vendor Name' },
+    { field: 'VendorName', header: 'Customer Name' },
     { field: 'EntityName', header: 'Entity Name' },
    
     { field: 'CreatedOn', header: 'Uploaded Date' },
@@ -76,6 +76,7 @@ export class BatchProcessComponent implements OnInit {
   batchProcessPOColumnLength : number
   dashboardViewBoolean: boolean;
   heading: string;
+  partytype:string;
   isVendorBoolean:boolean;
   apprveBool: any;
   invoceDoctype: boolean;
@@ -99,8 +100,11 @@ export class BatchProcessComponent implements OnInit {
     this.apprveBool = this.ds.configData?.enableApprovals;
     
     if(this.permissionService.excpetionPageAccess == true){
-      if(this.ds.configData.documentTypes.includes('Invoice')){
+      if(this.ds.ap_boolean){
         this.invoceDoctype = true;
+        this.partytype ='Vendor';
+      } else {
+        this.partytype ='Customer';
       }
       if(!this.tagService.batchProcessTab){
         if(this.invoceDoctype){
@@ -115,7 +119,6 @@ export class BatchProcessComponent implements OnInit {
       }
       
       this.findRoute();
-
     } else{
       alert("Sorry!, you do not have access");
       this.router.navigate(['customer/invoice/allInvoices'])
@@ -130,11 +133,12 @@ export class BatchProcessComponent implements OnInit {
       )
     ) {
       this.heading = 'Service based OCR Exceptions';
+      this.viewType = 'normal';
       this.isVendorBoolean = false;
       this.ColumnsForBatch = this.serviceColumns;
       this.getServiceInvoiceData();
     } else {
-      this.heading = 'Vendor based Exception';
+      this.heading = `${this.partytype} based Exception`;
       this.isVendorBoolean = true;
       this.getBatchInvoiceData();
       if(this.apprveBool){

@@ -87,6 +87,9 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   events: string[] = [];
   opened: boolean;
   vendorsListData = [];
+  partyType: string;
+  document: string;
+  ap_boolean: any;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -104,11 +107,19 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.ap_boolean = this.storageService.ap_boolean;
+    if(this.storageService.ap_boolean){
+      this.partyType = 'vendor';
+      this.document = 'Invoices'
+    } else {
+      this.partyType = 'customer';
+      this.document = "PO"
+    }
     this.first = this.storageService.vendorPaginationFirst;
     this.rows = this.storageService.vendorPaginationRowLength;
     this.bgColorCode = this.storageService.bgColorCode;
     this.columnVenderSite = [
-      { field: 'Account', header: 'Vendor site ID' },
+      { field: 'Account', header: `${this.partyType} site ID` },
       { field: 'EntityName', header: 'Entity' },
       { field: 'LocationCode', header: 'Location' },
       { field: 'City', header: 'Address' },
@@ -203,7 +214,7 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   }
   DisplayVendorDetails(offset,limit) {
     this.SpinnerService.show();
-    this.sharedService.readvendors(`?partyType=vendor&offset=${offset}&limit=${limit}`).subscribe((data: any) => {
+    this.sharedService.readvendors(`?partyType=${this.partyType}&offset=${offset}&limit=${limit}`).subscribe((data: any) => {
       if (data) {
         let pushArray = [];
         let onboardBoolean:boolean;
@@ -373,6 +384,9 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
         pushedInvoiceColumnsArray.push(arrayColumn)
       });
       this.VendorinvoiceColumns = pushedInvoiceColumnsArray.filter(ele => {
+        if(!this.storageService.ap_boolean && ele.columnName == 'Invoice Number'){
+          ele.columnName = 'Document Number'
+        }
         return ele.isActive == 1
       })
       const arrayOfColumnId = []

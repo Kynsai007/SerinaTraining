@@ -123,11 +123,11 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th pSortableColumn="EntityName">
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="EntityName">
                     Entity Name 
                     <!-- <span style="font-size: 11px">(ERPS code)</span> -->
                   </th>
-                  <th pSortableColumn="ServiceProviderName">SP name</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="ServiceProviderName">SP name</th>
                 </tr>
                 <tr class="sticky_top">
                   <td>
@@ -293,10 +293,11 @@
                             [pTooltip]="col.columnDescription"
                             tooltipPosition="top"
                             [pSortableColumn]="col.dbColumnname"
+                            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
                           >
                             {{ col.columnName }}
                           </th>
-                          <th class="action_Zindex">
+                          <th class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">
                             Actions
                             <i
                               class="fa fa-pencil-square-o actionsBtn"
@@ -444,10 +445,11 @@
                             [pTooltip]="column.header"
                             tooltipPosition="top"
                             [pSortableColumn]="column.field"
+                            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
                           >
                             {{ column.header }}
                           </th>
-                          <th class="action_Zindex" class="f-12 text-center">Actions</th>
+                          <th class="action_Zindex f-12 text-center" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions</th>
                         </tr>
                         <tr>
                           <td *ngFor="let col of columns" class="sticky_top">

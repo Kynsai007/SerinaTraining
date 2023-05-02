@@ -56,6 +56,9 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   exceptionRoute: string;
   DocumentPageRoute: string;
   invoceDoctype: boolean;
+  bothDocBoolean: boolean;
+  ap_boolean:boolean;
+  cust_type: string;
 
   constructor(
     public router: Router,
@@ -81,6 +84,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
+    this.dataStoreService.ap_boolean = JSON.parse(sessionStorage.getItem('ap_boolean'));
+    console.log(this.dataStoreService.ap_boolean)
     if(!this.dataStoreService.configData){
       this.readConfig();
     }
@@ -133,12 +138,33 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
     this.serviceInvoiceAccess = this.dataStoreService.configData.serviceInvoices;
-    if(this.dataStoreService.configData.documentTypes.includes('Invoice')){
-      this.DocumentPageRoute = 'invoice/allInvoices';
-      this.invoceDoctype = true;
+    if(this.dataStoreService.configData.documentTypes.length >1){
+      this.bothDocBoolean  = true;
     } else {
-      this.DocumentPageRoute = 'invoice/PO';
+      this.bothDocBoolean  = false;
     }
+    // if(this.dataStoreService.ap_boolean == undefined ){
+      if(this.dataStoreService.ap_boolean){
+        this.DocumentPageRoute = 'invoice/allInvoices';
+        this.ap_boolean = true;
+        this.cust_type = 'Vendor';
+        this.invoceDoctype = true;
+        console.log('hi')
+      } else {
+        this.DocumentPageRoute = 'invoice/PO';
+        this.ap_boolean = false;
+        this.dataStoreService.ap_boolean = false;
+        this.cust_type = 'Customer';
+      }
+    // } else {
+    //   if(this.ap_boolean){
+    //     this.cust_type = 'Vendor';
+    //   } else {
+    //     this.cust_type = 'Customer';
+    //   }
+    //   console.log(this.cust_type)
+    // }
+
     if(this.vendorInvoiceAccess){
       this.exceptionRoute = 'ExceptionManagement';
     } else if(this.serviceInvoiceAccess) {
@@ -347,6 +373,15 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
 
   onClickMenu(){
     this.menubarBoolean = !this.menubarBoolean
+  }
+  portalChange(){
+    this.ap_boolean = !this.ap_boolean;
+    this.dataStoreService.ap_boolean = !this.dataStoreService.ap_boolean;
+    sessionStorage.setItem('ap_boolean',JSON.stringify(this.ap_boolean))
+    console.log(this.ap_boolean)
+    setTimeout(() => {
+      window.location.reload()
+    }, 1000);
   }
 
   ngOnDestroy(): void {

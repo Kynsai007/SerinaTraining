@@ -40,10 +40,10 @@
 
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="idServiceProvider">SP Id</th>
-            <th pSortableColumn="ServiceProviderName">Name</th>
-            <th pSortableColumn="EntityName">Entity Name</th>
-            <th class="action_Zindex">View</th>
+            <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="idServiceProvider">SP Id</th>
+            <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="ServiceProviderName">Name</th>
+            <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="EntityName">Entity Name</th>
+            <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" class="action_Zindex">View</th>
             <!-- <th>Action</th> -->
           </tr>
           <tr class="sticky_top">

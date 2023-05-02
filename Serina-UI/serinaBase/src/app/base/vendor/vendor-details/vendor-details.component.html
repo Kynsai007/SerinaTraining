@@ -26,8 +26,8 @@
     </div>
   </mat-sidenav>
   <mat-sidenav-content>
-    <h6 *ngIf="!venderdetails" class="headh6">Vendor Details</h6>
-    <h6 *ngIf="venderdetails" class="headh6">Vendor Details - {{venderdetails.VendorName}}</h6>
+    <h6 *ngIf="!venderdetails" class="headh6 text-type">{{partyType}} Details</h6>
+    <h6 *ngIf="venderdetails" class="headh6 text-type">{{partyType}} Details - {{venderdetails.VendorName}}</h6>
     <div *ngIf="vendorList" class="row m-0">
     
     
@@ -41,8 +41,8 @@
     
             <ng-template pTemplate="header">
               <tr>
-                <th pSortableColumn="VenderCode">Vendor code</th>
-                <th pSortableColumn="VendorName">Vendor Name</th>
+                <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="VenderCode" class="text-type">{{partyType}} code</th>
+                <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="VendorName" class="text-type">{{partyType}} Name</th>
               </tr>
               <tr class="sticky_top">
                 <td>
@@ -67,9 +67,9 @@
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td colspan="2" class="p-t-30 text-center">
+                <td colspan="2" class="p-t-30 text-center text-type">
                   <!-- <img src="assets/Group 2691.png" alt="imageUrl"> <br> -->
-                  No vendors found.</td>
+                  No {{partyType}}s found.</td>
               </tr>
             </ng-template>
             <ng-template pTemplate="paginatorleft">
@@ -84,15 +84,15 @@
         <ul class="nav nav-tabs" id="tabs-tab" role="tablist">
           <li class="nav-item mr-1">
             <a class="nav-link active" id="tabs-InvoiceDetails-tab" data-toggle="pill" href="#tabs-InvoiceDetails"
-              role="tab" aria-controls="tabs-InvoiceDetails" aria-selected="true">Invoices</a>
+              role="tab" aria-controls="tabs-InvoiceDetails" aria-selected="true">{{document}}</a>
           </li>
           <li class="nav-item mr-1">
-            <a class="nav-link" id="tabs-mails-tab" data-toggle="pill" href="#tabs-mails" role="tab"
-              aria-controls="tabs-mails" aria-selected="false">Vendor Sites</a>
+            <a class="nav-link text-type" id="tabs-mails-tab" data-toggle="pill" href="#tabs-mails" role="tab"
+              aria-controls="tabs-mails" aria-selected="false">{{partyType}} Sites</a>
           </li>
           <li class="nav-item mr-1">
-            <a class="nav-link" id="tabs-vendorDetails-tab" data-toggle="pill" href="#tabs-vendorDetails" role="tab"
-              aria-controls="tabs-vendorDetails" aria-selected="false">Vendor Details</a>
+            <a class="nav-link text-type" id="tabs-vendorDetails-tab" data-toggle="pill" href="#tabs-vendorDetails" role="tab"
+              aria-controls="tabs-vendorDetails" aria-selected="false">{{partyType}} Details</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" id="tabs-ItemList-tab" data-toggle="pill" href="#tabs-ItemList" role="tab"
@@ -147,10 +147,11 @@
                     <ng-template pTemplate="header" let-columns>
                       <tr>
                         <th style="text-align: center;" *ngFor="let col of columns" [pTooltip]="col.columnDescription"
-                          tooltipPosition="top" [pSortableColumn]="col.dbColumnname">
+                          tooltipPosition="top" [pSortableColumn]="col.dbColumnname"
+                          [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">
                           {{col.columnName}}
                         </th>
-                        <th class="action_Zindex">Actions <i class="fa fa-pencil-square-o actionsBtn" style="border: 0;"
+                        <th class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions <i class="fa fa-pencil-square-o actionsBtn" style="border: 0;"
                             aria-hidden="true" (click)="showSidebar()"></i></th>
                       </tr>
                       <tr>
@@ -227,7 +228,7 @@
                     <ng-template pTemplate="header" let-columns>
                       <tr>
                         <th class="f-12 t-center" *ngFor=" let column of columns" [pTooltip]="column.header" tooltipPosition="top"
-                          [pSortableColumn]="column.field">
+                          [pSortableColumn]="column.field" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">
                           {{column.header}}
                         </th>
                       </tr>
@@ -253,7 +254,7 @@
                     </ng-template>
                     <ng-template pTemplate="emptymessage">
                       <tr>
-                        <td colspan="7">No Vendor sites found.</td>
+                        <td colspan="7" class="text-type">No {{partyType}} sites found.</td>
                       </tr>
                     </ng-template>
                     <ng-template pTemplate="paginatorleft">
@@ -278,7 +279,7 @@
                   <div class="DetailsHead">Personal Details:</div>
                   <table style="width: 100%;" *ngFor="let item of vendorbyidreaddata">
                     <tr class="trHeight">
-                      <td class="tdLeft">Vendor Name <span class="colon">:</span></td>
+                      <td class="tdLeft text-type">{{partyType}} Name <span class="colon">:</span></td>
                       <td class="tdRight">
                         <input type="text" class="form-control inputProfile" [disabled]="!editable" style="cursor:text"
                           [ngClass]="!editable? 'onEditFalse':'onEditTrue'" [value]="item.VendorName">
@@ -293,7 +294,7 @@
                       </td>
                     </tr> -->
                     <tr class="trHeight">
-                      <td class="tdLeft">Vendor Code<span class="colon">:</span></td>
+                      <td class="tdLeft text-type">{{partyType}} Code<span class="colon">:</span></td>
                       <td class="tdRight">
                         <input type="text" class="form-control inputProfile" [disabled]="!editable" style="cursor:text"
                            [ngClass]="!editable? 'onEditFalse':'onEditTrue'"
@@ -301,7 +302,7 @@
                       </td>
                     </tr>
                     <!-- <tr class="trHeight">
-                      <td class="tdLeft">Vendor Email <span class="colon">:</span></td>
+                      <td class="tdLeft text-type">{{partyType}} Email <span class="colon">:</span></td>
                       <td class="tdRight">
                         <input type="text" class="form-control inputProfile" [disabled]="!editable"
                           [(ngModel)]="vendorUpdateEmail" [ngClass]="!editable? 'onEditFalse':'onEditTrue'" [value]="item.Email">
@@ -315,7 +316,7 @@
                       </td>
                     </tr>
                     <tr class="trHeight">
-                      <td class="tdLeft">Vendor Contact <span class="colon">:</span></td>
+                      <td class="tdLeft text-type">{{partyType}} Contact <span class="colon">:</span></td>
                       <td class="tdRight">
                         <input type="text" class="form-control inputProfile" [disabled]="!editable" style="cursor:text"
                            [ngClass]="!editable? 'onEditFalse':'onEditTrue'"
@@ -323,7 +324,7 @@
                       </td>
                     </tr>
                     <!-- <tr class="trHeight">
-                      <td class="tdLeft">Vendor Address <span class="colon">:</span></td>
+                      <td class="tdLeft text-type">{{partyType}} Address <span class="colon">:</span></td>
                       <td class="tdRight">
                         <input type="text" class="form-control inputProfile" [disabled]="!editable"
                           [ngClass]="!editable? 'onEditFalse':'onEditTrue'"
@@ -331,14 +332,14 @@
                       </td>
                     </tr> -->
                     <!-- <tr class="trHeight">
-                      <td class="tdLeft">Vendor City <span class="colon">:</span></td>
+                      <td class="tdLeft text-type">{{partyType}} City <span class="colon">:</span></td>
                       <td class="tdRight">
                         <input type="text" class="form-control inputProfile" [disabled]="!editable" [(ngModel)]="vendorUpdateCity"
                           [ngClass]="!editable? 'onEditFalse':'onEditTrue'" [value]="item.City">
                       </td>
                     </tr> -->
                     <!-- <tr class="trHeight">
-                      <td class="tdLeft">Vendor Country <span class="colon">:</span></td>
+                      <td class="tdLeft text-type">{{partyType}} Country <span class="colon">:</span></td>
                       <td class="tdRight">
                         <input type="text" class="form-control inputProfile" [disabled]="!editable"
                           [(ngModel)]="vendorUpdateCountry" [ngClass]="!editable? 'onEditFalse':'onEditTrue'"
@@ -392,7 +393,7 @@
                               </div> -->
                   </div>
                   <div class="col-sm-6">
-                    <h6 class="f-13">Vendor</h6>
+                    <h6 class="f-13 text-type">{{partyType}}</h6>
                     <div class="d-flex" *ngFor="let item of itemsList">
                       <!-- <select class="form-control w-48 f-12">
                         <option class="f-12" value="" disabled selected>item Code</option>

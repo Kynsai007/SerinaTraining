@@ -23,7 +23,7 @@
       </option>
     </select> -->
     <p-autoComplete
-      placeholder="Select Vendor"
+      [placeholder]="partyType"
       (onSelect)="selectVendor($event)"
       [group]="false"
       [(ngModel)]="selectedVendorValue"
@@ -173,7 +173,7 @@
       </div>
     </div>
     <div class="chart_title f-12" style="left: 52%">
-      Invoice Count by Vendor
+      Invoice Count by {{partyType}}
     </div>
     <div class="chart_div">
       <div [ngStyle]="{'visibility':!noDataVndrCountboolean ? 'visible':'hidden'}" id="bar_chart"></div>

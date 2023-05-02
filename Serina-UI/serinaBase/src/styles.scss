@@ -258,7 +258,7 @@ $secondary_color: var(--secondary1-color);
     font-size: 12px !important;
     font-weight: 700 !important;
     color: #ffffff !important;
-    background: #313971 !important;
+    background: #313971;
     // width: 100%;
     padding: 10px !important;
     white-space: nowrap;
@@ -270,6 +270,9 @@ $secondary_color: var(--secondary1-color);
     text-align: center;
     // border: 0 !important;
     // border-right: 1px solid rgba(49, 57, 113, 0.2) !important;
+}
+.table_bg {
+    background-color: #a72845 !important;
 }
 .p-datatable .p-datatable-thead > tr > th:first-child {
     border-top-left-radius: 9px !important;
@@ -1036,6 +1039,9 @@ option:hover {
   .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-empty-message {
     font-size: 12px;
     font-weight: 600;
+  }
+  .text-type {
+    text-transform: capitalize;
   }
   @media screen and (max-width: 576px){ 
     .d_mobile {

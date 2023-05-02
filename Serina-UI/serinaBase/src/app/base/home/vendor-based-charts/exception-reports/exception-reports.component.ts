@@ -6,6 +6,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { TaggingService } from 'src/app/services/tagging.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { DatePipe } from '@angular/common';
+import { DataService } from 'src/app/services/dataStore/data.service';
 
 @Component({
   selector: 'app-exception-reports',
@@ -55,8 +56,9 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
   filterDataOCR: any[];
   filterDataBatch: any[];
   filterDataERP: any[];
+  partyType: string;
   constructor(
-    private tagService: TaggingService,
+    private dataService: DataService,
     private chartsService: ChartsService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
@@ -75,6 +77,11 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
     // this.tagService.aprrovalPageTab = 'vendorInvoice';
     // this.tagService.batchProcessTab = 'normal';
     this.tabName = this.chartsService.exceptionVendorTab;
+    if(this.dataService.ap_boolean){
+      this.partyType = 'Vendor';
+    } else {
+      this.partyType = 'Customer';
+    }
     this.dateRange();
     this.prepareColumns();
     this.readExceptionData('');
@@ -97,7 +104,7 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
 
   prepareColumns() {
     this.columnsForTotal = [
-      { field: 'VendorName', header: 'Vendor Name' },
+      { field: 'VendorName', header: `${this.partyType} Name`},
       { field: 'docheaderID', header: 'Invoice Number' },
       { field: 'PODocumentID', header: 'PO Number' },
       { field: 'EntityName', header: 'Entity' },
@@ -107,9 +114,9 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
     ];
 
     this.columnsForOCR = [
-      { field: 'VendorName', header: 'Vendor Name' },
+      { field: 'VendorName', header: `${this.partyType} Name` },
       { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'Account', header: 'Vendor Account' },
+      { field: 'Account', header: `${this.partyType} Account` },
       { field: 'documentdescription', header: 'Description' },
       { field: 'documentDate', header: 'Invoice Date' },
       // { field: 'UpdatedOn', header: 'Last Modified' },
@@ -117,7 +124,7 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
     ];
 
     this.columnsForbatch = [
-      { field: 'VendorName', header: 'Vendor Name' },
+      { field: 'VendorName', header: `${this.partyType} Name` },
       { field: 'docheaderID', header: 'Invoice Number' },
       { field: 'PODocumentID', header: 'PO Number' },
       // { field: 'Name', header: 'Rule' },
@@ -128,9 +135,9 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
     ];
 
     this.columnsForERP = [
-      { field: 'VendorName', header: 'Vendor Name' },
+      { field: 'VendorName', header: `${this.partyType} Name` },
       { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'Account', header: 'Vendor Account' },
+      { field: 'Account', header: `${this.partyType} Account` },
       // { field: 'Account', header: 'Approval Type' },
       { field: 'documentDate', header: 'Invoice Date' },
       // { field: 'UpdatedOn', header: 'Last Modified' },

@@ -1,7 +1,7 @@
 <mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer class="example-sidenav sideBar d-flex" mode="side" opened>
+  <mat-drawer #drawer class="example-sidenav sideBar d-flex" mode="side" opened [ngStyle]="{ backgroundColor: !ap_boolean? '#162F65':'#272727'}">
     <div class="d_mobile">
-      <div class="logotitle">
+      <div class="logotitle" *ngIf="ap_boolean">
         <div class="logoPlaceholder">
           <img
             class="logo_img"
@@ -15,6 +15,9 @@
           Serina Plus
           <span class="portalName">Customer Portal</span>
         </div>
+      </div>
+      <div class="logotitle" *ngIf="!ap_boolean">
+        <img src="assets/Arenalogo.png" alt="" style="width:100%">
       </div>
       <div class="routeLinks">
         <div
@@ -70,7 +73,7 @@
                 : 'navLink'
             "
           >
-            Vendor Based
+            {{cust_type}} Based
           </li>
           <li
             class="navLink"
@@ -141,7 +144,7 @@
         <div
           class="navLink"
           routerLinkActive="active"
-          data-text="Vendors"
+          [data-text]="cust_type"
           [routerLink]="'vendor'"
           *ngIf="vendorInvoiceAccess && vendor_SP_PageAccess"
           (click)="sideMenuVendor()"
@@ -149,7 +152,7 @@
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             business_center
           </span>
-          Vendors
+          {{cust_type}}
         </div>
         <ul *ngIf="openBooleanVendor" class="showHide f-13">
           <li
@@ -161,7 +164,7 @@
             List
           </li>
           <li
-            *ngIf="invoceDoctype"
+            *ngIf="ap_boolean"
             class="navLink"
             id="ex_sub"
             [routerLink]="'vendor/item_master'"
@@ -305,6 +308,17 @@
               [ngStyle]="{ display: showLogout ? 'block' : 'none' }"
               class="dropdown-content"
             >
+              <a *ngIf="bothDocBoolean">AR/AP portal 
+                <span class="portal">
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    [checked]="ap_boolean"
+                    (change)="portalChange()"
+                  />
+                  <span class="slider round"></span>
+                </label>
+              </span></a>
               <a (click)="openDialog()">Change Password</a>
               <a routerLink="profile">Profile</a>
               <a (click)="displayResponsivepopup = true">Logout</a>
@@ -389,7 +403,7 @@
                   : 'navLink'
               "
             >
-              Vendor Based
+              {{cust_type}} Based
             </li>
             <li
               class="navLink"
@@ -459,7 +473,7 @@
             <div
               class="navLink"
               routerLinkActive="active"
-              data-text="Vendors"
+              [data-text]="cust_type"
               [routerLink]="'vendor'"
               *ngIf="vendorInvoiceAccess && vendor_SP_PageAccess"
               (click)="sideMenuVendor()"
@@ -467,7 +481,7 @@
               <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
                 business_center
               </span>
-              Vendors
+              {{cust_type}}
             </div>
             <ul *ngIf="openBooleanVendor" class="showHide f-13">
               <li

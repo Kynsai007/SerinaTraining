@@ -9,6 +9,7 @@ import {
   PrimeNGConfig
 } from "primeng/api";
 import { PermissionService } from 'src/app/services/permission.service';
+import { DataService } from 'src/app/services/dataStore/data.service';
 
 
 export interface UserData {
@@ -105,6 +106,7 @@ export class NonPoComponent implements OnInit {
     detail: "Updated Successfully"
   }
   showPaginator: boolean;
+  ap_boolean: any;
 
 
   constructor(
@@ -114,11 +116,13 @@ export class NonPoComponent implements OnInit {
     private SpinnerService: NgxSpinnerService,
     private permissionService: PermissionService,
     private router: Router,
-    private primengConfig: PrimeNGConfig) {
+    private primengConfig: PrimeNGConfig,
+    private DS: DataService) {
   }
 
   ngOnInit(): void {
     if (this.permissionService.vendor_SP_PageAccess == true) {
+      this.ap_boolean = this.DS.ap_boolean;
       this.initialViewVendor = this.sharedService.initialViewSpBoolean;
       this.vendorList = this.sharedService.spListBoolean;
       this.venderdetails = this.sharedService.spDetailsArray;

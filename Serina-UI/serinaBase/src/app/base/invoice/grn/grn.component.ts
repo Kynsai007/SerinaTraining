@@ -36,6 +36,7 @@ export class GrnComponent implements OnInit {
   userType: string;
   first:number;
   rows:number;
+  ap_boolean: any;
 
   constructor(
     private tagService: TaggingService,
@@ -49,6 +50,7 @@ export class GrnComponent implements OnInit {
     this.userType = this.authService.currentUserValue['user_type'];
     this.first = this.storageService.GRNPaginationFisrt;
     this.rows = this.storageService.GRNPaginationRowLength;
+    this.ap_boolean = this.storageService.ap_boolean;
   }
   viewInvoice(e) {
     if (this.userType == 'vendor_portal') {

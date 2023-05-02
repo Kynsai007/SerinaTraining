@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
 import * as fileSaver from 'file-saver';
+import { DataService } from 'src/app/services/dataStore/data.service';
 
 @Component({
   selector: 'app-table',
@@ -24,15 +25,18 @@ export class TableComponent implements OnInit {
   downloadBoolean: boolean;
   etisalatBoolean: boolean;
   itemMasterBoolean: boolean;
+  ap_boolean: any;
   constructor(
     private router: Router,
     private serviceProviderService: ServiceInvoiceService,
     private alertService: AlertService,
     private sharedService : SharedService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private storageService : DataService
   ) {}
 
   ngOnInit(): void {
+    this.ap_boolean = this.storageService.ap_boolean;
     this.findRutesForDownloadOption();
     if (this.router.url.includes('home')) {
       this.dashboardViewBoolean = true;

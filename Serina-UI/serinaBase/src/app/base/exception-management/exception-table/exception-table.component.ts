@@ -61,6 +61,7 @@ export class ExceptionTableComponent implements OnInit {
   selectedFields1: any;
   stateTable: any
   globalSearch: string;
+  ap_boolean: any;
 
   constructor(
     private tagService: TaggingService,
@@ -74,6 +75,7 @@ export class ExceptionTableComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.ap_boolean = this.storageService.ap_boolean;
     this.initialData();
   }
   // ngOnChanges(changes: SimpleChanges) {

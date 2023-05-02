@@ -12,7 +12,7 @@
             >Exception Invoices({{ dataLength }})</a
           >
         </li>
-        <li class="nav-item mr-1" *ngIf="isVendorBoolean">
+        <li class="nav-item mr-1" *ngIf="isVendorBoolean && !invoceDoctype">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'PODoc'"
