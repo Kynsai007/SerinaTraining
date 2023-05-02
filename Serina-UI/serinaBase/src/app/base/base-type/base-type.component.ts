@@ -58,6 +58,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   invoceDoctype: boolean;
   bothDocBoolean: boolean;
   ap_boolean:boolean;
+  switchtext:string = "";
   cust_type: string;
 
   constructor(
@@ -147,12 +148,14 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
       if(this.dataStoreService.ap_boolean){
         this.DocumentPageRoute = 'invoice/allInvoices';
         this.ap_boolean = true;
+        this.switchtext = "AR";
         this.cust_type = 'Vendor';
         this.invoceDoctype = true;
         console.log('hi')
       } else {
         this.DocumentPageRoute = 'invoice/PO';
         this.ap_boolean = false;
+        this.switchtext = "AP";
         this.dataStoreService.ap_boolean = false;
         this.cust_type = 'Customer';
       }
@@ -376,6 +379,10 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   }
   portalChange(){
     this.ap_boolean = !this.ap_boolean;
+    if(this.ap_boolean)
+    this.switchtext = "AR";
+    else
+    this.switchtext = "AP";
     this.dataStoreService.ap_boolean = !this.dataStoreService.ap_boolean;
     sessionStorage.setItem('ap_boolean',JSON.stringify(this.ap_boolean))
     console.log(this.ap_boolean)
