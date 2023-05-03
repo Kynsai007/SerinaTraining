@@ -12,8 +12,11 @@ export class UplaodListenerComponent implements OnInit {
   msg:string="";
   err:string="";
   saving:boolean=false;
+  docTypes: any[] = [];
+  selecteddoctype:string="Invoice";
   constructor(private fb:FormBuilder,private sharedService:SharedService) {
     this.configData = this.fb.group({
+      doctype:[''],
       host: [''],
       email:['',[Validators.required,Validators.email]],
       email_tenant_id : ['', Validators.required],
@@ -28,16 +31,21 @@ export class UplaodListenerComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.getmailConfig();
+    this.docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
+    this.getmailConfig(this.docTypes[0]);
+    this.selecteddoctype = this.docTypes[0];
   }
-  getmailConfig(){
-    this.sharedService.getemailconfig().subscribe(data => {
+  getmailConfig(doctype){
+    this.sharedService.getemailconfig(doctype).subscribe(data => {
       if(data['message'] == "success"){
         this.configData.patchValue({'email':data['config'].email,'email_tenant_id':data['config'].email_tenant_id,'email_client_id':data['config'].email_client_id,'email_client_secret':data['config'].email_client_secret,'host':data['config'].host,'folder':data['config'].folder,'loginuser':'','loginpass':'','acceptedDomains':data["config"]['acceptedDomains'],'acceptedEmails':data["config"]['acceptedEmails']})
       }
     })
   }
-
+  changeDocType(e:any){
+   this.getmailConfig(e.target.value);
+   this.selecteddoctype = e.target.value;
+  }
   saveConfigData() {
   }
   SavePassword(){

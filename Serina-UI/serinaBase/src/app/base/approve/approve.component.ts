@@ -68,6 +68,7 @@ export class ApproveComponent implements OnInit {
   ColumnLengthVendor: number;
   ColumnLengthSP: number;
   dashboardViewBoolean: boolean;
+  ap_boolean: any;
 
   constructor(
     private tagService: TaggingService,
@@ -90,6 +91,7 @@ export class ApproveComponent implements OnInit {
 
   init() {
     this.editPermissionBoolean = this.permissionService.editBoolean;
+    this.ap_boolean = this.storageService.ap_boolean;
     this.tagService.headerName = 'Approve';
     this.viewType = this.tagService.aprrovalPageTab;
     this.first = this.storageService.approvalVendorPaginationFirst;

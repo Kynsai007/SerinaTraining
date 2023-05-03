@@ -80,6 +80,7 @@
                     [pSortableColumn]="col.field"
                     [pTooltip]="col.header"
                     tooltipPosition="top"
+                    [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
                   >
                     {{ col.header }}
                   </th>
@@ -87,6 +88,7 @@
                     *ngIf="!dashboardViewBoolean"
                     class="action_Zindex"
                     style="width: 6%"
+                    [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
                   >
                     Actions
                   </th>

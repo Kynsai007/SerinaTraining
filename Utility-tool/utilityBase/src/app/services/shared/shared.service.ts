@@ -300,15 +300,15 @@ export class SharedService {
   addSPAccount(vendoraccobj,vu_id,v_id): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/Vendor/newVendorAccount/${vu_id}/idVendor/${v_id}`,vendoraccobj);
   }
-  getemailconfig(): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/emailconfig/getemailconfig/1`);
+  getemailconfig(doctype): Observable<any>{
+    return this.http.get(`${this.url}/${this.apiVersion}/emailconfig/getemailconfig/${doctype}`);
   }
   saveemailconfig(emailconfig): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/emailconfig/saveemailconfig`,emailconfig);
   }
 
-  getSharepointconfig(): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/sharepoint/getsharepointconfig`);
+  getSharepointconfig(doctype): Observable<any>{
+    return this.http.get(`${this.url}/${this.apiVersion}/sharepoint/getsharepointconfig/${doctype}`);
   }
   saveSharePointConfig(shareConfig): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/sharepoint/savesharepointconfig`,shareConfig);

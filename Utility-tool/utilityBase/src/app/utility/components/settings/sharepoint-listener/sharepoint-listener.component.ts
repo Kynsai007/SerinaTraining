@@ -12,24 +12,30 @@ export class SharepointListenerComponent implements OnInit {
   configData:FormGroup;
   sharepointData: any;
   editable:boolean;
-
+  docTypes:any[]=[];
+  selecteddoctype: string = "Invoice";
   constructor(private fb:FormBuilder,
     private sharedService:SharedService,
     private messageService: MessageService) {
     this.configData = this.fb.group({
+      doctype: [''],
       client_id : ['',Validators.required],
       client_secret  : ['',Validators.required],
       site_url  : ['',Validators.required],
-      folder  : [''],
-      service_url: ['']
+      folder  : ['']
     })
    }
 
   ngOnInit(): void {
-    this.readConfigData();
+    this.docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
+    this.readConfigData(this.docTypes[0]);
+    this.selecteddoctype = this.docTypes[0];
     this.configData.disable();
   }
-
+  changeDocType(e:any){
+    this.readConfigData(e.target.value);
+    this.selecteddoctype = e.target.value;
+   }
   editBtnCilck(){
     this.configData.enable();
     this.editable = true;
@@ -68,8 +74,8 @@ export class SharepointListenerComponent implements OnInit {
     })
   }
 
-  readConfigData(){
-    this.sharedService.getSharepointconfig().subscribe((data:any)=>{
+  readConfigData(doctype){
+    this.sharedService.getSharepointconfig(doctype).subscribe((data:any)=>{
       this.sharepointData = data.config
       this.configData.patchValue({
         client_id : this.sharepointData.client_id,

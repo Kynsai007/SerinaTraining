@@ -7,7 +7,14 @@
         <form [formGroup]="configData" (ngSubmit)="saveConfigData()" class="formDiv" autocomplete="off" >
 
             <table style="width: 100%;">
-
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">Document Type<span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <select formControlName="doctype" name="doctype"  class="form-control f-13" (change)="changeDocType($event)" [(ngModel)]="selecteddoctype">
+                            <option *ngFor="let doc of docTypes" value="{{doc}}">{{doc}}</option>
+                        </select>
+                    </td>
+                </tr>
                 <tr class="trHeight">
                     <td class="tdLeft f-13">Client ID <span style="color: red;">*</span><span class="colon">:</span></td>
                     <td class="tdRight">

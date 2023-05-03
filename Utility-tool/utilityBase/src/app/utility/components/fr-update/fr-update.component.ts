@@ -210,7 +210,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     }
   }
   getSynonyms(){
-    this.sharedService.getemailconfig().subscribe(data => {
+    this.sharedService.getemailconfig(this.selecteddocType).subscribe(data => {
       if(data['message'] == 'success'){
         this.allsynonyms = data['config']['synonyms']; 
         if(this.vendorName in data['config']['synonyms']){
