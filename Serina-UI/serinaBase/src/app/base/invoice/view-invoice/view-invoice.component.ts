@@ -226,6 +226,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   allocationFileds = [];
   ERP: string;
   documentTypeId: number
+  ap_boolean: any;
 
   constructor(
     private tagService: TaggingService,
@@ -247,6 +248,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.rejectReason = this.dataService.rejectReason;
+    this.ap_boolean = this.dataService.ap_boolean;
     this.ERP = this.dataService.configData.erpname;
     this.route.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;

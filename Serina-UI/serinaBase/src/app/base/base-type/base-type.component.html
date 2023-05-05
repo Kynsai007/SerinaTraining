@@ -92,7 +92,7 @@
         </ul>
 
         <div
-          *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess"
+          *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess && ap_boolean"
           class="navLink"
           routerLinkActive="active"
           data-text="Approval"
@@ -108,7 +108,7 @@
           routerLinkActive="active"
           data-text="Create GRN"
           [routerLink]="'Create_GRN_inv_list'"
-          *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
+          *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess && ap_boolean"
         >
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             verified
@@ -422,7 +422,7 @@
           </ul>
 
           <div
-            *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess"
+            *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess && ap_boolean"
             class="navLink"
             routerLinkActive="active"
             data-text="Approval"
@@ -438,7 +438,7 @@
             routerLinkActive="active"
             data-text="Create GRN"
             [routerLink]="'Create_GRN_inv_list'"
-            *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
+            *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess && ap_boolean"
           >
             <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
               verified

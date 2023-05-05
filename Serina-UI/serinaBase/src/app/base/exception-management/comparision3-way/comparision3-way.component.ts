@@ -136,6 +136,7 @@ export class Comparision3WayComponent
   grnLineCount: any;
   rotation = 0;
   addrejectcmtBool: boolean;
+  ap_boolean:boolean;
   
   constructor(
     fb: FormBuilder,
@@ -159,6 +160,7 @@ export class Comparision3WayComponent
 
   ngOnInit(): void {
     this.rejectReason = this.dataService.rejectReason;
+    this.ap_boolean = this.dataService.ap_boolean;
     this.initialData();
     this.readFilePath();
     this.AddPermission();

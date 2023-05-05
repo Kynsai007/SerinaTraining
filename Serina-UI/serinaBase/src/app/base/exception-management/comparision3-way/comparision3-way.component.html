@@ -84,7 +84,6 @@
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li
         class="nav-item mr-2"
-        pTooltip="Vendor details"
         tooltipPosition="top"
         (click)="changeTab('vendor')"
       >
@@ -97,7 +96,7 @@
           aria-controls="vendor"
           aria-selected="true"
           [ngClass]="grnCreateBoolean ? '' : 'active'"
-          >Vendor details</a
+          > <span *ngIf="ap_boolean">Vendor</span> <span *ngIf="!ap_boolean">Customer</span> details</a
         >
       </li>
       <li
