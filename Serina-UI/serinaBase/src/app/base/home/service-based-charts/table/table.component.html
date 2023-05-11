@@ -31,7 +31,7 @@
         >
           {{ col.header }}
         </th>
-        <th *ngIf="downloadBoolean" class="action_Zindex">Actions</th>
+        <th *ngIf="downloadBoolean" class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions</th>
       </tr>
       <tr *ngIf="!(router.url.includes('processReports') ||router.url.includes('serviceBasedReports'))">
         <td *ngFor="let col of columns">

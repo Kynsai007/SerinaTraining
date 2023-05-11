@@ -1,8 +1,8 @@
 <section>
     <div class="d-flex justify-content-between">
         <h6 class="f-14">
-            <span *ngIf="type == 'flip'">Please select the lines</span>
-            <span *ngIf="type != 'flip'">Please add the Email details</span> </h6>
+            <span *ngIf="type == 'flip' || type == 'flip line'">Please select the lines</span>
+            <span *ngIf="type == 'Amend'">Please add the Email details</span> </h6>
         <div><i class="fa fa-close" style="cursor: pointer;" mat-dialog-close></i></div>
     </div>
   <!-- <p-table #dt [value]="POLineData" [rows]="10" [paginator]="true" [globalFilterFields]="['name','country.name','representative.name','status']" [tableStyle]="{'min-width': '75rem'}"
@@ -55,33 +55,43 @@
         </ng-template>
     </p-table> -->
 
-  <form *ngIf="type =='flip'" #polines="ngForm" (ngSubmit)="onSubmit(polines.value)" >
-    <table class="table table-bordered f-11">
+  <form *ngIf="type == 'flip' || type == 'flip line'" #polines="ngForm" (ngSubmit)="onSubmit(polines.value)" >
+    <table class="table table-bordered f-11" *ngIf="POLineData[0]?.Name">
       <tr class="f-12">
         <th></th>
         <th>Description</th>
+        <th>PO Quantity</th>
+        <th>Balance Quantity</th>
         <th>Quantity</th>
         <th>Unit price</th>
+        <th>Disc Amount</th>
+        <th>Disc Percent</th>
       </tr>
       <tr *ngFor="let line of POLineData">
         <td>
           <input
             type="checkbox"
-            [id]="line.lineid"
-            [name]="line.lineDesc"
-            [value]="line.lineDesc"
-            (change)="onSelect($event.target.checked,line.lineid)"
+            
+            [name]="line.Name"
+            [value]="line.LineNumber"
+            (change)="onSelect($event.target.checked,line)"
           />
         </td>
-        <td>{{ line.lineDesc }}</td>
-        <td>{{ line.qty }}</td>
-        <td>{{ line.unitprice }}</td>
+        <td>{{ line.Name }}</td>
+        <td>{{ line.PurchQty }}</td>
+        <td>{{ line.RemainPurchFinancial }}</td>
+        <td><input [id]="line.LineNumber" #qty type="text" value="{{ line.PurchQty }}" class="form-control f-11" style="width: 70px;" (change)="changeQty(qty.value,line.LineNumber)"></td>
+        <td>{{ line.UnitPrice }}</td>
+        <td>{{line.DiscAmount}}</td>
+        <td>{{line.DiscPercent}}</td>
       </tr>
     </table>
-    <div class="mt-4 d-flex justify-content-center mb-3">
+    <div class="text-center f-13" *ngIf="!POLineData[0]?.Name">PO lines are not availabe to flip </div>
+    <div class="mt-4 d-flex justify-content-center mb-3" *ngIf="POLineData[0]?.Name">
         <button
           class="btn btnVender bg-btn-success mr-3"
           type="submit"
+          [disabled]="selectedPOLines.length == 0"
         >
           Flip
         </button>

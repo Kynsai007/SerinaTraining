@@ -28,6 +28,7 @@ import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';
 import { PopupComponent } from '../../popup/popup.component';
 import { MatDialog } from '@angular/material/dialog';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-comparision3-way',
@@ -137,6 +138,18 @@ export class Comparision3WayComponent
   rotation = 0;
   addrejectcmtBool: boolean;
   ap_boolean:boolean;
+  poLineData = [];
+  isAdmin:boolean;
+  GRN_PO_Bool:boolean;
+  GRN_PO_Data = [];
+  GRN_PO_tags = [
+    { TagName: 'Description', linedata: [] },
+    { TagName: 'PO Qty', linedata: [] },
+    { TagName: 'PO Balance Qty', linedata: [] },
+    { TagName: 'GRN - Quantity', linedata: [] },
+    { TagName: 'UnitPrice', linedata: [] },
+    { TagName: 'Actions', linedata: [] }
+  ];
   
   constructor(
     fb: FormBuilder,
@@ -156,11 +169,17 @@ export class Comparision3WayComponent
     private mat_dlg: MatDialog,
   ) {
     super();
+    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg)=>{
+      if(msg == 'mapping'){
+      this.getInvoiceFulldata();
+      }
+    })
   }
 
   ngOnInit(): void {
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
+    this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
     this.initialData();
     this.readFilePath();
     this.AddPermission();
@@ -201,12 +220,19 @@ export class Comparision3WayComponent
     this.routeIdCapture = this.activatedRoute.params.subscribe((params) => {
       this.SharedService.invoiceID = params['id'];
       this.exceptionService.invoiceID = params['id'];
+      this.invoiceID = params['id'];
     });
     if (this.router.url.includes('Create_GRN_inv_list')) {
       if (this.permissionService.GRNPageAccess == true) {
         this.grnCreateBoolean = true;
-        this.tagService.headerName = 'Create GRN';
-        this.readGRNInvData();
+        if(this.GRN_PO_Bool){
+          this.tagService.headerName = 'Create GRN With PO';
+          this.getInvoiceFulldata_po();
+          this.get_PO_GRN_Lines();
+        } else {
+          this.tagService.headerName = 'Create GRN';
+          this.readGRNInvData();
+        }
         if(this.grnCreateBoolean){
           this.currentTab =  'line'
         }
@@ -284,6 +310,89 @@ export class Comparision3WayComponent
     } else {
       this.lineTabBoolean = false;
     }
+  }
+  get_PO_GRN_Lines(){
+    this.dataService.GRN_PO_Data.forEach((ele,i)=>{
+      this.GRN_PO_tags.forEach(tag=>{
+        if(tag.TagName == 'Description'){
+          tag.linedata.push({Value : ele.Name, old_value:ele.Name, ErrorDesc: '', idDocumentLineItems:ele.LineNumber, is_mapped: '',tagName:'Description'})
+        } else if(tag.TagName == 'PO Qty'){
+          tag.linedata.push({Value : ele.PurchQty, ErrorDesc: '', idDocumentLineItems:ele.LineNumber, is_mapped: '',tagName:'PO Qty'})
+        } else if(tag.TagName == 'PO Balance Qty'){
+          tag.linedata.push({Value : ele.RemainInventPhysical, ErrorDesc: '', idDocumentLineItems:ele.LineNumber, is_mapped: '',tagName:'PO Balance Qty'})
+        } else if(tag.TagName == 'GRN - Quantity'){
+          tag.linedata.push({Value : ele.RemainInventPhysical, ErrorDesc: '', idDocumentLineItems:ele.LineNumber, is_mapped: '',tagName:'Quantity'})
+        } else if(tag.TagName == 'UnitPrice'){
+          tag.linedata.push({Value : ele.UnitPrice, ErrorDesc: '', idDocumentLineItems:ele.LineNumber, is_mapped: 'Price',tagName:'UnitPrice'})
+        }
+         else if(tag.TagName == 'Actions'){
+          tag.linedata.push({Value : '', ErrorDesc: '', idDocumentLineItems:ele.LineNumber, is_mapped: '',tagName:'Actions'})
+        }
+      })
+    })
+    this.lineDisplayData = this.GRN_PO_tags;
+    let arr = this.GRN_PO_tags;
+        setTimeout(() => {
+          arr.forEach((ele1) => {
+            if (ele1.TagName == 'GRN - Quantity' || ele1.TagName == 'Description' || ele1.TagName == 'UnitPrice') {
+              this.GRNObject.push(ele1.linedata);
+            }
+            if (ele1.TagName == 'GRN - Quantity') {
+              ele1.linedata?.forEach((el) => {
+                el.is_quantity = true;
+              });
+            }
+            this.GRNObject = [].concat(...this.GRNObject);
+          });
+          this.GRNObject.forEach((val) => {
+            if (!val.old_value) {
+              val.old_value = val.Value;
+            }
+          });
+        }, 100);
+    this.grnLineCount =  this.lineDisplayData[0]?.linedata;
+    this.isGRNDataLoaded = true;
+  }
+
+  getInvoiceFulldata_po() {
+    this.SpinnerService.show();
+    this.inputDisplayArray = [];
+    this.lineData = [];
+    this.SharedService.getInvoiceInfo().subscribe(
+      (data: any) => {
+        const pushedArrayHeader = [];
+        data.ok.headerdata.forEach((element) => {
+          this.mergedArray = {
+            ...element.DocumentData,
+            ...element.DocumentTagDef,
+          };
+          this.mergedArray.DocumentUpdates = element.DocumentUpdates;
+          pushedArrayHeader.push(this.mergedArray);
+        });
+        this.inputData = pushedArrayHeader;
+        let inv_num_data: any = this.inputData.filter((val) => {
+          return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
+        });
+        this.invoiceNumber = inv_num_data[0]?.Value;
+        if (data.ok.vendordata) {
+          this.vendorData = {
+            ...data.ok.vendordata[0].Vendor,
+            ...data.ok.vendordata[0].VendorAccount,
+            ...data.ok.vendordata[0].VendorUser,
+          };
+          this.vendorName = this.vendorData['VendorName'];
+        }
+        this.SpinnerService.hide();
+      },
+      (error) => {
+        this.SpinnerService.hide();
+        this.messageService.add({
+          severity: 'error',
+          summary: 'error',
+          detail: 'Server error',
+        });
+      }
+    );
   }
 
   getInvoiceFulldata() {
@@ -1185,7 +1294,7 @@ export class Comparision3WayComponent
     }
     if (this.mappedData?.length > 0) {
       let presetArray = this.mappedData?.filter((ele1) => {
-        return ele1.ItemMetaData.itemcode == el;
+        return ele1.ItemMetaData?.itemcode == el;
       });
       if (presetArray.length > 0) {
         presetBoolean = true;
@@ -1235,7 +1344,7 @@ export class Comparision3WayComponent
 
   readMappingData() {
     this.exceptionService.readMappedData().subscribe((data: any) => {
-      this.mappedData = data.description;
+      this.mappedData = data?.description;
     });
   }
   selectReason(reasn){
@@ -1282,16 +1391,42 @@ export class Comparision3WayComponent
   }
 
   onChangeGrn(id, val) {}
+  deleteGrnLine(id){
+    if(confirm('Are you sure you want to delete this line?')){
+     this.lineDisplayData = this.lineDisplayData.map(record => {
+      const newLinedata = record.linedata.filter(obj => obj.idDocumentLineItems !== id);
+      return { ...record, linedata: newLinedata };
+    });
+      this.GRNObject = this.GRNObject.filter(val=>{
+      return val.idDocumentLineItems != id
+    })
+    this.grnLineCount =  this.lineDisplayData[0]?.linedata;
+    }
+  }
 
-  onSave_submit(val, boolean, txt) {
+  onSave_submit(grnQ, boolean, txt) {
+    
+    if(this.GRN_PO_Bool){
+      this.GRNObject.forEach(val=>{
+        let count = 0;
+        if(val.is_mapped == 'Price' ){
+          count++
+          let obj = {
+            Value : grnQ[val.idDocumentLineItems] * val.Value, ErrorDesc: '', idDocumentLineItems:val.idDocumentLineItems, is_mapped: '', tagName: 'AmountExcTax'
+          }
+            this.GRNObject.splice(this.GRNObject.length+1,0,obj)
+        }
+      })
+    this.GRNObject = this.GRNObject.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.idDocumentLineItems == val.idDocumentLineItems && v.tagName == val.tagName));
+
+    }
     let emptyBoolean: boolean = false;
     let commentBoolean = false;
     this.GRNObject.forEach((ele) => {
-      if (ele.Value == '') {
+      if (ele.Value === '') {
         emptyBoolean = true;
         this.AlertService.errorObject.detail = 'Fields should not be empty!';
-      } else if (ele.Value != ele.old_value) {
-        // console.log(parseFloat(ele.Value),parseFloat(ele.old_value))
+      } else if (ele.Value != ele.old_value && !this.GRN_PO_Bool) {
         if (
           ele.ErrorDesc == null ||
           ele.ErrorDesc == '' ||
@@ -1303,6 +1438,9 @@ export class Comparision3WayComponent
             'Please add comments for the Line which you adjusted.';
         }
       } else if(ele.Value == 0){
+        if(this.GRN_PO_Bool){
+          this.GRNObject = this.GRNObject.filter(val=> val.tagName != 'AmountExcTax')
+        }
         commentBoolean = true;
           this.AlertService.errorObject.detail =
             'Please check the fileds, it sholud not be 0 anywhere';
@@ -1313,13 +1451,56 @@ export class Comparision3WayComponent
         boolean == true &&
         confirm('Are you sure you want to create GRN, Please confirm')
       ) {
-        this.CreateGRNAPI(boolean, txt);
+        if(this.GRN_PO_Bool){
+          this.grnDuplicateCheck()
+        } else {
+          this.CreateGRNAPI(boolean, txt);
+        }
       } else {
         this.CreateGRNAPI(false, 'GRN data saved successfully');
       }
     } else {
       this.messageService.add(this.AlertService.errorObject);
     }
+  }
+
+  createGRNWithPO(){
+    this.SharedService.createGRNWithPO(JSON.stringify(this.GRNObject)).subscribe((data:any)=>{
+      this.AlertService.addObject.detail = "GRN Created Successfully";
+      this.messageService.add(this.AlertService.addObject);
+      setTimeout(() => {
+        this.router.navigate(['/customer/Create_GRN_inv_list']);
+      }, 2000);
+    },err=>{
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+    })
+  }
+
+  grnDuplicateCheck(){
+    let arr = []
+    this.GRNObject.forEach((ele)=>{
+      if(ele.tagName == 'Quantity'){
+       let obj = {
+          line_id:ele.idDocumentLineItems,
+          quantity:ele.Value
+        }
+      arr.push(obj)
+      }
+    })
+    // const uniqarr = arr.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.line_id == val.line_id && v.quantity == val.quantity));
+ 
+  this.SharedService.duplicateGRNCheck(JSON.stringify(arr)).subscribe((data:any)=>{
+    if(data.result == 'successful'){
+      this.createGRNWithPO();
+    } else {
+      this.AlertService.errorObject.detail = data.result;
+      this.messageService.add(this.AlertService.errorObject);
+    }
+  },err=>{
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+    })
   }
 
   CreateGRNAPI(boolean, txt) {
@@ -1357,18 +1538,28 @@ export class Comparision3WayComponent
     );
   }
   open_dialog_comp(str){
-    this.mat_dlg.open(PopupComponent,{ 
-      width : '60%',
-      height: '70vh',
-      hasBackdrop: false,
-      data : { type: str, resp: [
-        {lineid: 1, lineDesc: 'CHOLULA HOT SAUCE (SALSA)- 50Z (150 ML)', qty: '20', unitprice: '300'},
-        {lineid: 2, lineDesc: 'CHOLULA HOT SAUCE (SALSA)- 50Z (250 ML)', qty: '10', unitprice: '500'}
-      ]}});
+    this.SpinnerService.show();
+    this.getPO_lines(str);
+  }
+  getPO_lines(str){
+    let query = `?inv_id=${this.invoiceID}`
+    this.exceptionService.getPOLines(query).subscribe((data:any)=>{
+      this.poLineData = data.Po_line_details;
+      this.mat_dlg.open(PopupComponent,{ 
+        width : '60%',
+        height: '70vh',
+        hasBackdrop: false,
+        data : { type: str, resp: this.poLineData}});
+      this.SpinnerService.hide();
+    },err=>{
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+      this.SpinnerService.hide();
+    })
   }
 
   ngOnDestroy() {
-    if( this.grnCreateBoolean == false){
+    // if( this.grnCreateBoolean == false){
       let sessionData = {
         session_status: false,
         "client_address": JSON.parse(localStorage.getItem('userIp'))
@@ -1378,11 +1569,13 @@ export class Comparision3WayComponent
         .subscribe((data: any) => {});
       // clearInterval(this.timer);
       clearTimeout(this.callSession);
-    }
+    // }
     // this.timer = null;
     this.AlertService.addObject.severity = 'success';
     this.tagService.financeApprovePermission = false;
     this.tagService.approveBtnBoolean = false;
     this.tagService.submitBtnBoolean = false;
+    this.dataService.grnWithPOBoolean = false;
+    this.mat_dlg.closeAll();
   }
 }

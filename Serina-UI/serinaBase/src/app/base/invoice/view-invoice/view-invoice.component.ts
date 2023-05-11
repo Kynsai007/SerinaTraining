@@ -28,6 +28,9 @@ import IdleTimer from '../../idleTimer/idleTimer';
 import { catchError, map } from 'rxjs/operators';
 import { HttpEventType } from '@angular/common/http';
 import * as fileSaver from 'file-saver';
+import { MatDialog } from '@angular/material/dialog';
+import { PopupComponent } from '../../popup/popup.component';
+import { take } from 'rxjs/operators';
 
 export interface getApproverData {
   EntityID: number,
@@ -227,7 +230,20 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ERP: string;
   documentTypeId: number
   ap_boolean: any;
-
+  poLineData= [];
+  isAdmin: boolean;
+  polineTableData = [
+    { TagName: 'LineNumber', linedata: [] },
+    { TagName: 'ItemId', linedata: [] },
+    { TagName: 'Name', linedata: [] },
+    { TagName: 'ProcurementCategory', linedata: [] },
+    { TagName: 'PurchQty', linedata: [] },
+    { TagName: 'UnitPrice', linedata: [] },
+    { TagName: 'DiscAmount', linedata: [] },
+    { TagName: 'DiscPercent', linedata: [] }
+  ]
+  POlineBool: boolean;
+  poDocId: any;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -243,8 +259,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private SharedService: SharedService,
     private _sanitizer: DomSanitizer,
     private settingsService: SettingsService,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+    private mat_dlg: MatDialog,
+  ) {
+    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg)=>{
+      if(msg == 'normal'){
+      this.getInvoiceFulldata();
+      }
+    })
+  }
 
   ngOnInit(): void {
     this.rejectReason = this.dataService.rejectReason;
@@ -288,6 +311,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.exceptionService.invoiceID = params['id'];
       this.invoiceID = params['id'];
       this.getInvoiceFulldata();
+      this.readPOLines();
       this.readFilePath();
     });
     this.onResize();
@@ -468,6 +492,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         if (this.tagService.documentType == 'lcm') {
           this.readSavedLCMLineData();
         }
+        let po_num_data = this.inputData.filter((val) => {
+          return (val.TagLabel == 'PurchaseOrder');
+        });
+        let po_num = po_num_data[0]?.Value;
+        this.getPODocId(po_num);
         if (data.ok.vendordata) {
           this.isServiceData = false;
           this.vendorData = {
@@ -1106,6 +1135,22 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         });
       }
     );
+  }
+  serviceSubmit(){
+    this.SharedService.serviceSubmit().subscribe((data:any)=>{
+      this.AlertService.addObject.detail = 'send to batch successfully';
+      this.AlertService.addObject.summary = 'sent';
+      this.messageService.add(this.AlertService.addObject);
+      setTimeout(() => {
+        this._location.back();
+      }, 1000);
+    },err=>{
+      this.messageService.add({
+        severity: 'error',
+        summary: 'error',
+        detail: "Server error",
+      });
+    })
   }
 
   approveChanges() {
@@ -1901,6 +1946,63 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.SpinnerService.hide();
     })
   }
+  open_dialog_comp(str){
+    this.SpinnerService.show();
+    this.getPO_lines(str);
+  }
+  
+  getPO_lines(str){
+    let query = `?inv_id=${this.invoiceID}`
+    this.exceptionService.getPOLines(query).subscribe((data:any)=>{
+      let poLineData = data.Po_line_details;
+      this.mat_dlg.open(PopupComponent,{ 
+        width : '60%',
+        height: '70vh',
+        hasBackdrop: false,
+        data : { type: str, resp: poLineData}});
+      this.SpinnerService.hide();
+    },err=>{
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+      this.SpinnerService.hide();
+    })
+  }
+  readPOLines(){
+    let query = `?inv_id=${this.invoiceID}`;
+    this.exceptionService.getPOLines(query).subscribe((data:any)=>{
+      this.poLineData = data.Po_line_details;
+      if(Object.keys(this.poLineData[0]).length>0){
+        this.POlineBool = true;
+      } else {
+        this.POlineBool = false;
+      }
+      console.log(this.poLineData);
+      this.SpinnerService.hide();
+    },err=>{
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+      this.SpinnerService.hide();
+    })
+  }
+
+  getPODocId(po_num){
+    this.SharedService.get_poDoc_id(po_num).subscribe((data:any)=>{
+      this.poDocId = data.result;
+    })
+  }
+  refreshPO(){
+    this.SpinnerService.show();
+    this.SharedService.updatePO(this.poDocId).subscribe((data:any)=>{
+      this.readPOLines();
+      this.SpinnerService.hide();
+      this.AlertService.addObject.detail = 'PO data updated.';
+      this.messageService.add(this.AlertService.addObject);
+    },err=>{
+      this.SpinnerService.hide();
+      this.AlertService.errorObject.detail = 'Server error';
+      this.messageService.add(this.AlertService.errorObject);
+    })
+  }
   ngOnDestroy() {
     let sessionData = {
       session_status: false,
@@ -1910,6 +2012,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       .updateDocumentLockInfo(sessionData)
       .subscribe((data: any) => { });
     clearTimeout(this.callSession);
+    this.mat_dlg.closeAll();
     this.tagService.financeApprovePermission = false;
     this.tagService.approveBtnBoolean = false;
     this.tagService.submitBtnBoolean = false;

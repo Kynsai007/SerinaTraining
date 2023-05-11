@@ -20,7 +20,7 @@
             >Roles</a
           >
         </li>
-        <li *ngIf="isVendorportalRequired && vendorInvoiceAccess" [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
+        <li *ngIf="isVendorportalRequired && vendorInvoiceAccess && ap_boolean" [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'vendorAdminUser'"
@@ -29,7 +29,7 @@
           >
         </li>
 
-        <li *ngIf="isVendorportalRequired && vendorInvoiceAccess" [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
+        <li *ngIf="isVendorportalRequired && vendorInvoiceAccess && ap_boolean" [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'vendorAdminUserApprve'"
@@ -411,7 +411,7 @@
                 <tr>
                   <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="LogName" style="width: 12%">User Name</th>
                   <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="firstName">Name</th>
-                  <th pSortableColumn="email">Email</th>
+                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="email">Email</th>
 
                   <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="vendor_data.VendorName">Vendor Name</th>
                   <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="isActive" style="width: 114px">Status</th>

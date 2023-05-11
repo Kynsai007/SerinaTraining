@@ -38,22 +38,37 @@
       >
     </div>
   </div>
-  <div class="viewPdf" style="right: 160px">
-    <button
-      *ngIf="
-        (editPermissionBoolean ||
-          changeApproveBoolean ||
-          financeApproveBoolean) &&
-        (submitBtn_boolean || vendorUplaodBoolean) &&
-        lineTabBoolean &&
-        !isLinenonEditable
-      "
-      class="btnUpload bg-blue"
-      (click)="captureComments('AddLine', null)"
-    >
-      <i class="fa fa-plus" aria-hidden="true"></i> Add Line
-    </button>
-  </div>
+  <div
+  class="viewPdf"
+  style="right: 160px"
+  *ngIf="
+    (editPermissionBoolean ||
+      changeApproveBoolean ||
+      financeApproveBoolean) &&
+    (submitBtn_boolean || vendorUplaodBoolean) &&
+    lineTabBoolean
+  "
+>
+  <!-- <button
+  class="btnUpload btn_extra_bg mr-2"
+  (click)="open_dialog_comp('Amend')"
+>
+  PO Amend request
+</button> -->
+  <button
+    *ngIf="isAdmin"
+    class="btnUpload btn_extra_bg mr-2"
+    (click)="open_dialog_comp('flip')"
+  >
+    Flip PO
+  </button>
+  <button
+    class="btnUpload btn_extra_bg"
+    (click)="captureComments('AddLine', null)"
+  >
+    <i class="fa fa-plus" aria-hidden="true"></i> Add Line
+  </button>
+</div>
   <div class="viewPdf" *ngIf="!isPdfAvailable" style="right: 100px;">
     <button class="btnUpload" (click)="DownloadPDF()">
       <i class="fa fa-download" aria-hidden="true"></i>
@@ -175,6 +190,24 @@
           [ngClass]="isLCMInvoice ? 'active' : ''"
           aria-selected="false"
           >LCM line details</a
+        >
+      </li>
+      <li
+        class="nav-item ml-2"
+        pTooltip="PO Lines details"
+        tooltipPosition="top"
+        (click)="changeTab('hide', 'line')"
+        *ngIf="Itype == 'Invoice'"
+      >
+        <a
+          class="nav-link"
+          id="POline-tab"
+          data-toggle="tab"
+          href="#POline"
+          role="tab"
+          aria-controls="POline"
+          aria-selected="false"
+          >PO Lines</a
         >
       </li>
 
@@ -421,7 +454,7 @@
                       item.TagName != 'S.No' &&
                       item.TagName != 'Actions'
                     "
-                    [pTooltip]="line.value.ErrorDesc"
+                    [pTooltip]="line.value?.ErrorDesc"
                     tooltipPosition="top"
                   >
                     <i
@@ -748,6 +781,55 @@
             </div>
           </div>
         </div>
+
+                <!--PO lines-->
+                <div
+                class="tab-pane fade"
+                id="POline"
+                role="tabpanel"
+                aria-labelledby="POline-tab"
+              >
+              <div class="refresh_btn"><button class="btnUpload" (click)="refreshPO()">Refresh PO</button></div>
+                <table class="invert" style="width: 100%" *ngIf="POlineBool">
+                  <tr
+                    class="invert_tr"
+                    *ngFor="let item of polineTableData; let i = index"
+                  >
+                    <td class="lineName invert_th_td">
+                      {{ item.TagName }}
+                    </td>
+                    <!-- <div>
+                                              <div class="linevalue invert_thtd">{{i+1}}</div>
+                                            </div> -->
+                    <td
+                      class="linevalue invert_th_td"
+                      *ngFor="let line1 of poLineData; let i = index"
+                    >
+                      <span>
+                        <div
+                          *ngFor="let line of line1 | keyvalue"
+                          class="d-flex"
+                          style="position: relative"
+                        >
+                          <span *ngIf="line.key == item.TagName">
+                            <input
+                              type="text"
+                              [ngClass]="line.key == 'Name' ? 'w-des' : 'w-sm'"
+                              [value]="line.value"
+                              [title]="line.value"
+                              disabled
+                              class="form-control mb-1 inputHeight"
+                            />
+                          </span>
+                        </div>
+                      </span>
+                    </td>
+                  </tr>
+                </table>
+                <div *ngIf="!POlineBool" class="f-13 text-center">
+                  No PO lines are available
+                </div>
+              </div>
 
         <!-- Support Doc -->
         <div

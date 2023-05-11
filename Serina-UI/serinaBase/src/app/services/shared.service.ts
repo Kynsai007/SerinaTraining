@@ -22,7 +22,7 @@ export class SharedService {
   NTtempalteId: number
   public currentUser: Observable<any>;
   userId: number;
-  ap_id: number;
+  ap_id:number;
 
   selectedEntityId: number;
   selectedEntityBodyId: number;
@@ -62,7 +62,7 @@ export class SharedService {
     detail: "Updated Successfully"
   }
   isCustomerPortal: boolean;
-
+  po_doc_id: any;
   spAccountSub = new BehaviorSubject<any>([])
 
   constructor(private http: HttpClient) { }
@@ -339,7 +339,9 @@ export class SharedService {
   updatePO(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POUpdate/${id}`).pipe(retry(2));
   }
-
+  get_poDoc_id(id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getDocid_PO/${this.userId}/PODocumentid/${id}`).pipe(retry(2));
+  }
 
   readReadyGRNData(): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceList/${this.userId}`).pipe(retry(2))
@@ -347,8 +349,8 @@ export class SharedService {
   readReadyGRNInvData(): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceData/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(2))
   }
-  saveGRNData(boolean_value, value): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/saveCustomGRNData/${this.userId}?inv_id=${this.invoiceID}&submit_type=${boolean_value}`, value).pipe(retry(2))
+  saveGRNData(boolean_value,value):Observable<any> {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/saveCustomGRNData/${this.userId}?inv_id=${this.invoiceID}&submit_type=${boolean_value}`,value).pipe(retry(2))
   }
   getPo_numbers(idVen){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_numbers/${this.userId}/${idVen}`).pipe(retry(2))
@@ -359,7 +361,12 @@ export class SharedService {
   checkGRN_PO_duplicates(po_num){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/checkGRN_PO_availability/${this.userId}/${po_num}`)
   }
-
+  createGRNWithPO(value){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}`,value).pipe(retry(2))
+  }
+  duplicateGRNCheck(value){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}`,value).pipe(retry(2))
+  }
   // view Invoice
   getInvoiceInfo() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2), catchError(this.handleError))
@@ -411,6 +418,9 @@ export class SharedService {
   }
   triggerBatch(query): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/triggerbatch/${this.invoiceID}${query}`, '')
+  }
+  serviceSubmit(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/submitServiceInvoice/${this.userId}?inv_id=${this.invoiceID}`)
   }
   vendorSubmitPO(query, uploadtime){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorPO/${this.userId}?re_upload=${query}&po_id=${this.invoiceID}&uploadtime=${uploadtime}`)

@@ -249,6 +249,7 @@ export class RolesComponent implements OnInit {
   serachStr = '';
   totalC_users: any;
   ap_boolean: any;
+  party_type: string;
   constructor(
     private dataService: DataService,
     private messageService: MessageService,
@@ -268,6 +269,11 @@ export class RolesComponent implements OnInit {
 
   ngOnInit(): void {
     this.ap_boolean = this.dataService.ap_boolean;
+    if(this.ap_boolean){
+      this.party_type = 'Vendor';
+    } else {
+      this.party_type = 'Customer';
+    }
     this.inIt();
   }
 

@@ -1,7 +1,7 @@
 import { environment } from './../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { retry } from 'rxjs/operators';
 
 @Injectable({
@@ -13,10 +13,10 @@ export class ExceptionsService {
 
   userId: any;
   poNumber: string;
-  invoiceID:number;
+  invoiceID:any;
 
   selectedRuleId:number;
-
+  popupmsg = new BehaviorSubject<string>("sample");
   constructor(private http : HttpClient) { }
 
   readBatchInvoicesData():Observable<any> {
@@ -101,5 +101,17 @@ export class ExceptionsService {
   }
   addLineItem(data):Observable<any> {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createLineItem`,data)
+  }
+
+  getPOLines(query){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_po_lines/${this.userId}${query}`)
+  }
+
+  flip_po(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/flip_po_lines/${this.userId}/${this.invoiceID}`,data)
+  }
+
+  getMsg(){
+    return this.popupmsg.asObservable();
   }
 }
