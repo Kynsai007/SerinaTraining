@@ -1,15 +1,21 @@
 <div class="d-flex filters_div">
   <div class="selectFilter mr-2">
-    <select class="form-control f-12 font_weight" (change)="selectedService($event.target.value)">
+    <select
+      class="form-control f-12 font_weight"
+      (change)="selectedService($event.target.value)"
+    >
       <option value="">Select Serviceprovider</option>
       <option value="ALL" selected>ALL</option>
-      <option *ngFor="let service of serviceData" [value]="service.ServiceProviderName">
+      <option
+        *ngFor="let service of serviceData"
+        [value]="service.ServiceProviderName"
+      >
         {{ service.ServiceProviderName }}
       </option>
     </select>
   </div>
-  
-  <div class="selectFilter ">
+
+  <div class="selectFilter">
     <select
       class="f-12 form-control font_weight"
       (change)="selectEntityFilter($event.target.value)"
@@ -35,7 +41,9 @@
     inputId="range"
     (onClearClick)="clearDates()"
   ></p-calendar>
-  <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
+  <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">
+    Filter
+  </button>
 </div>
 
 <div class="tableDtDiv">
@@ -47,7 +55,7 @@
       </div>
       <div>
         <div class="f-12">Total Invoices Downloaded</div>
-        <div class="f-15">{{totolDownloadCount}}</div>
+        <div class="f-15">{{ totolDownloadCount }}</div>
       </div>
     </div>
 
@@ -57,32 +65,32 @@
       </div>
       <div>
         <div class="f-12">Processed to ERP</div>
-        <div class="f-15">{{totalProcessCount}}</div>
+        <div class="f-15">{{ totalProcessCount }}</div>
       </div>
     </div>
 
-    <div class="card-div d-flex bg-3">
+    <div class="card-div d-flex bg-3 mr-3">
       <div class="img-wrapper">
         <!-- <i class="fa fa-exclamation-triangle"></i> -->
         <mat-icon class="placement" svgIcon="service_pr"></mat-icon>
       </div>
       <div>
         <div class="f-12">Pending Invoices</div>
-        <div class="f-15">{{totalPendingCount}}</div>
+        <div class="f-15">{{ totalPendingCount }}</div>
       </div>
     </div>
 
-    <!-- <div class="card-div d-flex bg-6">
-            <div class="img-wrapper">
-              <mat-icon class="placement" svgIcon="service_rm"></mat-icon>
-            </div>
-            <div >
-              <div class="f-12">Remaining</div>
-              <div class="f-15">12</div>
-            </div>
-          </div>
-      
-          <div class="card-div d-flex bg-7">
+    <div class="card-div d-flex bg-7">
+      <div class="img-wrapper">
+        <mat-icon class="placement" svgIcon="service_scn"></mat-icon>
+      </div>
+      <div>
+        <div class="f-12">System check</div>
+        <div class="f-15">{{system_check}}</div>
+      </div>
+    </div>
+
+    <!-- <div class="card-div d-flex bg-7">
             <div class="img-wrapper">
               <mat-icon class="placement" svgIcon="service_scn"></mat-icon>
             </div>

@@ -19,20 +19,6 @@ export class ChartsService {
     google.charts.setOnLoadCallback(drawStacked);
 
     function drawStacked() {
-      // let data = new google.visualization.DataTable();
-      // data.addColumn('timeofday', 'Time of Day');
-      // data.addColumn('number', 'Processed');
-      // data.addColumn('number', 'Downloaded');
-
-      // data.addRows([
-      //   [{v: [8, 0, 0], f: '8 am'}, 1, .25],
-      //   [{v: [9, 0, 0], f: '9 am'}, 2, .5],
-      //   [{v: [10, 0, 0], f:'10 am'}, 3, 1],
-      //   [{v: [11, 0, 0], f: '11 am'}, 4, 2.25],
-      //   [{v: [12, 0, 0], f: '12 pm'}, 5, 2.25],
-      //   [{v: [17, 0, 0], f: 'DEWA'}, 10, 10],
-      // ]);
-
       let data = google.visualization.arrayToDataTable(data1);
 
       let options1 = {
@@ -47,14 +33,14 @@ export class ChartsService {
         bar: { groupWidth: '40%' },
         isStacked: true,
         annotations: {
-          // alwaysOutside: true,
-          textStyle: {
-            color: '#0d0b3c',
-            auraColor: 'none',
-            gridlines: {
-              color: 'transparent',
-            },
-          },
+          alwaysOutside: true,
+          // textStyle: {
+          //   color: '#0d0b3c',
+          //   auraColor: 'none',
+          //   gridlines: {
+          //     color: 'transparent',
+          //   },
+          // },
         },
         colors: ['#F4D47C', '#7F86B5'],
         animation: {
@@ -67,6 +53,10 @@ export class ChartsService {
             count: 0,
           },
           baselineColor: '#ffffff',
+          slantedText: true,
+          slantedTextAngle: 10,
+          maxTextLines: 5,
+          minTextSpacing: 5,
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
@@ -191,7 +181,7 @@ export class ChartsService {
         legend: { position: 'bottom', maxLines: 3 },
         bar: { groupWidth: '40%' },
         annotations: {
-          // alwaysOutside: true,
+          alwaysOutside: true,
           textStyle: {
             color: '#0d0b3c',
             auraColor: 'none',
@@ -211,6 +201,10 @@ export class ChartsService {
             count: 0,
           },
           baselineColor: 'green',
+          slantedText: true,
+          slantedTextAngle: 10,
+          maxTextLines: 5,
+          minTextSpacing: 5,
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
@@ -291,14 +285,7 @@ export class ChartsService {
         legend: { position: 'bottom', maxLines: 3 },
         bar: { groupWidth: '25%' },
         annotations: {
-          // alwaysOutside: true,
-          // textStyle: {
-          //   color: '#0d0b3c',
-          //   auraColor: 'none',
-          //   gridlines: {
-          //     color: 'transparent',
-          //   },
-          // },
+          alwaysOutside: true,
         },
         colors: [color],
         animation: {
@@ -311,6 +298,10 @@ export class ChartsService {
             count: 0,
           },
           baselineColor: '#ffffff',
+          slantedText: true,
+          slantedTextAngle: 10,
+          maxTextLines: 5,
+          minTextSpacing: 5,
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
@@ -331,6 +322,99 @@ export class ChartsService {
             italic: false, // true of false
           },
           // ticks: [0,10,20,30,40,50,60,70,80,100]
+        },
+      };
+
+      let chart = new google.visualization.ColumnChart(
+        document.getElementById(id)
+      );
+
+      chart.draw(data, options);
+    }
+  }
+
+  drawColumnChart_dual(id, color, tittle, chartData) {
+    google.charts.load('current', { packages: ['corechart', 'bar'] });
+    google.charts.setOnLoadCallback(drawBasic);
+
+    // function getTickInterval(maxVal) {
+    //   let power = Math.floor(Math.log10(maxVal));
+    //   let interval = Math.pow(10, power - 1);
+    //   return interval;
+    // }
+    function drawBasic() {
+
+      // let yaxisVa = []
+      // chartData.forEach((el, i) => {
+      //   if (i != 0) {
+      //     yaxisVa.push(el[1])
+      //   }
+      // });
+      // let maxVal = Math.max.apply(null, yaxisVa);
+      // let tickInterval = getTickInterval(maxVal);
+      // let tickValues = [];
+      // for (let i = 0; i <= 7; i++) {
+      //   tickValues.push(Math.round(maxVal / 5 * i / tickInterval) * tickInterval);
+      // }
+      let data = google.visualization.arrayToDataTable(chartData);
+
+      let options = {
+        title: tittle,
+        // width: 500,
+        // height: 250,
+        titlePosition: 'none',
+        textStyle: {
+          color: '#272727',
+          fontSize: 13
+        },
+        legend: { position: 'bottom' },
+        bar: { groupWidth: '25%' },
+        annotations: {
+          alwaysOutside: true,
+          position: 'out'
+        },
+        colors: ['#f15e5e', '#4cbc9a'],
+        animation: {
+          duration: 500,
+          startup: true,
+        },
+        hAxis: {
+          gridlines: {
+            color: 'transparent',
+            count: 0,
+          },
+          baselineColor: '#ffffff',
+          slantedText: true,
+          slantedTextAngle: 10,
+          maxTextLines: 5,
+          minTextSpacing: 5,
+          textStyle: {
+            color: '#0D0B3C',
+            fontSize: 10, // 12, 18 whatever you want (don't specify px)
+            bold: true, // true or false
+            italic: false, // true of false
+          },
+        },
+        vAxis: {
+          title: '',
+          0: { title: 'amount' },
+          1: { title: 'invoiceCount' },
+          gridlines: {
+            color: '#f3f3f3',
+          },
+          baselineColor: '#d3d3d3',
+          textStyle: {
+            color: '#0D0B3C',
+            fontSize: 10, // 12, 18 whatever you want (don't specify px)
+            bold: true, // true or false
+            italic: false, // true of false
+          },
+          // ticks: tickValues,
+          // interval: tickInterval
+        },
+        series: {
+          0: { targetAxisIndex: 0 },
+          1: { targetAxisIndex: 1 }
         },
       };
 
@@ -484,6 +568,31 @@ export class ChartsService {
           let chart = new google.visualization.BarChart(document.getElementById(id));
           chart.draw(data, options);
         }
+  }
+
+  drawProgress(id,data) {
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data1 = google.visualization.arrayToDataTable(data);
+
+      var options = {
+        title: '',
+        // width: 400,
+        height: 80,
+        isStacked: true,
+        colors: ['#5dc5cc', '#FFA500', '#008000'],
+        bar: { horizontal: true,groupWidth: '100%' },
+        legend: { position: 'bottom', maxLines: 3 },
+      };
+
+      var chart = new google.visualization.BarChart(document.getElementById(id));
+
+      chart.draw(data1, options);
+    }
+    
+
   }
 
 

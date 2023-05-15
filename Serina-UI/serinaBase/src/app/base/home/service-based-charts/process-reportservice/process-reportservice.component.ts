@@ -19,7 +19,7 @@ export class ProcessReportserviceComponent implements OnInit {
   invoiceBysourceChartdata: any;
   totalProcessedvalueChart: any;
   pendingInvoiceChartData: any;
-  stackedChartData : any;
+  stackedChartData = [];
   entity: any;
   entitySubscription : Subscription;
 
@@ -34,11 +34,12 @@ export class ProcessReportserviceComponent implements OnInit {
   totolDownloadCount: number;
   totalProcessCount: number;
   totalPendingCount: number;
+  system_check : number;
 
   selectedEntityValue = 'ALL';
   selectedDateValue = '';
   selectedServiceValue = 'ALL';
-
+  datequery: string;
   invoiceByEntityChartdata = [];
   noDataSourceEntityboolean: boolean;
   pagesByEntityChartdata:any;
@@ -66,16 +67,14 @@ export class ProcessReportserviceComponent implements OnInit {
     this.chartsData();
     this.dateRange();
     this.getEntitySummary();
-    this.readProcessVsDownloadData('');
-    this.readInvCountByEntity('');
-    // this.readPageCountByEntity('');
-    this.readProcessAmtData('');
-    this.readPendingAmountData('');
-    this.readOverallChartData('');
-    this.prepareColumns();
+    this.readProcessVsDownloadData(this.datequery);
+    this.readProcessAmtData(this.datequery);
+    this.readPendingAmountData(this.datequery);
+    this.readOverallChartData(this.datequery);
+    this.readInvCountByEntity(this.datequery)
     setTimeout(() => {
       this.setContainers();
-    }, 800);
+    }, 2000);
   }
 
   setContainers(){
@@ -100,7 +99,7 @@ export class ProcessReportserviceComponent implements OnInit {
 
     if(this.pendingInvoiceChartData.length>1){
       this.noDataPendingboolean = false;
-      this.chartsService.drawColumnChart(
+      this.chartsService.drawColumnChart_dual(
         'column_chart1',
         '#DCCAA6',
         'Pending Invoices by Amount',
@@ -114,9 +113,8 @@ export class ProcessReportserviceComponent implements OnInit {
     // this.chartsService.drawColumnChartPending('column_chart1');
     if(this.invoiceBysourceChartdata.length>1){
       this.noDataOverallboolean = false;
-      this.chartsService.drawPieChart(
+      this.chartsService.drawProgress(
         'pie_chart',
-        'Overall Invoice Processed vs Downloaded',
         this.invoiceBysourceChartdata
       );
     } else {
@@ -178,16 +176,17 @@ export class ProcessReportserviceComponent implements OnInit {
 
   chartsData() {
     this.invoiceBysourceChartdata = [
-      ['Type', 'count']
+      ['Count', 'Processed','Exceptions', 'System check']
     ];
     this.totalProcessedvalueChart = [
-      ['Service Provider', 'Amount']
+      ['Service Provider', 'Amount',{type: 'string', role: 'annotation'}],
+
     ];
     this.pendingInvoiceChartData = [
       ['Service Provider', 'Pending Invoices']
     ];
     this.stackedChartData = [
-      ['Service Provider', 'Processed', 'Downloaded']
+      ['Service Provider', 'Processed',{type: 'string', role: 'annotation'}, 'Downloaded',{type: 'string', role: 'annotation'}],
     ]
     this.pagesByEntityChartdata = [
       ['Entity', 'Count']
@@ -223,13 +222,19 @@ export class ProcessReportserviceComponent implements OnInit {
   readProcessVsDownloadData(filter){
     this.SpinnerService.show();
     this.chartsService.getProcessVsTotalSP(filter).subscribe((data:any)=>{
-      data.data?.processed?.forEach((ele)=>{
-        this.stackedChartData.push([ele.ServiceProviderName, ele.count]);
+      data?.data?.processed.forEach((ele)=>{
+        if(ele.ServiceProviderName == 'Emirates Integrated Telecommunication Co'){
+          ele.ServiceProviderName = 'DU'
+        }
+        this.stackedChartData.push([ele.ServiceProviderName, ele.count,ele.count]);
       })
-      data.data?.downloaded?.forEach((ele1)=>{
+      data.data.downloaded.forEach((ele1)=>{
         this.stackedChartData.forEach((val,index)=>{
+          if(ele1.ServiceProviderName == 'Emirates Integrated Telecommunication Co'){
+            ele1.ServiceProviderName = 'DU'
+          }
           if(ele1.ServiceProviderName == val[0]){
-            this.stackedChartData[index].splice(2,0,ele1.count);
+            this.stackedChartData[index].splice(3,0,ele1.count,ele1.count);
           }
         });
       })
@@ -243,7 +248,11 @@ export class ProcessReportserviceComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getProcessByAmountSP(filter).subscribe((data:any)=>{
       data.data.forEach(ele=>{
-        this.totalProcessedvalueChart.push([ele.ServiceProviderName,ele.amount])
+        if(ele.ServiceProviderName == 'Emirates Integrated Telecommunication Co'){
+        ele.ServiceProviderName = 'DU'
+      }
+      let amount = this.convertToKM(ele.amount)
+        this.totalProcessedvalueChart.push([ele.ServiceProviderName,ele.amount,amount])
       });
       this.SpinnerService.hide();
     },err=>{
@@ -255,7 +264,11 @@ export class ProcessReportserviceComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getPendingInvByAmountSP(filter).subscribe((data:any)=>{
       data.data.forEach(ele=>{
-        this.pendingInvoiceChartData.push([ele.ServiceProviderName,ele.amount])
+        if(ele.ServiceProviderName == 'Emirates Integrated Telecommunication Co'){
+          ele.ServiceProviderName = 'DU'
+        }
+        let amount = this.convertToKM(ele.amount)
+        this.pendingInvoiceChartData.push([ele.ServiceProviderName,ele.amount,amount,ele.count,ele.count])
       });
       this.SpinnerService.hide();
     },err=>{
@@ -266,12 +279,16 @@ export class ProcessReportserviceComponent implements OnInit {
   readOverallChartData(filter){
     this.SpinnerService.show();
     this.chartsService.getProcessVsTotal_OverallSP(filter).subscribe((data:any)=>{
-      this.invoiceBysourceChartdata[1] = ['Processed',data.data.processed];
-      this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
-
+      this.invoiceBysourceChartdata[1]= ['',data.data.processed,data.data.exceptions,data.data.systemcheck];
+      // this.invoiceBysourceChartdata[1] = [`Processed - ${data.data.processed}`,data.data.processed,'#FFA500'];
+      // // this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
+      // this.invoiceBysourceChartdata[2] = [`Exceptions - ${data.data.exceptions}`,data.data.exceptions,'#FFFF00'];
+      // this.invoiceBysourceChartdata[3] = [`System check - ${data.data.systemcheck}`,data.data.systemcheck,'#008000'];
+      console.log(this.invoiceBysourceChartdata)
       this.totolDownloadCount = data.data.downloaded;
       this.totalProcessCount = data.data.processed;
-      this.totalPendingCount = this.totolDownloadCount - this.totalProcessCount;
+      this.totalPendingCount = data.data.exceptions;
+      this.system_check = data?.data?.systemcheck;
       this.SpinnerService.hide();
     },err=>{
       this.SpinnerService.hide();
@@ -294,18 +311,26 @@ export class ProcessReportserviceComponent implements OnInit {
     this.dateFilterService.dateRange();
     this.minDate = this.dateFilterService.minDate;
     this.maxDate = this.dateFilterService.maxDate;
+    let date = this.datePipe.transform(this.maxDate, 'yyyy-MM-dd');
+    let monthArr = date.split('-')
+    let month = monthArr[1];
+    let year = monthArr[0];
+    let day = monthArr[2];
+    let date1 = `${year}-${month}-01`
+    let date2 = `${year}-${month}-${day}`
+    let date3 = this.dateFilterService.satrtDate;
+    this.datequery = `?date=${date1}To${date2}`;
+    this.rangeDates = [date3,this.maxDate];
   }
 
   filterByDate(date) {
     this.selectedDateValue = '';
-    console.log(date,this.selectedEntityValue)
     let query = '';
     let date1: any;
     let date2: any
     if (date != '' && date != undefined) {
       date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
       date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
-      console.log(date1, date2);
       this.selectedDateValue = date
     }
     if (
@@ -356,7 +381,6 @@ export class ProcessReportserviceComponent implements OnInit {
       query = `?entity=${this.selectedEntityValue}&date=${date1}To${date2}`;
     }
 
-    console.log(query)
     this.chartsData();
     this.readProcessVsDownloadData(query);
     this.readInvCountByEntity(query);
@@ -366,11 +390,21 @@ export class ProcessReportserviceComponent implements OnInit {
     this.readOverallChartData(query);
     setTimeout(() => {
       this.setContainers();
-    },1000);
+    },2000);
 
   }
   clearDates(){
     this.selectedDateValue = '';
+  }
+  convertToKM(value: number): string {
+    const absValue = Math.abs(value);
+    if (absValue >= 1000000) {
+      return (value / 1000000).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "M";
+    } else if (absValue >= 1000) {
+      return (value / 1000).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "k";
+    } else {
+      return value.toLocaleString();
+    }
   }
   downloadReport(){
     this.ImportExcelService.exportExcel(this.invoiceByEntityChartdata);

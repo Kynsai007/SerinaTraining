@@ -8,6 +8,7 @@ export class DateFilterService {
   displayYear: string;
   minDate: Date;
   maxDate: Date;
+  satrtDate:Date;
 
   constructor() { }
   
@@ -19,6 +20,11 @@ export class DateFilterService {
     this.lastYear = year - 5;
     this.displayYear = `${this.lastYear}:${year}`;
     let prevYear = year - 5;
+
+    this.satrtDate = new Date();
+    this.satrtDate.setDate(1)
+    this.satrtDate.setMonth(month);
+    this.satrtDate.setFullYear(year);
 
     this.minDate = new Date();
     this.minDate.setDate(day)
