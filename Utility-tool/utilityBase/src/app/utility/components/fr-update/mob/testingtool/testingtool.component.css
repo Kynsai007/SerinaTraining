@@ -22,6 +22,9 @@
   .divider{
     margin-top: 4.7%;
   }
+  :host ::ng-deep .tag.mark {
+    border: 2px solid #2ecc71 !important; /* Set the border color on hover */
+  }
   .btncancel{
     background-color: #ffffff;
     color: #273c75;
@@ -52,6 +55,13 @@
     flex:29;
     height: 100vh;
     overflow: hidden;
+    flex-wrap: wrap;
+    background-color: #eee;
+  }
+  .item5{
+    flex:29;
+    height: 100vh;
+    overflow-y: auto;
     flex-wrap: wrap;
     background-color: #eee;
   }

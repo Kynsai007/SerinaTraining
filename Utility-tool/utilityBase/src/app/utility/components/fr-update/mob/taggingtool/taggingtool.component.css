@@ -64,9 +64,10 @@ td:hover{
   background-color: rgb(45, 48, 53);
 }
 
-  table{
-    border-collapse: collapse;
-  }
+  :host ::ng-deep table{
+    border-collapse: initial !important;
+    padding: 20px;
+  } 
   .item1{
     flex:1;
     height: 100vh;
@@ -97,9 +98,14 @@ td:hover{
     flex:82;
     height: 100vh;
     background-color: #eee;
-    overflow-y:hidden;
     overflow-x:hidden;
     flex-wrap: wrap;
+  }
+  .item3-hidden{
+    overflow-y:hidden;
+  }
+  .item-overflow{
+    overflow-y:auto;
   }
   .selectable{
       position: absolute;
@@ -308,11 +314,40 @@ td:hover{
   background-color:#000000;
   color:#f2be42
 }
+.content {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 30px;
+}
 :host ::ng-deep .p-dialog-content{
   background-image: none;
   background-color:#000000;
   color:#f2be42
 }
+:host ::ng-deep .tag {
+  border: 2px solid transparent; /* Set initial border style */
+  transition: border-color 0.3s; /* Add a smooth transition effect */
+  cursor: pointer;
+}
+
+:host ::ng-deep .tag.highlight {
+  border-color: #ffa502 !important; /* Set the border color on hover */
+}
+
+:host ::ng-deep .tag.mark {
+  border-color: #2ecc71 !important; /* Set the border color on hover */
+}
+
+:host ::ng-deep .tag.mark1 {
+  border-color: #ffa502 !important; /* Set the border color on hover */
+}
+
+:host ::ng-deep table .tag .highlight {
+  border-collapse: initial !important;
+  border-spacing: 0;
+}
+
 .tag-item-label {
   min-height: 1em;
   display: flex;

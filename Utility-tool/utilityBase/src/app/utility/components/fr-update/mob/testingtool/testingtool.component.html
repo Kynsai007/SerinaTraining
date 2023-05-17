@@ -6,11 +6,11 @@
                     <a><i class="fa fa-tags"></i></a>
                 </li>
                 
-                <li (click)="navigatetoPage('training')" class="text-center" title="Training">
+                <li   *ngIf="modelData.labels != 'html'" (click)="navigatetoPage('training')" class="text-center" title="Training">
                     <a><i class="fa fa-connectdevelop"></i></a>
                 </li>
                 
-                <li (click)="navigatetoPage('composing')" title="Compose" class="text-center">
+                <li  *ngIf="modelData.labels != 'html'" (click)="navigatetoPage('composing')" title="Compose" class="text-center">
                     <a><i class="fa fa-link"></i></a>
                 </li>
                 <li (click)="navigatetoPage('testing')" title="Test Model" class="active text-center">
@@ -18,7 +18,7 @@
                 </li>
             </ul>
         </div>
-        <div class="item3 bg-white box">
+        <div class="bg-white box" [ngClass]="modelData.labels != 'html' ? 'item3' : 'item5'">
             <div id="sticky">
                 <div class="root-61">
                     <div class="primarySet-65"></div>
@@ -38,7 +38,10 @@
                   
                 </div>
             </div>
-            <div *ngIf="ready">
+            <div *ngIf="ready && modelData.labels == 'html'">
+                <div class="container" id="htmlcontainer" #htmlcontainer></div>
+            </div>
+            <div *ngIf="ready && modelData.labels != 'html'">
             <div *ngFor="let p of countertest(maxpage);let i = index">
                 <div class="asset-item-image" id="Page-{{i+1}}container">
                     <div class="asset-preview">
@@ -56,7 +59,7 @@
             <div><i class="fa fa-flash"></i> Analyse</div>
             <div style="margin-top: 4%;"></div>
             <div class="row">
-                <div class="col-md-12">
+                <div *ngIf="modelData.labels != 'html'" class="col-md-12">
                     <span class="headings">Model Analyse with Model</span>
                     <label for="idmodel"></label>
                     <select class="form-control form-control-sm" (change)="setModelId($event)" id="idmodel">
@@ -68,15 +71,17 @@
                 <div style="margin-top: 8%;"></div>
                 <hr>
                 <div class="col-md-12">
-                    <span class="headings">Choose an Image or Pdf</span>
-                    <input type="file" (change)="getFiles($event)">
+                    <span *ngIf="modelData.labels != 'html'" class="headings">Choose an Image or Pdf</span>
+                    <span *ngIf="modelData.labels == 'html'" class="headings">Choose an HTML File</span>
+                    <input *ngIf="modelData.labels != 'html'" type="file" accept="image/*,.pdf" (change)="getFiles($event)">
+                    <input *ngIf="modelData.labels == 'html'" type="file" accept=".html" (change)="getFiles($event)">
                     <div style="margin-top: 4%;"></div>
                     
-                    <button type="button" class="btn btnbg btn-sm" style="font-size: small;" (click)="runAnalyses()"><div *ngIf="testing" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!testing" class="fa fa-flash"></i> Test Model</button>&nbsp;<small style="font-weight: bold;color: #888888;">or Skip to Validate Model</small>&nbsp; 
+                    <button type="button" class="btn btnbg btn-sm" style="font-size: small;" (click)="runAnalyses()"><div *ngIf="testing" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!testing" class="fa fa-flash"></i> Test Model</button>&nbsp;<small *ngIf="modelData.labels != 'html'" style="font-weight: bold;color: #888888;">or Skip to Validate Model</small>&nbsp; 
                     
                 </div>
                 <div style="margin-top: 4%;"></div>
-                <div class="col-md-12">
+                <div *ngIf="modelData.labels != 'html'" class="col-md-12">
                     <span>
                         <small><b>Mandatory Field Check Validation Required?</b></small>&nbsp;
                         <label class="switch" style="font-size: smaller;">

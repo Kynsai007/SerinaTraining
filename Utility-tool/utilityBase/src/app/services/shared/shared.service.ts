@@ -196,7 +196,9 @@ export class SharedService {
   uploadFolder(data): Observable<any> {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/uploadfolder`, data);
   }
-
+  uploadHTMLFile(data,folderpath): Observable<any>{
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/upload_html_template?folderpath=${folderpath}`,data);
+  }
   uploadBlob(data): Observable<any> {
     return this.http.post(`${this.url}/${this.apiVersion}/fr/upload_blob`, data);
   }
@@ -267,6 +269,12 @@ export class SharedService {
   getAnalyzeResult(frobj):Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result/${frobj['container']}`,{headers:new HttpHeaders({'filename':frobj['filename'],'connstr':frobj['connstr'],'fr_endpoint':frobj['fr_endpoint'],'fr_key':frobj['fr_key'],'account':frobj['account']})});
   }
+  getAnalyzeResultHTML(filename):Observable<any>{
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result_html?filename=${filename}`);
+  }
+  saveHTMLFields(fields,modelName):Observable<any>{
+    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/save_analyze_result_html?modelName=${modelName}`,fields);
+  }
   getTrainingResult(documentId): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_training_result/${documentId}`);
   }
@@ -284,6 +292,9 @@ export class SharedService {
   }
   testModel(modelobj): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result/${modelobj['modelid']}`,modelobj['formData'],{headers:new HttpHeaders({'fr_endpoint':modelobj['fr_endpoint'],'fr_key':modelobj['fr_key']})})
+  }
+  testHtml(formData): Observable<any>{
+    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result_html`,formData);
   }
   addVendor(vendorobj,vu_id): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/Vendor/newVendor/${vu_id}`,vendorobj);

@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { MobmainService } from './mob/mobmain/mobmain.service';
 import * as fileSaver from 'file-saver';
+import { FileUploader } from 'ng2-file-upload';
 @Component({
   selector: 'app-fr-update',
   templateUrl: './fr-update.component.html',
@@ -28,16 +29,24 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   FRMetaData: any;
   modalList: any[] = [];
   allsynonyms: any;
+  msg:string = "Drag and drop an HTML File";
+  public uploader: FileUploader = new FileUploader({
+    isHTML5: true
+  });
+  public hasBaseDropZoneOver: boolean = false;
+  uploading: boolean = false;
   selected_template: string;
+  docFormats = ['pdf,jpg,png,jpeg','html']
+  selectedDocFormat = "pdf,jpg,png,jpeg";
   dateFormats = ['mm/dd/yy', 'mm/dd/yyyy', 'mm.dd.yy', 'mm.dd.yyyy','dd/mm/yy','dd-mm-yy','dd-mm-yyyy','dd.mm.yyyy','dd-mmm-yy','dd-mmm-yyyy','yyyy mm dd','mmm-dd-yyyy','dd/mm/yyyy','dd mmm yyyy','mmm dd yyyy','yyyy/mm/dd']
   enableTabsBoolean: boolean = false;
   enableMetaDataBoolean: boolean = false;
   sasExpiry:any;
   modelData: any;
   saving:boolean = false;
-  msg:string="";
   frLoadBoolean:boolean;
   downloading:boolean = false;
+  htmluploaded:boolean= false;
   rulesData: any;
   filterdRules:any;
   amountRulesData:any;
@@ -98,6 +107,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     private _location: Location) { }
 
   ngOnInit(): void {
+    this.msg = "Drag and drop an HTML File";
+    this.selectedDocFormat = "pdf,jpg,png,jpeg";
     if(sessionStorage.getItem("currentFolder")){
       sessionStorage.removeItem("currentFolder");
     }
@@ -137,6 +148,9 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     this.getSynonyms();
     this.getRules();
     this.getAmountRules();
+  }
+  changeDocFormat(val:any){
+    this.selectedDocFormat = val;
   }
   changeMetaData(){
     if(this.selecteddocType == "Purchase Orders"){
@@ -239,6 +253,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
   
   selectTemplate(modal_id){
+    this.selectedDocFormat = this.modalList.filter(v => v.idDocumentModel == modal_id)[0].labels;
     this.currentTemplate = modal_id;
     this.getAllTags(this.currentTemplate,this.selecteddocType);
     this.getTrainingTestingRes(modal_id);
@@ -388,6 +403,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
           this.LineOptTags = [];
         }
         if(this.FRMetaData){
+          this.htmluploaded = true;
+          this.msg = "File Uploaded Successfully";
           if(!this.FRMetaData['DateFormat'] || this.FRMetaData['DateFormat'] == ''){
             this.FRMetaData['DateFormat'] = 'dd/mm/yy';
           }
@@ -400,8 +417,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
             this.FRMetaData['AccuracyFeild'] = '90';
           }
           (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = this.FRMetaData['AccuracyFeild'];
-          (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = this.FRMetaData['InvoiceFormat'];
-          
+          this.selectedDocFormat = this.FRMetaData['InvoiceFormat'];
           (<HTMLInputElement>document.getElementById("unitprice_tol")).value = this.FRMetaData['UnitPriceTol_percent'];
           (<HTMLInputElement>document.getElementById("quantity_tol")).value = this.FRMetaData['QtyTol_percent'];
           if(!this.FRMetaData['Units'] || this.FRMetaData['Units'] == ''){
@@ -436,17 +452,49 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         
           
         }else{
+          this.htmluploaded = false;
+          this.msg = "Drag and drop an HTML File";
           (<HTMLSelectElement>document.getElementById("DateFormat")).value = '';
           (<HTMLInputElement>document.getElementById("AccuracyOverall")).value = '90';
           (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = '90';
-          (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = 'pdf,jpg';
           (<HTMLInputElement>document.getElementById("Units")).value = 'USD';
           if((<HTMLSelectElement>document.getElementById("ruleID")))
           (<HTMLSelectElement>document.getElementById("ruleID")).value = '';
         }    
     })
   }
+  fileDrop(event) {
+    const formData = new FormData();
+    formData.append("file", event[0], event[0].name);
+    this.sharedService.uploadHTMLFile(formData,this.FolderPath).subscribe(data =>{
+      if(data.filename){
+        this.htmluploaded = true;
+        this.msg = "File Uploaded Successfully";
+      }else{
+        this.msg = "File is not Uploaded due to Server Error";
+        this.htmluploaded = false;
+      }
+    })
+  }
+  uploadFolderEvent(e:any){
+    const formData = new FormData();
+    formData.append("file", e.target.files[0], e.target.files[0].name);
+    this.sharedService.uploadHTMLFile(formData,this.FolderPath).subscribe(data =>{
+      if(data.filename){
+        this.msg = "File Uploaded Successfully";
+        this.htmluploaded = true;
+      }else{
+        this.msg = "File is not Uploaded due to Server Error";
+        this.htmluploaded = false;
+      }
+    })
+  }
+  upload_Blob(){
 
+  }
+  fileOverBase(event) {
+    this.hasBaseDropZoneOver = event;
+  }
   selectVendorAccont(value) {
 
   }
@@ -473,6 +521,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   createModel(value) {
     value.modelStatus = 1;
     value.docType = this.selecteddocType;
+    value.labels = this.selectedDocFormat;
     if(value['modelName'] == ''){
       return;
     }
@@ -573,9 +622,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     if(value['Units'] == ''){
       value['Units'] = (<HTMLInputElement>document.getElementById("Units")).value;
     }
-    if(value['InvoiceFormat'] == ''){
-      value['InvoiceFormat'] = (<HTMLInputElement>document.getElementById("InvoiceFormat")).value;
-    }
+     value['InvoiceFormat'] = this.selectedDocFormat;
      value['mandatoryheadertags'] = this.headerArray.toString();
      value['mandatorylinetags'] = this.LineArray.toString();
      value['optionalheadertags'] = this.headerOptTags ? this.headerOptTags.toString() : "";

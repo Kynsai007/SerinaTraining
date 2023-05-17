@@ -1,9 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { NavigationStart, Router } from '@angular/router';
 import * as pdfjsLib from 'pdfjs-dist';
-import {CdkDrag, CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import {CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { SharedService } from 'src/app/services/shared/shared.service';
 import $ from 'jquery';
 if( pdfjsLib !== undefined ){
@@ -33,6 +32,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   connectionString:string="";
   containerName:string="";
   fieldid:any;
+  saving=false;
   currentangle:any;
   currentfiletype:string="";
   ready = false;
@@ -66,19 +66,28 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   tabledetails:{};
   options:any;
   pid:any;
+  htmlstring:string;
+  sanitizedHtml: SafeHtml;
+  htmlArray: any[] = [];
+  savedhtmltags: boolean = false;
+  savedhtmlbtntext: string = "Save Tags Info";
+  tagid:string="";
+  tagtext:string="";
   @Input() showtab:any;
   @Output() changeTab = new EventEmitter<{'show1':boolean,'show2':boolean,'show3':boolean,'show4':boolean}>();
   drawStartX: number;
   drawStartY: number;
   drawingRect: any;
   selectedRect: any;
-  
-  constructor(private domSanitizer: DomSanitizer,private sharedService:SharedService,private router:Router) { 
+  toDelete:any[]= [];
+  constructor(private domSanitizer: DomSanitizer,private sharedService:SharedService,private router:Router,private sanitizer: DomSanitizer) { 
     this.fieldsfile = {}
     this.options = {'rect':{'minWidth':10,'minHeight':10}}
     this.columnfields = [{'fieldKey':'','fieldType':'string','fieldFormat':'not-specified','itemType':null,'fields':null}]
     this.rows = [0];
     sessionStorage.setItem("layoutInfo",JSON.stringify({}));
+    sessionStorage.removeItem("htmlInfo");
+    sessionStorage.removeItem("htmlArray");
     router.events.forEach((event) => {
       if(event instanceof NavigationStart && router.url == '/IT_Utility/training') {
         
@@ -664,6 +673,123 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       })
     }
   }
+  onTagHover(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const tagElement = target.closest('.tag');
+    if (tagElement) {
+      tagElement.classList.toggle('highlight');
+    }
+  }
+  onTagClick(event: MouseEvent): void{
+    const target = event.target as HTMLElement;
+    const tagElement = target.closest('.tag');
+    let tagpresent = false;
+    if(tagElement){
+      this.tagid = tagElement.getAttribute("id");
+      this.tagtext = tagElement.textContent.trim().replace(/\s+/g, ' ').replace(/\n/g, '');
+      for(let obj of this.htmlArray){
+        let key = Object.keys(obj)[0];
+        let id = obj[key]["id"];
+        if(id == this.tagid){
+          tagpresent = true;
+        }
+      }
+      console.log(tagpresent);
+      if(tagpresent){
+        tagElement.classList.toggle("mark1");
+        const index = this.toDelete.indexOf(this.tagid); // Find the index of the element
+        if (index !== -1) {
+          this.toDelete.splice(index, 1); // Remove the element from the array
+        }else{
+          this.toDelete.push(this.tagid);
+        }
+      }else{
+        tagElement.classList.toggle("mark");
+      }
+    }
+  }
+  SetHTMLField(i:any,f:any){
+    if(this.tagtext != ""){
+      (<HTMLDivElement>document.getElementById("field-"+f.fieldKey)).innerHTML = this.tagtext;
+      let obj = {}
+      obj[f.fieldKey] = {"id":this.tagid,"text":this.tagtext}
+      this.htmlArray.push(obj);
+      this.tagtext = "";
+      this.tagid = "";
+    }
+  }
+  saveFieldsData(){
+    this.saving = true;
+    this.sharedService.saveHTMLFields(this.htmlArray,this.modelData.modelName).subscribe(data => {
+      this.saving = false;
+    })
+  }
+  async analyzeDocumentHTML(filename:string){
+    let full_filename = this.modelData.folderPath+"/"+filename;
+    this.ready = false;
+    if(sessionStorage.getItem("htmlInfo") != null && sessionStorage.getItem("htmlArray") != null){
+      this.ready = true;
+      this.htmlstring = sessionStorage.getItem("htmlInfo");
+      this.htmlArray = JSON.parse(sessionStorage.getItem("htmlArray"));
+      this.sanitizedHtml = this.sanitizer.bypassSecurityTrustHtml(this.htmlstring);
+      setTimeout(() => {
+        this.setHTMLFields();
+      }, 1000);
+    }else{
+      this.sharedService.getAnalyzeResultHTML(full_filename).subscribe(data=>{
+        this.ready = true;
+        if(data.message == "success"){
+          this.htmlstring = data.content;
+          this.htmlArray = data.fields;
+          this.sanitizedHtml = this.sanitizer.bypassSecurityTrustHtml(this.htmlstring);
+          sessionStorage.setItem("htmlInfo",data.content);
+          sessionStorage.setItem("htmlArray",JSON.stringify(data.fields));
+          setTimeout(() => {
+            this.setHTMLFields();
+          }, 1000);
+        }
+      })
+    }
+  }
+  setHTMLFields(){
+    if(this.htmlArray && this.htmlArray.length > 0){
+      this.savedhtmltags = true;
+      this.savedhtmlbtntext = "Saved!"
+    }else{
+      this.htmlArray = [];
+      this.savedhtmltags = false;
+      this.savedhtmlbtntext = "Save Tags Info"
+    }
+    for(let obj of this.htmlArray){
+      let key = Object.keys(obj)[0];
+      let id = obj[key]["id"];
+      let text = obj[key]["text"];
+      (<HTMLElement>document.getElementById(id)).classList.add("mark");
+      (<HTMLDivElement>document.getElementById("field-"+key)).innerHTML = text;
+    }
+    let _this = this;
+    document.addEventListener('keydown',async function(eve){
+      const key = eve.key;
+      if(key === 'Delete'){
+        for(let obj of _this.htmlArray){
+          let key = Object.keys(obj)[0];
+          let id = obj[key]["id"];
+          if(_this.toDelete.includes(id)){
+            const filteredData = _this.htmlArray.filter(obj => !obj.hasOwnProperty(key));
+            _this.htmlArray = filteredData;
+            const index = _this.toDelete.indexOf(id); // Find the index of the element
+            if (index !== -1) {
+              _this.toDelete.splice(index, 1); // Remove the element from the array
+            }
+            (<HTMLDivElement>document.getElementById(id)).classList.remove("mark1");
+            (<HTMLDivElement>document.getElementById(id)).classList.remove("mark");
+            (<HTMLDivElement>document.getElementById("field-"+key)).innerHTML = "";
+          }
+        }
+        console.log(_this.htmlArray,_this.toDelete);
+      }
+    });
+  }
   async analyzeDocument(id:any,filename:string,data:Object){
     this.showtags = true;
     this.showtabletags = false;
@@ -1178,7 +1304,11 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       if(div){
         div.style.display = 'none';
       }
-      this.analyzeDocument(this.frp_id,Object.keys(this.thumbnails[i])[0],data);
+      if(!this.currentfile.endsWith(".html")){
+        this.analyzeDocument(this.frp_id,this.currentfile,data);
+      }else{
+        this.analyzeDocumentHTML(this.currentfile);
+      }
     });
   }
   zoomIn(){

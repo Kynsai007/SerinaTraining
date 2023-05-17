@@ -15,12 +15,15 @@
                 <a class="nav-link active f-13" id="Updatefr-tab" data-toggle="tab" href="#Updatefr" role="tab"
                     aria-controls="Updatefr" aria-selected="true">Update FR Config</a>
             </li>
-            <li class="nav-item" [ngClass]="!enableTabsBoolean ? 'opaque' : 'clearopaque'">
+            <li class="nav-item" *ngIf="selectedDocFormat == 'html'">
+                <a class="nav-link f-13" id="htmlupload-tab" data-toggle="tab" href="#htmlupload" role="tab" aria-controls="htmlupload" aria-selected="false">Training Sample</a>
+            </li>
+            <li class="nav-item" *ngIf="selectedDocFormat != 'html'" [ngClass]="!enableTabsBoolean ? 'opaque' : 'clearopaque'">
                 <a class="nav-link f-13" [ngClass]="!enableTabsBoolean ? 'disabled':''" id="mob-tab" data-toggle="tab"
                     href="#mob" role="tab" aria-controls="mob" aria-selected="false">Training Samples</a>
             </li>
-            <li class="nav-item" [ngClass]="!enableMetaDataBoolean ? 'opaque' : 'clearopaque'">
-                <a class="nav-link f-13" [ngClass]="!enableMetaDataBoolean ? 'disabled':''" id="meta-tab" data-toggle="tab"
+            <li class="nav-item" [ngClass]="!enableMetaDataBoolean && !htmluploaded ? 'opaque' : 'clearopaque'">
+                <a class="nav-link f-13" [ngClass]="!enableMetaDataBoolean && !htmluploaded ? 'disabled':''" id="meta-tab" data-toggle="tab"
                     href="#meta" role="tab" aria-controls="meta" aria-selected="false">Meta Data</a>
             </li>
             
@@ -173,6 +176,29 @@
                     <div class="loader"></div>
                 </ng-template>
             </div>
+            <div class="tab-pane fade font_weight headings" id="htmlupload" role="tabpanel" aria-labelledby="htmlupload-tab">
+                <div class="container p-2">
+                    <div ng2FileDrop [uploader]="uploader" [ngClass]="{'file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)" (onFileDrop)="fileDrop($event)" class="file-upload dashed-border">
+                        <div style="margin: 30px;">
+                        <img src="assets/upload_doc_ic.svg" *ngIf="!htmluploaded">
+                        <img src="assets/upload_doc_sucess_ic.svg" *ngIf="htmluploaded">
+                        <div style="margin-top: 4%;"></div>
+                        <div class="f-13" style="color: rgb(0 167 0);">
+                            
+                        </div>
+                        <div class="underdropIcon">{{msg}}</div>
+                        <div style="margin-top: 4%;"></div>
+                        <div class="fileText">Or</div>
+                        <div style="margin-top: 4%;"></div>
+                        <label for="img">
+                            <span *ngIf="uploading" class="spinner-border spinner-border-sm"></span> Browse File
+                        </label>
+                        <input ng2FileSelect (change)="uploadFolderEvent($event)" [uploader]="uploader"
+                            #fileInput type="file" id="img" name="img" accept=".html" hidden />
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="tab-pane fade font_weight headings" id="mob" role="tabpanel" aria-labelledby="mob-tab">
                 <div>
                  <ng-container #outlet >
@@ -260,14 +286,6 @@
                                             </label>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-    
-                            <tr class="trHeight">
-                                <td class="tdLeft f-13">Invoice Format <span class="colon">:</span></td>
-                                <td class="tdRight">
-                                    <input type="text" name="InvoiceFormat" id="InvoiceFormat" class="form-control max_width f-13" ngModel #invoiceFormat="ngModel" placeholder="">
-    
                                 </td>
                             </tr>
     
@@ -502,7 +520,7 @@
             <!-- Modal body -->
             <div class="modal-body b-0">
                 <div>
-                    <label class="f-14">Select Vendor Account</label>
+                    <label class="f-14">Select Vendor Account *</label>
                     <select class="form-control f-13 inputBox selectpicker"
                         name="idVendorAccount" ngModel #idVendorAccount="ngModel"
                         (change)="selectVendorAccont($event.target.value)" required>
@@ -511,10 +529,14 @@
                             {{vendor.Account}}</option>
                     </select>
 
-                    <label class="f-14 mt-2">Template Name</label>
+                    <label class="f-14 mt-2">Template Name *</label>
                     <input type="text" class="form-control inputBox f-13" name="modelName" ngModel
                         #modelName="ngModel" [(ngModel)]="templateName" (change)="removealert()" required>
-
+                    <label class="f-14 mt-2">Document Format *</label>
+                    <select class="form-control f-13 inputBox selectpicker" name="docFormat" ngModel #docFormat="ngModel"
+                            (change)="changeDocFormat($event.target.value)" required>
+                        <option *ngFor="let docf of docFormats" [value]="docf">{{docf}}</option>
+                    </select>
                 </div>
             </div>
 
