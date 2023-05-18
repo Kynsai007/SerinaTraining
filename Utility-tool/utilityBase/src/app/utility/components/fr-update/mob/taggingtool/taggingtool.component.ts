@@ -1304,7 +1304,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       if(div){
         div.style.display = 'none';
       }
-      if(!this.currentfile.endsWith(".html") || !this.currentfile.endsWith(".htm")){
+      if(!this.currentfile.endsWith(".html") && !this.currentfile.endsWith(".htm")){
         this.analyzeDocument(this.frp_id,this.currentfile,data);
       }else{
         this.analyzeDocumentHTML(this.currentfile);
