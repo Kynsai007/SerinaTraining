@@ -74,7 +74,7 @@
                     <span *ngIf="modelData.labels != 'html'" class="headings">Choose an Image or Pdf</span>
                     <span *ngIf="modelData.labels == 'html'" class="headings">Choose an HTML File</span>
                     <input *ngIf="modelData.labels != 'html'" type="file" accept="image/*,.pdf" (change)="getFiles($event)">
-                    <input *ngIf="modelData.labels == 'html'" type="file" accept=".html" (change)="getFiles($event)">
+                    <input *ngIf="modelData.labels == 'html'" type="file" accept=".html,.htm" (change)="getFiles($event)">
                     <div style="margin-top: 4%;"></div>
                     
                     <button type="button" class="btn btnbg btn-sm" style="font-size: small;" (click)="runAnalyses()"><div *ngIf="testing" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!testing" class="fa fa-flash"></i> Test Model</button>&nbsp;<small *ngIf="modelData.labels != 'html'" style="font-weight: bold;color: #888888;">or Skip to Validate Model</small>&nbsp; 

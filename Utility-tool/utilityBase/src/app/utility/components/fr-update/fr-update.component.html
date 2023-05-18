@@ -194,7 +194,7 @@
                             <span *ngIf="uploading" class="spinner-border spinner-border-sm"></span> Browse File
                         </label>
                         <input ng2FileSelect (change)="uploadFolderEvent($event)" [uploader]="uploader"
-                            #fileInput type="file" id="img" name="img" accept=".html" hidden />
+                            #fileInput type="file" id="img" name="img" accept=".html,.htm" hidden />
                         </div>
                     </div>
                 </div>
