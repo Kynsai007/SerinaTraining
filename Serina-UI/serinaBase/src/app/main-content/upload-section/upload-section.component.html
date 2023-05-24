@@ -409,6 +409,23 @@
           </select>
         </div>
 
+        <div *ngIf="LCMBoolean !=='No'">
+          <label class="f-13 mb-0">Select Currency</label>
+          <select
+            class="form-control accountSelect f-12"
+            [(ngModel)]="selectedCurrency"
+            name="Currency"
+            ngModel
+          >
+            <option
+              *ngFor="let name of currencyList"
+              [value]="name"
+            >
+              {{ name }}
+            </option>
+          </select>
+        </div>
+
         <!-- select PO Number -->
         <div *ngIf="POnumberBoolean">
           <label class="f-13 mb-0">Select PO Number</label><br />
@@ -433,41 +450,66 @@
           </p-autoComplete>
         </div>
 
-        <!-- select PO Number -->
+        <!-- select GRN Number -->
         <div *ngIf="POnumberBoolean">
           <label class="f-13 mb-0">Select GRN</label><br />
           <p-multiSelect
             [options]="po_grn_list"
+            placeholder="Number"
+            filter="false"
+            inputStyleClass="form-control"
+            optionLabel="PackingSlip"
+            [maxSelectedLabels]="3"
+            [selectedItemsLabel]="'{0} items selected'"
+            (onChange)="addGrnLine($event)"
+            name="PO_GRN_Number"
+            ngModel
+            required
+          >
+          </p-multiSelect>
+        </div>
+
+         <!-- select GRN Line -->
+         <div *ngIf="POnumberBoolean">
+          <label class="f-13 mb-0">Select GRN Line</label><br />
+          <p-multiSelect
+            [options]="po_grn_line_list"
             placeholder="Number-line-description"
             filter="false"
             inputStyleClass="form-control"
             optionLabel="GRNField"
             [maxSelectedLabels]="3"
             [selectedItemsLabel]="'{0} items selected'"
-            name="PO_GRN_Number"
+            name="PO_GRN_Number_line"
             ngModel
             required
+            [(ngModel)]="PO_GRN_Number_line"
           >
           </p-multiSelect>
-          <!-- <p-autoComplete
-                    placeholder="Select GRN"
-                    (onSelect)="selectedPO_GRN($event)"
-                    [group]="false"
-                    [forceSelection]="true"
-                    [suggestions]="filteredPO_GRN"
-                    (completeMethod)="filterPO_GRNnumber($event)"
-                    field="GRNField"
-                    [dropdown]="true"
-                    name="PO_GRN_Number"
-                    ngModel
-                    required
-                  >
-                    <ng-template let-group pTemplate="group">
-                      <div class="flex align-items-center">
-                        <span class="f-12">{{ group.GRNField }}</span>
-                      </div>
-                    </ng-template>
-                  </p-autoComplete> -->
+        </div>
+
+        <div *ngIf="POnumberBoolean">
+          <div style="visibility: hidden">visible</div>
+          <button
+            class="img-browse b-0 mt-0 bg-gray"
+            type="button"
+            [disabled]="!flipBool"
+            [ngClass]="{
+              disable: !flipBool,
+              'b-success': isPOFlipped
+            }"
+            (click)="open_dialog_comp('flip')"
+          >
+            <span *ngIf="!isPOFlipped"
+              >Flip PO</span
+            >
+            <span
+              *ngIf="isPOFlipped"
+              class="material-icons d-flex justify-content-center"
+            >
+              check_circle
+            </span>
+          </button>
         </div>
 
         <div>

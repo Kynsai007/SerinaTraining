@@ -25,12 +25,13 @@ import { FormGroup, NgForm } from '@angular/forms';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { DomSanitizer } from '@angular/platform-browser';
 import IdleTimer from '../../idleTimer/idleTimer';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, take} from 'rxjs/operators';
 import { HttpEventType } from '@angular/common/http';
 import * as fileSaver from 'file-saver';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../../popup/popup.component';
-import { take } from 'rxjs/operators';
+import { MultiPOComponent } from 'src/app/main-content/multi-po/multi-po.component';
+
 
 export interface getApproverData {
   EntityID: number,
@@ -244,6 +245,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ]
   POlineBool: boolean;
   poDocId: any;
+  multiPOBool = false;
+  mutliplePOTableData = [];
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -328,6 +331,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.documentType = this.tagService.documentType;
     this.documentTypeId = this.dataService.idDocumentType;
     if (this.tagService.documentType == 'lcm' || this.tagService.documentType == 'multipo') {
+      if(this.tagService.documentType == 'multipo'){
+        this.multiPOBool = true;
+      }      
       this.isLinenonEditable = true;
     }
 
@@ -1959,7 +1965,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         width : '60%',
         height: '70vh',
         hasBackdrop: false,
-        data : { type: str, resp: poLineData}});
+        data : { type: str, comp:'ocr', resp: poLineData,grnLine:''}});
       this.SpinnerService.hide();
     },err=>{
       this.AlertService.errorObject.detail = "Server error";
@@ -2002,6 +2008,17 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.AlertService.errorObject.detail = 'Server error';
       this.messageService.add(this.AlertService.errorObject);
     })
+  }
+
+  mutliPOEdit(str){
+   const dailogRef: MatDialogRef<MultiPOComponent> =  this.mat_dlg.open(MultiPOComponent,{ 
+      width : '85%',
+      height: '85vh',
+      hasBackdrop: false,
+      data : {type:str, lines:this.mutliplePOTableData}});
+      dailogRef.afterClosed().subscribe(result=>{
+        this.mutliplePOTableData = result;
+      })
   }
   ngOnDestroy() {
     let sessionData = {

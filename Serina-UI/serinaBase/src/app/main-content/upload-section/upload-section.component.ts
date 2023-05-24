@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { FileUploader } from 'ng2-file-upload';
 import { MessageService } from 'primeng/api';
 import { throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -21,6 +21,9 @@ import * as fileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AutoComplete } from 'primeng/autocomplete';
+import { PopupComponent } from 'src/app/base/popup/popup.component';
+import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 // declare var EventSourcePolyfill: any;
 export interface getApproverData {
   EntityID: number,
@@ -124,6 +127,7 @@ export class UploadSectionComponent implements OnInit {
   GRNLineData = [];
   GRNData = []
   filteredGRN: any[];
+  UniqueGRN = [];
   selectedGRNValue: any;
   mutliplePOTableData = [];
   @ViewChild('multiPO') multiPO: NgForm;
@@ -188,9 +192,18 @@ export class UploadSectionComponent implements OnInit {
     { statusName: 'Completed', status : '',percent:''},
   ]
   po_grn_list = [];
+  po_grn_line_list = [];
   filteredPO_GRN = [];
   DocumentTypes = [];
   document_type: string;
+  PO_GRN_Number_line = [];
+  slectedPOLineDetails: any;
+  currencyList: any[];
+  selectedCurrency = '';
+  flipBool:boolean;
+  isPOFlipped:boolean;
+  flipPOData = [];
+  UniqueGRNPO: any;
 
   constructor(
     private http: HttpClient,
@@ -206,8 +219,16 @@ export class UploadSectionComponent implements OnInit {
     private messageService: MessageService,
     private serviceProviderService: ServiceInvoiceService,
     private datepipe: DatePipe,
-    private PS: PermissionService
-  ) { }
+    private PS : PermissionService,
+    private exceptionService: ExceptionsService,
+    private mat_dlg: MatDialog
+  ) {
+    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg)=>{
+      if(msg == 'normal'){
+      this.isPOFlipped = true;
+      }
+    })
+   }
 
   ngOnInit(): void {
     this.userDetails = this.authenticationService.currentUserValue['userdetails'];
@@ -351,6 +372,7 @@ export class UploadSectionComponent implements OnInit {
         }
       }
     } else {
+      this.LCMBoolean = 'No';
       if (val == 'singlePO') {
         this.POnumberBoolean = true;
       } else if (val == 'multiPO') {
@@ -359,6 +381,10 @@ export class UploadSectionComponent implements OnInit {
           this.mutliPODailog = true;
           this.multiBtn = 'Submit';
         this.POnumberBoolean = false;
+      }else if (val == 'LCM') {
+        this.LCMBoolean = 'Yes';
+        this.POnumberBoolean = false;
+        this.getCurrency(this.vendorAccountId);
       } else {
         this.POnumberBoolean = false;
       }
@@ -375,6 +401,7 @@ export class UploadSectionComponent implements OnInit {
     //   }
     // })
     if (this.isCustomerPortal == true) {
+      this.quickUploadForm.controls['vendor'].reset();
       this.getCustomerVendors();
      this.readDepartment();
      // this.dropdown.show();
@@ -471,6 +498,12 @@ export class UploadSectionComponent implements OnInit {
         }
       });
   }
+  getCurrency(vId){
+    this.sharedService.getCurrency(vId).subscribe((data:any)=>{
+      this.currencyList = data;
+      this.selectedCurrency = data[0];
+    })
+  }
   getPONumbers(id) {
     this.sharedService.getPoNumbers(id).subscribe((data: any) => {
       this.poNumbersList = data;
@@ -506,6 +539,13 @@ export class UploadSectionComponent implements OnInit {
       this.readPOLines(event.PODocumentID);
     // }
     this.selectedPONumber = event.PODocumentID;
+    this.multiPO.controls['Name'].reset();
+    this.multiPO.controls['POLineAmount'].reset();
+    this.multiPO.controls['GRN_Name'].reset();
+    this.multiPO.controls['GRN_number'].reset();
+    this.multiPO.controls['GRNQty'].reset();
+    this.multiPO.controls['GRNLineAmount'].reset();
+    this.multiPO.controls['ConsumedPOQty'].reset();
   }
   filterPO_GRNnumber(event){
     let filtered: any[] = [];
@@ -528,7 +568,7 @@ export class UploadSectionComponent implements OnInit {
     if (this.entity?.length > 0) {
       for (let i = 0; i < this.entity?.length; i++) {
         let ent: any = this.entity[i];
-        if (ent.EntityName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        if (ent.EntityName.toLowerCase().includes(query.toLowerCase())) {
           filtered.push(ent);
         }
       }
@@ -551,22 +591,40 @@ export class UploadSectionComponent implements OnInit {
   readPOLines(po_num) {
     this.sharedService.readPOLines(po_num).subscribe((data: any) => {
       this.poLineData = data.PODATA;
-      this.GRNData = data?.GRNDATA?.filter((val1,i,a)=> a.findIndex(val2=>val2.PackingSlip == val1.PackingSlip) === i);
+      this.UniqueGRN = data?.GRNDATA?.filter((val1,i,a)=> a.findIndex(val2=>val2.PackingSlip == val1.PackingSlip) === i);
+      this.GRNData = data?.GRNDATA
       // let jsonObj = data?.GRNDATA?.map(JSON.stringify);
       // let uniqeSet = new Set(jsonObj);
       // let unique = Array?.from(uniqeSet)?.map(JSON.parse);
-      let arr = [];
-      data?.GRNDATA?.forEach(val=>{
-        let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
-        arr.push({PackingSlip:val.PackingSlip,POLineNumber:val.POLineNumber,GRNField:ele});
-      })
-      this.po_grn_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
+
+      this.po_grn_list = data?.GRNDATA.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip'].every(k=>v2[k] ===val1[k])) === index);
     }, err => {
       this.alertService.errorObject.detail = "Server error";
       this.messageService.add(this.alertService.errorObject);
     })
   }
-
+  addGrnLine(val){
+    this.po_grn_line_list = [];
+    val?.value?.forEach(ele=>{
+      this.GRNData.filter(el=>{
+        if(ele.PackingSlip == el.PackingSlip){
+          this.po_grn_line_list.push(el)
+        }
+      });
+    })
+    let arr = [];
+    this.po_grn_line_list?.forEach(val=>{
+        let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
+        arr.push({PackingSlip:val.PackingSlip,POLineNumber:val.POLineNumber,GRNField:ele});
+      })
+      this.po_grn_line_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
+    this.PO_GRN_Number_line = this.po_grn_line_list;
+    if(this.PO_GRN_Number_line.length>0){
+      this.flipBool = true;
+    } else {
+      this.flipBool = false;
+    }
+  }
   filterPOLine(event) {
     let filtered: any[] = [];
     let query = event.query;
@@ -584,6 +642,8 @@ export class UploadSectionComponent implements OnInit {
 
   selectedPOLine(event) {
     this.selectedPOlinevalue = event.Name;
+    this.slectedPOLineDetails = event;
+    this.UniqueGRNPO = this.GRNData.filter(el=> event.LineNumber == el.POLineNumber);
     // let obj = {
     //   PODocumentID : this.selectedPONumber,
     //   Name : event.Name,
@@ -594,6 +654,10 @@ export class UploadSectionComponent implements OnInit {
     this.PO_desc_line = event.Name;
     this.PO_amount_line = event.UnitPrice * event.PurchQty;
     this.PO_qty = event.PurchQty;
+    this.multiPO.controls['GRN_Name'].reset();
+    this.multiPO.controls['GRN_number'].reset();
+    this.multiPO.controls['GRNQty'].reset();
+    this.multiPO.controls['GRNLineAmount'].reset();
   }
 
   filterGRNnumber(event, name) {
@@ -601,9 +665,9 @@ export class UploadSectionComponent implements OnInit {
     let query = event.query;
 
     if (name == 'grn_num') {
-      for (let i = 0; i < this.GRNData?.length; i++) {
-        let PO: any = this.GRNData[i];
-        if (PO?.PackingSlip?.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+      for (let i = 0; i < this.UniqueGRNPO?.length; i++) {
+        let PO: any = this.UniqueGRNPO[i];
+        if (PO?.PackingSlip?.toLowerCase().includes(query.toLowerCase())) {
           filtered.push(PO);
         }
       }
@@ -611,7 +675,7 @@ export class UploadSectionComponent implements OnInit {
     } else {
       for (let i = 0; i < this.GRNLineData?.length; i++) {
         let PO: any = this.GRNLineData[i];
-        if (PO.Name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        if (PO.Name.toLowerCase().includes(query.toLowerCase())) {
           filtered.push(PO);
         }
       }
@@ -623,7 +687,8 @@ export class UploadSectionComponent implements OnInit {
   selectedGRN(event, name) {
     if (name == 'grn_num') {
       this.GRN_number = event.PackingSlip;
-      this.GRNLineData = this.GRNData.filter(ele => ele.PackingSlip === event.PackingSlip);
+      this.GRNLineData = this.GRNData.filter(ele => (ele.PackingSlip === event.PackingSlip) &&(ele.POLineNumber == this.slectedPOLineDetails.LineNumber) );
+      this.multiPO.controls['GRN_Name'].reset();
     } else {
       this.GRN_desc_line = event.Name;
       this.GRN_amount_line = event.Price * event.Qty;
@@ -930,11 +995,15 @@ export class UploadSectionComponent implements OnInit {
               document_type: this.document_type
             };
             this.runEventSource(eventSourceObj);
+            let count = 0;
             this.evtSource.addEventListener('update', (event: any) => {
               // Logic to handle status updates
               this.updateData = JSON.parse(event.data);
               this.progressText = this.updateData['status'];
+              this.progressBarObj[count].status = 'Passed'
+              this.progressBarObj[count].percent = this.updateData['percentage'];
               this.progressWidth = this.updateData['percentage'];
+              count = count+1;
               if (this.progressText == 'ERROR') {
                 alert('ERROR');
               }
@@ -1168,7 +1237,7 @@ export class UploadSectionComponent implements OnInit {
       Approver = this.approverNameListFinal
 
     }
-    val?.PO_GRN_Number?.forEach(el=>{
+    this.PO_GRN_Number_line?.forEach(el=>{
       po_grn_data.push(el.GRNField)
     })
     let obj = {
@@ -1193,7 +1262,9 @@ export class UploadSectionComponent implements OnInit {
       "po_number": val.PONumber?.PODocumentID,
       "multi_po_path": multiPath,
       "supporting_doc_names": this.supportFileNamelist,
-      "po_grn_data":val?.PO_GRN_Number
+      "po_grn_data":this.PO_GRN_Number_line,
+      "Currency" : this.selectedCurrency,
+      "flippo_data": this.flipPOData
     }
     this.uploadInvoicesListData.push(obj);
     this.APIPostData.push(APIObj);
@@ -1210,6 +1281,8 @@ export class UploadSectionComponent implements OnInit {
     this.approversSendData = [];
     this.mutliplePOTableData = [];
     this.POnumberBoolean = false;
+    this.selectedCurrency = '';
+    this.flipPOData = [];
   }
   deleteQueue(index, data) {
     if (confirm('Are you sure you want to delete?')) {
@@ -1263,5 +1336,32 @@ export class UploadSectionComponent implements OnInit {
     if (confirm('Are you sure you want to delete?')) {
       this.mutliplePOTableData.splice(index, 1);
     }
+  }
+  open_dialog_comp(str){
+    this.spinnerService.show();
+    this.getPO_lines(str);
+  }
+  
+  getPO_lines(str){
+    let query = `?po_number=${this.selectedPONumber}`;
+    this.exceptionService.getPOLines(query).subscribe((data:any)=>{
+      let poLineData = data.Po_line_details;
+      const dailogRef: MatDialogRef<PopupComponent> =  this.mat_dlg.open(PopupComponent,{ 
+        width : '60%',
+        height: '70vh',
+        hasBackdrop: false,
+        data : { type: str, comp:'upload', resp: poLineData,grnLine:this.PO_GRN_Number_line}});
+        dailogRef.afterClosed().subscribe(result=>{
+          this.flipPOData = result;
+        })
+      this.spinnerService.hide();
+    },err=>{
+      this.alertService.errorObject.detail = "Server error";
+      this.messageService.add(this.alertService.errorObject);
+      this.spinnerService.hide();
+    })
+  }
+  ngOnDestroy() {
+    this.mat_dlg.closeAll();
   }
 }

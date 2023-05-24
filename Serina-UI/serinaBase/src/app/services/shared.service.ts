@@ -462,6 +462,10 @@ export class SharedService {
   getPoNumbers(id): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/VendorPortal/getponumbers/${id}`).pipe(retry(2))
   }
+  getCurrency(vId){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/VendorPortal/getcurrency/${vId}/?u_id=${this.userId}`).pipe(retry(2))
+  }
+  
 
   // GRN Related
   getGRNdata(data) {

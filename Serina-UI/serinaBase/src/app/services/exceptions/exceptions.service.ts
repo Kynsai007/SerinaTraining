@@ -13,7 +13,7 @@ export class ExceptionsService {
 
   userId: any;
   poNumber: string;
-  invoiceID:any;
+  invoiceID:number;
 
   selectedRuleId:number;
   popupmsg = new BehaviorSubject<string>("sample");
@@ -110,7 +110,17 @@ export class ExceptionsService {
   flip_po(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/flip_po_lines/${this.userId}/${this.invoiceID}`,data)
   }
+  validateFlipPO(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/validateFlipPO/${this.userId}`,data)
+  }
 
+  update_GRN_data(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/updateGRNdata/${this.userId}/idDocument/${this.invoiceID}`,data)
+  }
+
+  get_grn_data(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_GRNSelected_lines/${this.userId}/${this.invoiceID}`)
+  }
   getMsg(){
     return this.popupmsg.asObservable();
   }

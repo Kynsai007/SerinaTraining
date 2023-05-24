@@ -150,6 +150,18 @@ export class Comparision3WayComponent
     { TagName: 'UnitPrice', linedata: [] },
     { TagName: 'Actions', linedata: [] }
   ];
+  po_grn_list = [];
+  po_grn_line_list = [];
+  filteredPO_GRN = [];
+  GRNData: any;
+  PO_GRN_Number_line = [];
+  grnEditData = [];
+  summaryColumn = [
+    { field: 'PackingSlip', header: 'GRN Number' },
+    { field: 'GRNField', header: 'GRN Field' },
+
+  ];
+  ColumnLengthVendor: number;
   
   constructor(
     fb: FormBuilder,
@@ -403,8 +415,9 @@ export class Comparision3WayComponent
     this.exceptionService.getInvoiceInfo().subscribe(
       (data: any) => {
         this.lineDisplayData = data.linedata.Result;
-        this.lineDisplayData.forEach((element,index,arr) => {
-          this.lineCount = arr[0].items
+        this.lineDisplayData.forEach((element) => {
+          this.lineCount = element.items;
+          this.lineData.push(element.items)
         });
 
         const pushedArrayHeader = [];
@@ -420,7 +433,11 @@ export class Comparision3WayComponent
         let inv_num_data:any = this.inputData.filter(val=>{
           return val.TagLabel == 'InvoiceId';
         })
+        let PO_doc_num:any = this.inputData.filter(val=>{
+          return val.TagLabel == 'PurchaseOrder';
+        })
         this.invoiceNumber = inv_num_data[0]?.Value;
+        this.readPOLines(PO_doc_num[0]?.Value)
         this.vendorData = {
           ...data.Vendordata[0].Vendor,
           ...data.Vendordata[0].VendorAccount,
@@ -1537,25 +1554,115 @@ export class Comparision3WayComponent
       }
     );
   }
+
   open_dialog_comp(str){
     this.SpinnerService.show();
     this.getPO_lines(str);
   }
+  
   getPO_lines(str){
-    let query = `?inv_id=${this.invoiceID}`
+    let query = `?inv_id=${this.invoiceID}`;
     this.exceptionService.getPOLines(query).subscribe((data:any)=>{
       this.poLineData = data.Po_line_details;
       this.mat_dlg.open(PopupComponent,{ 
         width : '60%',
         height: '70vh',
         hasBackdrop: false,
-        data : { type: str, resp: this.poLineData}});
+        data : { type: str, comp:'line', resp: this.poLineData,grnLine:''}});
       this.SpinnerService.hide();
     },err=>{
       this.AlertService.errorObject.detail = "Server error";
       this.messageService.add(this.AlertService.errorObject);
       this.SpinnerService.hide();
     })
+  }
+
+  readPOLines(po_num) {
+    this.SharedService.readPOLines(po_num).subscribe((data: any) => {
+      // this.poLineData = data.PODATA;
+      // this.UniqueGRN = data?.GRNDATA?.filter((val1,i,a)=> a.findIndex(val2=>val2.PackingSlip == val1.PackingSlip) === i);
+      this.GRNData = data?.GRNDATA
+      // let jsonObj = data?.GRNDATA?.map(JSON.stringify);
+      // let uniqeSet = new Set(jsonObj);
+      // let unique = Array?.from(uniqeSet)?.map(JSON.parse);
+      
+      this.po_grn_list = data?.GRNDATA.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip'].every(k=>v2[k] ===val1[k])) === index);
+    }, err => {
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+    })
+  }
+  addGrnLine(val){
+    this.po_grn_line_list = [];
+    val?.value?.forEach(ele=>{
+      this.GRNData.filter(el=>{
+        if(ele.PackingSlip == el.PackingSlip){
+          this.po_grn_line_list.push(el)
+        }
+      });
+    })
+    let arr = [];
+    this.po_grn_line_list?.forEach(val=>{
+        let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
+        arr.push({PackingSlip:val.PackingSlip,POLineNumber:val.POLineNumber,GRNField:ele});
+      })
+      this.po_grn_line_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
+    this.PO_GRN_Number_line = this.po_grn_line_list;
+  }
+  filterPO_GRNnumber(event){
+    let filtered: any[] = [];
+    let query = event.query;
+
+    if (this.po_grn_list?.length > 0) {
+      for (let i = 0; i < this.po_grn_list?.length; i++) {
+        let PO: any = this.po_grn_list[i];
+        if (PO.GRNField.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(PO);
+        }
+      }
+    }
+    this.filteredPO_GRN = filtered;
+  }
+  editGRNData(){
+    this.getGrnData();
+    this.displayRuleDialog = true;
+  }
+  getGrnData(){
+    this.SpinnerService.show();
+    this.exceptionService.get_grn_data().subscribe((data:any)=>{
+      this.PO_GRN_Number_line = data;
+      this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+    })
+  }
+  deleteGRNEdit(index,data){
+    this.PO_GRN_Number_line.splice(index,1)
+  }
+  ChangeGRNData(){
+    let grnNumberList = [];
+    this.PO_GRN_Number_line.forEach(el=>{
+      grnNumberList.push(el.PackingSlip) 
+    })
+    grnNumberList = [...new Set(grnNumberList)]
+    let obj ={
+      "MultiPoList":this.PO_GRN_Number_line,
+      "grn_documentID": grnNumberList.toString()
+    }
+    if(confirm("Are you sure you want to change GRN data?")){
+      this.SpinnerService.show();
+      this.exceptionService.update_GRN_data(obj).subscribe((data:any)=>{
+        this.SpinnerService.hide();
+        this.AlertService.addObject.detail = "GRN Data updated";
+        this.messageService.add(this.AlertService.addObject);
+        this.displayRuleDialog = false;
+      }, err=>{
+        this.SpinnerService.hide();
+        this.AlertService.errorObject.detail = "Please try after sometime";
+        this.messageService.add(this.AlertService.errorObject);
+        this.displayRuleDialog = false;
+      })
+    }
   }
 
   ngOnDestroy() {

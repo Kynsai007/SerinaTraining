@@ -13,7 +13,7 @@
 <div class="row invoice-body">
   <div
     class="viewPdf"
-    style="right: 340px"
+    style="right: 150px"
     *ngIf="
       (editPermissionBoolean ||
         changeApproveBoolean ||
@@ -22,6 +22,25 @@
       this.currentTab == 'line'
     "
   >
+
+
+    <button class="btnUpload m-t-neg bg-blue ml-2 mr-2" (click)="editGRNData()">Edit GRN</button>
+    <!-- PO Selection -->
+    <p-autoComplete
+      [(ngModel)]="selectedPONumber"
+      (onSelect)="onSelectPO($event)"
+      placeholder="Select PO Number"
+      [suggestions]="filteredPO"
+      (completeMethod)="filterPO($event)"
+      field="PODocumentID"
+      [dropdown]="true"
+    >
+      <ng-template let-country pTemplate="item">
+        <div class="country-item">
+          <div class="f-12">{{ country.PODocumentID }}</div>
+        </div>
+      </ng-template>
+    </p-autoComplete>
     <!-- <button
       class="btnUpload btn_extra_bg mr-2"
       (click)="open_dialog_comp('Amend')"
@@ -30,7 +49,7 @@
     </button> -->
     <button
       *ngIf="isAdmin"
-      class="btnUpload btn_extra_bg"
+      class="btnUpload btn_extra_bg m-t-neg ml-2"
       (click)="open_dialog_comp('flip line')"
     >
       Flip PO
@@ -63,24 +82,11 @@
       Current Selected Approval Type : {{ approvalType }}
     </div>
   </div>
+  <!-- <div  *ngIf="submitBtn_boolean" class="changePOInput">
 
-  <div *ngIf="submitBtn_boolean" class="changePOInput">
-    <p-autoComplete
-      [(ngModel)]="selectedPONumber"
-      (onSelect)="onSelectPO($event)"
-      placeholder="Select PO Number"
-      [suggestions]="filteredPO"
-      (completeMethod)="filterPO($event)"
-      field="PODocumentID"
-      [dropdown]="true"
-    >
-      <ng-template let-country pTemplate="item">
-        <div class="country-item">
-          <div class="f-12">{{ country.PODocumentID }}</div>
-        </div>
-      </ng-template>
-    </p-autoComplete>
-  </div>
+
+  </div> -->
+
   <div
     class="col-md-12 p-0 pl-1"
     [ngClass]="showPdf ? 'col-lg-5' : 'col-lg-12'"
@@ -703,7 +709,7 @@
             (click)="reviewManualApprove()"
           >
             Review to Manual Approval
-          </button>
+          </button> -->
           <!-- <button
             *ngIf="submitBtn_boolean"
             class="btn btnVender bg-btn-success"
@@ -711,13 +717,13 @@
           >
             Review to Batch
           </button> -->
-          <button
+          <!-- <button
             *ngIf="approveBtn_boolean && financeapproveDisplayBoolean"
             class="btn btnVender bg-btn-success mr-3"
             (click)="approveChangesManual()"
           >
             Send to Manual Approval
-          </button>
+          </button> -->
           <button
             *ngIf="submitBtn_boolean"
             class="btn btnVender bg-btn-success"
@@ -869,31 +875,96 @@
 
 <!-- Rule selection modal-->
 <p-dialog
-  header="Change Rule For Batch "
+  header="Edit GRN"
   [(visible)]="displayRuleDialog"
   [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '31vw' }"
+  [style]="{ width: '50vw' }"
   [baseZIndex]="10000"
   [draggable]="false"
   [resizable]="false"
 >
-  <div>
-    <mat-radio-group
-      class="example-radio-group"
-      [(ngModel)]="SelectRuleOption.value"
+  <div style="min-height: 50vh;">
+    <div class="d-flex mb-3" style="gap:20px">
+      <!-- select GRN Number -->
+      <p-multiSelect
+      [options]="po_grn_list"
+      placeholder="GRN Number"
+      filter="false"
+      inputStyleClass="form-control mr-2"
+      optionLabel="PackingSlip"
+      [maxSelectedLabels]="3"
+      [selectedItemsLabel]="'{0} items selected'"
+      (onChange)="addGrnLine($event)"
+      name="PO_GRN_Number"
+      ngModel
+      required
     >
-      <mat-radio-button
-        class="example-radio-button f-13"
-        *ngFor="let rule of givenRules"
-        [value]="rule"
-        [disabled]="rule.IsActive == 0"
-      >
-        {{ rule.Name }}
-        <span *ngIf="rule.IsActive == 0" class="f-11 ml-1 glow"
-          >Coming soon</span
+    </p-multiSelect>
+
+  <!-- select GRN Line -->
+    <p-multiSelect
+      [options]="po_grn_line_list"
+      placeholder="GRN Line"
+      filter="false"
+      inputStyleClass="form-control mr-2"
+      optionLabel="GRNField"
+      [maxSelectedLabels]="3"
+      [selectedItemsLabel]="'{0} items selected'"
+      name="PO_GRN_Number_line"
+      ngModel
+      required
+      [(ngModel)]="PO_GRN_Number_line"
+    >
+    </p-multiSelect>
+
+    <!-- <button class="btnUpload" >Add</button>  -->
+</div>
+<div>
+  <p-table
+          *ngIf="PO_GRN_Number_line?.length > 0"
+          [value]="PO_GRN_Number_line"
+          [paginator]="false"
+          [columns]="summaryColumn"
+          styleClass="p-datatable-striped"
         >
-      </mat-radio-button>
-    </mat-radio-group>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th
+                *ngFor="let col of columns"
+                [pTooltip]="col.header"
+                tooltipPosition="top"
+                class="lineName"
+                [ngStyle]="{'width':col.header == 'GRN Number' ? '100px':''}"
+              >
+                {{ col.header }}
+              </th>
+              <th class="action_Zindex" style="width: 60px">Actions</th>
+            </tr>
+          </ng-template>
+          <ng-template
+            pTemplate="body"
+            let-invoiceData
+            let-columns="columns"
+            let-rowIndex="rowIndex"
+          >
+            <tr>
+              <td *ngFor="let col of columns" [title]="invoiceData[col.field]">
+                {{ invoiceData[col.field] }}
+              </td>
+              <td>
+                <i
+                  class="fa fa-trash-o"
+                  style="cursor: pointer"
+                  (click)="deleteGRNEdit(rowIndex, invoiceData)"
+                ></i>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage"> </ng-template>
+          <ng-template pTemplate="paginatorleft"> </ng-template>
+          <ng-template pTemplate="paginatorright"> </ng-template>
+        </p-table>
+</div>
   </div>
 
   <ng-template pTemplate="footer">
@@ -906,20 +977,12 @@
         Cancel
       </button>
       <button
-        *ngIf="!save_rule_boolean"
         type="button"
         class="btn btnVender bg-btn-success"
-        (click)="sendReview()"
+        [disabled]="!(PO_GRN_Number_line?.length > 0)"
+        (click)="ChangeGRNData()"
       >
-        Send for Review Batch
-      </button>
-      <button
-        *ngIf="save_rule_boolean"
-        type="button"
-        class="btn btnVender bg-btn-success"
-        (click)="save_rule()"
-      >
-        Save
+        Update
       </button>
     </div>
   </ng-template>

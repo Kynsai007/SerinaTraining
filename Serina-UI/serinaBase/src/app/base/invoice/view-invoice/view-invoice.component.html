@@ -363,19 +363,23 @@
           role="tabpanel"
           aria-labelledby="line-tab"
         >
-          <table class="invert" style="width: 100%">
+          <button
+            *ngIf="multiPOBool && lineTabBoolean" class="btnUpload bg-blue edt_mul_btn mr-2" (click)="mutliPOEdit('exception')">
+              Edit MultiPO
+            </button>
+          <table  id="linesdata"  class="invert" style="width: 100%">
             <tr
               class="invert_tr"
               *ngFor="let item of lineDisplayData; let i = index"
             >
-              <td
+              <th
                 class="lineName invert_th_td"
                 [ngStyle]="{
                   'min-width': item.TagName == 'S.No' ? '40px' : '130px'
                 }"
               >
                 {{ item.TagName }}
-              </td>
+              </th>
               <!-- <div>
                     <div class="linevalue invert_thtd">{{i+1}}</div>
                   </div> -->
@@ -422,13 +426,14 @@
                         type="text"
                         [ngClass]="
                           item.TagName == 'Description' ||
-                          item.TagName == 'Name'
+                          item.TagName == 'Name' || item.TagName == 'POLineDescription' ||item.TagName == 'GRNLineDescription'
                             ? 'w-des'
                             : 'w-sm'
                         "
                         [value]="line.value.Value"
                         [title]="line.value.Value"
-                        [disabled]="
+                        [name]="item.TagName"
+                          [readonly]="
                           !editable || fin_boolean || isLinenonEditable
                         "
                         [ngStyle]="{

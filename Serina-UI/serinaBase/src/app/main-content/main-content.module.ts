@@ -17,16 +17,17 @@ import { VendorContactComponent } from './vendor-contact/vendor-contact.componen
 import { NotificationsVendorComponent } from './notifications-vendor/notifications-vendor.component';
 import { ProcessMetricsComponent } from './home/process-metrics/process-metrics.component';
 import { DetailedReportsComponent } from './home/detailed-reports/detailed-reports.component';
+import { MultiPOComponent } from './multi-po/multi-po.component';
 
 
 @NgModule({
-  declarations: [HomeComponent, VendorBaseComponent, RolesVendorComponent, ProfileVendorComponent, DocumentStatusComponent, UploadSectionComponent, PaymentStatusVendorComponent, ActionCenterVendorComponent, VendorContactComponent, NotificationsVendorComponent, ProcessMetricsComponent, DetailedReportsComponent],
+  declarations: [HomeComponent, VendorBaseComponent, RolesVendorComponent, ProfileVendorComponent, DocumentStatusComponent, UploadSectionComponent, PaymentStatusVendorComponent, ActionCenterVendorComponent, VendorContactComponent, NotificationsVendorComponent, ProcessMetricsComponent, DetailedReportsComponent, MultiPOComponent],
   imports: [
     CommonModule,
     MainContentRoutingModule,
     importFilesModule,
     BaseModule
   ],
-  exports:[UploadSectionComponent]
+  exports:[UploadSectionComponent,MultiPOComponent]
 })
 export class MainContentModule { }
