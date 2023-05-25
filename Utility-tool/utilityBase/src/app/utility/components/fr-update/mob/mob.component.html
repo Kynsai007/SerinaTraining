@@ -13,7 +13,7 @@
             {{msg1}}
         </div>
         <div class="underdropIcon" *ngIf="!status1Boolean">Drag and drop Training Folder</div>
-        <small class="f-12" *ngIf="!status1Boolean">Folder must contain atleast 5 documents of type .jpg,.png or .pdf</small>
+        <small class="f-12" *ngIf="!status1Boolean">Folder must contain atleast 5 documents of type jpg,png,pdf or html</small>
         <div style="margin-top: 4%;"></div>
         <div class="fileText" *ngIf="!status1Boolean">Or</div>
         <label for="img" [ngClass]="{'img-browse':!status1Boolean,'img-disabled':status1Boolean}">
