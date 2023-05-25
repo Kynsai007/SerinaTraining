@@ -15,10 +15,7 @@
                 <a class="nav-link active f-13" id="Updatefr-tab" data-toggle="tab" href="#Updatefr" role="tab"
                     aria-controls="Updatefr" aria-selected="true">Update FR Config</a>
             </li>
-            <li class="nav-item" *ngIf="selectedDocFormat == 'html'">
-                <a class="nav-link f-13" id="htmlupload-tab" data-toggle="tab" href="#htmlupload" role="tab" aria-controls="htmlupload" aria-selected="false">Training Sample</a>
-            </li>
-            <li class="nav-item" *ngIf="selectedDocFormat != 'html'" [ngClass]="!enableTabsBoolean ? 'opaque' : 'clearopaque'">
+            <li class="nav-item" [ngClass]="!enableTabsBoolean ? 'opaque' : 'clearopaque'">
                 <a class="nav-link f-13" [ngClass]="!enableTabsBoolean ? 'disabled':''" id="mob-tab" data-toggle="tab"
                     href="#mob" role="tab" aria-controls="mob" aria-selected="false">Training Samples</a>
             </li>
@@ -175,29 +172,6 @@
                 <ng-template #spinner>
                     <div class="loader"></div>
                 </ng-template>
-            </div>
-            <div class="tab-pane fade font_weight headings" id="htmlupload" role="tabpanel" aria-labelledby="htmlupload-tab">
-                <div class="container p-2">
-                    <div ng2FileDrop [uploader]="uploader" [ngClass]="{'file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)" (onFileDrop)="fileDrop($event)" class="file-upload dashed-border">
-                        <div style="margin: 30px;">
-                        <img src="assets/upload_doc_ic.svg" *ngIf="!htmluploaded">
-                        <img src="assets/upload_doc_sucess_ic.svg" *ngIf="htmluploaded">
-                        <div style="margin-top: 4%;"></div>
-                        <div class="f-13" style="color: rgb(0 167 0);">
-                            
-                        </div>
-                        <div class="underdropIcon">{{msg}}</div>
-                        <div style="margin-top: 4%;"></div>
-                        <div class="fileText">Or</div>
-                        <div style="margin-top: 4%;"></div>
-                        <label for="img">
-                            <span *ngIf="uploading" class="spinner-border spinner-border-sm"></span> Browse File
-                        </label>
-                        <input ng2FileSelect (change)="uploadFolderEvent($event)" [uploader]="uploader"
-                            #fileInput type="file" id="img" name="img" accept=".html,.htm" hidden />
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="tab-pane fade font_weight headings" id="mob" role="tabpanel" aria-labelledby="mob-tab">
                 <div>

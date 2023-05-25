@@ -6,11 +6,11 @@
                     <a><i class="fa fa-tags"></i></a>
                 </li>
                 
-                <li   *ngIf="modelData.labels != 'html'" (click)="navigatetoPage('training')" class="text-center" title="Training">
+                <li (click)="navigatetoPage('training')" class="text-center" title="Training">
                     <a><i class="fa fa-connectdevelop"></i></a>
                 </li>
                 
-                <li  *ngIf="modelData.labels != 'html'" (click)="navigatetoPage('composing')" title="Compose" class="text-center">
+                <li  (click)="navigatetoPage('composing')" title="Compose" class="text-center">
                     <a><i class="fa fa-link"></i></a>
                 </li>
                 <li (click)="navigatetoPage('testing')" title="Test Model" class="active text-center">
@@ -18,7 +18,7 @@
                 </li>
             </ul>
         </div>
-        <div class="bg-white box" [ngClass]="modelData.labels != 'html' ? 'item3' : 'item5'">
+        <div class="bg-white box item3">
             <div id="sticky">
                 <div class="root-61">
                     <div class="primarySet-65"></div>
@@ -59,7 +59,7 @@
             <div><i class="fa fa-flash"></i> Analyse</div>
             <div style="margin-top: 4%;"></div>
             <div class="row">
-                <div *ngIf="modelData.labels != 'html'" class="col-md-12">
+                <div class="col-md-12">
                     <span class="headings">Model Analyse with Model</span>
                     <label for="idmodel"></label>
                     <select class="form-control form-control-sm" (change)="setModelId($event)" id="idmodel">
@@ -77,11 +77,11 @@
                     <input *ngIf="modelData.labels == 'html'" type="file" accept=".html,.htm" (change)="getFiles($event)">
                     <div style="margin-top: 4%;"></div>
                     
-                    <button type="button" class="btn btnbg btn-sm" style="font-size: small;" (click)="runAnalyses()"><div *ngIf="testing" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!testing" class="fa fa-flash"></i> Test Model</button>&nbsp;<small *ngIf="modelData.labels != 'html'" style="font-weight: bold;color: #888888;">or Skip to Validate Model</small>&nbsp; 
+                    <button type="button" class="btn btnbg btn-sm" style="font-size: small;" (click)="runAnalyses()"><div *ngIf="testing" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!testing" class="fa fa-flash"></i> Test Model</button>&nbsp;<small style="font-weight: bold;color: #888888;">or Skip to Validate Model</small>&nbsp; 
                     
                 </div>
                 <div style="margin-top: 4%;"></div>
-                <div *ngIf="modelData.labels != 'html'" class="col-md-12">
+                <div class="col-md-12">
                     <span>
                         <small><b>Mandatory Field Check Validation Required?</b></small>&nbsp;
                         <label class="switch" style="font-size: smaller;">

@@ -208,8 +208,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     })
   }
   ngAfterViewInit(): void {
-    sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
-    sessionStorage.setItem("frConfigData",JSON.stringify(this.frConfigData));
+    sessionStorage.setItem("configData",JSON.stringify(this.frConfigData));
   }
   addTableRow(){
     this.rownumber += 1
@@ -410,7 +409,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       try {
         if(!this.modelData){
           this.modelData = JSON.parse(sessionStorage.getItem("modelData"));
-          this.frConfigData = JSON.parse(sessionStorage.getItem("frConfigData")); 
+          this.frConfigData = JSON.parse(sessionStorage.getItem("configData")); 
         }
         this.loading = true;
         this.connectionString = this.frConfigData[0].ConnectionString;

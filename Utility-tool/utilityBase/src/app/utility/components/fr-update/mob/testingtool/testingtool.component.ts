@@ -62,6 +62,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   rows:any[]=[];
   testfields:any;
   htmlstring:string;
+  cleanedhtmlstring:string;
   sanitizedHtml: SafeHtml;
   @ViewChild('htmlcontainer', { read: ElementRef }) htmlcontainer!: ElementRef;
   pid:any;
@@ -82,7 +83,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   }
   ngAfterViewInit(): void {
     sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
-    sessionStorage.setItem("frConfigData",JSON.stringify(this.frConfigData));
+    sessionStorage.setItem("configData",JSON.stringify(this.frConfigData));
   }
 
   ngOnInit(): void {
@@ -117,7 +118,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   async setup(){
     if(!this.modelData){
       this.modelData = JSON.parse(sessionStorage.getItem("modelData"));
-      this.frConfigData = JSON.parse(sessionStorage.getItem("frConfigData")); 
+      this.frConfigData = JSON.parse(sessionStorage.getItem("configData")); 
     }
     let result_id = null,modeltype = null;
     if(this.modelData.idVendorAccount){
@@ -180,6 +181,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     this.sharedService.testHtml(formData).subscribe(data => {
       if(data.content){
         this.htmlstring = data.content;
+        this.cleanedhtmlstring = data["cleaned_content"]
         this.sanitizedHtml = this.domsanitize(this.htmlstring);
         (<HTMLDivElement>document.getElementById("htmlcontainer")).innerHTML = this.sanitizedHtml.toString();
       }
@@ -209,7 +211,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     element.scrollIntoView(); 
   }
   async runAnalyses(){
-    if(this.file_url != "" && this.modelData.labels != "html"){
+    if(this.file_url != ""){
       const formData: FormData = new FormData();
       formData.append('file', this.file);
       this.testing = true;
@@ -250,45 +252,6 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
           }, 200);
         }
       })
-      
-    }else{
-      this.analyzed = false;
-      this.testfields = JSON.parse(this.modelData.fields);
-      let result = {};
-      this.model_validate_msg = "Template ready to be saved in DB";
-      this.validating = false;
-      this.invalidModelBoolean = false;
-      for(let obj of this.testfields){
-        let key = Object.keys(obj)[0];
-        let id = obj[key]["id"];
-        const containerElement: HTMLElement | null = this.htmlcontainer?.nativeElement;
-        const targetElementId = id; // Replace with your target element ID
-        try{
-          const targetElement: HTMLElement | null = containerElement.querySelector(`#${targetElementId}`);
-          if (targetElement) {
-            const trimmedText = targetElement.textContent?.trim().replace(/\s+/g, ' ').replace(/\n/g, '') || '';
-            targetElement.classList.add("mark");  
-            result[key] = {"confidence":1.0,"type":"string","text":trimmedText}
-          } else {
-            let id = obj[key]["id"].split("-")[0];
-            const matchingElement: HTMLElement | null = containerElement.querySelector(`[id*="${id}"]`);
-            if(matchingElement){
-              console.log(id);
-              let trimmedText = matchingElement.textContent?.trim().replace(/\s+/g, ' ').replace(/\n/g, '') || '';
-              matchingElement.classList.add("mark");  
-              result[key] = {"confidence":0.5,"type":"string","text":trimmedText}
-            }else{
-              console.log('Target element not found.');
-              result[key] = {"confidence":0.0,"type":"string","text":""}
-            }
-          }
-        }catch(ex){
-
-        }
-        
-      }
-      this.analyzed = true;
-      this.fields = result;
       
     }
   }
@@ -373,78 +336,68 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   }
   uploadToSerina(){
     let _this = this;
-    if(this.modelData.labels != "html"){
-      try{
-        console.log(this.jsonFinalData);
-        this.jsonFinalData.final_data.ModelID = this.modelid;
-        this.jsonFinalData.final_data['TestResult'] = this.jsonresult.analyzeResult ? this.jsonresult.analyzeResult : {};
-        this.saving = true;
-        this.sharedService.uploadDb(JSON.stringify(this.jsonFinalData.final_data),this.modelStatus.idDocumentModel).subscribe(data=>{
-          this.messageService.add({
-            severity: "success",
-            summary: "Uploaded",
-            detail: "Model Uploaded Sucessfully"
-          });
-          this.model_validate_msg = "Template Onboarded!"
-          if(this.modelStatus.idVendorAccount){
-            this.sharedService.checkSameVendors(this.modelStatus.idVendorAccount,this.modelData.modelName).subscribe(dt => {
-              this.saving = false;
-              if(dt['message'] == 'exists'){
-                (<HTMLButtonElement>document.getElementById("openmodel")).click();
-                this.valuename = "Vendor";
-                this.valueent = "Entities";
-                this.vendor = dt['vendor'];
-                this.vendorcount = dt['count'];        
+    try{
+      console.log(this.jsonFinalData);
+      this.jsonFinalData.final_data.ModelID = this.modelid;
+      this.jsonFinalData.final_data['TestResult'] = this.jsonresult.analyzeResult ? this.jsonresult.analyzeResult : {};
+      this.saving = true;
+      this.sharedService.uploadDb(JSON.stringify(this.jsonFinalData.final_data),this.modelStatus.idDocumentModel).subscribe(data=>{
+        this.messageService.add({
+          severity: "success",
+          summary: "Uploaded",
+          detail: "Model Uploaded Sucessfully"
+        });
+        this.model_validate_msg = "Template Onboarded!"
+        if(this.modelStatus.idVendorAccount){
+          this.sharedService.checkSameVendors(this.modelStatus.idVendorAccount,this.modelData.modelName).subscribe(dt => {
+            this.saving = false;
+            if(dt['message'] == 'exists'){
+              (<HTMLButtonElement>document.getElementById("openmodel")).click();
+              this.valuename = "Vendor";
+              this.valueent = "Entities";
+              this.vendor = dt['vendor'];
+              this.vendorcount = dt['count'];        
+            }else{
+              if(_this.modelData.docType.includes("Invoice")){
+                _this.router.navigate(['IT_Utility/vendors'])
               }else{
-                if(_this.modelData.docType.includes("Invoice")){
-                  _this.router.navigate(['IT_Utility/vendors'])
-                }else{
-                  _this.router.navigate(['IT_Utility/customers'])
-                }
-                
+                _this.router.navigate(['IT_Utility/customers'])
               }
-            })
-          }
-          if(this.modelStatus.serviceproviderID){
-            this.sharedService.checkSameSP(this.modelStatus.serviceproviderID,this.modelData.modelName).subscribe(dt => {
-              this.saving = false;
-              if(dt['message'] == 'exists'){
-                (<HTMLButtonElement>document.getElementById("openmodel")).click();
-                this.valuename = "Service Provider";
-                this.valueent = "Accounts";
-                this.vendor = dt['sp'];
-                this.vendorcount = dt['count'];        
-              }else{
-                _this.router.navigate(['IT_Utility/service-providers'])
-              }
-            })
-          }
-          
-          this.status4Boolean = true;
-          this.modelUpdate(5);
-          
-        },error=>{
-          this.sharedService.errorObject.detail = error.statusText
-          this.messageService.add(this.sharedService.errorObject);
-          setTimeout(() => {
-            _this.router.navigate(['IT_Utility/home'])
-          }, 1000);
-        })
-      }catch(ex){
-        console.log(ex)
+              
+            }
+          })
+        }
+        if(this.modelStatus.serviceproviderID){
+          this.sharedService.checkSameSP(this.modelStatus.serviceproviderID,this.modelData.modelName).subscribe(dt => {
+            this.saving = false;
+            if(dt['message'] == 'exists'){
+              (<HTMLButtonElement>document.getElementById("openmodel")).click();
+              this.valuename = "Service Provider";
+              this.valueent = "Accounts";
+              this.vendor = dt['sp'];
+              this.vendorcount = dt['count'];        
+            }else{
+              _this.router.navigate(['IT_Utility/service-providers'])
+            }
+          })
+        }
+        
+        this.status4Boolean = true;
+        this.modelUpdate(5);
+        
+      },error=>{
+        this.sharedService.errorObject.detail = error.statusText
+        this.messageService.add(this.sharedService.errorObject);
         setTimeout(() => {
           _this.router.navigate(['IT_Utility/home'])
         }, 1000);
-      }
-    }else{
-      this.modelUpdate(5);
-      if(this.modelData.docType.includes("Invoice"))
-      this.router.navigate(['IT_Utility/vendors']);
-      else
-      this.router.navigate(['IT_Utility/customers'])
+      })
+    }catch(ex){
+      console.log(ex)
+      setTimeout(() => {
+        _this.router.navigate(['IT_Utility/home'])
+      }, 1000);
     }
-    
-    
   }
   noanswer(){
     this.router.navigate(['IT_Utility/home']);

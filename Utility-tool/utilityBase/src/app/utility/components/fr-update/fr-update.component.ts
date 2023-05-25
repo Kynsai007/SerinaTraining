@@ -266,6 +266,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       })
       this.modelData = selected[0];
       this.mobservice.setModelData(this.modelData);
+      sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
       this.FolderPath = this.modelData.folderPath;
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
     }
@@ -303,7 +304,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     this.sharedService.getFrConfig().subscribe((data: any) => {
       this.frLoadBoolean = true;
       this.FRConfigData = [data];
-      sessionStorage.setItem('configData',JSON.stringify(data));
+      sessionStorage.setItem('configData',JSON.stringify([data]));
       this.sharedService.frData = this.FRConfigData;
     })
   }

@@ -98,7 +98,7 @@ td:hover{
     flex:82;
     height: 100vh;
     background-color: #eee;
-    overflow-x:hidden;
+    overflow:hidden;
     flex-wrap: wrap;
   }
   .item3-hidden{

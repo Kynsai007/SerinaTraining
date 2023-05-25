@@ -6,11 +6,11 @@
                     <a><i class="fa fa-tags"></i></a>
                 </li>
                 
-                <li *ngIf="modelData.labels != 'html'"  (click)="navigatetoPage('training')" class="text-center" title="Training">
+                <li (click)="navigatetoPage('training')" class="text-center" title="Training">
                     <a><i class="fa fa-connectdevelop"></i></a>
                 </li>
                 
-                <li *ngIf="modelData.labels != 'html'" (click)="navigatetoPage('composing')" title="Compose" class="text-center">
+                <li (click)="navigatetoPage('composing')" title="Compose" class="text-center">
                     <a><i class="fa fa-link"></i></a>
                 </li>
                 <li (click)="navigatetoPage('testing')" title="Test Model" class="text-center">
@@ -60,7 +60,7 @@
                 </div>
             </div>
         </div>
-        <div class="item3 bg-white box" [ngClass]="modelData.labels == 'html' ? 'item3-overflow' : 'item3-hidden'">
+        <div class="item3 bg-white box">
             <div id="sticky">
                 <div class="root-61">
                     <div class="primarySet-65"></div>
@@ -81,12 +81,7 @@
                 <div class="spinner-border spinner-border-sm" role="status">
                 </div>
             </div>
-            <div *ngIf="ready && modelData.labels == 'html'">
-                <div class="container content" id="Page-1container" [innerHTML]="sanitizedHtml" (mouseover)="onTagHover($event)" (mouseout)="onTagHover($event)" (click)="onTagClick($event)">
-                    
-                </div>
-            </div>
-            <div *ngIf="ready && modelData.labels != 'html'">
+            <div *ngIf="ready">
             <div *ngFor="let p of counter(maxpage);let i = index">
                 <div class="asset-item-image1" id="Page-{{i+1}}container">
                     <div class="asset-preview">
@@ -274,15 +269,7 @@ style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-w
                                     <div class="tag-item"  id="tag-container{{i}}">
                                         <div class="tag-content pr-2">
                                             <div class="tag-name-container">
-                                                <div *ngIf="modelData.labels != 'html'" class="tag-name-body" (click)="SetField(i,f)" (mouseenter)="mouseEnter(f.fieldKey)" (mouseleave)="mouseLeave(f.fieldKey)">
-                                                    <span class="tag-name-text px-2 pb-1" *ngIf="f.fieldType == 'string'" title="{{f.fieldKey}}">
-                                                        {{f.fieldKey}}
-                                                    </span>
-                                                    <span class="tag-name-text px-2 pb-1" *ngIf="f.fieldType == 'array'" title="{{f.fieldKey}}">
-                                                        <i class="fa fa-table"></i> {{f.fieldKey}}
-                                                    </span>
-                                                </div>
-                                                <div *ngIf="modelData.labels == 'html'" class="tag-name-body" (click)="SetHTMLField(i,f)">
+                                                <div class="tag-name-body" (click)="SetField(i,f)" (mouseenter)="mouseEnter(f.fieldKey)" (mouseleave)="mouseLeave(f.fieldKey)">
                                                     <span class="tag-name-text px-2 pb-1" *ngIf="f.fieldType == 'string'" title="{{f.fieldKey}}">
                                                         {{f.fieldKey}}
                                                     </span>
@@ -313,10 +300,7 @@ style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-w
                         <div class="tag-input-text-input-row" id="newtag">
                             <input id="newtaginput" type="text" placeholder="New Tag Name" (blur)="setTag()">
                         </div>
-                        <div style="margin-top: 4%;"></div>
-                        <div *ngIf="modelData.labels == 'html'">
-                            <button class="btn btn-sm" [ngClass]="savedhtmltags ? 'btn-success' : 'btn-primary'" type="button" (click)="saveFieldsData()" [disabled]="saving"><div *ngIf="saving" class="spinner-border spinner-border-sm" role="status"></div>{{savedhtmlbtntext}}</button>
-                        </div>
+                        
                     </div>
                 </div>
                 <div *ngIf="showtags && showtabletags" class="p-3">

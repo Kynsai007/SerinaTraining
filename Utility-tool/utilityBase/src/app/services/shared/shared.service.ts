@@ -296,6 +296,9 @@ export class SharedService {
   testHtml(formData): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result_html`,formData);
   }
+  getHtmlResult(content): Observable<any>{
+    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/get_test_result`,{"content":content});
+  }
   addVendor(vendorobj,vu_id): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/Vendor/newVendor/${vu_id}`,vendorobj);
   }

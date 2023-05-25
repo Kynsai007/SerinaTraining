@@ -12,11 +12,11 @@ export class MobmainComponent implements OnInit {
   filePath:any;
   ready: boolean = false;
   showtab={"show1":true,"show2":false,"show3":false,"show4":false};
-  constructor(private mobservice:MobmainService) { }
+  constructor() { }
 
   ngOnInit(): void {
-    this.mobservice.getModelData().subscribe(data => this.modelData = data);
-    this.mobservice.getFrConfig().subscribe(data => this.frConfigData = data);
+    this.modelData = JSON.parse(sessionStorage.getItem("modelData"));
+    this.frConfigData = JSON.parse(sessionStorage.getItem("configData"));
     this.ready = true;
   }
   getTab($eve){
