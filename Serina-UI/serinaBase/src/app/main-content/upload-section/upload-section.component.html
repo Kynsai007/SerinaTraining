@@ -208,13 +208,13 @@
                   <span class="material-icons f-80"> filter_none </span>
                   <div class="underdropIcon">Drag and drop an Document copy</div>
                   <small class="f-12"
-                    >File type must be in .jpg .png .pdf</small
+                    >File type must be in .jpg .png .pdf .html .htm</small
                   >
                   <div class="fileText">Or</div>
                   <label for="img" class="img-browse"> Attach Document </label>
                   <input
                     ng2FileSelect
-                    accept=".png, .jpg, .pdf"
+                    accept=".png, .jpg, .pdf, .html, .htm"
                     (change)="onSelectFile($event)"
                     [uploader]="uploader"
                     #fileInput
@@ -545,7 +545,7 @@
             </span>
           </label>
           <input
-            accept=".png, .jpg, .pdf"
+            accept=".png, .jpg, .pdf, .html, .htm"
             (change)="onSelectFile_quick($event, 'invoice')"
             type="file"
             id="img1"

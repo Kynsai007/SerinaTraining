@@ -816,7 +816,7 @@ export class UploadSectionComponent implements OnInit {
   }
 
   onSelectFile(event) {
-    let isSupportedFiletype = !!event.target.files[0].name.match(/(.png|.jpg|.pdf)/);
+    let isSupportedFiletype = !!event.target.files[0].name.match(/(.png|.jpg|.pdf|.html|.htm)/);
     if(isSupportedFiletype){
       this.isuploadable = false;
       this.dragfile = false;
@@ -853,7 +853,7 @@ export class UploadSectionComponent implements OnInit {
 
   // drop file in upload file selection
   fileDrop(event) {
-    let isSupportedFiletype = !!event[0].name.match(/(.png|.jpg|.pdf)/);
+    let isSupportedFiletype = !!event[0].name.match(/(.png|.jpg|.pdf|.html|.htm)/);
     if(isSupportedFiletype){
       this.invoiceUploadDetails = event[0];
       this.isuploadable = false;
