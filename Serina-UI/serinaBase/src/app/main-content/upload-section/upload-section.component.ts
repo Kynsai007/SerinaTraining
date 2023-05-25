@@ -945,7 +945,7 @@ export class UploadSectionComponent implements OnInit {
     }, 1000);
     this.http
       .post(
-        `${environment.apiUrl}/${this.apiVersion}/VendorPortal/uploadfile/${this.vendorAccountId}`,
+        `${environment.apiUrl}/${this.apiVersion}/VendorPortal/uploadfile`,
         formData,
         {
           reportProgress: true,
