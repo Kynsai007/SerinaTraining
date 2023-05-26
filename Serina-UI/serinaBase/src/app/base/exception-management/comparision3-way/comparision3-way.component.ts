@@ -415,9 +415,8 @@ export class Comparision3WayComponent
     this.exceptionService.getInvoiceInfo().subscribe(
       (data: any) => {
         this.lineDisplayData = data.linedata.Result;
-        this.lineDisplayData.forEach((element) => {
-          this.lineCount = element.items;
-          this.lineData.push(element.items)
+        this.lineDisplayData.forEach((element, index, arr) => {
+          this.lineCount = arr[0].items
         });
 
         const pushedArrayHeader = [];

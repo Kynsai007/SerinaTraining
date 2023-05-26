@@ -173,14 +173,15 @@ export class InvoiceComponent implements OnInit {
         if(this.GRNCreateBool){
           this.readGRNExceptionData();
         }
-        if(this.serviceInvoiceAccess){
-          this.getServiceColumns();
-          this.getDisplayServiceInvoicedata();
-        }
+        
       } else {
         this.partyType = 'Customer';
         this.route.navigate(['/customer/invoice/PO']);
       }
+    }
+    if(this.serviceInvoiceAccess){
+      this.getServiceColumns();
+      this.getDisplayServiceInvoicedata();
     }
     this.APIParams = `?offset=1&limit=50`;
     if (this.userDetails.user_type == 'customer_portal') {

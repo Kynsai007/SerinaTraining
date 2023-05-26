@@ -52,9 +52,9 @@
 
     <div class="container-fluid" style="overflow: hidden; max-height: 92vh">
       <div>
-        <div class="nav_pane_width">
+        <div class="nav_pane_width d-flex">
           <ul class="nav nav-tabs d-inline-block"
-              [ngStyle]="{'order':!vendorInvoiceAccess ? '1':''}">
+              [ngStyle]="{'order':!vendorInvoiceAccess ? '2':''}">
             <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess && invoceDoctype">
               <a
                 [ngClass]="
@@ -119,7 +119,7 @@
               >
             </li>
           </ul>
-          <ul class="nav nav-tabs d-inline-block" *ngIf="usertypeBoolean && serviceInvoiceAccess && invoceDoctype "
+          <ul class="nav nav-tabs d-inline-block" *ngIf="usertypeBoolean && serviceInvoiceAccess "
               [ngClass]="!vendorInvoiceAccess ? 'mr-2':'ml-2'">
             <li class="nav-item service">
               <a
