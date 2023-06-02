@@ -969,10 +969,10 @@ option:hover {
       font-weight: 600;
   }
   .d_mobile {
-    display: block;
+    display: none;
   }
  .d_desk {
-    display: none;
+    display: block;
  }
  .pos_rel {
     position: relative;
@@ -1045,10 +1045,10 @@ option:hover {
   }
   @media screen and (max-width: 576px){ 
     .d_mobile {
-        display: none;
+        display: block;
       }
     .d_desk {
-        display: block;
+        display: none;
      }
      .p-datatable .p-datatable-tbody > tr > td {
         text-overflow:clip !important;

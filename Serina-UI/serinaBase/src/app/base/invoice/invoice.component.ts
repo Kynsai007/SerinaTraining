@@ -164,11 +164,22 @@ export class InvoiceComponent implements OnInit {
     this.GRNCreateBool = this.dataService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
+    if (this.userDetails.user_type == 'customer_portal') {
+      this.usertypeBoolean = true;
+      this.portal_name = 'customer';
+      if (!this.vendorInvoiceAccess) {
+        this.route.navigate([`/${this.portal_name}/invoice/ServiceInvoices`])
+      }
+    } else if (this.userDetails.user_type == 'vendor_portal') {
+      this.usertypeBoolean = false;
+      this.portal_name = 'vendorPortal';
+
+    }
     if (this.vendorInvoiceAccess) {
       if (this.dataService.ap_boolean) {
         this.partyType = 'Vendor';
         this.invoceDoctype = true;
-        this.route.navigate(['/customer/invoice/allInvoices']);
+        this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
         this.getInvoiceColumns();
         if(this.GRNCreateBool){
           this.readGRNExceptionData();
@@ -176,7 +187,7 @@ export class InvoiceComponent implements OnInit {
         
       } else {
         this.partyType = 'Customer';
-        this.route.navigate(['/customer/invoice/PO']);
+        this.route.navigate([`/${this.portal_name}/invoice/PO`]);
       }
     }
     if(this.serviceInvoiceAccess){
@@ -184,17 +195,7 @@ export class InvoiceComponent implements OnInit {
       this.getDisplayServiceInvoicedata();
     }
     this.APIParams = `?offset=1&limit=50`;
-    if (this.userDetails.user_type == 'customer_portal') {
-      this.usertypeBoolean = true;
-      this.portal_name = 'customer';
-      if (!this.vendorInvoiceAccess) {
-        this.route.navigate(['/customer/invoice/ServiceInvoices'])
-      }
-    } else if (this.userDetails.user_type == 'vendor_portal') {
-      this.usertypeBoolean = false;
-      this.portal_name = 'vendorPortal';
 
-    }
     this.routeForTabs();
     this.dateRange();
     this.findActiveRoute();

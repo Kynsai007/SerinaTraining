@@ -55,11 +55,14 @@ export class VendorBaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userDetails = this.authService.currentUserValue;
-    this.docService.userId = this.userDetails.userdetails.idUser;
+    this.DS.configData = JSON.parse(sessionStorage.getItem('configData'));
+    this.DS.ap_boolean = JSON.parse(sessionStorage.getItem('ap_boolean'));
     if(!this.DS.configData){
       this.readConfig();
     }
+    this.userDetails = this.authService.currentUserValue;
+    this.docService.userId = this.userDetails.userdetails.idUser;
+ 
     this.SharedService.userId = this.userDetails.userdetails.idUser;
     this.serviceproviderService.userId = this.userDetails.userdetails.idUser
     this.SharedService.isCustomerPortal = false;
@@ -85,7 +88,6 @@ export class VendorBaseComponent implements OnInit {
 
   readVendor(){
     this.docService.readVendorContactData().subscribe((data:any)=>{
-      console.log(data);
       this.SharedService.vendorReadID = data.idVendor;
     });
   }
@@ -140,10 +142,8 @@ export class VendorBaseComponent implements OnInit {
     // get Notifications
     getNotification() {
       this.SharedService.getNotification().subscribe((data: any) => {
-        console.log(data)
         this.notifyArray = data;
         this.numberOfNotify = this.notifyArray.length;
-        console.log('hia', this.numberOfNotify);
       })
     }
   isActive(){

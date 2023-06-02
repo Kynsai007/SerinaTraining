@@ -238,12 +238,13 @@ export class UploadSectionComponent implements OnInit {
     } else {
       this.document_type = 'Purchase Orders'
     }
-    if(this.PS.uploadPermissionBoolean){
-      if(this.userDetails?.uploadOpt == 'Quick Upload'){
+    this.isCustomerPortal = this.sharedService.isCustomerPortal;
+    // if(this.PS.uploadPermissionBoolean){
+      if(this.userDetails?.uploadOpt == 'Quick Upload' && this.isCustomerPortal){
         this.viewType = 'quick';
         this.isQuickUploadbool = true;
         this.bothOptBoolean = false;
-      } else if (this.userDetails?.uploadOpt == 'Both'){
+      } else if (this.userDetails?.uploadOpt == 'Both' && this.isCustomerPortal){
         this.viewType = 'ideal';
         this.isQuickUploadbool = false;
         this.bothOptBoolean = true;
@@ -254,7 +255,6 @@ export class UploadSectionComponent implements OnInit {
       }
     this.seconds = "00";
     this.minutes = "00";
-    this.isCustomerPortal = this.sharedService.isCustomerPortal;
 
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     this.getEntitySummary();
@@ -267,10 +267,11 @@ export class UploadSectionComponent implements OnInit {
     } else {
       this.reuploadBoolean = false;
     }
-    } else {
-      // alert("Sorry, you don't have access!")
-      this.route.navigate(['customer/invoice/allInvoices']);
-    }
+    // } 
+    // else {
+    //   // alert("Sorry, you don't have access!")
+    //   this.route.navigate([`${this.portal_name}/invoice/allInvoices`]);
+    // }
 
   }
 
