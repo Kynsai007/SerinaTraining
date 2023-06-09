@@ -126,13 +126,16 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
 
   getRowsData() {
+    
     if (this.router.url.includes('allInvoices')) {
       this.first = this.storageService.allPaginationFirst;
       this.rows = this.storageService.allPaginationRowLength;
       this.stateTable = 'allInvoices';
+      this.filter('All','docstatus')
       let stItem:any = JSON.parse(sessionStorage?.getItem('allInvoices'));
       if(stItem){
         this.globalSearch = stItem?.filters?.global?.value;
+        this.selectedStatus = stItem?.filters?.docstatus?.value;
       } else {
         this.globalSearch = this.storageService.invoiceGlobe;
       }
@@ -144,6 +147,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       let stItem:any = JSON.parse(sessionStorage?.getItem('PO'));
       if(stItem){
         this.globalSearch = stItem?.filters?.global?.value;
+        this.selectedStatus = stItem?.filters?.docstatus?.value;
       }
     }
     else if (this.router.url.includes('archived')) {
@@ -153,6 +157,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       let stItem:any = JSON.parse(sessionStorage?.getItem('Archived'));
       if(stItem){
         this.globalSearch = stItem?.filters?.global?.value;
+        this.selectedStatus = stItem?.filters?.docstatus?.value;
       }
     } 
     else if (this.router.url.includes('rejected')) {
@@ -171,6 +176,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       let stItem:any = JSON.parse(sessionStorage?.getItem('Service'));
       if(stItem){
         this.globalSearch = stItem?.filters?.global?.value;
+        this.selectedStatus = stItem?.filters?.docstatus?.value;
       } else {
         this.globalSearch = this.storageService.serviceGlobe;
       }
@@ -209,13 +215,15 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     //   this.tagService.type = 'Invoice';
     // }
   }
-  filter(value) {
+  filter(value,dbCl) {
     this.tableData = this.FilterData;
+    this.selectedStatus = value;
     if (value != 'All') {
-      this.tableData = this.tableData.filter(
-        (val) => value == val.docstatus
-      );
+    this.allInvoice.filter(value || ' ',dbCl,'contains')
+
       this.first = 0
+    } else {
+      this.allInvoice.filter(value || ' ',dbCl,'notContains')
     }
   }
   viewStatusPage(e) {

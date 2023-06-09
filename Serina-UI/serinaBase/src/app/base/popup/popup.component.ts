@@ -1,9 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-popup',
@@ -15,6 +15,9 @@ export class PopupComponent implements OnInit {
   selectedPOLines = [];
   type: string;
   component: string;
+  uploadBool: boolean = false;
+  GRNData = [];
+  po_num:string;
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
     private ES: ExceptionsService,
@@ -26,12 +29,26 @@ export class PopupComponent implements OnInit {
 
   ngOnInit(): void {
     this.type = this.data.type;
+    this.po_num = this.data.po_num
+    let grn = this.data.grnLine;
+    if (grn) {
+      grn?.forEach(el => {
+        let obj = { LineNumber: el.POLineNumber, grnpackagingid: el.PackingSlip };
+        this.GRNData.push(obj);
+      })
+    }
     if (this.type == 'flip') {
       this.component = 'normal';
     } else if (this.type == 'flip line') {
       this.component = 'mapping';
     }
+    if (this.data.comp == 'upload') {
+      this.uploadBool = true;
+    }
     this.POLineData = this.data.resp;
+    this.POLineData.forEach(val => {
+      val.isSelected = false;
+    })
   }
   onSubmit(value) {
     this.spin.show();
@@ -39,15 +56,15 @@ export class PopupComponent implements OnInit {
       if (data?.result) {
         this.dialogRef.close();
         this.ES.popupmsg.next(this.component);
-        this.alert.addObject.detail= "PO flip is successful"
+        this.alert.addObject.detail = "PO flip is successful"
         this.message.add(this.alert.addObject)
       } else {
-        this.alert.errorObject.detail= data?.error
+        this.alert.errorObject.detail = data?.error
         this.message.add(this.alert.errorObject)
       }
       this.spin.hide();
-    },err=>{
-      this.alert.errorObject.detail= "Server error"
+    }, err => {
+      this.alert.errorObject.detail = "Server error"
       this.message.add(this.alert.errorObject)
       this.spin.hide();
     })
@@ -67,6 +84,21 @@ export class PopupComponent implements OnInit {
       }
     }
   }
+  onSelectAll(bool) {
+    if (bool) {
+      this.POLineData.forEach(val => {
+        val.isSelected = true;
+        let id = val.LineNumber;
+        val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
+      })
+      this.selectedPOLines = this.POLineData
+    } else {
+      this.selectedPOLines = [];
+      this.POLineData.forEach(val => {
+        val.isSelected = false;
+      })
+    }
+  }
   changeQty(qty, lineid) {
     this.selectedPOLines.forEach(el => {
       if (el.LineNumber == lineid) {
@@ -76,6 +108,32 @@ export class PopupComponent implements OnInit {
   }
   onSubmitRequest(val) {
     console.log(val)
+  }
+
+  validateFlip() {
+    this.spin.show();
+    let obj = {
+      Podata: this.selectedPOLines,
+      GRNdata: this.GRNData
+    }
+    this.ES.validateFlipPO(JSON.stringify(obj),this.po_num).subscribe((data:string) => {
+      console.log(data)
+      if (data == 'success') {
+        this.ES.popupmsg.next(this.component);
+        this.alert.addObject.detail = "PO flip is successful";
+        this.message.add(this.alert.addObject);
+        this.dialogRef.close(this.selectedPOLines);
+      } else {
+        this.alert.errorObject.detail = data;
+        this.message.add(this.alert.errorObject);
+      }
+      this.spin.hide();
+    }, err => {
+      this.alert.errorObject.detail = "Server error"
+      this.message.add(this.alert.errorObject)
+      this.spin.hide();
+    });
+
   }
 
 }

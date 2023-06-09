@@ -52,7 +52,13 @@
     <ng-template pTemplate="body" let-invoiceData let-columns="columns">
       <tr>
         <td *ngFor="let col of columns" [title]="invoiceData[col.field]">
-          {{ invoiceData[col.field] }}
+          <span *ngIf=" col.field == 'CreatedOn' || col.field == 'documentDate'">
+                <span *ngIf="invoiceData[col?.field] && col.field == 'CreatedOn'">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yy, h:mm a' }}</span> 
+                <span *ngIf="invoiceData[col?.field] && col.field == 'documentDate' ">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yyyy' }}</span>  
+              </span>
+              <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate'">{{
+                invoiceData[col.field]
+              }}</span>
         </td>
         <td *ngIf="etisalatBoolean">
             <button class="b-0 actionsBtn" (click)="downloadFile(invoiceData)"

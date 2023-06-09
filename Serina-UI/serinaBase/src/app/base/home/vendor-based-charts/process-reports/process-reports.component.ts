@@ -293,6 +293,8 @@ export class ProcessReportsComponent implements OnInit {
       { id: 1, sourceType: 'Web' },
       { id: 2, sourceType: 'Mail' },
       { id: 3, sourceType: 'SharePoint' },
+      { id: 4, sourceType: 'WhatsApp' },
+      
     ];
   }
   selectedSource(e){

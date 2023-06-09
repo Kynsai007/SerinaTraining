@@ -123,7 +123,12 @@
                     *ngFor="let col of columns"
                     [title]="invoiceData[col.field]"
                   >
-                    {{ invoiceData[col.field] }}
+                  <span *ngIf=" col.field == 'CreatedOn' || col.field == 'documentDate'">
+                    <span *ngIf="invoiceData[col?.field]">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yy, h:mm a' }}</span>  
+                  </span>
+                  <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate'">{{
+                    invoiceData[col.field]
+                  }}</span>
                   </td>
                   <td *ngIf="!dashboardViewBoolean">
                     <button

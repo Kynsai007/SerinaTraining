@@ -8,13 +8,6 @@
       [first]="first"
       [showCurrentPageReport]="true"
       (onPage)="paginate($event)"
-      [globalFilterFields]="[
-        'docheaderID',
-        'idInvoice',
-        'documentDate',
-        'PODocumentID',
-        'totalAmount'
-      ]"
       [showFirstLastIcon]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
       styleClass="p-datatable-striped"
@@ -22,6 +15,22 @@
     >
       <ng-template pTemplate="header">
         <tr>
+          <th
+            pTooltip="Entity Name"
+            tooltipPosition="top"
+            pSortableColumn="EntityName"
+            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
+          >
+            Entity Name
+          </th>
+          <th
+            pTooltip="Vendor Name"
+            tooltipPosition="top"
+            pSortableColumn="VendorName"
+            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
+          >
+            Vendor Name
+          </th>
           <th
             pTooltip="PO Number"
             tooltipPosition="top"
@@ -47,17 +56,42 @@
             Received Date
           </th>
           <th
-            pTooltip="GRN Amount"
+            pTooltip="Source"
             tooltipPosition="top"
-            pSortableColumn="totalAmount"
+            pSortableColumn="grn_type"
             [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
+
           >
-            GRN Amount
+            Source
           </th>
 
           <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions</th>
         </tr>
         <tr class="sticky_top">
+          <td>
+            <input
+              pInputText
+              type="text"
+              (input)="
+                GRN.filter($event.target.value, 'EntityName', 'contains')
+              "
+              [value]="GRN.filters['EntityName']?.value"
+              placeholder="Search by EntityName"
+              class="p-column-filter tableSearchInput"
+            />
+          </td>
+          <td>
+            <input
+              pInputText
+              type="text"
+              (input)="
+                GRN.filter($event.target.value, 'VendorName', 'contains')
+              "
+              [value]="GRN.filters['VendorName']?.value"
+              placeholder="Search by VendorName"
+              class="p-column-filter tableSearchInput"
+            />
+          </td>
           <td>
             <input
               pInputText
@@ -99,9 +133,9 @@
               pInputText
               type="text"
               (input)="
-                GRN.filter($event.target.value, 'totalAmount', 'contains')
+                GRN.filter($event.target.value, 'grn_type', 'contains')
               "
-              [value]="GRN.filters['totalAmount']?.value"
+              [value]="GRN.filters['grn_type']?.value"
               placeholder="Search by Amount"
               class="p-column-filter tableSearchInput"
             />
@@ -112,10 +146,12 @@
       </ng-template>
       <ng-template pTemplate="body" let-invoiceData>
         <tr>
+          <td>{{ invoiceData.EntityName }}</td>
+          <td>{{ invoiceData.VendorName }}</td>
           <td>{{ invoiceData.PODocumentID }}</td>
           <td>{{ invoiceData.docheaderID }}</td>
-          <td>{{ invoiceData.documentDate }}</td>
-          <td>{{ invoiceData.totalAmount }}</td>
+          <td>{{ invoiceData.documentDate + "Z" | date:'dd-MM-yy, h:mm a' }}</td>
+          <td>{{ invoiceData.grn_type }}</td>
           <td>
             <i
               class="pi pi-eye f-16 showEye"

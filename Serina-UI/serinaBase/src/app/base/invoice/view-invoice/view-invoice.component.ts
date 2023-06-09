@@ -247,6 +247,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   poDocId: any;
   multiPOBool = false;
   mutliplePOTableData = [];
+  po_num: any;
+  grnList: any[];
+  selectedGRNList = [];
+  currentTab = 'head';
+  currentlyOpenedItemIndex = -1;
+  GRNTabData:any;
+  grnTabDatalength: number;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -283,6 +290,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.ERPCostAllocation();
     this.AddPermission();
     this.readVendors();
+    this.isAdmin =  this.dataService.isAdmin;
     if (this.tagService.editable == true) {
       this.updateSessionTime();
       this.getEntity();
@@ -302,21 +310,23 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     } else {
       this.vendorUplaodBoolean = false;
     }
-    if (this.router.url.includes('InvoiceDetails')) {
-      this.Itype = 'Invoice';
-    } else if (this.router.url.includes('PODetails')) {
-      this.Itype = 'PO';
-    } else if (this.router.url.includes('GRNDetails')) {
-      this.Itype = 'GRN';
-    }
     this.routeIdCapture = this.activatedRoute.params.subscribe((params) => {
       this.SharedService.invoiceID = params['id'];
       this.exceptionService.invoiceID = params['id'];
       this.invoiceID = params['id'];
       this.getInvoiceFulldata();
-      this.readPOLines();
       this.readFilePath();
     });
+    if (this.router.url.includes('InvoiceDetails')) {
+      this.Itype = 'Invoice';
+      this.readPOLines();
+      this.getGRNtabData();
+    } else if (this.router.url.includes('PODetails')) {
+      this.Itype = 'PO';
+    } else if (this.router.url.includes('GRNDetails')) {
+      this.Itype = 'GRN';
+    }
+    
     this.onResize();
     // this.Itype = this.tagService.type;
     this.editable = this.tagService.editable;
@@ -501,8 +511,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         let po_num_data = this.inputData.filter((val) => {
           return (val.TagLabel == 'PurchaseOrder');
         });
-        let po_num = po_num_data[0]?.Value;
-        this.getPODocId(po_num);
+        this.po_num = po_num_data[0]?.Value;
+        this.getPODocId(this.po_num);
+        // this.getGRNnumbers(this.po_num);
         if (data.ok.vendordata) {
           this.isServiceData = false;
           this.vendorData = {
@@ -2019,6 +2030,22 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       dailogRef.afterClosed().subscribe(result=>{
         this.mutliplePOTableData = result;
       })
+  }
+  getGRNtabData(){
+    this.SharedService.getGRNTabData().subscribe((data:any)=>{
+      this.GRNTabData = data?.result;
+      this.grnTabDatalength =Object.keys(this.GRNTabData).length;
+    })
+  }
+
+  setOpened(itemIndex) {
+    this.currentlyOpenedItemIndex = itemIndex;
+  }
+  
+  setClosed(itemIndex) {
+    if(this.currentlyOpenedItemIndex === itemIndex) {
+      this.currentlyOpenedItemIndex = -1;
+    }
   }
   ngOnDestroy() {
     let sessionData = {

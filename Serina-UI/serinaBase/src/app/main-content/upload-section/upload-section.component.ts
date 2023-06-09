@@ -204,6 +204,7 @@ export class UploadSectionComponent implements OnInit {
   isPOFlipped:boolean;
   flipPOData = [];
   UniqueGRNPO: any;
+  portal_name = 'vendorPortal';
 
   constructor(
     private http: HttpClient,
@@ -239,7 +240,10 @@ export class UploadSectionComponent implements OnInit {
       this.document_type = 'Purchase Orders'
     }
     this.isCustomerPortal = this.sharedService.isCustomerPortal;
-    // if(this.PS.uploadPermissionBoolean){
+    if(this.isCustomerPortal){
+      this.portal_name = "customer"
+    }
+    if(this.PS.uploadPermissionBoolean){
       if(this.userDetails?.uploadOpt == 'Quick Upload' && this.isCustomerPortal){
         this.viewType = 'quick';
         this.isQuickUploadbool = true;
@@ -267,11 +271,11 @@ export class UploadSectionComponent implements OnInit {
     } else {
       this.reuploadBoolean = false;
     }
-    // } 
-    // else {
-    //   // alert("Sorry, you don't have access!")
-    //   this.route.navigate([`${this.portal_name}/invoice/allInvoices`]);
-    // }
+    } 
+    else {
+      // alert("Sorry, you don't have access!")
+      this.route.navigate([`${this.portal_name}/invoice/allInvoices`]);
+    }
 
   }
 

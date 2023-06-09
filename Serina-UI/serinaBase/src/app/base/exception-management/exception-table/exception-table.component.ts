@@ -6,6 +6,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
   SimpleChanges,
@@ -16,13 +17,15 @@ import { AuthenticationService } from 'src/app/services/auth/auth-service.servic
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { PermissionService } from 'src/app/services/permission.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { AlertService } from 'src/app/services/alert/alert.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-exception-table',
   templateUrl: './exception-table.component.html',
   styleUrls: ['./exception-table.component.scss'],
 })
-export class ExceptionTableComponent implements OnInit {
+export class ExceptionTableComponent implements OnInit, OnChanges {
   @Input() columnsData;
   @Input() invoiceColumns;
   @Input() columnsToDisplay;
@@ -62,6 +65,8 @@ export class ExceptionTableComponent implements OnInit {
   stateTable: any
   globalSearch: string;
   ap_boolean: any;
+  selectedStatus: any;
+  statusData: Set<string>;
 
   constructor(
     private tagService: TaggingService,
@@ -71,17 +76,25 @@ export class ExceptionTableComponent implements OnInit {
     private ExceptionsService: ExceptionsService,
     private storageService: DataService,
     private sharedService: SharedService,
-    private SpinnerService: NgxSpinnerService
-  ) { }
+    private SpinnerService: NgxSpinnerService,
+    private alertService : AlertService,
+    private MessageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.ap_boolean = this.storageService.ap_boolean;
     this.initialData();
   }
-  // ngOnChanges(changes: SimpleChanges) {
-  //   console.log(changes.columnsData);
-  //   this.columnsData = changes.columnsData.currentValue;
-  // }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
+
+      let mergedStatus = [ 'All'];
+      this.columnsData.forEach(ele=>{
+        mergedStatus.push(ele.status)
+      })
+      this.statusData = new Set(mergedStatus);
+    }
+  }
   initialData() {
     this.userType = this.authService.currentUserValue['user_type'];
     if (this.userType == 'vendor_portal') {
@@ -187,6 +200,17 @@ export class ExceptionTableComponent implements OnInit {
       this.storageService.createGrn_G_S = value;
     }
   }
+  filter(value,dbCl) {
+    this.selectedStatus = value;
+    // this.storageService.allSelected
+    if (value != 'All') {
+    this.allInvoice.filter(value || ' ',dbCl,'contains')
+
+      this.first = 0
+    } else {
+      this.allInvoice.filter(value || ' ',dbCl,'notContains')
+    }
+  }
 
   // edit invoice details if something wrong
   editInvoice(e) {
@@ -217,7 +241,8 @@ export class ExceptionTableComponent implements OnInit {
                 e.documentsubstatusID == 16 ||
                 e.documentsubstatusID == 33 ||
                 e.documentsubstatusID == 21 ||
-                e.documentsubstatusID == 27) {
+                e.documentsubstatusID == 27 ||
+                e.documentsubstatusID == 75 ) {
                 this.router.navigate([
                   `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
                 ]);
@@ -277,6 +302,10 @@ export class ExceptionTableComponent implements OnInit {
           this.displayResponsivepopup = true;
           this.confirmText = `Sorry, "${data.result.User?.firstName} ${data.result.User?.lastName}" is doing changes for this invoice.`;
         }
+      }, err=>{
+        this.SpinnerService.hide();
+        this.alertService.errorObject.detail = "Please try after sometime"
+        this.MessageService.add(this.alertService.errorObject);
       });
     }
   }

@@ -13,7 +13,7 @@
 <div class="row invoice-body">
   <div
     class="viewPdf"
-    style="right: 150px"
+    style="right: 340px"
     *ngIf="
       (editPermissionBoolean ||
         changeApproveBoolean ||
@@ -22,31 +22,28 @@
       this.currentTab == 'line'
     "
   >
-
-
-    <button class="btnUpload m-t-neg bg-blue ml-2 mr-2" (click)="editGRNData()">Edit GRN</button>
-    <!-- PO Selection -->
-    <p-autoComplete
-      [(ngModel)]="selectedPONumber"
-      (onSelect)="onSelectPO($event)"
-      placeholder="Select PO Number"
-      [suggestions]="filteredPO"
-      (completeMethod)="filterPO($event)"
-      field="PODocumentID"
-      [dropdown]="true"
-    >
-      <ng-template let-country pTemplate="item">
-        <div class="country-item">
-          <div class="f-12">{{ country.PODocumentID }}</div>
-        </div>
-      </ng-template>
-    </p-autoComplete>
     <!-- <button
       class="btnUpload btn_extra_bg mr-2"
       (click)="open_dialog_comp('Amend')"
     >
       PO Amend request
     </button> -->
+          <!-- select GRN Number -->
+          <p-multiSelect
+          [options]="grnList"
+          placeholder="GRN Number"
+          filter="false"
+          inputStyleClass="form-control mr-2"
+          optionLabel="docheaderID"
+          [maxSelectedLabels]="3"
+          [selectedItemsLabel]="'{0} items selected'"
+          name="PO_GRN_Number"
+          [(ngModel)]="selectedGRNList"
+          required
+        >
+        </p-multiSelect>
+    
+        <button class="btnUpload m-t-neg bg-blue ml-2 mr-2" [disabled]="!(selectedGRNList?.length>0)" (click)="ChangeGRNData()">Change</button>
     <button
       *ngIf="isAdmin"
       class="btnUpload btn_extra_bg m-t-neg ml-2"
@@ -82,11 +79,24 @@
       Current Selected Approval Type : {{ approvalType }}
     </div>
   </div>
-  <!-- <div  *ngIf="submitBtn_boolean" class="changePOInput">
 
-
-  </div> -->
-
+  <div *ngIf="submitBtn_boolean" class="changePOInput">
+    <p-autoComplete
+      [(ngModel)]="selectedPONumber"
+      (onSelect)="onSelectPO($event)"
+      placeholder="Select PO Number"
+      [suggestions]="filteredPO"
+      (completeMethod)="filterPO($event)"
+      field="PODocumentID"
+      [dropdown]="true"
+    >
+      <ng-template let-country pTemplate="item">
+        <div class="country-item">
+          <div class="f-12">{{ country.PODocumentID }}</div>
+        </div>
+      </ng-template>
+    </p-autoComplete>
+  </div>
   <div
     class="col-md-12 p-0 pl-1"
     [ngClass]="showPdf ? 'col-lg-5' : 'col-lg-12'"
@@ -94,6 +104,7 @@
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li
         class="nav-item mr-2"
+        pTooltip="Vendor details"
         tooltipPosition="top"
         (click)="changeTab('vendor')"
       >
@@ -105,7 +116,7 @@
           role="tab"
           aria-controls="vendor"
           aria-selected="true"
-          [ngClass]="grnCreateBoolean ? '' : 'active'"
+          [ngClass]="currentTab == 'vendor' ? 'active' : ''"
           > <span *ngIf="ap_boolean">Vendor</span> <span *ngIf="!ap_boolean">Customer</span> details</a
         >
       </li>
@@ -123,7 +134,8 @@
           role="tab"
           aria-controls="header"
           aria-selected="false"
-          >Header details</a
+          [ngClass]="currentTab == 'header' ? 'active' : ''"
+          >Header</a
         >
       </li>
       <li
@@ -140,8 +152,27 @@
           role="tab"
           aria-controls="line"
           aria-selected="false"
-          [ngClass]="grnCreateBoolean ? 'active' : ''"
+          [ngClass]="currentTab == 'line' ? 'active' : ''"
           >Line details</a
+        >
+      </li>
+
+      <li
+        class="nav-item ml-2"
+        pTooltip="GRN details"
+        tooltipPosition="top"
+        (click)="changeTab('grn')"
+      >
+        <a
+          class="nav-link"
+          id="grn-tab"
+          data-toggle="tab"
+          href="#grn"
+          role="tab"
+          aria-controls="grn"
+          aria-selected="false"
+          [ngClass]="currentTab == 'grn' ? 'active' : ''"
+          >GRN Data</a
         >
       </li>
       <!-- <button class="raiseAlert" pTooltip="raise an alert" tooltipPosition="top"><i class="fa fa-exclamation-triangle"
@@ -153,15 +184,16 @@
           <ng-container *ngTemplateOutlet="vendor"></ng-container>
           <ng-container *ngTemplateOutlet="header"></ng-container>
           <ng-container *ngTemplateOutlet="line"></ng-container>
+          <ng-container *ngTemplateOutlet="grn"></ng-container>
         </div>
 
         <ng-template #vendor>
           <!-- vendor -->
           <div
             class="tab-pane fade"
-            [ngClass]="grnCreateBoolean ? '' : 'show active'"
             id="vendor"
             role="tabpanel"
+            [ngClass]="currentTab == 'vendor' ? 'show active' : ''"
             aria-labelledby="vendor-tab"
           >
             <div class="displayFlex">
@@ -194,6 +226,7 @@
             class="tab-pane fade"
             id="header"
             role="tabpanel"
+            [ngClass]="currentTab == 'header' ? 'show active' : ''"
             aria-labelledby="header-tab"
           >
             <div class="displayFlex">
@@ -258,7 +291,7 @@
           <!-- line -->
           <div
             class="tab-pane fade"
-            [ngClass]="grnCreateBoolean ? 'show active' : ''"
+            [ngClass]="currentTab == 'line' ? 'show active' : ''"
             id="line"
             role="tabpanel"
             aria-labelledby="line-tab"
@@ -681,6 +714,105 @@
               </table>
             </div>
           </div>
+        </ng-template>
+
+        <ng-template #grn>
+          <div
+          class="tab-pane fade show"
+          id="grn"
+          [ngClass]="currentTab == 'grn' ? 'show active' : ''"
+          role="tabpanel"
+          aria-labelledby="grn-tab"
+        >
+        <div *ngIf="!grnCreateBoolean">
+           <div *ngIf="grnTabDatalength>0">
+            <mat-accordion>
+              <div class="row"  *ngFor="let grnitem of GRNTabData | keyvalue; let i = index;">
+                <div class="col-sm-12">
+                  <mat-expansion-panel 
+                  [expanded]="true"
+                   (opened)="setOpened(i)"
+                   (closed)="setClosed(i)" style="margin-top: 10px;">
+                   
+                   <mat-expansion-panel-header class="KPIName">
+                     <mat-panel-title class=" secondheadertoggle">
+                       
+                       <h6 class="kpi-header f-13 faPulsandMinus head-pos">
+                         {{ grnitem.key }}
+                       </h6>
+                      
+                     </mat-panel-title>
+                   </mat-expansion-panel-header>
+                   <ng-container>
+                    <table class="invert" style="width: 100%">
+                      <tr
+                        class="invert_tr"
+                        *ngFor="let item of grnitem.value; let i = index"
+                      >
+                        <td
+                          class="lineName invert_th_td"
+                          [ngStyle]="{
+                            'min-width': item.TagName == 'S.No' ? '40px' : '130px'
+                          }"
+                        >
+                          {{ item.TagName }}
+                        </td>
+                        <!-- <div>
+                              <div class="linevalue invert_thtd">{{i+1}}</div>
+                            </div> -->
+                        <td
+                          class="linevalue invert_th_td"
+                          *ngFor="let line1 of item.linedata; let i = index"
+                        >
+                          <div
+                            *ngFor="let line of line1 | keyvalue"
+                            class="d-flex"
+                            style="position: relative"
+                          >
+                            <div *ngIf="line.key == 'DocumentLineItems'">
+                              <div *ngIf="item.TagName == 'S.No'">
+                                <div class="linevalue invert_thtd p-2">
+                                  {{ line.value.itemCode }}
+                                </div>
+                              </div>
+                              <span
+                                *ngIf="
+                                  item.TagName != 'S.No' && item.TagName != 'Actions'
+                                "
+                              >
+                                <input
+                                  #inputv
+                                  type="text"
+                                  [ngClass]="
+                                    item.TagName == 'Description' ||
+                                    item.TagName == 'Name'
+                                      ? 'w-des'
+                                      : 'w-sm'
+                                  "
+                                  [value]="line.value.Value"
+                                  [title]="line.value.Value"
+                                  readonly
+                                  class="form-control mb-1 inputHeight"
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                   </ng-container>
+             
+                 </mat-expansion-panel>
+                </div>
+              </div>
+            </mat-accordion>
+           </div>
+
+            <div *ngIf="!(grnTabDatalength>0)" class="d-flex justify-content-center f-13 mt-4">
+              No GRN is mapped with the Invoice.
+            </div>
+        </div>
+        </div>
         </ng-template>
 
         <div

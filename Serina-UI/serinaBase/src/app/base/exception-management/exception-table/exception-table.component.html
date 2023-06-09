@@ -138,7 +138,12 @@
                 [title]="invoiceData[col.field]"
                 *ngSwitchDefault
               >
-                {{ invoiceData[col.field] }}
+              <span *ngIf=" col.field == 'CreatedOn' || col.field == 'documentDate'">
+                <span *ngIf="invoiceData[col?.field]">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yy, h:mm a' }}</span>  
+              </span>
+              <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate'">{{
+                invoiceData[col.field]
+              }}</span>
                 <span
                   *ngIf="invoiceData?.oldrule && col.header == 'Rule'"
                   class="prev_value float-right"

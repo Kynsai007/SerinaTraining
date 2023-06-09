@@ -31,6 +31,7 @@ export class VendorBaseComponent implements OnInit {
   BtnText ="Are you sure you want to Logout?"
   menubarBoolean: boolean;
   excpetionPageAccess: boolean;
+  uploadPermissionBoolean: boolean;
 
   constructor(private router:Router,
     private settingService : SettingsService,
@@ -72,6 +73,8 @@ export class VendorBaseComponent implements OnInit {
     this.serviceproviderService.userId = this.userDetails.userdetails.idUser;
     this.chartService.userId = this.userDetails.userdetails.idUser;
     const date = this.convertUTCDateToLocalDate(new Date(this.userDetails.last_login));
+    this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
+    this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login = this.userDetails.last_login;
     this.readVendor();
     this.getPermissions();

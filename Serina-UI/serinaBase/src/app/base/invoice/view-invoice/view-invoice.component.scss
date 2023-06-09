@@ -263,12 +263,56 @@ a {
   border-radius: 20px;
 }
 :host ::ng-deep {
+  .p-multiselect {
+    height: 30px;
+    font-size: 12px;
+    font-weight: 600;
+    width: 200px;
+    position: relative;
+    top: 3px;
+  }
+  .p-multiselect .p-multiselect-label {
+    padding: 6px;
+  }
+  .p-multiselect-panel .p-multiselect-items .p-multiselect-empty-message {
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .p-multiselect-items {
+    font-size: 12px;
+    font-weight: 600;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .ng2-pdf-viewer-container {
     height: 82vh !important;
     background-color: white;
     border-radius: 10px;
     max-height: 82vh;
   }
+  .mat-expansion-panel:not([class*=mat-elevation-z]) {
+    box-shadow: none;
+  }
+  .mat-expansion-panel-content {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    }
+    .mat-expansion-panel-body {
+        background-color: #f5f5f5;
+    }
+    .mat-expansion-panel-header {
+        background-color: #f5f5f5 !important; 
+    }
+    .mat-expansion-indicator::after {
+        position: relative;
+        top: -4px;
+    }
+    .mat-expansion-panel-content {
+      overflow: auto !important;
+    }
   .p-inputtext {
     margin: 0;
     height: 30px;

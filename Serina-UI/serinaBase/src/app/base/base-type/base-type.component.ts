@@ -5,7 +5,7 @@ import { SettingsService } from './../../services/settings/settings.service';
 import { PermissionService } from './../../services/permission.service';
 import { AuthenticationService } from './../../services/auth/auth-service.service';
 import { SharedService } from './../../services/shared.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy,Renderer2  } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 // import { IMqttMessage, MqttService } from 'ngx-mqtt';
@@ -49,7 +49,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   settingsPageAccess: boolean;
   vendor_SP_PageAccess: boolean;
   menubarBoolean:boolean;
-
+  timezone: string;
   GRNCreationAccess:boolean;
   vendorInvoiceAccess:boolean;
   serviceInvoiceAccess:boolean;
@@ -74,7 +74,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     private alertService: AlertService,
     private authService: AuthenticationService,
     private serviceProviderService : ServiceInvoiceService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private renderer: Renderer2
   ) {
     this.subscription1 = this.SharedService.getMessage().subscribe(
       (message) => {
@@ -86,10 +87,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
     this.dataStoreService.ap_boolean = JSON.parse(sessionStorage.getItem('ap_boolean'));
-    console.log(this.dataStoreService.ap_boolean)
     if(!this.dataStoreService.configData){
       this.readConfig();
     }
+    this.getUserTimezone();
+    this.appendScript();
     this.show2ndMenu();
     this.servicesData();
     this.getPermissions();
@@ -98,9 +100,16 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.getEntitySummary();
     // this.readVendors();
     // this.readVendorNames();
+  }
+  appendScript (){
+    const script = this.renderer.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://datasemanticschatbots.in/bot_script/Serina Bot/cGluZWFwcGxl';
 
   }
-
+  removeSession(){
+    sessionStorage.clear();
+  }
   openDialog() {
     this.dialog.open(ChangePasswordComponent);
   }
@@ -183,7 +192,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.serviceBased.userId = this.userDetails.userdetails.idUser;
     this.chartService.userId = this.userDetails.userdetails.idUser;
     this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
-    this,this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
+    this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login1 = this.userDetails.last_login;
 
   }
@@ -376,6 +385,10 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
 
   onClickMenu(){
     this.menubarBoolean = !this.menubarBoolean
+  }
+  getUserTimezone(): void {
+    const date = new Date();
+    this.timezone = date.toLocaleTimeString('en', { timeZoneName: 'short' }).split(' ')[2];
   }
   portalChange(){
     this.ap_boolean = !this.ap_boolean;

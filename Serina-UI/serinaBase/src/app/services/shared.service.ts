@@ -367,6 +367,12 @@ export class SharedService {
   duplicateGRNCheck(value){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}`,value).pipe(retry(2))
   }
+  validateUnitprice(data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/validateInvPOUnitPrice/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))
+  }
+  updateGRNnumber(data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceGrn/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))
+  }
   // view Invoice
   getInvoiceInfo() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2), catchError(this.handleError))
@@ -424,6 +430,9 @@ export class SharedService {
   }
   vendorSubmitPO(query, uploadtime){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorPO/${this.userId}?re_upload=${query}&po_id=${this.invoiceID}&uploadtime=${uploadtime}`)
+  }
+  getGRNTabData(){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGrnDataForInvoice/${this.userId}?inv_id=${this.invoiceID}`)
   }
 
   // invoiceStatusHistory

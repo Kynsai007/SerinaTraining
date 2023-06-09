@@ -1,13 +1,14 @@
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { MessageService } from 'primeng/api';
 import { PermissionService } from 'src/app/services/permission.service';
 import { TaggingService } from 'src/app/services/tagging.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-create-grn',
@@ -58,6 +59,7 @@ export class CreateGRNComponent implements OnInit {
   PO_GRN_Number_line = [];
   poNumbersList: any;
   poLineData: any;
+  @ViewChild('PO_GRNForm')PO_GRNForm : NgForm
   constructor(
     private tagService: TaggingService,
     private ImportExcelService: ImportExcelService,
@@ -168,6 +170,9 @@ export class CreateGRNComponent implements OnInit {
     this.sharedService.selectedEntityId = value.idEntity;
     this.entityName = value.EntityName;
     this.getCustomerVendors();
+    this.PO_GRNForm.controls['vendor'].reset();
+    this.PO_GRNForm.controls['PONumber'].reset();
+    this.PO_GRNForm.controls['PO_GRN_Number_line'].reset();
   }
   getCustomerVendors() {
     this.sharedService
@@ -194,7 +199,9 @@ export class CreateGRNComponent implements OnInit {
     }
   }
   selectedVendor(val){
-    this.getPO_numbers(val.idVendor)
+    this.getPO_numbers(val.idVendor);
+    this.PO_GRNForm.controls['PONumber'].reset();
+    this.PO_GRNForm.controls['PO_GRN_Number_line'].reset();
   }
   getPO_numbers(idVen){
     this.sharedService.getPo_numbers(idVen).subscribe((data:any)=>{
@@ -205,7 +212,6 @@ export class CreateGRNComponent implements OnInit {
   filterPOnumber(event){
     let filtered: any[] = [];
     let query = event.query;
-    if (query != '') {
       if (this.poNumbersList?.length > 0) {
         for (let i = 0; i < this.poNumbersList?.length; i++) {
           let PO: any = this.poNumbersList[i];
@@ -215,13 +221,10 @@ export class CreateGRNComponent implements OnInit {
           this.filteredPO = filtered;
         }
       }
-    }
-     else {
-      this.filteredPO = this.poNumbersList;
-    }
   }
   selectedPO(id){
     this.readPOLines(id.PODocumentID)
+    this.sharedService.po_doc_id = id.idDocument;
   }
   readPOLines(po_num) {
     this.sharedService.getPO_Lines(po_num).subscribe((data: any) => {

@@ -63,6 +63,10 @@ export class ExceptionsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/testlinedata/${this.userId}/invoiceid/${this.invoiceID}`).pipe(retry(3))
   }
 
+  getInvoicePOs():Observable<any> {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/allpos/${this.userId}/invoiceid/${this.invoiceID}`).pipe(retry(3))
+  }
+
   send_batch_approval_review(rule_id):Observable<any> {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/Send_to_batch_approval/${this.userId}/invoiceid/${this.invoiceID}?rule_id=${rule_id}`).pipe(retry(3))
   }
@@ -110,8 +114,8 @@ export class ExceptionsService {
   flip_po(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/flip_po_lines/${this.userId}/${this.invoiceID}`,data)
   }
-  validateFlipPO(data){
-    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/validateFlipPO/${this.userId}`,data)
+  validateFlipPO(data,po_num){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/validateFlipPO/${this.userId}?po_num=${po_num}`,data)
   }
 
   update_GRN_data(data){
