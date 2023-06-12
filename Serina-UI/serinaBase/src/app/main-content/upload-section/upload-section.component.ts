@@ -330,7 +330,7 @@ export class UploadSectionComponent implements OnInit {
     this.serviceProviderService.getSummaryEntity().subscribe((data: any) => {
       let arr = [];
       data?.result?.forEach(ele=>{
-        ele.EntityName1 = `${ele.EntityName} - ${ele.EntityCode}`;
+        ele.EntityName1 = `${ele.EntityName}`;
         arr.push({ EntityName: ele.EntityName1, idEntity: ele.idEntity })
       })
       this.entity = arr;
