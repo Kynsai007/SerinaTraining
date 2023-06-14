@@ -123,7 +123,7 @@
 <div class="charts_height">
   <div class="d-flex justify-content-between mt-2" style="position: relative">
     <div class="chart_title f-12">Invoice Count by Entity</div>
-    <button *ngIf="invoiceByEntityChartdata.length>0" class="btnUpload dwnload_btn" (click)="downloadReport()">
+    <button *ngIf="invoiceByEntityChartdata?.length>0" class="btnUpload dwnload_btn" (click)="downloadReport()">
       <i class="fa fa-download" aria-hidden="true"></i>
     </button>
     <div class="chart_div">

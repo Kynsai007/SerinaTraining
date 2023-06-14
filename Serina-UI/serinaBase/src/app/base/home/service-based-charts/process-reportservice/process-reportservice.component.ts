@@ -67,11 +67,12 @@ export class ProcessReportserviceComponent implements OnInit {
     this.chartsData();
     this.dateRange();
     this.getEntitySummary();
+    this.readInvCountByEntity(this.datequery)
     this.readProcessVsDownloadData(this.datequery);
     this.readProcessAmtData(this.datequery);
     this.readPendingAmountData(this.datequery);
     this.readOverallChartData(this.datequery);
-    this.readInvCountByEntity(this.datequery)
+    this.prepareColumns();
     setTimeout(() => {
       this.setContainers();
     }, 2000);
@@ -268,7 +269,7 @@ export class ProcessReportserviceComponent implements OnInit {
           ele.ServiceProviderName = 'DU'
         }
         let amount = this.convertToKM(ele.amount)
-        this.pendingInvoiceChartData.push([ele.ServiceProviderName,ele.amount,amount,ele.count,ele.count])
+        this.pendingInvoiceChartData.push([ele.ServiceProviderName,ele.amount])
       });
       this.SpinnerService.hide();
     },err=>{
@@ -284,11 +285,10 @@ export class ProcessReportserviceComponent implements OnInit {
       // // this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
       // this.invoiceBysourceChartdata[2] = [`Exceptions - ${data.data.exceptions}`,data.data.exceptions,'#FFFF00'];
       // this.invoiceBysourceChartdata[3] = [`System check - ${data.data.systemcheck}`,data.data.systemcheck,'#008000'];
-      console.log(this.invoiceBysourceChartdata)
       this.totolDownloadCount = data.data.downloaded;
       this.totalProcessCount = data.data.processed;
-      this.totalPendingCount = data.data.exceptions;
-      this.system_check = data?.data?.systemcheck;
+      this.totalPendingCount = data.data.exceptions ? data.data.exceptions : 0;
+      this.system_check = data.data.systemcheck ? data.data.systemcheck : 0;
       this.SpinnerService.hide();
     },err=>{
       this.SpinnerService.hide();
