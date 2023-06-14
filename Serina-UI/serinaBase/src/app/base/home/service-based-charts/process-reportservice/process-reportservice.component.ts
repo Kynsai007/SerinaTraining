@@ -114,8 +114,9 @@ export class ProcessReportserviceComponent implements OnInit {
     // this.chartsService.drawColumnChartPending('column_chart1');
     if(this.invoiceBysourceChartdata.length>1){
       this.noDataOverallboolean = false;
-      this.chartsService.drawProgress(
+      this.chartsService.drawPieChart(
         'pie_chart',
+        'Overall Invoice Processed vs Downloaded',
         this.invoiceBysourceChartdata
       );
     } else {
@@ -177,7 +178,7 @@ export class ProcessReportserviceComponent implements OnInit {
 
   chartsData() {
     this.invoiceBysourceChartdata = [
-      ['Count', 'Processed','Exceptions', 'System check']
+      ['Type', 'count']
     ];
     this.totalProcessedvalueChart = [
       ['Service Provider', 'Amount',{type: 'string', role: 'annotation'}],
@@ -280,15 +281,15 @@ export class ProcessReportserviceComponent implements OnInit {
   readOverallChartData(filter){
     this.SpinnerService.show();
     this.chartsService.getProcessVsTotal_OverallSP(filter).subscribe((data:any)=>{
-      this.invoiceBysourceChartdata[1]= ['',data.data.processed,data.data.exceptions,data.data.systemcheck];
-      // this.invoiceBysourceChartdata[1] = [`Processed - ${data.data.processed}`,data.data.processed,'#FFA500'];
-      // // this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
-      // this.invoiceBysourceChartdata[2] = [`Exceptions - ${data.data.exceptions}`,data.data.exceptions,'#FFFF00'];
-      // this.invoiceBysourceChartdata[3] = [`System check - ${data.data.systemcheck}`,data.data.systemcheck,'#008000'];
+      this.invoiceBysourceChartdata[1] = [`Processed - ${data.data.processed}`,data.data.processed];
+      // this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
+      this.invoiceBysourceChartdata[2] = [`Exceptions - ${data.data.exceptions}`,data.data.exceptions];
+      this.invoiceBysourceChartdata[3] = [`System check - ${data.data.systemcheck}`,data.data.systemcheck];
+      this.invoiceBysourceChartdata[4] = [`Downloaded - ${data.data.downloaded}`,data.data.downloaded]
       this.totolDownloadCount = data.data.downloaded;
       this.totalProcessCount = data.data.processed;
-      this.totalPendingCount = data.data.exceptions ? data.data.exceptions : 0;
-      this.system_check = data.data.systemcheck ? data.data.systemcheck : 0;
+      this.totalPendingCount = data.data.exceptions;
+      this.system_check = data.data.systemcheck;
       this.SpinnerService.hide();
     },err=>{
       this.SpinnerService.hide();
