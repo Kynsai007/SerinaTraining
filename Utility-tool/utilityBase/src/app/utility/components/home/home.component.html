@@ -2,6 +2,7 @@
     <ul *ngIf="this.router.url !='/IT_Utility/home'">
         <div class="title">Serina Configuration Portal</div>
         <li routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="IT_Utility/home">Home</a></li>
+        <li *ngIf="showGPTTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/customers">GPT Setup</a></li>
         <li *ngIf="showCustomersTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/customers">Customers</a></li>
         <li *ngIf="showVendorsTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/vendors">Vendors</a></li>
         <li *ngIf="showServiceTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/service-providers">Service Providers</a></li>

@@ -517,6 +517,20 @@ td:hover{
     flex:4;
   }
 }
+@media screen and (min-width: 1920px) {
+  .item1{
+    flex:0.5;
+  }
+  .item2{
+    flex:1.5;
+  }
+  .item3{
+    flex:4;
+  }
+  .item4{
+    flex: 1 1 25%;
+  }
+}
 @media screen and (min-width: 2400px) {
   .item2{
     flex:1;

@@ -15,10 +15,12 @@ export class HomeComponent implements OnInit {
   showServiceTab:boolean = true;
   showVendorsTab:boolean=true;
   showCustomersTab:boolean=true;
+  showGPTTab:boolean=false;
   constructor(private authService : AuthenticationService,
     private sharedService : SharedService,public router:Router) { }
 
   ngOnInit(): void {
+    let ocr_engine = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.ocr_engine;
     let docTypes = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.documentTypes;
     let serviceTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.serviceInvoices;
     let vendorTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.vendorInvoices;
@@ -36,6 +38,12 @@ export class HomeComponent implements OnInit {
       this.showCustomersTab = true;
     }else{
       this.showCustomersTab = false;
+    }
+    if(ocr_engine == "GPT 3.5"){
+      this.showCustomersTab = false;
+      this.showVendorsTab = false;
+      this.showServiceTab = false;
+      this.showGPTTab= true;
     }
     this.userDetails = this.authService.currentUserValue;
     this.sharedService.userId = this.userDetails.userdetails.idUser;
