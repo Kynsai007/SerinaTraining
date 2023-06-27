@@ -254,6 +254,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   currentlyOpenedItemIndex = -1;
   GRNTabData:any;
   grnTabDatalength: number;
+  progressDailogBool: boolean;
+  batchData: any;
+  portalName: string;
+
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -286,6 +290,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;
     })
+    this.userDetails = this.authService.currentUserValue;
+    if (this.userDetails.user_type == 'vendor_portal') {
+      this.portalName = 'vendorPortal';
+    } else {
+      this.portalName = 'customer'
+    }
     this.init();
     this.ERPCostAllocation();
     this.AddPermission();
@@ -340,8 +350,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.isLCMInvoice = this.tagService.LCM_boolean;
     this.documentType = this.tagService.documentType;
     this.documentTypeId = this.dataService.idDocumentType;
-    if (this.tagService.documentType == 'lcm' || this.tagService.documentType == 'multipo') {
-      if(this.tagService.documentType == 'multipo'){
+    this.routeOptions();
+
+  }
+
+  routeOptions(){
+    if (this.documentType == 'lcm' || this.documentType == 'multipo') {
+      if(this.documentType == 'multipo'){
         this.multiPOBool = true;
       }      
       this.isLinenonEditable = true;
@@ -373,7 +388,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.selectionTabBoolean = false;
     }
   }
-
   ERPCostAllocation() {
     if (this.ERP == 'JD') {
       this.allocationFileds = [
@@ -422,11 +436,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       clean: str,
       onTimeout: () => {
         if (this.router.url.includes('ExceptionManagement/InvoiceDetails')) {
-          if (this.router.url.includes('vendorPortal')) {
-            this.router.navigate(['/vendorPortal/ExceptionManagement']);
-          } else {
-            this.router.navigate(['/customer/ExceptionManagement']);
-          }
+          this.router.navigate([`${this.portalName}/ExceptionManagement`]);
           this.AlertService.errorObject.detail =
             'Session Expired for Editing Invoice';
           this.messageService.add(this.AlertService.errorObject);
@@ -1078,7 +1088,32 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           query = `?re_upload=${this.reuploadBoolean}`;
         }
 
-        this.SharedService.triggerBatch(query).subscribe((data: any) => {
+        // this.SharedService.triggerBatch(query).subscribe((data: any) => {
+        //   if (
+        //     this.vendorUplaodBoolean == true &&
+        //     this.reuploadBoolean == true
+        //   ) {
+        //     if (data[0] == 0) {
+        //       this.messageService.add({
+        //         severity: 'error',
+        //         summary: 'Rejected',
+        //         detail: data[1],
+        //       });
+        //     } else {
+        //       this.messageService.add({
+        //         severity: 'success',
+        //         summary: 'Uploaded',
+        //         detail: data[1],
+        //       });
+        //     }
+        //   }
+
+        //   this.dataService.reUploadData = [];
+        // });
+        this.SharedService.syncBatchTrigger(query).subscribe((data: any) => {
+          this.progressDailogBool = true;
+          this.batchData = data[this.invoiceID]?.complete_status;
+          console.log(this.batchData);
           if (
             this.vendorUplaodBoolean == true &&
             this.reuploadBoolean == true
@@ -1099,18 +1134,18 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           }
 
           this.dataService.reUploadData = [];
-        });
-        setTimeout(() => {
-          if (this.router.url.includes('ExceptionManagement')) {
-            this._location.back();
-          } else {
-            if (this.userDetails.user_type == 'vendor_portal') {
-              this.router.navigate(['vendorPortal/invoice/allInvoices']);
-            } else {
-              this.router.navigate(['customer/invoice/allInvoices']);
-            }
-          }
-        }, 4000);
+        })
+        // setTimeout(() => {
+        //   if (this.router.url.includes('ExceptionManagement')) {
+        //     this._location.back();
+        //   } else {
+        //     if (this.userDetails.user_type == 'vendor_portal') {
+        //       this.router.navigate(['vendorPortal/invoice/allInvoices']);
+        //     } else {
+        //       this.router.navigate(['customer/invoice/allInvoices']);
+        //     }
+        //   }
+        // }, 4000);
       },
       (error) => {
         this.messageService.add({
@@ -1122,8 +1157,57 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     );
   }
 
+  routeToMapping() {
+    this.exceptionService.invoiceID = this.invoiceID;
+    this.tagService.editable = true;
+    this.tagService.submitBtnBoolean = true;
+    this.tagService.headerName = 'Edit Invoice';
+    let sub_status = null;
+    for (const el of this.batchData) {
+      if (el.status == 0) {
+        sub_status = el.sub_status;
+      }
+    };
+    console.log(sub_status)
+    if (sub_status == 8 ||
+      sub_status == 16 ||
+      sub_status == 17 ||
+      sub_status == 33 ||
+      sub_status == 21 ||
+      sub_status == 27 ||
+      sub_status == 75) {
+      this.router.navigate([
+        `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${this.invoiceID}`,
+      ]);
+    } else if (sub_status == 34 || sub_status == 51 || sub_status == 54 || sub_status == 70 || sub_status == 71)  {
+      if(sub_status == 34){
+        this.AlertService.updateObject.summary = 'Suggestion';
+        this.AlertService.updateObject.detail = 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.';
+      } else if(sub_status == 51) {
+        this.AlertService.updateObject.summary = 'LCM Invoice';
+        this.AlertService.updateObject.detail = 'Please add the lines for the LCM invoice.';
+      } else if(sub_status == 54) {
+        this.AlertService.updateObject.summary = 'MultiPO Invoice';
+        this.AlertService.updateObject.detail = 'Please Check the invoice total is not matching with the lines.';
+      } else if(sub_status == 70) {
+        this.AlertService.updateObject.summary = 'Set Approval';
+        this.AlertService.updateObject.detail = 'Please add the approvers';
+      } 
+      // else if(sub_status == 71) {
+      //   this.AlertService.updateObject.summary = 'Approval pending';
+      //   this.AlertService.updateObject.detail = 'Please change the approvers if you have any issues.';
+      // }
+      // this.routeOptions();
+      this.messageService.add(this.AlertService.updateObject)
+    } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {
+      this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+    } else {
+      this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+    }
+    this.progressDailogBool = false;
+  }
+
   vendorSubmitPO() {
-    console.log('hi PO')
     this.SharedService.vendorSubmitPO(this.reuploadBoolean, this.uploadtime).subscribe(
       (data: any) => {
         this.SpinnerService.hide();
@@ -1371,7 +1455,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           });
           this.displayrejectDialog = false;
           setTimeout(() => {
-            this._location.back();
+            this.router.navigate([`${this.portalName}/ExceptionManagement`]);
           }, 1000);
         },
         (error) => {
@@ -1967,10 +2051,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SpinnerService.show();
     this.getPO_lines(str);
   }
-  
-  getPO_lines(str){
-    let query = `?inv_id=${this.invoiceID}`
-    this.exceptionService.getPOLines(query).subscribe((data:any)=>{
+
+  getPO_lines(str) {
+    this.exceptionService.getPOLines('').subscribe((data: any) => {
       let poLineData = data.Po_line_details;
       this.mat_dlg.open(PopupComponent,{ 
         width : '60%',
@@ -1984,26 +2067,26 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.SpinnerService.hide();
     })
   }
-  readPOLines(){
-    let query = `?inv_id=${this.invoiceID}`;
-    this.exceptionService.getPOLines(query).subscribe((data:any)=>{
+  readPOLines() {
+    this.exceptionService.getPOLines('').subscribe((data: any) => {
       this.poLineData = data.Po_line_details;
-      if(Object.keys(this.poLineData[0]).length>0){
-        this.POlineBool = true;
-      } else {
-        this.POlineBool = false;
+      if(this.poLineData){
+        if (Object?.keys(this.poLineData[0])?.length > 0) {
+          this.POlineBool = true;
+        } else {
+          this.POlineBool = false;
+        }
       }
-      console.log(this.poLineData);
       this.SpinnerService.hide();
-    },err=>{
+    }, err => {
       this.AlertService.errorObject.detail = "Server error";
       this.messageService.add(this.AlertService.errorObject);
       this.SpinnerService.hide();
     })
   }
 
-  getPODocId(po_num){
-    this.SharedService.get_poDoc_id(po_num).subscribe((data:any)=>{
+  getPODocId(po_num) {
+    this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
       this.poDocId = data.result;
     })
   }
@@ -2057,11 +2140,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       .subscribe((data: any) => { });
     clearTimeout(this.callSession);
     this.mat_dlg.closeAll();
-    this.tagService.financeApprovePermission = false;
-    this.tagService.approveBtnBoolean = false;
-    this.tagService.submitBtnBoolean = false;
-    this.tagService.approval_selection_boolean = false;
-    this.tagService.LCM_boolean = false;
+    // this.tagService.financeApprovePermission = false;
+    // this.tagService.approveBtnBoolean = false;
+    // this.tagService.submitBtnBoolean = false;
+    // this.tagService.approval_selection_boolean = false;
+    // this.tagService.LCM_boolean = false;
     // this.dataService.entityID = undefined;
     // this.SharedService.selectedEntityId = undefined;
     this.vendorsSubscription.unsubscribe();

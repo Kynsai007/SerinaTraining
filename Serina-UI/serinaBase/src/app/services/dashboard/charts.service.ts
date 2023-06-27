@@ -286,6 +286,7 @@ export class ChartsService {
         bar: { groupWidth: '25%' },
         annotations: {
           alwaysOutside: true,
+          position: 'out'
         },
         colors: [color],
         animation: {
@@ -442,15 +443,10 @@ export class ChartsService {
         },
         legend: { position: 'bottom', maxLines: 3 },
         bar: { groupWidth: '50%' },
+        
         annotations: {
-          // textStyle: {
-          //   color: '#0d0b3c',
-          //   fontSize: 16,
-          //   auraColor: 'none',
-          //   gridlines: {
-          //     color: 'transparent',
-          //   },
-          // },
+          alwaysOutside: true,
+          position: 'out'
         },
         colors: ['#9BD7D1'],
         animation: {

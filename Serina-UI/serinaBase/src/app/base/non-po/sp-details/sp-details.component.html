@@ -778,6 +778,7 @@
                 formControlName="entityID"
                 [ngClass]="{ 'is-invalid': submitted && f.EntityName.errors }"
                 (change)="selectedEntity($event.target.value)"
+                [readOnly]="readOnlyForm"
               >
                 <option *ngFor="let entity of entityList" [value]="entity.idEntity">
                   {{ entity.EntityName }}
@@ -800,6 +801,7 @@
                 type="text"
                 formControlName="Account"
                 class="form-control w-250 inputHeight"
+                [readOnly]="readOnlyForm"
               />
             </div>
             <div>
@@ -812,6 +814,7 @@
               <select
                 class="form-control inputHeight w-250"
                 formControlName="MeterNumber"
+                [readOnly]="readOnlyForm"
               >
                 <option value="NA"> NA </option>
                 <option value="mobile"> Mobile </option>
@@ -831,6 +834,7 @@
                 type="text"
                 formControlName="serviceProviderNameAccount"
                 class="form-control inputHeight w-250"
+                [readOnly]="readOnlyForm"
               />
             </div>
             <div>
@@ -841,6 +845,7 @@
                 type="text"
                 formControlName="URL"
                 class="form-control inputHeight w-250"
+                [readOnly]="readOnlyForm"
               />
             </div>
             <div>
@@ -851,6 +856,7 @@
                 type="text"
                 formControlName="UserName"
                 class="form-control inputHeight w-250"
+                [readOnly]="readOnlyForm"
               />
             </div>
             <div>
@@ -861,6 +867,7 @@
                 type="password"
                 formControlName="LogSecret"
                 class="form-control inputHeight w-250"
+                [readOnly]="readOnlyForm"
               />
             </div>
     
@@ -870,6 +877,7 @@
                 type="email"
                 formControlName="Email"
                 class="form-control inputHeight w-250"
+                [readOnly]="readOnlyForm"
               />
             </div>
     
@@ -879,6 +887,7 @@
                 type="text"
                 formControlName="Address"
                 class="form-control w-250 inputHeight"
+                [readOnly]="readOnlyForm"
               />
             </div>
             <!-- <div>
@@ -897,6 +906,7 @@
                 type="text"
                 formControlName="LocationCode"
                 class="form-control inputHeight w-250"
+                [readOnly]="readOnlyForm"
               />
             </div>
             <div>
@@ -907,6 +917,7 @@
                 type="date"
                 formControlName="ScheduleDateTime"
                 class="form-control inputHeight w-250"
+                [readOnly]="readOnlyForm"
               />
               <!-- <p-calendar formControlName="ScheduleDateTime" [showIcon]="true" class="form-control w-250 inputHeight" inputId="icon"></p-calendar> -->
             </div>
@@ -919,6 +930,7 @@
                 list="op_units"
                 formControlName="operatingUnit"
                 class="form-control inputHeight w-250"
+                [readOnly]="readOnlyForm"
               />
               <datalist id="op_units">
                 <option *ngFor="let data of OPUnits" [value]="data">
@@ -979,7 +991,7 @@
                 <span class="f-12 mr-3"> Activate/Deactivate</span>
                 <span>
                   <label class="switch" style="top: 4px">
-                    <input type="checkbox" formControlName="isActive_Alloc" />
+                    <input type="checkbox" formControlName="isActive_Alloc"  [readOnly]="readOnlyForm"/>
                     <span class="slider round"></span>
                   </label>
                 </span>
@@ -993,6 +1005,7 @@
                   <select
                     class="form-control w-250 inputHeight bg-cost"
                     formControlName="entityBodyID"
+                    [readOnly]="readOnlyForm"
                     [ngClass]="{
                       'is-invalid': submitted && f.EntityBodyName.errors
                     }"
@@ -1014,12 +1027,13 @@
                   <select
                     class="form-control w-250 inputHeight bg-cost"
                     formControlName="Element"
+                    [readOnly]="readOnlyForm"
                   >
                     <option
                       *ngFor="let element of elementList"
-                      [value]="element.name"
+                      [value]="element"
                     >
-                      {{ element.name }}
+                      {{ element }}
                     </option>
                   </select>
                   <!-- <div *ngIf="submitted && f.entityDeparment.errors" class="invalid-feedback">
@@ -1034,6 +1048,7 @@
                     class="form-control w-250 inputHeight bg-cost"
                     data-mask="(999) 999-9999"
                     placeholder=""
+                    [readOnly]="readOnlyForm"
                   />
                 </div>
                 <div>
@@ -1042,6 +1057,7 @@
                     type="text"
                     formControlName="product"
                     class="form-control w-250 inputHeight bg-cost"
+                    [readOnly]="readOnlyForm"
                   />
                 </div>
                 <div>
@@ -1049,6 +1065,7 @@
                   <input
                     type="text"
                     formControlName="project"
+                    [readOnly]="readOnlyForm"
                     class="form-control w-250 inputHeight bg-cost"
                   />
                 </div>
@@ -1058,6 +1075,7 @@
                   >
                   <input
                     type="text"
+                    [readOnly]="readOnlyForm"
                     formControlName="interco"
                     class="form-control w-250 inputHeight bg-cost"
                   />
@@ -1069,6 +1087,7 @@
                   <input
                     type="text"
                     formControlName="segments"
+                    [readOnly]="readOnlyForm"
                     class="form-control w-250 inputHeight bg-cost"
                   />
                 </div>
@@ -1079,6 +1098,7 @@
                   <input
                     type="text"
                     formControlName="bsMovements"
+                    [readOnly]="readOnlyForm"
                     class="form-control w-250 inputHeight bg-cost"
                   />
                 </div>
@@ -1089,6 +1109,7 @@
                   <input
                     type="text"
                     formControlName="fixedAssetDepartment"
+                    [readOnly]="readOnlyForm"
                     class="form-control w-250 inputHeight bg-cost"
                   />
                 </div>
@@ -1099,6 +1120,7 @@
                   <input
                     type="text"
                     formControlName="fixedAssetGroup"
+                    [readOnly]="readOnlyForm"
                     class="form-control w-250 inputHeight bg-cost"
                   />
                 </div>
@@ -1110,6 +1132,7 @@
                   <input
                     type="text"
                     formControlName="mainAccount"
+                    [readOnly]="readOnlyForm"
                     class="form-control w-250 inputHeight bg-cost"
                   />
                 </div>
@@ -1121,6 +1144,7 @@
                     type="text"
                     [textMask]="{ mask: mask }"
                     formControlName="mainAccount"
+                    [readOnly]="readOnlyForm"
                     placeholder="11-1111-11-11-111111-00-000"
                     class="form-control w-250 inputHeight bg-cost"
                   />
@@ -1135,6 +1159,7 @@
                     [textMask]="{ mask: mask }"
                     formControlName="naturalAccountWater"
                     placeholder="11-1111-11-11-111111-00-000"
+                    [readOnly]="readOnlyForm"
                     class="form-control w-250 inputHeight bg-cost"
                   />
                   <!-- <p-inputMask mask="19-1042-12-21-813620-00-000" class="form-control w-250 inputHeight bg-cost"  formControlName="naturalAccountWater" placeholder="19-1042-12-21-813620-00-000"></p-inputMask> -->
@@ -1148,6 +1173,7 @@
                     [textMask]="{ mask: mask }"
                     formControlName="naturalAccountHousing"
                     placeholder="11-1111-11-11-111111-00-000"
+                    [readOnly]="readOnlyForm"
                     class="form-control w-250 inputHeight bg-cost"
                   />
                 </div>
@@ -1160,6 +1186,7 @@
                     class="form-control w-250 inputHeight bg-cost"
                     min="1"
                     max="100"
+                    [readOnly]="readOnlyForm"
                     maxlength="3"
                   />
                 </div>

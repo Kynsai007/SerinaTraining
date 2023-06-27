@@ -199,8 +199,8 @@
         class="nav-item ml-2"
         pTooltip="PO Lines details"
         tooltipPosition="top"
-        (click)="changeTab('hide', 'line')"
-        *ngIf="Itype == 'Invoice'"
+        (click)="changeTab('hide', 'poline')"
+        *ngIf="Itype == 'Invoice' && !isServiceData && POlineBool"
       >
         <a
           class="nav-link"
@@ -209,29 +209,30 @@
           href="#POline"
           role="tab"
           aria-controls="POline"
+          [ngClass]="currentTab == 'poline'?'active':''"
           aria-selected="false"
           >PO Lines</a
         >
       </li>
 
       <li
-      class="nav-item ml-2"
-      pTooltip="GRN details"
-      tooltipPosition="top"
-      (click)="changeTab('hide','grn')"
-    >
-      <a
-        class="nav-link"
-        id="grn-tab"
-        data-toggle="tab"
-        href="#grn"
-        role="tab"
-        aria-controls="grn"
-        aria-selected="false"
-        [ngClass]="currentTab == 'grn'?'active':''"
-        >GRN Data</a
+        class="nav-item ml-2"
+        pTooltip="GRN details"
+        tooltipPosition="top"
+        *ngIf="Itype == 'Invoice'  && !isServiceData && (grnTabDatalength>0)"
+        (click)="changeTab('hide','grn')"
       >
-    </li>
+        <a
+          class="nav-link"
+          id="grn-tab"
+          data-toggle="tab"
+          href="#grn"
+          role="tab"
+          aria-controls="grn"
+          aria-selected="false"
+          [ngClass]="currentTab == 'grn'?'active':''"
+          >GRN Data</a
+        >
 
       <li
         *ngIf="!isServiceData && !approval_selection_boolean && Itype == 'Invoice'"
@@ -1257,7 +1258,7 @@
           class="btn btnVender bg-btn-success"
           (click)="submitChanges()"
         >
-          Submit
+          Next
         </button>
 
         <button
@@ -1374,9 +1375,13 @@
             </div>
 
             <div class="rotate_text">
-              <button class="preBtn" (click)="rotate(-90)"><i class="fa fa-undo" aria-hidden="true"></i></button>
-              <div class="f-12 ml-1">Rotate</div>
-              <button class="preBtn mr-1" (click)="rotate(90)"><i class="fa fa-repeat" aria-hidden="true"></i></button>
+              <button class="preBtn" (click)="rotate(-90)">
+                <i class="fa fa-undo" aria-hidden="true"></i>
+              </button>
+              <div class="f-12 ml-1 p-r-t">Rotate</div>
+              <button class="preBtn mr-1" (click)="rotate(90)">
+                <i class="fa fa-repeat" aria-hidden="true"></i>
+              </button>
             </div>
 
             <span class="zoom zoom_pos_pdf">
@@ -1413,9 +1418,9 @@
   </div>
 </div>
 <!-- Add label-->
-<!-- <p-dialog header="Add Label" [(visible)]="displayAddLabelDialog" [breakpoints]="{'960px': '75vw'}"
+<p-dialog header="Batch Progress" [(visible)]="progressDailogBool" [breakpoints]="{'960px': '75vw'}"
   [style]="{width: '31vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
-  <div>
+  <!-- <div>
     <label class="label-head"> Label</label>
     <input type="text" class="form-control inputAddLabel mb-1" name="addLabel" ngModel #addLabel="ngModel"
       [(ngModel)]="customLabel" required>
@@ -1429,18 +1434,24 @@
       >
 
 
+  </div> -->
+  <div>
+    <div class="f-12" *ngIf="!(batchData?.length>0)">Hey, Please hold on the batch is running...</div>
+    <ul class="f-12" *ngIf="batchData?.length>0">
+      <li *ngFor="let st of batchData"> <span [ngStyle]="{'color':st.status == 1 ? 'green':'red'}">{{st.msg}}</span> </li>
+    </ul>
   </div>
   <ng-template  pTemplate="footer">
     <div class="d-flex justify-content-center">
-      <button type="button" class="btn btnVender" (click)="displayAddLabelDialog = false">Cancel</button>
-      <button type="button" class="btn btnVender"
+      <button type="button" class="btn btnVender bg-btn-success mt-2" (click)="routeToMapping()">Next</button>
+      <!-- <button type="button" class="btn btnVender"
         [disabled]="addLabel.invalid "
         [ngStyle]="{'cursor':(addLabel.invalid)? 'not-allowed':'pointer'}"
-        (click)="addLabelData()">Add</button>
+        (click)="addLabelData()">Add</button> -->
     </div>
 
   </ng-template>
-</p-dialog> -->
+</p-dialog>
 
 <!-- Reject modal-->
 <p-dialog

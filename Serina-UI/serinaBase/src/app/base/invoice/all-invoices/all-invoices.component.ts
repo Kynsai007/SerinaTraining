@@ -18,6 +18,9 @@ import { AuthenticationService } from 'src/app/services/auth/auth-service.servic
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { MessageService } from 'primeng/api';
 import * as fileSaver from 'file-saver';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ConfirmationComponent } from '../../confirmation/confirmation.component';
+
 export interface statusArray {
   name:string;
 }
@@ -81,7 +84,8 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     private sharedService: SharedService,
     private AlertService :AlertService,
     private messageService :MessageService,
-    private spinnerService : NgxSpinnerService
+    private spinnerService : NgxSpinnerService,
+    private md: MatDialog
   ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.tableData && changes.tableData.currentValue && changes.tableData.currentValue.length > 0) {
@@ -314,19 +318,42 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
 
   triggerBatch(id){
-    alert("Are you sure you want to re-trigger the batch for the Document?")
-    this.triggerBoolean = true;
-    let query = `?re_upload=false`;
-    this.invoiceID = id;
-    this.sharedService.invoiceID = id;
-    this.sharedService.triggerBatch(query).subscribe((data:any)=>{
-      if(data){
-        this.triggerBoolean = false;
-        window.location.reload();
-      }
-    },(error => {
-      this.triggerBoolean = false;
-    }))
+    const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
+      width : '30%',
+      height: '35vh',
+      hasBackdrop: false,
+      data : { body: 'Are you sure you want to re-trigger the batch for the Invoice?'}})
+
+      drf.afterClosed().subscribe((bool)=>{
+        if(bool){
+          this.triggerBoolean = true;
+          let query = `?re_upload=false`;
+          this.invoiceID = id;
+          this.sharedService.invoiceID = id;
+          this.sharedService.syncBatchTrigger(query).subscribe((data:any)=>{
+            let sub_status = null;
+            
+            if(data){
+              this.triggerBoolean = false;
+              for (const el of data[this.invoiceID]?.complete_status) {
+                if (el.status == 0) {
+                  sub_status = el.sub_status;
+                }
+              };
+            }
+            console.log(sub_status)
+            if(sub_status != 1){
+              window.location.reload();
+            } else {
+              this.AlertService.errorObject.detail = 'Hey, we are facing some issue so, our technical team will handle this Document';
+              this.messageService.add(this.AlertService.errorObject)
+            }
+          },(error => {
+            this.triggerBoolean = false;
+          }))
+        }
+      })
+
   }
 
   updatePO(e){

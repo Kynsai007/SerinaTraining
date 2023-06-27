@@ -108,7 +108,7 @@ export class ExceptionsService {
   }
 
   getPOLines(query){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_po_lines/${this.userId}/${this.invoiceID}`)
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_po_lines/${this.userId}/${this.invoiceID}${query}`)
   }
 
   flip_po(data){

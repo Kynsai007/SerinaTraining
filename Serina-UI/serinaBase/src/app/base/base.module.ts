@@ -47,6 +47,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { CreateGRNComponent } from './create-grn/create-grn.component';
 import { HelpComponent } from './help/help.component';
 import { PopupComponent } from './popup/popup.component';
+import { ConfirmationComponent } from './confirmation/confirmation.component';
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import { PopupComponent } from './popup/popup.component';
     ChangePasswordComponent,
     CreateGRNComponent,
     HelpComponent,
-    PopupComponent
+    PopupComponent,
+    ConfirmationComponent
   ],
   imports: [
     CommonModule,

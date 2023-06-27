@@ -176,7 +176,7 @@ a {
   font-size: 13px;
   margin: 5px;
 }
-.upload-time{
+.upload-time {
   font-size: smaller;
   font-weight: bold;
   color: #27ae60;
@@ -355,6 +355,11 @@ a {
 //     border: 0;
 //     opacity: 1;
 // }
+.refresh_btn {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+}
 .img-browse {
   background-color: #f2be42;
   color: #272727;

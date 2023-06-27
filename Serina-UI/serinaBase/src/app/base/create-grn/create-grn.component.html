@@ -173,6 +173,17 @@
             </button>
           </div>
         </form>
+        <div *ngIf="columnsDataPO.length > 0" class="mt-2">
+          <app-exception-table
+            [invoiceColumns]="ColumnsForGRN"
+            [columnsToDisplay]="columnsToDisplay"
+            [showPaginatorAllInvoice]="showPaginator"
+            [ColumnLength]="GRNTableColumnLength"
+            (searchInvoiceData)="searchInvoiceDataV($event)"
+            [columnsData]="columnsDataPO"
+          >
+          </app-exception-table>
+        </div>
         </div>
       </div>
 

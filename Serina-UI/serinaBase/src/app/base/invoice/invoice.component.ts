@@ -146,6 +146,10 @@ export class InvoiceComponent implements OnInit {
   columnstodisplayrejected: any = [];
   rejectedColumnLength: number;
 
+  GRNColumns: any = [];
+  columnstodisplayGRN: any = [];
+  GRNColumnLength: number;
+
   constructor(
     public route: Router,
     private AlertService: AlertService,
@@ -293,6 +297,16 @@ export class InvoiceComponent implements OnInit {
       // { dbColumnname: 'documentPaymentStatus', columnName: 'Status' },
     ];
 
+    this.GRNColumns = [
+      { dbColumnname: 'EntityName', columnName: 'Entity Name' },
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      { dbColumnname: 'docheaderID', columnName: 'GRN Number' },
+      { dbColumnname: 'CreatedOn', columnName: 'Received Date' },
+      { dbColumnname: 'firstName', columnName: 'Created By' },
+      { dbColumnname: 'grn_type', columnName: 'source' }
+    ];
+
     if (this.portal_name == 'customer') {
       this.rejectedColumns.unshift({
         dbColumnname: 'VendorName',
@@ -310,8 +324,14 @@ export class InvoiceComponent implements OnInit {
       this.columnstodisplayrejected.push(e.dbColumnname);
     });
 
+    this.GRNColumns.forEach((e) => {
+      this.columnstodisplayGRN.push(e.dbColumnname);
+    });
+
     this.GRNExcpColumnLength = this.GRNExcpColumns.length + 1;
     this.rejectedColumnLength = this.rejectedColumns.length + 1;
+    this.GRNColumnLength = this.GRNColumns.length + 1;
+
   }
   dateRange() {
     this.dateFilterService.dateRange();
@@ -331,6 +351,9 @@ export class InvoiceComponent implements OnInit {
     } else if (this.route.url == this.rejectedTab) {
       this.routeName = 'rejected';
       this.searchStr = this.dataService.searchRejStr;
+    } else if( this.route.url == this.GRNTab){
+      this.routeName = 'GRN';
+      this.searchStr = this.dataService.searchGRNStr;
     }
   }
   getInvoiceData() {
@@ -444,6 +467,16 @@ export class InvoiceComponent implements OnInit {
   getDisplayGRNdata(data) {
     this.SpinnerService.show();
     this.sharedService.getGRNdata(data).subscribe((data: any) => {
+      // let grnD = []
+      // data.grndata?.forEach(ele=>{
+      //   let merg = {...ele.Document}
+      //   merg.EntityName = ele.EntityName;
+      //   merg.VendorName = ele.VendorName;
+      //   merg.grn_type = ele.grn_type;
+      //   merg.firstName = ele.firstName;
+      //   grnD.push(merg)
+      // })
+     
       this.GRNDispalyData = this.dataService.GRNLoadedData.concat(data.grndata);
       this.dataService.GRNLoadedData = this.GRNDispalyData;
       this.dataService.GRNTableLength = data.grn_total;
@@ -466,8 +499,9 @@ export class InvoiceComponent implements OnInit {
           ...element.EntityBody,
           ...element.VendorAccount,
           ...element.Vendor,
+          ...element.PaymentsInfo
         };
-
+        
         // invoiceData.append('docStatus',element.docStatus)
 
         invoiceData['docstatus'] = element.docstatus;
@@ -739,7 +773,7 @@ export class InvoiceComponent implements OnInit {
         });
       },
       (error) => {
-        alert(error.error.detail[0].msg);
+        alert(error?.error?.detail[0]?.msg);
       }
     );
   }

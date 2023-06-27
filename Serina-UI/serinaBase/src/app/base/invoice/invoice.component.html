@@ -203,13 +203,25 @@
                 *ngIf="route.url == POTab"
               ></app-all-invoices>
 
-              <app-grn
+              <app-all-invoices
+                [tableData]="GRNDispalyData"
+                [invoiceColumns]="GRNColumns"
+                [columnsToDisplay]="columnstodisplayGRN"
+                [showPaginatorAllInvoice]="showPaginatorGRNTable"
+                (sideBarBoolean)="showSidebar($event)"
+                (paginationEvent) = "paginate($event)"
+                [columnLength]="GRNColumnLength"
+                (searchInvoiceData)="searchInvoiceDataV($event)"
+                *ngIf="route.url == GRNTab"
+              ></app-all-invoices>
+
+              <!-- <app-grn
                 [tableData]="GRNDispalyData"
                 [showPaginatorGRNTable]="showPaginatorGRNTable"
                 (searchInvoiceData)="searchInvoiceDataV($event)"
                 (paginationEvent) = "paginate($event)"
                 *ngIf="route.url == GRNTab"
-              ></app-grn>
+              ></app-grn> -->
               <!-- <app-pip [tableData]="receiptDispalyData" (searchInvoiceData)="searchInvoiceDataV($event)" *ngIf="route.url == '/customer/invoice/paymentInprogress'"></app-pip> -->
               <app-all-invoices
                 [tableData]="archivedDisplayData"

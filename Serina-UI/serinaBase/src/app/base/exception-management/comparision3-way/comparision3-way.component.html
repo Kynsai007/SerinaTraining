@@ -28,22 +28,9 @@
     >
       PO Amend request
     </button> -->
-          <!-- select GRN Number -->
-          <p-multiSelect
-          [options]="grnList"
-          placeholder="GRN Number"
-          filter="false"
-          inputStyleClass="form-control mr-2"
-          optionLabel="docheaderID"
-          [maxSelectedLabels]="3"
-          [selectedItemsLabel]="'{0} items selected'"
-          name="PO_GRN_Number"
-          [(ngModel)]="selectedGRNList"
-          required
-        >
-        </p-multiSelect>
+        
     
-        <button class="btnUpload m-t-neg bg-blue ml-2 mr-2" [disabled]="!(selectedGRNList?.length>0)" (click)="ChangeGRNData()">Change</button>
+        <button class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2"  (click)="opengrnDailog()">Edit GRN</button>
     <button
       *ngIf="isAdmin"
       class="btnUpload btn_extra_bg m-t-neg ml-2"
@@ -159,8 +146,28 @@
 
       <li
         class="nav-item ml-2"
+        pTooltip="PO Lines details"
+        tooltipPosition="top"
+        (click)="changeTab('poline')"
+        *ngIf="Itype == 'Invoice'"
+      >
+        <a
+          class="nav-link"
+          id="POline-tab"
+          data-toggle="tab"
+          href="#POline"
+          role="tab"
+          aria-controls="POline"
+          aria-selected="false"
+          >PO Lines</a
+        >
+      </li>
+
+      <li
+        class="nav-item ml-2"
         pTooltip="GRN details"
         tooltipPosition="top"
+        *ngIf="!grnCreateBoolean && (grnTabDatalength>0)"
         (click)="changeTab('grn')"
       >
         <a
@@ -171,7 +178,6 @@
           role="tab"
           aria-controls="grn"
           aria-selected="false"
-          [ngClass]="currentTab == 'grn' ? 'active' : ''"
           >GRN Data</a
         >
       </li>
@@ -184,6 +190,7 @@
           <ng-container *ngTemplateOutlet="vendor"></ng-container>
           <ng-container *ngTemplateOutlet="header"></ng-container>
           <ng-container *ngTemplateOutlet="line"></ng-container>
+          <ng-container *ngTemplateOutlet="poline"></ng-container>
           <ng-container *ngTemplateOutlet="grn"></ng-container>
         </div>
 
@@ -193,7 +200,6 @@
             class="tab-pane fade"
             id="vendor"
             role="tabpanel"
-            [ngClass]="currentTab == 'vendor' ? 'show active' : ''"
             aria-labelledby="vendor-tab"
           >
             <div class="displayFlex">
@@ -226,7 +232,6 @@
             class="tab-pane fade"
             id="header"
             role="tabpanel"
-            [ngClass]="currentTab == 'header' ? 'show active' : ''"
             aria-labelledby="header-tab"
           >
             <div class="displayFlex">
@@ -290,8 +295,8 @@
         <ng-template #line>
           <!-- line -->
           <div
-            class="tab-pane fade"
-            [ngClass]="currentTab == 'line' ? 'show active' : ''"
+            class="tab-pane fade show active"
+            [ngClass]="grnCreateBoolean ? 'show active' : ''"
             id="line"
             role="tabpanel"
             aria-labelledby="line-tab"
@@ -651,6 +656,8 @@
                           [ngClass]="
                             item.TagName == 'Description' ? 'w-des' : 'w-sm'
                           "
+                          
+                          style="border: 1px solid #efc384;"
                           [name]="line1.idDocumentLineItems"
                           [value]="line1.Value"
                           [title]="line1.Value"
@@ -716,11 +723,63 @@
           </div>
         </ng-template>
 
+        <!--PO lines-->
+        <ng-template #poline>
+        <div
+          *ngIf="currentTab == 'poline'"
+          class="tab-pane fade"
+          id="POline"
+          role="tabpanel"
+          aria-labelledby="POline-tab"
+        >
+          <div class="refresh_btn">
+            <button class="btnUpload" (click)="refreshPO()">Refresh PO</button>
+          </div>
+          <table class="invert" style="width: 100%" *ngIf="POlineBool">
+            <tr
+              class="invert_tr"
+              *ngFor="let item of polineTableData; let i = index"
+            >
+              <td class="lineName invert_th_td">
+                {{ item.TagName }}
+              </td>
+              <!-- <div>
+                          <div class="linevalue invert_thtd">{{i+1}}</div>
+                        </div> -->
+              <td
+                class="linevalue invert_th_td"
+                *ngFor="let line1 of poLineData; let i = index"
+              >
+                <span>
+                  <div
+                    *ngFor="let line of line1 | keyvalue"
+                    class="d-flex"
+                    style="position: relative"
+                  >
+                    <span *ngIf="line.key == item.TagName">
+                      <input
+                        type="text"
+                        [ngClass]="line.key == 'Name' ? 'w-des' : 'w-sm'"
+                        [value]="line.value"
+                        [title]="line.value"
+                        disabled
+                        class="form-control mb-1 inputHeight"
+                      />
+                    </span>
+                  </div>
+                </span>
+              </td>
+            </tr>
+          </table>
+          <div *ngIf="!POlineBool" class="f-13 text-center">
+            No PO lines are available
+          </div>
+        </div>
+        </ng-template>
         <ng-template #grn>
           <div
           class="tab-pane fade show"
           id="grn"
-          [ngClass]="currentTab == 'grn' ? 'show active' : ''"
           role="tabpanel"
           aria-labelledby="grn-tab"
         >
@@ -884,6 +943,7 @@
             Cancel
           </button>
           <button
+          *ngIf="!GRN_PO_Bool"
             class="btn btnVender bg-btn-cancel mr-3"
             type="button"
             (click)="displayrejectDialog = true"
@@ -1117,6 +1177,44 @@
         Update
       </button>
     </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Add label-->
+<p-dialog [header]="headerpop" [(visible)]="progressDailogBool" [breakpoints]="{'960px': '75vw'}"
+  [style]="{width: '31vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+  
+  <div *ngIf="!GRNDialogBool">
+    <div class="f-12" *ngIf="!(batchData?.length>0)">Hey, Please hold on the batch is running...</div>
+    <ul class="f-12" *ngIf="batchData?.length>0">
+      <li *ngFor="let st of batchData"> <span [ngStyle]="{'color':st.status == 1 ? 'green':'red'}">{{st.msg}}</span> </li>
+    </ul>
+  </div>
+  <div *ngIf="GRNDialogBool" class="text-center" style="min-height: 150px;">
+    <!-- select GRN Number -->
+    <p-multiSelect
+    [options]="grnList"
+    placeholder="GRN Number"
+    filter="false"
+    inputStyleClass="form-control mr-2"
+    optionLabel="docheaderID"
+    [maxSelectedLabels]="3"
+    [selectedItemsLabel]="'{0} items selected'"
+    name="PO_GRN_Number"
+    [(ngModel)]="selectedGRNList"
+    required
+  >
+  </p-multiSelect>
+
+  </div>
+  <ng-template  pTemplate="footer">
+    <div class="d-flex justify-content-center">
+      <button *ngIf="!GRNDialogBool" type="button" class="btn btnVender bg-btn-success mt-2" (click)="routeToMapping()">Next</button>
+      <button *ngIf="GRNDialogBool" type="button" class="btn btnVender bg-btn-cancel mt-2 mr-2" (click)="progressDailogBool = false">Cancel</button>
+      <button *ngIf="GRNDialogBool" type="button" class="btn btnVender bg-btn-success mt-2" [disabled]="!(selectedGRNList?.length>0)" (click)="ChangeGRNData()">Change</button>
+      
+    </div>
+
   </ng-template>
 </p-dialog>
 

@@ -9,7 +9,8 @@ import { MessageService } from 'primeng/api';
 import { PermissionService } from 'src/app/services/permission.service';
 import { TaggingService } from 'src/app/services/tagging.service';
 import { NgForm } from '@angular/forms';
-
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 @Component({
   selector: 'app-create-grn',
   templateUrl: './create-grn.component.html',
@@ -26,6 +27,8 @@ export class CreateGRNComponent implements OnInit {
     { field: 'totalAmount', header: 'Amount' },
   ];
   columnsData = [];
+  columnsDataPO = [];
+  showPaginator: boolean;
   showPaginatorAllInvoice: boolean;
   columnsToDisplay = [];
 
@@ -69,14 +72,18 @@ export class CreateGRNComponent implements OnInit {
     private alertService: AlertService,
     private router: Router,
     private permissionService : PermissionService,
-    private dataS : DataService
+    private dataS : DataService,
+    private md: MatDialog
   ) { }
 
   ngOnInit(): void {
     if(this.permissionService.GRNPageAccess == true){
       this.viewType = this.tagService.GRNTab;
       this.prepareColumnsArray();
-      this.readTableData();
+      this.readTableData('');
+      if(this.sharedService.po_num){
+        this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`)
+      }
       this.readEntity();
     } else{
       alert("Sorry!, you do not have access");
@@ -127,9 +134,9 @@ export class CreateGRNComponent implements OnInit {
     }
   }
 
-  readTableData(){
+  readTableData(query){
     this.ngxSpinner.show();
-    this.sharedService.readReadyGRNData().subscribe((data:any)=>{
+    this.sharedService.readReadyGRNData(query).subscribe((data:any)=>{
       let array = [];
       data.result.forEach(ele=>{
         let mergedArray = {...ele.Document,...ele.Vendor};
@@ -144,6 +151,26 @@ export class CreateGRNComponent implements OnInit {
       this.ngxSpinner.hide();
     },err=>{
       this.ngxSpinner.hide();
+    })
+  }
+  readTableDataPO(query){
+    this.sharedService.readReadyGRNData(query).subscribe((data:any)=>{
+      let array = [];
+      data.result.forEach(ele=>{
+        let mergedArray = {...ele.Document,...ele.Vendor};
+        array.push(mergedArray);
+      });
+      this.columnsDataPO = array;
+      if(this.columnsDataPO.length > 0){
+        this.MessageService.add({
+          severity : 'warn',
+          summary  : 'Alert',
+          detail  : "Hey, Invoice is already available in Serina for the Selected PO, Please create the GRN using the invoice."
+        })
+      }
+      if(this.columnsDataPO.length >10){
+        this.showPaginator = true;
+      }
     })
   }
   readEntity(){
@@ -223,30 +250,70 @@ export class CreateGRNComponent implements OnInit {
       }
   }
   selectedPO(id){
-    this.readPOLines(id.PODocumentID)
     this.sharedService.po_doc_id = id.idDocument;
+    this.sharedService.po_num = id.PODocumentID
+    this.checkGRNPO(id.PODocumentID)
   }
   readPOLines(po_num) {
     this.sharedService.getPO_Lines(po_num).subscribe((data: any) => {
       this.poLineData = data.result;
       this.PO_GRN_Number_line = this.poLineData;
+      this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`);
+
     }, err => {
       this.alertService.errorObject.detail = "Server error";
       this.MessageService.add(this.alertService.errorObject);
     })
   }
   addPODetailsToQueue(val){
-    console.log(val)
-    this.sharedService.checkGRN_PO_duplicates(val.PONumber.PODocumentID).subscribe((data:any)=>{
-      if(data.result.length > 0){
-        if(confirm(`GRN is already availablle for ${val.PONumber.PODocumentID}, still you want to create one more?`)){
+    this.sharedService.checkGRN_PO_balance(true).subscribe((data:any)=>{
+      if(data.result > 0 && this.columnsDataPO.length == 0 ){
           this.routeToGRN(val);
-        } else {
-          this.alertService.errorObject.detail = "Please select other PO to create GRN";
-          this.MessageService.add(this.alertService.errorObject);
-        }
       } else {
-        this.routeToGRN(val);
+        // this.alertService.updateObject.summary = 'Alert';
+        // this.alertService.updateObject.detail = "Hey, Invoice is already available in Serina, Please create the GRN using the invoice.";
+        // this.MessageService.add(this.alertService.updateObject);
+        const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
+          width : '30%',
+          height: '35vh',
+          hasBackdrop: false,
+          data : { body: 'Still you want to create GRN from PO for remaining balance?'}})
+
+          drf.afterClosed().subscribe((bool)=>{
+            if(bool){
+              this.routeToGRN(val);
+            } else {
+              this.MessageService.add({
+                severity : 'warn',
+                summary  : 'Alert',
+                detail  : "Okay, Please create the GRN from the given list of invoices."
+              })
+            }
+          })
+          
+      }
+    })
+  }
+  checkGRNPO(val){
+    this.sharedService.checkGRN_PO_duplicates(val).subscribe((data:any)=>{
+      if(data.result.length > 0){
+        const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
+          width : '30%',
+          height: '35vh',
+          hasBackdrop: false,
+          data : { body: `GRN is already availablle for ${val}, still you want to create one more?`}})
+
+          drf.afterClosed().subscribe(bool=>{
+            if(bool){
+              this.readPOLines(val);
+            } else {
+              this.alertService.errorObject.detail = "Please select other PO to create GRN";
+              this.MessageService.add(this.alertService.errorObject);
+            }
+          })
+       
+      } else {
+        this.readPOLines(val);
       }
     })
     

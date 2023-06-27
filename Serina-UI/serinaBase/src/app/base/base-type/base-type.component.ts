@@ -144,6 +144,12 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   servicesData() {
     this.financeapproveDisplayBoolean =
     this.dataStoreService.configData?.enableApprovals;
+    let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
+    if(userRole == 'customer super admin' || userRole == 'ds it admin'){
+      this.dataStoreService.isAdmin = true;
+    } else {
+      this.dataStoreService.isAdmin = false;
+    }
     this.settingService.finaceApproveBoolean = this.dataStoreService.configData?.enableApprovals;
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;

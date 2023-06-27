@@ -63,6 +63,7 @@ export class SharedService {
   }
   isCustomerPortal: boolean;
   po_doc_id: any;
+  po_num:string;
   spAccountSub = new BehaviorSubject<any>([])
 
   constructor(private http: HttpClient) { }
@@ -213,7 +214,7 @@ export class SharedService {
   readvendors(data) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorlist/${this.userId}${data}`).pipe(retry(2));
   }
-  getVendorUniqueData(data): Observable<any> {
+  getVendorUniqueData(data):Observable<any>{
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorNameCode/${this.userId}${data}`)
   }
 
@@ -297,6 +298,10 @@ export class SharedService {
   readSPApprovers() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/getapprovers`)
   }
+  getElements(sp) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/elementsList?sp=${sp}`)
+  }
+
   // entity
 
   getEntitybody() {
@@ -342,11 +347,11 @@ export class SharedService {
   get_poDoc_id(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getDocid_PO/${this.userId}/PODocumentid/${id}`).pipe(retry(2));
   }
-
-  readReadyGRNData(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceList/${this.userId}`).pipe(retry(2))
+  
+  readReadyGRNData(param):Observable<any> {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceList/${this.userId}${param}`).pipe(retry(2))
   }
-  readReadyGRNInvData(): Observable<any> {
+  readReadyGRNInvData():Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceData/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(2))
   }
   saveGRNData(boolean_value,value):Observable<any> {
@@ -360,6 +365,9 @@ export class SharedService {
   }
   checkGRN_PO_duplicates(po_num){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/checkGRN_PO_availability/${this.userId}/${po_num}`)
+  }
+  checkGRN_PO_balance(bool){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POInvoiceBalanceCheckForGRN/${this.userId}?po_doc_id=${this.po_doc_id}&overbal=${bool}`)
   }
   createGRNWithPO(value){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}`,value).pipe(retry(2))
@@ -430,6 +438,9 @@ export class SharedService {
   }
   vendorSubmitPO(query, uploadtime){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorPO/${this.userId}?re_upload=${query}&po_id=${this.invoiceID}&uploadtime=${uploadtime}`)
+  }
+  syncBatchTrigger(query){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/synctriggerbatch/${this.invoiceID}${query}`,'')
   }
   getGRNTabData(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGrnDataForInvoice/${this.userId}?inv_id=${this.invoiceID}`)

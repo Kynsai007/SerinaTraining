@@ -1,0 +1,30 @@
+<div class="div_center">
+    <div class="text-center">
+        <div>
+          <i
+            class="pi pi-exclamation-triangle"
+            style="font-size: 4rem; color: red"
+          ></i>
+        </div>
+        <div class="deleteDivText">
+          {{ componentTxt }}
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <button
+        class="btn btnVender bg-btn-success mr-3"
+        type="button"
+        (click)="closedialog(true)"
+      >
+        Yes
+      </button>
+      <button
+        class="btn btnVender bg-btn-cancel"
+        type="button"
+        (click)="closedialog(false)"
+      >
+        No
+      </button>
+      </div>
+</div>

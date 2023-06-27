@@ -193,6 +193,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   approverList: any;
   acc_num: any;
   ap_boolean: any;
+  readOnlyForm = false;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -501,32 +502,35 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getElementData(e) {
-    if ((e.ServiceProviderName == 'Dubai Electricity & Water Authority') || e.ServiceProviderName == 'DUBAI ELECTRICITY AND WATER AUTHORITY') {
-      this.elementList = [
-        { id: 1, name: 'Water' },
-        { id: 2, name: 'Electricity' },
-        { id: 3, name: 'Housing' },
-        { id: 4, name: 'Sewerage' },
-        { id: 5, name: 'Others' },
-      ]
-    } else if (e.ServiceProviderName == 'EMIRATES INTEGRATED TELECOMMUNICATIONS PJSC(DU)') {
-      this.elementList = [
-        { id: 1, name: 'Usage charges' },
-        { id: 2, name: 'Monthly Fixed Charges' },
-        { id: 3, name: 'TV Channels' },
-        { id: 4, name: 'Others' }
-      ]
-    } else if (e.ServiceProviderName == 'ETISALAT') {
-      this.elementList = [
-        { id: 1, name: 'Usage_Credit' },
-        { id: 2, name: 'International_Calls' },
-        { id: 3, name: 'Others' }
-      ]
-    } else {
-      this.elementList = [
-        { id: 1, name: 'Others' }
-      ]
-    }
+    this.sharedService.getElements(e.ServiceProviderName).subscribe((data:any)=>{
+      this.elementList = data[e.ServiceProviderName];
+    })
+    // if ((e.ServiceProviderName == 'Dubai Electricity & Water Authority') || e.ServiceProviderName == 'DUBAI ELECTRICITY AND WATER AUTHORITY') {
+    //   this.elementList = [
+    //     { id: 1, name: 'Water' },
+    //     { id: 2, name: 'Electricity' },
+    //     { id: 3, name: 'Housing' },
+    //     { id: 4, name: 'Sewerage' },
+    //     { id: 5, name: 'Others' },
+    //   ]
+    // } else if (e.ServiceProviderName == 'EMIRATES INTEGRATED TELECOMMUNICATIONS PJSC(DU)') {
+    //   this.elementList = [
+    //     { id: 1, name: 'Usage charges' },
+    //     { id: 2, name: 'Monthly Fixed Charges' },
+    //     { id: 3, name: 'TV Channels' },
+    //     { id: 4, name: 'Others' }
+    //   ]
+    // } else if (e.ServiceProviderName == 'ETISALAT') {
+    //   this.elementList = [
+    //     { id: 1, name: 'Usage_Credit' },
+    //     { id: 2, name: 'International_Calls' },
+    //     { id: 3, name: 'Others' }
+    //   ]
+    // } else {
+    //   this.elementList = [
+    //     { id: 1, name: 'Others' }
+    //   ]
+    // }
   }
 
   colseDiv() {
@@ -709,7 +713,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.EditSpAccountBoolean) {
       let costDetailsData = [];
       let u_elmentArray = [];
-      this.SpAccountDatails.value.costDetails.forEach((element, index) => {
+      this.SpAccountDatails?.value?.costDetails?.forEach((element, index) => {
         const { entityBodyID, departmentID, elementFactor } = element;
         element.entityBodyID = +entityBodyID;
         if (element.departmentID != null) {
@@ -829,9 +833,9 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       return element.idServiceProvider == data.serviceProviderID;
     });
     if (data.isActive == 1) {
-      this.SpAccountDatails.enable();
+      this.readOnlyForm = false;
     } else {
-      this.SpAccountDatails.disable();
+      this.readOnlyForm = true;
     }
     this.SpAccountDatails.controls['isActive'].enable();
     // this.SpAccountDatails.controls['Account'].disable();
@@ -866,9 +870,9 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   accontAtiveToggle(val) {
     if (val === false) {
-      this.SpAccountDatails.disable();
+      this.readOnlyForm = true;
     } else {
-      this.SpAccountDatails.enable();
+      this.readOnlyForm = false;
     }
     this.SpAccountDatails.controls['isActive'].enable();
     // this.SpAccountDatails.controls['Account'].disable();
