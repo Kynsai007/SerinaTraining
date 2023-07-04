@@ -156,7 +156,7 @@ export class ApproveComponent implements OnInit {
     this.sharedService.readApprovedInvoiceData().subscribe(
       (data: any) => {
         let approvedArray = [];
-        data.approved.forEach((element) => {
+        data?.result?.approved.forEach((element) => {
           let mergeArray = {
             ...element.Entity,
             ...element.EntityBody,
