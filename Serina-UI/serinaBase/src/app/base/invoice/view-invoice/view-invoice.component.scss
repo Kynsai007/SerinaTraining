@@ -356,9 +356,10 @@ a {
 //     opacity: 1;
 // }
 .refresh_btn {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 5px;
+  position: absolute;
+  z-index: 12;
+  right: 10px;
+  top: 6px;
 }
 .img-browse {
   background-color: #f2be42;

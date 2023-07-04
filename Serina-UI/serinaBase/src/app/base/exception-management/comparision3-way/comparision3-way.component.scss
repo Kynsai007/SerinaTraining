@@ -189,6 +189,12 @@
   position: relative;
   top: 11px;
 }
+.refresh_btn {
+  display: flex;
+  position: relative !important;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
 @media screen and (max-width: 1200px) {
   .position_rule {
     left: 50vw;

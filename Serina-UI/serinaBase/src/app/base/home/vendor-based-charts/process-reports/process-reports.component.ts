@@ -17,7 +17,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class ProcessReportsComponent implements OnInit {
   vendorsData = [];
   invoiceAmountData: any;
-  invoiceAgechartData: any;
+  invoiceAgechartData: any; 
   invoiceBysourceChartdata: any;
   entity: any;
   invCountByvendor: any;
@@ -93,7 +93,7 @@ export class ProcessReportsComponent implements OnInit {
 
     setTimeout(() => {
       this.setConatinerForCharts();
-    }, 800);
+    }, 1200);
   }
 
   setConatinerForCharts() {
@@ -223,7 +223,7 @@ export class ProcessReportsComponent implements OnInit {
 
   chartsData() {
     this.invoiceAmountData = [
-      ['Vendor', 'Amount'],
+      ['Vendor', 'Amount',{type: 'string', role: 'annotation'}],
       // ['Mehtab', 8000],
       // ['Alpha Data', 10000],
       // ['First Choice', 1900],
@@ -399,9 +399,10 @@ export class ProcessReportsComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getPendingInvByAmount(filter).subscribe((data: any) => {
       data.data.forEach((element) => {
+        let amount = this.convertToKM(element.amount)
         this.invoiceAmountData.push([
           element.VendorName,
-          parseInt(element.amount),
+          parseInt(element.amount),amount
         ]);
       });
       this.SpinnerService.hide();
@@ -560,5 +561,16 @@ export class ProcessReportsComponent implements OnInit {
 
   downloadReport(){
       this.ImportExcelService.exportExcel(this.invoiceByEntityChartdata);
+  }
+
+  convertToKM(value: number): string {
+    const absValue = Math.abs(value);
+    if (absValue >= 1000000) {
+      return (value / 1000000).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "M";
+    } else if (absValue >= 1000) {
+      return (value / 1000).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "k";
+    } else {
+      return value.toLocaleString();
+    }
   }
 }

@@ -87,84 +87,6 @@ export class ChartsService {
     }
   }
 
-  // drawColumnChart(id) {
-  //   google.charts.load('current', { packages: ['corechart', 'bar'] });
-  //   google.charts.setOnLoadCallback(drawBasic);
-
-  //   function drawBasic() {
-  //     // let data = new google.visualization.DataTable();
-  //     // data.addColumn('string', 'Service Provider');
-  //     // data.addColumn('number', 'Amount');
-
-  //     // data.addRows([
-  //     //   [{v: ['SEWA', 0, 0], f: 'SEWA'}, 1],
-  //     //   [{v: ['SECO', 0, 0], f: 'SECO'}, 2],
-  //     //   [{v: ['ENOC', 0, 0], f:'ENOC'}, 3],
-  //     //   [{v: ['DEWA', 0, 0], f: 'DEWA'}, 4]
-  //     // ]);
-
-  //     let data = google.visualization.arrayToDataTable();
-
-  //     let options = {
-  //       title: 'Sp Amount Status',
-  //       textStyle: {
-  //         color: '#272727',
-  //         fontSize: 13 
-  //       },
-  //       legend: { position: 'bottom', maxLines: 3 },
-  //       bar: { groupWidth: '40%' },
-  //       annotations: {
-  //         // alwaysOutside: true,
-  //         textStyle: {
-  //           color: '#0d0b3c',
-  //           auraColor: 'none',
-  //           gridlines: {
-  //             color: 'transparent',
-  //           },
-  //         },
-  //       },
-  //       colors: ['#A3B8C5'],
-  //       animation: {
-  //         duration: 500,
-  //         startup: true,
-  //       },
-  //       hAxis: {
-  //         gridlines: {
-  //           color: 'transparent',
-  //           count: 0,
-  //         },
-  //         baselineColor: '#ffffff',
-  //         textStyle: {
-  //           color: '#0D0B3C',
-  //           fontSize: 10, // 12, 18 whatever you want (don't specify px)
-  //           bold: true, // true or false
-  //           italic: false, // true of false
-  //         },
-  //       },
-  //       vAxis: {
-  //         title: '',
-  //         gridlines: {
-  //           color: '#f3f3f3',
-  //         },
-  //         baselineColor: '#d3d3d3',
-  //         textStyle: {
-  //           color: '#0D0B3C',
-  //           fontSize: 10, // 12, 18 whatever you want (don't specify px)
-  //           bold: true, // true or false
-  //           italic: false, // true of false
-  //         },
-  //         // ticks: [0,10,20,30,40,50,60,70,80,100]
-  //       },
-  //     };
-
-  //     let chart = new google.visualization.ColumnChart(
-  //       document.getElementById(id)
-  //     );
-
-  //     chart.draw(data, options);
-  //   }
-  // }
-
   drawColumnChartPending(id) {
     google.charts.load('current', { packages: ['corechart', 'bar'] });
     google.charts.setOnLoadCallback(drawBasic);
@@ -269,8 +191,25 @@ export class ChartsService {
     google.charts.load('current', { packages: ['corechart', 'bar'] });
     google.charts.setOnLoadCallback(drawBasic);
 
+    function getTickInterval(maxVal) {
+      let power = Math.floor(Math.log10(maxVal));
+      let interval = Math.pow(10, power - 1);
+      return interval;
+    }
     function drawBasic() {
-      
+
+      let yaxisVa = []
+      chartData.forEach((el, i) => {
+        if (i != 0) {
+          yaxisVa.push(el[1])
+        }
+      });
+      let maxVal = Math.max.apply(null, yaxisVa);
+      let tickInterval = getTickInterval(maxVal);
+      let tickValues = [];
+      for (let i = 0; i <= 5; i++) {
+        tickValues.push(Math.round(maxVal / 5 * i / tickInterval) * tickInterval);
+      }
       let data = google.visualization.arrayToDataTable(chartData);
 
       let options = {
@@ -322,7 +261,8 @@ export class ChartsService {
             bold: true, // true or false
             italic: false, // true of false
           },
-          // ticks: [0,10,20,30,40,50,60,70,80,100]
+          ticks: tickValues,
+          interval: tickInterval
         },
       };
 

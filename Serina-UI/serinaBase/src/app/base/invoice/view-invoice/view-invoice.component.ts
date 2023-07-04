@@ -373,6 +373,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       // this.selectionTabBoolean = true;
       // this.supportTabBoolean = true;
     } else if (this.approval_selection_boolean == true && this.isLCMInvoice == false) {
+      console.log("hi Approval")
       this.readDepartment();
       this.readCategoryData();
       this.showPdf = false;
@@ -1190,14 +1191,17 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.AlertService.updateObject.summary = 'MultiPO Invoice';
         this.AlertService.updateObject.detail = 'Please Check the invoice total is not matching with the lines.';
       } else if(sub_status == 70) {
+        this.approval_selection_boolean = true;
         this.AlertService.updateObject.summary = 'Set Approval';
         this.AlertService.updateObject.detail = 'Please add the approvers';
+        console.log("hi ser Approval",this.approval_selection_boolean,this.isLCMInvoice);
+        
       } 
       // else if(sub_status == 71) {
       //   this.AlertService.updateObject.summary = 'Approval pending';
       //   this.AlertService.updateObject.detail = 'Please change the approvers if you have any issues.';
       // }
-      // this.routeOptions();
+      this.routeOptions();
       this.messageService.add(this.AlertService.updateObject)
     } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {
       this.router.navigate([`${this.portalName}/ExceptionManagement`]);
@@ -2141,12 +2145,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     clearTimeout(this.callSession);
     this.mat_dlg.closeAll();
     // this.tagService.financeApprovePermission = false;
-    // this.tagService.approveBtnBoolean = false;
+    this.tagService.approveBtnBoolean = false;
     // this.tagService.submitBtnBoolean = false;
-    // this.tagService.approval_selection_boolean = false;
-    // this.tagService.LCM_boolean = false;
-    // this.dataService.entityID = undefined;
-    // this.SharedService.selectedEntityId = undefined;
+    this.tagService.approval_selection_boolean = false;
+    this.tagService.LCM_boolean = false;
+    this.dataService.entityID = undefined;
+    this.SharedService.selectedEntityId = undefined;
     this.vendorsSubscription.unsubscribe();
   }
 }

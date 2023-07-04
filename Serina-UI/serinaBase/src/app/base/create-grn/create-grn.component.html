@@ -53,20 +53,9 @@
         </div>
       </div>
 
-      <!-- Inprogress Tab -->
+      <!-- GRN With PO Tab -->
       <div *ngSwitchCase="'editApproveGRN'">
         <div class="tableDiv">
-          <!-- <div>
-            <app-exception-table
-              [invoiceColumns]="ColumnsForGRNApproval"
-              [columnsToDisplay]="columnsToDisplayGRNApproval"
-              (searchInvoiceData)="searchInvoiceDataV($event)"
-              [ColumnLength]="approvalPageColumnLength"
-              [showPaginatorAllInvoice]="showPaginatorApproval"
-              [columnsData]="columnsDataAdmin"
-            >
-            </app-exception-table>
-          </div> -->
           <form
           #PO_GRNForm="ngForm"
           (ngSubmit)="addPODetailsToQueue(PO_GRNForm.value)"

@@ -1044,6 +1044,7 @@ export class UploadSectionComponent implements OnInit {
                     id = 3
                   }
                   this.dataService.idDocumentType = id;
+                  this.dataService.entityID = this.selectedEntityId;
                   this.tagService.isUploadScreen = true;
                   this.tagService.displayInvoicePage = false;
                   this.tagService.editable = true;

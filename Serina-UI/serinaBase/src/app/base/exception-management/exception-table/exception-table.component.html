@@ -64,7 +64,7 @@
         </tr>
         <tr>
           <td *ngFor="let col of columns" class="sticky_top">
-            <input
+            <!-- <input
               pInputText
               type="text"
               (input)="
@@ -77,7 +77,45 @@
               [value]="allInvoice.filters[col.field]?.value"
               [placeholder]="'Search by ' + col.header"
               class="tableSearchInput"
-            />
+            /> -->
+            <div [ngSwitch]="col.field">
+              <div *ngSwitchCase="'status'" class="f-12">
+                <p-columnFilter
+                  [field]="col.field"
+                  matchMode="contains"
+                  [showMenu]="false"
+                >
+                  <ng-template pTemplate="filter">
+                    <p-dropdown
+                      [options]="statusData"
+                      [(ngModel)]="selectedStatus"
+                      (onChange)="filter($event.value,col.field)"
+                      placeholder="Select Status"
+                      [showClear]="false"
+                      styleClass="w-100 text-center f-11"
+                    ></p-dropdown>
+                  </ng-template>
+                </p-columnFilter>
+              </div>
+              <div *ngSwitchDefault>
+                <input
+                  pInputText
+                  type="text"
+                  (input)="
+                    allInvoice.filter(
+                      $event.target.value || ' ',
+                      col.field,
+                      'contains'
+                    )
+                  "
+                  [value]="allInvoice.filters[col.field]?.value"
+                  [placeholder]="'Search by ' + col.header"
+                  class="tableSearchInput"
+                />
+
+                <!-- <p-columnFilter placeholder="Search by ID" type="text"  [field]="col.field"></p-columnFilter> -->
+              </div>
+            </div>
 
             <!-- <p-columnFilter placeholder="Search by ID" type="text"  [field]="col.field"></p-columnFilter> -->
           </td>

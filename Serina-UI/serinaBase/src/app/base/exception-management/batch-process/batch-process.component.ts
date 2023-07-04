@@ -8,7 +8,9 @@ import { ImportExcelService } from './../../../services/importExcel/import-excel
 import { TaggingService } from './../../../services/tagging.service';
 import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { DatePipe, Location } from '@angular/common';
 import { DataService } from 'src/app/services/dataStore/data.service';
+import { DateFilterService } from 'src/app/services/date/date-filter.service';
 
 @Component({
   selector: 'app-batch-process',
@@ -82,6 +84,9 @@ export class BatchProcessComponent implements OnInit {
   invoceDoctype: boolean;
   datalengthPO: number;
   showPaginatorAllPO: boolean;
+  filterData: any[];
+  minDate: Date;
+  maxDate: Date;
 
   constructor(
     private tagService: TaggingService,
@@ -93,7 +98,9 @@ export class BatchProcessComponent implements OnInit {
     private exceptionService: ExceptionsService,
     private permissionService : PermissionService,
     private sharedService :SharedService,
-    private ds: DataService
+    private ds: DataService,
+    private datePipe :DatePipe,
+    private dateFilterService :DateFilterService
   ) {}
 
   ngOnInit(): void {
@@ -119,11 +126,17 @@ export class BatchProcessComponent implements OnInit {
       }
       
       this.findRoute();
+      this.dateRange();
     } else{
       alert("Sorry!, you do not have access");
       this.router.navigate(['customer/invoice/allInvoices'])
     }
 
+  }
+  dateRange() {
+    this.dateFilterService.dateRange();
+    this.minDate = this.dateFilterService.minDate;
+    this.maxDate = this.dateFilterService.maxDate;
   }
 
   findRoute() {
@@ -209,8 +222,10 @@ export class BatchProcessComponent implements OnInit {
         batchData.forEach(ele=>{
           if(ele.idDocumentType == 3){
             this.columnsData.push(ele);
+            this.filterData = this.columnsData;
           } else if (ele.idDocumentType == 1){
             this.columnsDataPO.push(ele);
+            this.filterData = this.columnsDataPO;
           }
         })
         this.dataLength = this.columnsData.length;
@@ -279,6 +294,7 @@ export class BatchProcessComponent implements OnInit {
           let c = new Date(a.CreatedOn).getTime();
           let d = new Date(b.CreatedOn).getTime();
           return d-c });
+        this.filterData = this.columnsData;
         this.dataLength = this.columnsData.length;
         if (this.dataLength > 10) {
           this.showPaginatorAllInvoice = true;
@@ -306,5 +322,23 @@ export class BatchProcessComponent implements OnInit {
     } else {
       alert('No Data to import');
     }
+  }
+  filterByDate(date) {
+    if (date != '') {
+      const frmDate = this.datePipe.transform(date[0], 'yyyy-MM-dd');
+      const toDate = this.datePipe.transform(date[1], 'yyyy-MM-dd');
+        this.columnsData = this.filterData;
+        this.columnsData = this.columnsData.filter((element) => {
+          const dateF = this.datePipe.transform(element.CreatedOn, 'yyyy-MM-dd')
+          return dateF >= frmDate && dateF <= toDate;
+        });
+        this.dataLength = this.columnsData.length;
+    } else {
+      this.columnsData = this.filterData;
+      this.dataLength = this.columnsData.length;
+    }
+  }
+  clearDates() {
+    this.filterByDate('');
   }
 }

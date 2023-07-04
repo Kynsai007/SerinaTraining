@@ -30,9 +30,9 @@
     </button> -->
         
     
-        <button class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2"  (click)="opengrnDailog()">Edit GRN</button>
+        <button class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2"  (click)="opengrnDailog()">Select GRN</button>
     <button
-      *ngIf="isAdmin"
+      *ngIf="subStstusId == 8 || subStstusId == 16 || subStstusId == 21 || subStstusId == 27"
       class="btnUpload btn_extra_bg m-t-neg ml-2"
       (click)="open_dialog_comp('flip line')"
     >
@@ -103,7 +103,6 @@
           role="tab"
           aria-controls="vendor"
           aria-selected="true"
-          [ngClass]="currentTab == 'vendor' ? 'active' : ''"
           > <span *ngIf="ap_boolean">Vendor</span> <span *ngIf="!ap_boolean">Customer</span> details</a
         >
       </li>
@@ -121,25 +120,23 @@
           role="tab"
           aria-controls="header"
           aria-selected="false"
-          [ngClass]="currentTab == 'header' ? 'active' : ''"
           >Header</a
         >
       </li>
       <li
-        class="nav-item"
+        class="nav-item "
         pTooltip="Line details"
         tooltipPosition="top"
         (click)="changeTab('line')"
       >
         <a
-          class="nav-link"
+          class="nav-link active"
           id="line-tab"
           data-toggle="tab"
           href="#line"
           role="tab"
           aria-controls="line"
           aria-selected="false"
-          [ngClass]="currentTab == 'line' ? 'active' : ''"
           >Line details</a
         >
       </li>

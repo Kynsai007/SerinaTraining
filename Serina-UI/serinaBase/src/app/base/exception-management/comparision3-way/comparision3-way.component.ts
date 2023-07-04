@@ -270,9 +270,11 @@ export class Comparision3WayComponent
           this.tagService.headerName = 'Create GRN With PO';
           this.getInvoiceFulldata_po();
           this.get_PO_GRN_Lines();
+          
         } else {
           this.tagService.headerName = 'Create GRN';
           this.readGRNInvData();
+          this.readPOLines();
         }
         if(this.grnCreateBoolean){
           this.currentTab =  'line'

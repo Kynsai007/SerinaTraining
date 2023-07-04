@@ -77,22 +77,24 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     private storageService: DataService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
-    private alertService : AlertService,
+    private alertService: AlertService,
     private MessageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.ap_boolean = this.storageService.ap_boolean;
     this.initialData();
   }
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes)
     if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
 
-      let mergedStatus = [ 'All'];
-      this.columnsData.forEach(ele=>{
+      let mergedStatus = ['All'];
+      this.columnsData.forEach(ele => {
         mergedStatus.push(ele.status)
       })
       this.statusData = new Set(mergedStatus);
+      console.log(this.statusData);
     }
   }
   initialData() {
@@ -200,21 +202,29 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.storageService.createGrn_G_S = value;
     }
   }
-  filter(value,dbCl) {
+  filter(value, dbCl) {
     this.selectedStatus = value;
     // this.storageService.allSelected
     if (value != 'All') {
-    this.allInvoice.filter(value || ' ',dbCl,'contains')
+      this.allInvoice.filter(value || ' ', dbCl, 'contains')
 
       this.first = 0
     } else {
-      this.allInvoice.filter(value || ' ',dbCl,'notContains')
+      this.allInvoice.filter(value || ' ', dbCl, 'notContains')
     }
   }
 
   // edit invoice details if something wrong
   editInvoice(e) {
     console.log(e)
+    // this.tagService.financeApprovePermission = false;
+    // this.tagService.approveBtnBoolean = false;
+    // this.tagService.submitBtnBoolean = false;
+    // this.tagService.approval_selection_boolean = false;
+    // this.tagService.LCM_boolean = false;
+    // this.dataService.entityID = undefined;
+    // this.SharedService.selectedEntityId = undefined;
+
     this.storageService.editableInvoiceData = e;
     this.ExceptionsService.invoiceID = e.idDocument;
     this.tagService.editable = true;
@@ -239,10 +249,11 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
             if (this.permissionService.editBoolean == true) {
               if (e.documentsubstatusID == 8 ||
                 e.documentsubstatusID == 16 ||
+                e.documentsubstatusID == 17 ||
                 e.documentsubstatusID == 33 ||
                 e.documentsubstatusID == 21 ||
                 e.documentsubstatusID == 27 ||
-                e.documentsubstatusID == 75 ) {
+                e.documentsubstatusID == 75) {
                 this.router.navigate([
                   `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
                 ]);
@@ -251,8 +262,8 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
                 this.router.navigate([
                   `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
                 ]);
-                this.storageService.entityID = e.entityID;
-                this.sharedService.selectedEntityId = e.entityID;
+                this.storageService.entityID = e.idEntity;
+                this.sharedService.selectedEntityId = e.idEntity;
                 if (e.documentsubstatusID == 29) {
 
                 } else if (e.documentStatusID == 24) {
@@ -268,7 +279,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
               };
               // this.ExceptionsService.updateDocumentLockInfo(JSON.stringify(sessionData)).subscribe((data:any)=>{})
               this.tagService.submitBtnBoolean = true;
-              if(this.tagService.batchProcessTab == 'PODoc'){
+              if (this.tagService.batchProcessTab == 'PODoc') {
                 this.tagService.headerName = 'Edit PO';
               } else {
                 this.tagService.headerName = 'Edit Invoice';
@@ -302,7 +313,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
           this.displayResponsivepopup = true;
           this.confirmText = `Sorry, "${data.result.User?.firstName} ${data.result.User?.lastName}" is doing changes for this invoice.`;
         }
-      }, err=>{
+      }, err => {
         this.SpinnerService.hide();
         this.alertService.errorObject.detail = "Please try after sometime"
         this.MessageService.add(this.alertService.errorObject);

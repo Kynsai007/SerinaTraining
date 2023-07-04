@@ -36,11 +36,28 @@
         </button>
         <!-- <button class=" btnUpload mr-2" (click)="toCreateNew()"><span class="f-16">+</span> Create</button> -->
       </div>
-      <!-- <div class="filter_input">
-                <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="Select dates to Filter"
-                    [readonlyInput]="true" [showIcon]="true" inputId="range"></p-calendar>
-                <button class="btnUpload filter_btn_m "> Filter</button>
-            </div> -->
+      <div
+          class="filter_input"
+        >
+          <p-calendar
+            [(ngModel)]="rangeDates"
+            selectionMode="range"
+            [minDate]="minDate"
+            [maxDate]="maxDate"
+            placeholder="Select dates to Filter"
+            [readonlyInput]="true"
+            [showIcon]="true"
+            showButtonBar="true"
+            (onClearClick)="clearDates()"
+            inputId="range"
+          ></p-calendar>
+          <button
+            class="btnUpload filter_btn_m z_index"
+            (click)="filterByDate(rangeDates)"
+          >
+          <i class="fa fa-filter" aria-hidden="true"></i>
+          </button>
+        </div>
     </div>
 
     <div class="tableDataDiv bg-design-all pt-1" [ngSwitch]="viewType">
