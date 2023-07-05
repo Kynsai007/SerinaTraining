@@ -256,6 +256,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   progressDailogBool: boolean;
   batchData: any;
   portalName: string;
+  isBatchTriggered: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -328,7 +329,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     });
     if (this.router.url.includes('InvoiceDetails')) {
       this.Itype = 'Invoice';
-      this.readPOLines();
+      
       this.getGRNtabData();
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
@@ -524,7 +525,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           return (val.TagLabel == 'PurchaseOrder');
         });
         this.po_num = po_num_data[0]?.Value;
-        this.getPODocId(this.po_num);
+        if(this.po_num){
+          this.getPODocId(this.po_num);
+        }
         // this.getGRNnumbers(this.po_num);
         if (data.ok.vendordata) {
           this.isServiceData = false;
@@ -542,6 +545,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             ...data.ok.servicedata[0].ServiceProvider,
           };
           this.vendorName = this.vendorData['ServiceProviderName'];
+        }
+        if(!this.isServiceData && this.Itype == 'Invoice' ){
+          this.readPOLines();
         }
         if (this.Itype == 'PO') {
           let count = 0;
@@ -1159,6 +1165,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   routeToMapping() {
+    this.isBatchTriggered = true;
     this.exceptionService.invoiceID = this.invoiceID;
     this.tagService.editable = true;
     this.tagService.submitBtnBoolean = true;
@@ -1475,7 +1482,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   backToInvoice() {
-    if (this.vendorUplaodBoolean === false) {
+    if (this.vendorUplaodBoolean === false && !this.isBatchTriggered) {
       this._location.back();
     } else {
       if (
@@ -2075,13 +2082,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   readPOLines() {
     this.exceptionService.getPOLines('').subscribe((data: any) => {
       this.poLineData = data.Po_line_details;
-      if(this.poLineData){
-        if (Object?.keys(this.poLineData[0])?.length > 0) {
+        if (this.poLineData?.length > 0) {
           this.POlineBool = true;
         } else {
           this.POlineBool = false;
         }
-      }
       this.SpinnerService.hide();
     }, err => {
       this.AlertService.errorObject.detail = "Server error";

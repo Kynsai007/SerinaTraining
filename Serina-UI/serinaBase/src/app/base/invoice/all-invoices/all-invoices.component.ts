@@ -61,7 +61,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   rows = 10;
   bgColorCode;
   FilterData = [];
-  selectedStatus: any;
+  selectedStatus = '';
   statusData: any;
   checkstatusPopupBoolean:boolean;
   statusText:string;
@@ -135,7 +135,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       this.first = this.storageService.allPaginationFirst;
       this.rows = this.storageService.allPaginationRowLength;
       this.stateTable = 'allInvoices';
-      this.filter('All','docstatus')
+      this.filter('All')
       let stItem:any = JSON.parse(sessionStorage?.getItem('allInvoices'));
       if(stItem){
         this.globalSearch = stItem?.filters?.global?.value;
@@ -193,10 +193,12 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
   viewInvoiceDetails(e) {
     let route:string;
-    if(this.stateTable == 'PO' ){
+    if(this.router.url.includes('PO')){
       route = 'PODetails';
+    } else if(this.router.url.includes('GRN') && !this.router.url.includes('GRNExceptions')){
+      route = 'GRNDetails';
     } else {
-      route = 'InvoiceDetails';
+      route = 'InvoiceDetails';      
     }
     if (this.userType == 'vendor_portal') {
       this.router.navigate([
@@ -219,15 +221,13 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     //   this.tagService.type = 'Invoice';
     // }
   }
-  filter(value,dbCl) {
+  filter(value) {
     this.tableData = this.FilterData;
-    this.selectedStatus = value;
     if (value != 'All') {
-    this.allInvoice.filter(value || ' ',dbCl,'contains')
-
+      this.tableData = this.tableData.filter(
+        (val) => value == val.docstatus
+      );
       this.first = 0
-    } else {
-      this.allInvoice.filter(value || ' ',dbCl,'notContains')
     }
   }
   viewStatusPage(e) {
@@ -341,7 +341,6 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
                 }
               };
             }
-            console.log(sub_status)
             if(sub_status != 1){
               window.location.reload();
             } else {

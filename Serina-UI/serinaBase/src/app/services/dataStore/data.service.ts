@@ -149,6 +149,7 @@ export class DataService {
   GRN_PO_Data = [];
   idDocumentType: number;
   ap_boolean:any;
+  doc_status_tab: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

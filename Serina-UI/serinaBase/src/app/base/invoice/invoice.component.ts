@@ -5,7 +5,7 @@ import { DateFilterService } from './../../services/date/date-filter.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 
 import { MessageService } from 'primeng/api';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -160,6 +160,7 @@ export class InvoiceComponent implements OnInit {
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
+    private location : Location,
     private authService: AuthenticationService
   ) { }
 
@@ -172,7 +173,9 @@ export class InvoiceComponent implements OnInit {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
       if (!this.vendorInvoiceAccess) {
-        this.route.navigate([`/${this.portal_name}/invoice/ServiceInvoices`])
+        if(this.dataService.doc_status_tab == undefined){
+          this.route.navigate([`/${this.portal_name}/invoice/ServiceInvoices`])
+        }
       }
     } else if (this.userDetails.user_type == 'vendor_portal') {
       this.usertypeBoolean = false;
@@ -183,7 +186,11 @@ export class InvoiceComponent implements OnInit {
       if (this.dataService.ap_boolean) {
         this.partyType = 'Vendor';
         this.invoceDoctype = true;
-        this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
+        if(!this.dataService.doc_status_tab){
+          this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
+        } else {
+          this.route.navigate([`${this.dataService.doc_status_tab}`]);
+        }
         this.getInvoiceColumns();
         if(this.GRNCreateBool){
           this.readGRNExceptionData();
@@ -304,7 +311,7 @@ export class InvoiceComponent implements OnInit {
       { dbColumnname: 'docheaderID', columnName: 'GRN Number' },
       { dbColumnname: 'CreatedOn', columnName: 'Received Date' },
       { dbColumnname: 'firstName', columnName: 'Created By' },
-      { dbColumnname: 'grn_type', columnName: 'source' }
+      { dbColumnname: 'grn_type', columnName: 'Source' }
     ];
 
     if (this.portal_name == 'customer') {
@@ -467,17 +474,17 @@ export class InvoiceComponent implements OnInit {
   getDisplayGRNdata(data) {
     this.SpinnerService.show();
     this.sharedService.getGRNdata(data).subscribe((data: any) => {
-      // let grnD = []
-      // data.grndata?.forEach(ele=>{
-      //   let merg = {...ele.Document}
-      //   merg.EntityName = ele.EntityName;
-      //   merg.VendorName = ele.VendorName;
-      //   merg.grn_type = ele.grn_type;
-      //   merg.firstName = ele.firstName;
-      //   grnD.push(merg)
-      // })
+      let grnD = []
+      data.grndata?.forEach(ele=>{
+        let merg = {...ele.Document}
+        merg.EntityName = ele.EntityName;
+        merg.VendorName = ele.VendorName;
+        merg.grn_type = ele.grn_type;
+        merg.firstName = ele.firstName;
+        grnD.push(merg)
+      })
      
-      this.GRNDispalyData = this.dataService.GRNLoadedData.concat(data.grndata);
+      this.GRNDispalyData = this.dataService.GRNLoadedData.concat(grnD);
       this.dataService.GRNLoadedData = this.GRNDispalyData;
       this.dataService.GRNTableLength = data.grn_total;
       this.GRNArrayLength = data.grn_total;
@@ -886,37 +893,44 @@ export class InvoiceComponent implements OnInit {
 
   menuChange(value) {
     this.updateColumns = [];
-    // this.tagService.activeMenuName = value;
+   
     this.activeMenuName = value;
     // this.getInvoiceData();
     this.dataService.allPaginationFirst = 0;
     this.dataService.allPaginationRowLength = 10;
     if (value == 'invoice') {
       this.route.navigate([this.invoiceTab]);
+      this.dataService.doc_status_tab = this.invoiceTab;
       this.allSearchInvoiceString = [];
       // this.getInvoiceColumns();
     } else if (value == 'po') {
       // this.getPOColums();
       this.route.navigate([this.POTab]);
+      this.dataService.doc_status_tab = this.POTab;
       this.allSearchInvoiceString = [];
       this.searchStr = this.dataService.searchPOStr;
     } else if (value == 'grn') {
       this.route.navigate([this.GRNTab]);
+      this.dataService.doc_status_tab = this.GRNTab;
       this.allSearchInvoiceString = [];
       this.searchStr = this.dataService.searchGRNStr;
     } else if (value == 'ServiceInvoices') {
       this.route.navigate([this.serviceInvoiceTab]);
+      this.dataService.doc_status_tab = this.serviceInvoiceTab;
       this.allSearchInvoiceString = [];
     } else if (value == 'archived') {
       this.route.navigate([this.archivedTab]);
+      this.dataService.doc_status_tab = this.archivedTab;
       this.allSearchInvoiceString = [];
       this.searchStr = this.dataService.searchArcStr;
     } else if (value == 'rejected') {
       this.route.navigate([this.rejectedTab]);
+      this.dataService.doc_status_tab = this.rejectedTab;
       this.allSearchInvoiceString = [];
       this.searchStr = this.dataService.searchRejStr;
     } else if (value == 'GRNException') {
       this.route.navigate([this.GRNExceptionTab]);
+      this.dataService.doc_status_tab = this.GRNExceptionTab;
       this.allSearchInvoiceString = [];
     }
   }

@@ -73,7 +73,7 @@
           <td *ngFor="let col of columns" class="sticky_top">
             <div [ngSwitch]="col.dbColumnname">
               <div *ngSwitchCase="'docstatus'" class="f-12">
-                <p-columnFilter
+                <!-- <p-columnFilter
                   [field]="col.dbColumnname"
                   matchMode="contains"
                   [showMenu]="false"
@@ -88,7 +88,15 @@
                       styleClass="w-100 text-center f-11"
                     ></p-dropdown>
                   </ng-template>
-                </p-columnFilter>
+                </p-columnFilter> -->
+                <p-dropdown
+                  [options]="statusData"
+                  [(ngModel)]="selectedStatus"
+                  (onChange)="filter($event.value)"
+                  placeholder="Select Status"
+                  [showClear]="false"
+                  styleClass="w-100 text-center f-11"
+                ></p-dropdown>
               </div>
               <div *ngSwitchDefault >
                 <input
@@ -198,6 +206,7 @@
             ></i>
             <button
               *ngIf="router.url.includes('PO') && invoceDoctype"
+              tooltipPosition="left"
               pTooltip="Click here to update PO"
               (click)="updatePO(invoiceData)"
               class="f-13 b-0 pos-rel"
