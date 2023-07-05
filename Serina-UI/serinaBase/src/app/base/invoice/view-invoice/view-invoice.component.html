@@ -46,7 +46,7 @@
       changeApproveBoolean ||
       financeApproveBoolean) &&
     (submitBtn_boolean || vendorUplaodBoolean) &&
-    lineTabBoolean
+    currentTab == 'line'
   "
 >
   <!-- <button
@@ -134,7 +134,7 @@
           role="tab"
           aria-controls="header"
           aria-selected="false"
-          [ngClass]="!approval_selection_boolean &&  currentTab == 'head' ? 'active' : ''"
+          [ngClass]="currentTab == 'head' ? 'active' : ''"
           >Header</a
         >
       </li>
@@ -171,6 +171,7 @@
           href="#cost"
           role="tab"
           aria-controls="cost"
+          [ngClass]="currentTab == 'cost'?'active':''"
           aria-selected="true"
           >Allocation</a
         >
@@ -190,7 +191,7 @@
           href="#lcm"
           role="tab"
           aria-controls="lcm"
-          [ngClass]="isLCMInvoice ? 'active' : ''"
+          [ngClass]="isLCMInvoice && currentTab == 'LCM' ? 'active' : ''"
           aria-selected="false"
           >LCM line details</a
         >
@@ -242,7 +243,7 @@
         (click)="changeTab('show', 'support')"
       >
         <a
-          [ngClass]="tabName == 'support' ? 'bg-2' : 'bg-1'"
+          [ngClass]="currentTab == 'support' ? 'bg-2 active' : 'bg-1'"
           class="nav-link"
           id="support-tab"
           data-toggle="tab"
@@ -270,7 +271,7 @@
           aria-controls="approver_selection"
           aria-selected="false"
           [ngClass]="
-            approval_selection_boolean && !isLCMInvoice ? 'active' : ''
+            approval_selection_boolean && !isLCMInvoice && currentTab == 'approver_selection'? 'active' : ''
           "
           >Approver Selection</a
         >
@@ -323,7 +324,7 @@
         <!-- header -->
         <div
           class="tab-pane fade"
-          [ngClass]="!approval_selection_boolean && currentTab == 'head' ? 'show active' : ''"
+          [ngClass]=" currentTab == 'head' ? 'show active' : ''"
           id="header"
           role="tabpanel"
           aria-labelledby="header-tab"
@@ -389,7 +390,7 @@
           aria-labelledby="line-tab"
         >
           <button
-            *ngIf="multiPOBool && lineTabBoolean" class="btnUpload bg-blue edt_mul_btn mr-2" (click)="mutliPOEdit('exception')">
+            *ngIf="multiPOBool && currentTab == 'line'" class="btnUpload bg-blue edt_mul_btn mr-2" (click)="mutliPOEdit('exception')">
               Edit MultiPO
             </button>
           <table  id="linesdata"  class="invert" style="width: 100%">
@@ -512,9 +513,11 @@
             </tr>
           </table>
         </div>
+
         <!-- Cost -->
         <div
           class="tab-pane fade"
+          [ngClass]="currentTab == 'cost'?'show active':''"
           id="cost"
           role="tabpanel"
           aria-labelledby="cost-tab"
@@ -545,7 +548,7 @@
         <!--LCM-->
         <div
           class="tab-pane fade"
-          [ngClass]="isLCMInvoice ? 'show active' : ''"
+          [ngClass]="isLCMInvoice && currentTab == 'LCM' ? 'show active' : ''"
           id="lcm"
           role="tabpanel"
           aria-labelledby="lcm-tab"
@@ -815,6 +818,7 @@
                 <!--PO lines-->
                 <div
                 class="tab-pane fade"
+                [ngClass]="currentTab == 'poline'?'show active':''"
                 id="POline"
                 role="tabpanel"
                 aria-labelledby="POline-tab"
@@ -961,6 +965,7 @@
         <!-- Support Doc -->
         <div
           class="tab-pane fade show active"
+          [ngClass]="currentTab == 'support'? 'show active': ''"
           id="support"
           role="tabpanel"
           aria-labelledby="support-tab"
@@ -1069,7 +1074,7 @@
         <div
           class="tab-pane fade"
           [ngClass]="
-            approval_selection_boolean && !isLCMInvoice ? 'show active' : ''
+            approval_selection_boolean && !isLCMInvoice && currentTab == 'approver_selection' ? 'show active' : ''
           "
           id="approver_selection"
           role="tabpanel"
@@ -1190,7 +1195,7 @@
           </div>
           <div
             *ngIf="
-              tabName == 'approver_selection' && support_doc_list?.length > 0
+              currentTab == 'approver_selection' && support_doc_list?.length > 0
             "
             class="selection_Div"
             style="min-height: auto"

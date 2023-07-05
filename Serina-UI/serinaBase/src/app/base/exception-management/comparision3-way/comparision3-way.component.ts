@@ -1477,7 +1477,11 @@ export class Comparision3WayComponent
         });
         this.displayrejectDialog = false;
         setTimeout(() => {
+          if(this.router.url.includes('ExceptionManagement')){
           this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+          } else {
+          this.router.navigate([`${this.portalName}/Create_GRN_inv_list`]);
+          }
         }, 1000);
       },
       (error) => {

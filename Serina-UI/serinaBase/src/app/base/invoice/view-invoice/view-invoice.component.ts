@@ -215,7 +215,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ContextRecId: any;
   uploadExcelValue: any;
   MarkupTransRecId: any;
-  tabName: string;
   commentslabelBool = true;
   documentType: string;
   allocateTotal: number;
@@ -358,7 +357,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     if (this.documentType == 'lcm' || this.documentType == 'multipo') {
       if(this.documentType == 'multipo'){
         this.multiPOBool = true;
+        this.currentTab = "line";
       }      
+      
       this.isLinenonEditable = true;
     }
 
@@ -369,16 +370,16 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.readPONumbersLCM(this.dataService.entityID);
       this.showPdf = false;
       this.btnText = 'View PDF';
+      this.currentTab = "LCM";
 
       // this.selectionTabBoolean = true;
       // this.supportTabBoolean = true;
     } else if (this.approval_selection_boolean == true && this.isLCMInvoice == false) {
-      console.log("hi Approval")
       this.readDepartment();
       this.readCategoryData();
       this.showPdf = false;
       this.btnText = 'View PDF';
-      this.tabName = "approver_selection";
+      this.currentTab = "approver_selection";
       this.selectionTabBoolean = true;
       this.supportTabBoolean = true;
       this.isLCMCompleted = true;
@@ -1044,7 +1045,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.readDepartment();
         this.readCategoryData();
         this.getInvoiceFulldata();
-        this.tabName = 'approver_selection';
+        this.currentTab = 'approver_selection';
       } else {
         this.AlertService.addObject.detail = 'LCM Lines created';
         setTimeout(() => {
@@ -1114,7 +1115,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.SharedService.syncBatchTrigger(query).subscribe((data: any) => {
           this.progressDailogBool = true;
           this.batchData = data[this.invoiceID]?.complete_status;
-          console.log(this.batchData);
           if (
             this.vendorUplaodBoolean == true &&
             this.reuploadBoolean == true
@@ -1169,7 +1169,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         sub_status = el.sub_status;
       }
     };
-    console.log(sub_status)
     if (sub_status == 8 ||
       sub_status == 16 ||
       sub_status == 17 ||
@@ -1187,14 +1186,16 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       } else if(sub_status == 51) {
         this.AlertService.updateObject.summary = 'LCM Invoice';
         this.AlertService.updateObject.detail = 'Please add the lines for the LCM invoice.';
+        this.currentTab = 'LCM';
       } else if(sub_status == 54) {
         this.AlertService.updateObject.summary = 'MultiPO Invoice';
         this.AlertService.updateObject.detail = 'Please Check the invoice total is not matching with the lines.';
+        this.currentTab = 'line';
       } else if(sub_status == 70) {
         this.approval_selection_boolean = true;
         this.AlertService.updateObject.summary = 'Set Approval';
         this.AlertService.updateObject.detail = 'Please add the approvers';
-        console.log("hi ser Approval",this.approval_selection_boolean,this.isLCMInvoice);
+        this.currentTab = 'approver_selection';
         
       } 
       // else if(sub_status == 71) {
@@ -1598,9 +1599,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
 
 
-  changeTab(val, tabName) {
+  changeTab(val, currentTab) {
     this.isLCMTab = false;
-    this.tabName = tabName;
+    this.currentTab = currentTab;
     if (val === 'show') {
       this.showPdf = true;
       this.btnText = 'Close';
@@ -1608,10 +1609,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.showPdf = false;
       this.btnText = 'View PDF';
     }
-    if (tabName === 'support') {
+    if (currentTab === 'support') {
       this.supportTabBoolean = true;
 
-    } else if (tabName === 'approver_selection') {
+    } else if (currentTab === 'approver_selection') {
 
       this.selectionTabBoolean = true;
       this.supportTabBoolean = true;
@@ -1620,15 +1621,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.selectionTabBoolean = false;
     }
 
-    if (tabName == 'LCM') {
+    if (currentTab == 'LCM') {
       this.isLCMTab = true;
     }
 
-    if (tabName == 'line') {
-      this.lineTabBoolean = true;
-    } else {
-      this.lineTabBoolean = false;
-    }
+    // if (currentTab == 'line') {
+    //   this.lineTabBoolean = true;
+    // } else {
+    //   this.lineTabBoolean = false;
+    // }
     this.loadImage();
   }
   onSelectFileApprove(event) {

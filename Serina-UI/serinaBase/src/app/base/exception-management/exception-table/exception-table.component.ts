@@ -86,15 +86,13 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.initialData();
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
-    if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
+    if (changes.columnsData && changes.columnsData.currentValue ) {
 
       let mergedStatus = ['All'];
       this.columnsData.forEach(ele => {
         mergedStatus.push(ele.status)
       })
       this.statusData = new Set(mergedStatus);
-      console.log(this.statusData);
     }
   }
   initialData() {
@@ -136,15 +134,26 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         this.batchBoolean = true;
         this.first = this.storageService.exc_batch_edit_page_first;
         this.rows = this.storageService.exc_batch_edit_page_row_length;
-        this.stateTable = "Exceptions";
-        this.globalSearch = this.storageService.exception_G_S;
+        let stItem:any = JSON.parse(sessionStorage?.getItem('editException'));
+        if(stItem){
+          this.globalSearch = stItem?.filters?.global?.value;
+        } else {
+          this.globalSearch = this.storageService.exception_G_S;
+        }
+       
+        this.stateTable = 'editException';
       } else {
         this.batchBoolean = false;
         this.first = this.storageService.exc_batch_approve_page_first;
         this.rows = this.storageService.exc_batch_approve_page_row_length;
-        this.stateTable = "AprvPending";
-        this.globalSearch = this.storageService.exception_A_G_S;
+        this.stateTable = 'approvalPending';
+        let stItem:any = JSON.parse(sessionStorage?.getItem('approvalPending'));
+        if(stItem){
+          this.globalSearch = stItem?.filters?.global?.value;
+        } else {
+          this.globalSearch = this.storageService.exception_A_G_S;
       }
+    }
     } else if (this.router.url.includes('Create_GRN_inv_list')) {
       this.first = this.storageService.create_GRN_page_first;
       this.rows = this.storageService.create_GRN_page_row_length;
@@ -289,25 +298,34 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
               this.confirmText = 'Sorry, you do not have access to edit';
             }
           } else if (this.tagService.batchProcessTab == 'editApproveBatch') {
-            if (this.permissionService.changeApproveBoolean == true) {
-              if (e.documentsubstatusID == (29 || 4)) {
-                this.ExceptionsService.selectedRuleId = e.ruleID;
-                this.router.navigate([
-                  `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
-                ]);
-              } else {
-                this.router.navigate([
-                  `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
-                ]);
-              }
-              // this.invoiceListBoolean = false;
-              this.tagService.approveBtnBoolean = true;
-              this.tagService.headerName = 'Approve Invoice';
-              this.tagService.approvalType = e.Approvaltype;
-            } else {
-              this.displayResponsivepopup = true;
-              this.confirmText = 'Sorry, you do not have Permission to Approve';
-            }
+            // if (this.permissionService.changeApproveBoolean == true) {
+            //   if (e.documentsubstatusID == (29 || 4)) {
+            //     this.ExceptionsService.selectedRuleId = e.ruleID;
+            //     this.router.navigate([
+            //       `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
+            //     ]);
+            //   } else {
+            //     this.router.navigate([
+            //       `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
+            //     ]);
+            //   }
+            //   // this.invoiceListBoolean = false;
+            //   this.tagService.approveBtnBoolean = true;
+            //   this.tagService.headerName = 'Approve Invoice';
+            //   this.tagService.approvalType = e.Approvaltype;
+            // } else {
+            //   this.displayResponsivepopup = true;
+            //   this.confirmText = 'Sorry, you do not have Permission to Approve';
+            // }
+            this.tagService.submitBtnBoolean = true;
+          this.tagService.headerName = 'Edit Invoice';
+          this.tagService.approval_selection_boolean = true;
+          this.storageService.entityID = e.idEntity;
+          this.sharedService.selectedEntityId = e.idEntity;
+          // this.ExceptionsService.selectedRuleId = e?.ruleID;
+          this.router.navigate([
+            'customer/ExceptionManagement/InvoiceDetails/' + e.idDocument,
+          ]);
           }
         } else {
           this.displayResponsivepopup = true;
