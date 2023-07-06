@@ -30,7 +30,7 @@
     </button> -->
         
     
-        <button class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2"  (click)="opengrnDailog()">Select GRN</button>
+    <button class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2" [ngClass]="(subStatusId == 75 || subStatusId == 17) ? 'bt-hlt':''" (click)="opengrnDailog()">Select GRN</button>
     <button
       *ngIf="subStstusId == 8 || subStstusId == 16 || subStstusId == 21 || subStstusId == 27"
       class="btnUpload btn_extra_bg m-t-neg ml-2"
@@ -1208,7 +1208,7 @@
     <div class="d-flex justify-content-center">
       <button *ngIf="!GRNDialogBool" type="button" class="btn btnVender bg-btn-success mt-2" (click)="routeToMapping()">Next</button>
       <button *ngIf="GRNDialogBool" type="button" class="btn btnVender bg-btn-cancel mt-2 mr-2" (click)="progressDailogBool = false">Cancel</button>
-      <button *ngIf="GRNDialogBool" type="button" class="btn btnVender bg-btn-success mt-2" [disabled]="!(selectedGRNList?.length>0)" (click)="ChangeGRNData()">Change</button>
+      <button *ngIf="GRNDialogBool" type="button" class="btn btnVender bg-btn-success mt-2" [disabled]="!(selectedGRNList?.length>0)" (click)="ChangeGRNDataR()">Change</button>
       
     </div>
 

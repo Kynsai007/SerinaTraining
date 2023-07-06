@@ -189,7 +189,7 @@ export class Comparision3WayComponent
   POlineBool: boolean;
   poDocId: any;
   po_num: any;
-  subStstusId: any;
+  subStatusId: any;
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -311,7 +311,7 @@ export class Comparision3WayComponent
     this.approvalType = this.tagService.approvalType;
     this.financeapproveDisplayBoolean =
       this.settingService.finaceApproveBoolean;
-      this.subStstusId = this.dataService.editableInvoiceData?.idDocumentSubstatus;
+    this.subStatusId = this.dataService.editableInvoiceData?.idDocumentSubstatus;
 
     // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
     this.lineCompareData = comaprisionLineData;
@@ -1839,8 +1839,8 @@ export class Comparision3WayComponent
       })
     }
   }
-  getGRNnumbers(po_num){
-    this.SharedService.checkGRN_PO_duplicates(po_num).subscribe((data:any)=>{
+  getGRNnumbers(po_num) {
+    this.SharedService.checkGRN_PO_duplicates(po_num).subscribe((data: any) => {
       this.grnList = data.result;
     })
   }

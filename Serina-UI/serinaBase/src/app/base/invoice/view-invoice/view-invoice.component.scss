@@ -463,6 +463,10 @@ a {
   position: relative;
   top: 2px;
 }
+.bt-hlt {
+  box-shadow: 1px 1px 30px #ff8201d1;
+  background-color: #ff8201d1 !important;
+}
 @media screen and (max-width:1200px) {
   .zoom_pos_pdf {
     left: -160px;
