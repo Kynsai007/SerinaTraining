@@ -1845,7 +1845,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.AlertService.addObject.detail = data?.result;
         this.messageService.add(this.AlertService.addObject);
         setTimeout(() => {
-          this._location.back();
+          this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
         }, 1000);
       }
     },
