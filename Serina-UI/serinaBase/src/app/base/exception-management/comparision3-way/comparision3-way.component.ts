@@ -1117,27 +1117,45 @@ export class Comparision3WayComponent
         sub_status = el.sub_status;
       }
     };
-    if (sub_status == 8 || 
-      sub_status == 16 || 
-      sub_status == 17 ||
-      sub_status == 33 ||
-      sub_status == 21 ||
-      sub_status == 27 ||
-      sub_status == 75 ) {
-      this.AlertService.updateObject.summary = 'Suggestion';
-      this.AlertService.updateObject.detail = 'Please check the values in invoice.';
-      this.messageService.add(this.AlertService.updateObject);
-      
-    } else if(sub_status == 34) {
-      this.AlertService.updateObject.summary = 'Suggestion';
-      this.AlertService.updateObject.detail = 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.';
-      this.messageService.add(this.AlertService.updateObject)
-    } else if(sub_status == 7 || sub_status == 23 || sub_status == 10){
-      this.router.navigate([
-        `${this.portalName}/ExceptionManagement`,
-      ])
-    } else {
+    if (this.portalName == 'vendorPortal') {
+      if (sub_status == 8 ||
+        sub_status == 16 ||
+        sub_status == 33 ||
+        sub_status == 21 ||
+        sub_status == 27) {
+        this.AlertService.updateObject.summary = 'Suggestion';
+        this.AlertService.updateObject.detail = 'Please check the values in invoice.';
+        this.messageService.add(this.AlertService.updateObject);
+      } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+      }
+    } else {
+      if (sub_status == 8 ||
+        sub_status == 16 ||
+        sub_status == 17 ||
+        sub_status == 33 ||
+        sub_status == 21 ||
+        sub_status == 27 ||
+        sub_status == 75) {
+        this.AlertService.updateObject.summary = 'Suggestion';
+        this.AlertService.updateObject.detail = 'Please check the values in invoice.';
+        this.messageService.add(this.AlertService.updateObject);
+
+      } else if (sub_status == 34) {
+        this.AlertService.updateObject.summary = 'Suggestion';
+        this.AlertService.updateObject.detail = 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.';
+        this.messageService.add(this.AlertService.updateObject)
+      } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {
+        this.router.navigate([`${this.portalName}/ExceptionManagement`])
+      }else if(sub_status == 70) {
+          this.tagService.approval_selection_boolean = true;
+          this.router.navigate([`${this.portalName}/ExceptionManagement/InvoiceDetails/${this.invoiceID}`])
+          this.AlertService.updateObject.summary = 'Set Approval';
+          this.AlertService.updateObject.detail = 'Please add the approvers';
+          this.currentTab = 'approver_selection';
+      }  else {
+        this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+      }
     }
     this.progressDailogBool = false;
   }

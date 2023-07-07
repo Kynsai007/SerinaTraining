@@ -333,7 +333,7 @@
                     [ngStyle]="{
                       width:
                         tagName?.tagname == 'Description'
-                          ? '-webkit-fill-available'
+                          ? '500px'
                           : '200px'
                     }"
                   >
@@ -375,7 +375,7 @@
                               [value]="
                                 data2.invline[0]?.DocumentLineItems.Value
                               "
-                              class="f-12 input_disabled w-fill"
+                              class="f-12 input_disabled"
                               style="text-transform: lowercase"
                               [disabled]="!editable || fin_boolean"
                               (change)="
@@ -417,7 +417,7 @@
                               type="text"
                               [title]="data2.poline[0]?.Value"
                               [value]="data2.poline[0]?.Value"
-                              class="f-12 input_disabled w-fill"
+                              class="f-12 input_disabled"
                               style="text-transform: lowercase"
                               disabled
                               [ngClass]="!editable ? 'input_disabled' : ''"
@@ -461,7 +461,7 @@
                   </td>
 
                   <td
-                    [ngStyle]="{ width: mappedData?.length == 0 ? '' : '35%' }"
+                    [ngStyle]="{ width: mappedData?.length == 0 ? '' : '25%' }"
                   >
                     <!-- <div class="visiblity_hidden">Dummy Data</div> -->
                     <span class="f-13 p-2 mapping_line"

@@ -87,6 +87,7 @@ export class BatchProcessComponent implements OnInit {
   filterData: any[];
   minDate: Date;
   maxDate: Date;
+  portalName:string;
 
   constructor(
     private tagService: TaggingService,
@@ -105,7 +106,7 @@ export class BatchProcessComponent implements OnInit {
 
   ngOnInit(): void {
     this.apprveBool = this.ds.configData?.enableApprovals;
-    
+    this.portalName = this.ds.portalName;
     if(this.permissionService.excpetionPageAccess == true){
       if(this.ds.ap_boolean){
         this.invoceDoctype = true;
@@ -154,7 +155,7 @@ export class BatchProcessComponent implements OnInit {
       this.heading = `${this.partytype} based Exception`;
       this.isVendorBoolean = true;
       this.getBatchInvoiceData();
-      if(this.apprveBool){
+      if(this.apprveBool && this.portalName == 'customer'){
         this.getApprovalBatchData();
       }
 

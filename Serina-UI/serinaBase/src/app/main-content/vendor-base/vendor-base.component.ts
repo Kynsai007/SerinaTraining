@@ -63,7 +63,11 @@ export class VendorBaseComponent implements OnInit {
     }
     this.userDetails = this.authService.currentUserValue;
     this.docService.userId = this.userDetails.userdetails.idUser;
- 
+    if (this.userDetails.user_type == 'vendor_portal') {
+      this.DS.portalName = 'vendorPortal';
+    } else {
+      this.DS.portalName = 'customer'
+    }
     this.SharedService.userId = this.userDetails.userdetails.idUser;
     this.serviceproviderService.userId = this.userDetails.userdetails.idUser
     this.SharedService.isCustomerPortal = false;

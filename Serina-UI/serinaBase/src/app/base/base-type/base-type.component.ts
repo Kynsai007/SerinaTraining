@@ -154,6 +154,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
     this.serviceInvoiceAccess = this.dataStoreService.configData.serviceInvoices;
+    
     if(this.dataStoreService.configData.documentTypes.length >1){
       this.bothDocBoolean  = true;
     } else {
@@ -166,7 +167,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
         this.switchtext = "AR";
         this.cust_type = 'Vendor';
         this.invoceDoctype = true;
-        console.log('hi')
       } else {
         this.DocumentPageRoute = 'invoice/PO';
         this.ap_boolean = false;
@@ -189,6 +189,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
       this.exceptionRoute = 'ExceptionManagement/Service_ExceptionManagement';
     }
     this.userDetails = this.authService.currentUserValue;
+    if (this.userDetails.user_type == 'vendor_portal') {
+      this.dataStoreService.portalName = 'vendorPortal';
+    } else {
+      this.dataStoreService.portalName = 'customer'
+    }
     environment1.password = this.userDetails.token;
     environment1.username = JSON.parse(sessionStorage.getItem('username'));
     this.SharedService.userId = this.userDetails.userdetails.idUser;

@@ -1176,6 +1176,19 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         sub_status = el.sub_status;
       }
     };
+    if (this.portalName == 'vendorPortal') {
+      if (sub_status == 8 ||
+        sub_status == 16 ||
+        sub_status == 33||
+        sub_status == 21||
+        sub_status == 27) {
+        this.router.navigate([
+          `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${this.invoiceID}`,
+        ]);
+      } else {
+        this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+      }
+    } else {
     if (sub_status == 8 ||
       sub_status == 16 ||
       sub_status == 17 ||
@@ -1199,10 +1212,14 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.AlertService.updateObject.detail = 'Please Check the invoice total is not matching with the lines.';
         this.currentTab = 'line';
       } else if(sub_status == 70) {
-        this.approval_selection_boolean = true;
-        this.AlertService.updateObject.summary = 'Set Approval';
-        this.AlertService.updateObject.detail = 'Please add the approvers';
-        this.currentTab = 'approver_selection';
+        if(this.portalName == 'customer'){
+          this.approval_selection_boolean = true;
+          this.AlertService.updateObject.summary = 'Set Approval';
+          this.AlertService.updateObject.detail = 'Please add the approvers';
+          this.currentTab = 'approver_selection';
+        } else {
+          this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+        }
         
       } 
       // else if(sub_status == 71) {
@@ -1215,6 +1232,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.router.navigate([`${this.portalName}/ExceptionManagement`]);
     } else {
       this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+    }
     }
     this.progressDailogBool = false;
   }
@@ -1482,7 +1500,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   backToInvoice() {
-    if (this.vendorUplaodBoolean === false && !this.isBatchTriggered) {
+    if (this.vendorUplaodBoolean === false || this.isBatchTriggered) {
       this._location.back();
     } else {
       if (
@@ -2155,8 +2173,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // this.tagService.submitBtnBoolean = false;
     this.tagService.approval_selection_boolean = false;
     this.tagService.LCM_boolean = false;
-    this.dataService.entityID = undefined;
-    this.SharedService.selectedEntityId = undefined;
+    // this.dataService.entityID = undefined;
+    // this.SharedService.selectedEntityId = undefined;
     this.vendorsSubscription.unsubscribe();
   }
 }
