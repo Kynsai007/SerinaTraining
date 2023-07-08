@@ -380,6 +380,7 @@
                               [disabled]="!editable || fin_boolean"
                               (change)="
                                 onChangeLineValue(
+                                  tagName.tagname,
                                   lineInput.value,
                                   data2.invline[0]?.DocumentLineItems
                                 )

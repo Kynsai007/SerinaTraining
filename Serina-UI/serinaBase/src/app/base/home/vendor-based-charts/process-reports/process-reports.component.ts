@@ -93,7 +93,7 @@ export class ProcessReportsComponent implements OnInit {
 
     setTimeout(() => {
       this.setConatinerForCharts();
-    }, 1200);
+    }, 2000);
   }
 
   setConatinerForCharts() {

@@ -257,6 +257,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   batchData: any;
   portalName: string;
   isBatchTriggered: boolean;
+  isAmtStr: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -728,6 +729,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   onChangeValue(key, value, data) {
     // this.inputData[0][key]=value;
+    if (key == 'InvoiceTotal' || key == 'SubTotal') { 
+      if (value == '' || isNaN(+value)) {
+        this.isAmtStr = true ;
+      } else {
+        this.isAmtStr = false ;
+      }
+    }
     let updateValue = {
       documentDataID: data.idDocumentData,
       OldValue: data.Value || '',
@@ -735,7 +743,14 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     };
     this.updateInvoiceData.push(updateValue);
   }
-  onChangeLineValue(value, data) {
+  onChangeLineValue(key,value, data) {
+    if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') { 
+      if (value == '' || isNaN(+value)) {
+        this.isAmtStr = true ;
+      } else {
+        this.isAmtStr = false ;
+      }
+    }
     let updateValue = {
       documentLineItemID: data.idDocumentLineItems,
       OldValue: data.Value || '',
@@ -744,28 +759,34 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.updateInvoiceData.push(updateValue);
   }
   saveChanges() {
-    if (this.updateInvoiceData.length != 0) {
-      this.SharedService.updateInvoiceDetails(
-        JSON.stringify(this.updateInvoiceData)
-      ).subscribe(
-        (data: any) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Saved',
-            detail: 'Changes saved successfully',
-          });
-
-          this.updateInvoiceData = [];
-        },
-        (err) => {
-          this.updateInvoiceData = [];
-          this.messageService.add({
-            severity: 'error',
-            summary: 'error',
-            detail: 'Server error or Please check the data',
-          });
-        }
-      );
+    if(!this.isAmtStr){
+      if (this.updateInvoiceData.length != 0) {
+        this.SharedService.updateInvoiceDetails(
+          JSON.stringify(this.updateInvoiceData)
+        ).subscribe(
+          (data: any) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Saved',
+              detail: 'Changes saved successfully',
+            });
+  
+            this.updateInvoiceData = [];
+          },
+          (err) => {
+            this.updateInvoiceData = [];
+            this.messageService.add({
+              severity: 'error',
+              summary: 'error',
+              detail: 'Server error or Please check the data',
+            });
+          }
+        );
+      }
+    } else {
+      this.updateInvoiceData = [];
+      this.AlertService.errorObject.detail = 'Strings are not allowed in the amount and quantity fields.';
+      this.messageService.add(this.AlertService.errorObject);
     }
   }
   onSubmitData() {
