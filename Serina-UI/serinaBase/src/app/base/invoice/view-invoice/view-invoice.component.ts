@@ -963,8 +963,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               element.TagName == 'Quantity' ||
               element.TagName == 'UnitPrice' ||
               element.TagName == 'AmountExcTax' ||
-              element.TagName == 'Amount'|| 
-              element.TagName == 'Description'
+              element.TagName == 'Amount'
             ) {
               element.linedata.forEach((ele1) => {
                 if (
@@ -1016,7 +1015,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
                   severity: 'error',
                   summary: 'error',
                   detail:
-                    'Please verify Description, Amount, Quntity, unitprice and AmountExcTax in Line details',
+                    'Please verify Amount, Quntity, unitprice and AmountExcTax in Line details',
                 });
               }, 10);
             } else if (errorTypeLine == 'quntity') {
