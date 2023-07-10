@@ -84,17 +84,19 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.ap_boolean = this.storageService.ap_boolean;
     this.initialData();
-    
+
   }
   ngOnChanges(changes: SimpleChanges): void {
     // if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
 
-      let mergedStatus = ['All'];
-      this.columnsData.forEach(ele => {
-        mergedStatus.push(ele.status)
-      })
-      this.statusData = new Set(mergedStatus);
-      this.filter('All','status');
+    let mergedStatus = ['All'];
+    this.columnsData.forEach(ele => {
+      mergedStatus.push(ele.status)
+    })
+    this.statusData = new Set(mergedStatus);
+    if (this.router.url.includes('ExceptionManagement')) {
+      this.filter('All', 'status');
+    }
     // }
   }
   initialData() {
@@ -136,26 +138,27 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         this.batchBoolean = true;
         this.first = this.storageService.exc_batch_edit_page_first;
         this.rows = this.storageService.exc_batch_edit_page_row_length;
-        let stItem:any = JSON.parse(sessionStorage?.getItem('editException'));
-        if(stItem){
+        let stItem: any = JSON.parse(sessionStorage?.getItem('editException'));
+        if (stItem) {
           this.globalSearch = stItem?.filters?.global?.value;
         } else {
           this.globalSearch = this.storageService.exception_G_S;
         }
-       
+
         this.stateTable = 'editException';
       } else {
         this.batchBoolean = false;
         this.first = this.storageService.exc_batch_approve_page_first;
         this.rows = this.storageService.exc_batch_approve_page_row_length;
         this.stateTable = 'approvalPending';
-        let stItem:any = JSON.parse(sessionStorage?.getItem('approvalPending'));
-        if(stItem){
+        let stItem: any = JSON.parse(sessionStorage?.getItem('approvalPending'));
+        if (stItem) {
           this.globalSearch = stItem?.filters?.global?.value;
         } else {
           this.globalSearch = this.storageService.exception_A_G_S;
+        }
       }
-    }
+
     } else if (this.router.url.includes('Create_GRN_inv_list')) {
       this.first = this.storageService.create_GRN_page_first;
       this.rows = this.storageService.create_GRN_page_row_length;
@@ -320,14 +323,14 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
             //   this.confirmText = 'Sorry, you do not have Permission to Approve';
             // }
             this.tagService.submitBtnBoolean = true;
-          this.tagService.headerName = 'Edit Invoice';
-          this.tagService.approval_selection_boolean = true;
-          this.storageService.entityID = e.idEntity;
-          this.sharedService.selectedEntityId = e.idEntity;
-          // this.ExceptionsService.selectedRuleId = e?.ruleID;
-          this.router.navigate([
-            'customer/ExceptionManagement/InvoiceDetails/' + e.idDocument,
-          ]);
+            this.tagService.headerName = 'Edit Invoice';
+            this.tagService.approval_selection_boolean = true;
+            this.storageService.entityID = e.idEntity;
+            this.sharedService.selectedEntityId = e.idEntity;
+            // this.ExceptionsService.selectedRuleId = e?.ruleID;
+            this.router.navigate([
+              'customer/ExceptionManagement/InvoiceDetails/' + e.idDocument,
+            ]);
           }
         } else {
           this.displayResponsivepopup = true;

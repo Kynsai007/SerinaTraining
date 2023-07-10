@@ -993,6 +993,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           } else {
             /* Error reponse starts*/
             if (errorTypeHead == 'AmountHeader') {
+              this.currentTab = 'head';
               setTimeout(() => {
                 this.messageService.add({
                   severity: 'error',
@@ -1003,21 +1004,24 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               }, 50);
             }
             if (errorType == 'emptyHeader') {
+              this.currentTab = 'head';
               this.AlertService.errorObject.detail =
                 'Please Check PO Number, Invoice Date, InvoiceId fileds in header details';
               this.messageService.add(this.AlertService.errorObject);
             }
             if (errorTypeLine == 'AmountLine') {
               setTimeout(() => {
+                this.currentTab = 'line';
                 this.messageService.add({
                   severity: 'error',
                   summary: 'error',
                   detail:
-                    'Please verify Amount, Quntity, unitprice and AmountExcTax in Line details',
+                    'Please verify Description, Amount, Quntity, unitprice and AmountExcTax in Line details',
                 });
               }, 10);
             } else if (errorTypeLine == 'quntity') {
               setTimeout(() => {
+                this.currentTab = 'line';
                 this.messageService.add({
                   severity: 'error',
                   summary: 'error',
