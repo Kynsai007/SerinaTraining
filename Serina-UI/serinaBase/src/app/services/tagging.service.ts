@@ -21,7 +21,7 @@ export class TaggingService {
   submitBtnBoolean: boolean;
   approveBtnBoolean: boolean;
   headerName: string;
-  batchProcessTab:string;
+  batchProcessTab:string = "normal";
   InvokebatchProcessTab = "normal";
   isUploadScreen: boolean;
   approvalType: any;

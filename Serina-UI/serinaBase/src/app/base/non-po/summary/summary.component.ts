@@ -5,6 +5,7 @@ import { formatDate, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { DataService } from 'src/app/services/dataStore/data.service';
 
 @Component({
   selector: 'app-summary',
@@ -38,15 +39,18 @@ export class SummaryComponent implements OnInit {
   active_accounts: any;
   selectedMonth = 'Current Month'
   months: string[];
+  ap_boolean: any;
 
   constructor(private serviceProviderService : ServiceInvoiceService,
     private SpinnerService: NgxSpinnerService,
     private alertService : AlertService,
     private datePipe : DatePipe,
-    private MessageService:MessageService) {
+    private MessageService:MessageService,
+    private storageService : DataService) {
   }
 
   ngOnInit(): void {
+    this.ap_boolean = this.storageService.ap_boolean;
     this.getDate();
     this.getSummary(this.stringDate);
     this.getEntitySummary();

@@ -84,16 +84,18 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.ap_boolean = this.storageService.ap_boolean;
     this.initialData();
+    
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.columnsData && changes.columnsData.currentValue ) {
+    // if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
 
       let mergedStatus = ['All'];
       this.columnsData.forEach(ele => {
         mergedStatus.push(ele.status)
       })
       this.statusData = new Set(mergedStatus);
-    }
+      this.filter('All','status');
+    // }
   }
   initialData() {
     this.userType = this.authService.currentUserValue['user_type'];

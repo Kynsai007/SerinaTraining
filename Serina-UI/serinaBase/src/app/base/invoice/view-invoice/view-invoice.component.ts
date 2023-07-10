@@ -258,7 +258,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   portalName: string;
   isBatchTriggered: boolean;
   isAmtStr: boolean;
-
+  subStatusId: any;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -345,6 +345,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.submitBtn_boolean = this.tagService.submitBtnBoolean;
     this.approveBtn_boolean = this.tagService.approveBtnBoolean;
     this.headerName = this.tagService.headerName;
+    this.subStatusId = this.dataService.editableInvoiceData?.idDocumentSubstatus;
     this.userDetails = this.authService.currentUserValue;
     this.approval_selection_boolean =
       this.tagService.approval_selection_boolean;
@@ -946,7 +947,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             } else if (
               data.TagLabel == 'PurchaseOrder' ||
               data.TagLabel == 'InvoiceDate' ||
-              data.TagLabel == 'InvoiceId'
+              data.TagLabel == 'InvoiceId' 
             ) {
               if (data.Value == '') {
                 errorType = 'emptyHeader';
@@ -962,7 +963,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               element.TagName == 'Quantity' ||
               element.TagName == 'UnitPrice' ||
               element.TagName == 'AmountExcTax' ||
-              element.TagName == 'Amount'
+              element.TagName == 'Amount'|| 
+              element.TagName == 'Description'
             ) {
               element.linedata.forEach((ele1) => {
                 if (
