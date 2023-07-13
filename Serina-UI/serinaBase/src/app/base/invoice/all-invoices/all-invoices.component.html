@@ -227,10 +227,10 @@
             </span>
             <i
               *ngIf="
-                router.url.includes('allInvoices') ||
+                (router.url.includes('allInvoices') ||
                 router.url.includes('archived') ||
                 router.url.includes('rejected') ||
-                (router.url.includes('PO') && !invoceDoctype)
+                (router.url.includes('PO') && !invoceDoctype)) && invoiceData?.sourcetype != 'RPA'
               "
               pTooltip="Click here to view Full Status details"
               tooltipPosition="left"

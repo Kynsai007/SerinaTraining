@@ -382,3 +382,16 @@ input[type="checkbox"] {
       font-weight: 600;
   }
 }
+@media screen and (max-width: 576px) { 
+  .flex_col {
+    flex-direction: column;
+  }
+  .accountSelect {
+    width: 100% !important;
+  }
+  :host ::ng-deep {
+    .p-autocomplete {
+      width: 100% !important;
+    }
+  }
+}

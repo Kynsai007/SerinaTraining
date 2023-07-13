@@ -521,11 +521,20 @@ export class InvoiceComponent implements OnInit {
           ...element.Entity,
           ...element.EntityBody,
           ...element.ServiceProvider,
-          ...element.ServiceAccount
+          ...element.ServiceAccount,
+          ...element.PaymentsInfo
         };
         invoiceData['docstatus'] = element.docstatus;
         invoicePushedArray.push(invoiceData);
       });
+      
+
+      this.archivedDisplayData =
+        this.dataService.archivedDisplayData.concat(invoicePushedArray);
+      this.dataService.archivedDisplayData = this.archivedDisplayData;
+      this.dataService.ARCTableLength = data?.result?.ven?.ok?.total_arc;
+      this.archivedLength = data?.result?.ven?.ok?.total_arc;
+      console.log(this.archivedDisplayData)
       this.archivedDisplayData.forEach((ele1) => {
         for (let name in ele1) {
           if (name == 'ServiceProviderName') {
@@ -533,12 +542,6 @@ export class InvoiceComponent implements OnInit {
           }
         }
       });
-
-      this.archivedDisplayData =
-        this.dataService.archivedDisplayData.concat(invoicePushedArray);
-      this.dataService.archivedDisplayData = this.archivedDisplayData;
-      this.dataService.ARCTableLength = data?.result?.ven?.ok?.total_arc;
-      this.archivedLength = data?.result?.ven?.ok?.total_arc;
       if (this.archivedLength > 10) {
         this.showPaginatorArchived = true;
       }

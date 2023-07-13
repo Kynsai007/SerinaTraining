@@ -45,10 +45,10 @@ export class InvoiceStatusComponent implements OnInit {
         this.counts = [];
         data.forEach((element) => {
           this.invoiceNumber = element.docheaderID;
-          this.counts.push(element.dochistorystatus);
+          this.counts.push(element?.dochistorystatus);
         });
         this.statusData = data;
-        this.orderStatus = data[data.length - 1].dochistorystatus;
+        this.orderStatus = data[data.length - 1]?.dochistorystatus;
         this.spin.hide();
       },
       (error) => {
