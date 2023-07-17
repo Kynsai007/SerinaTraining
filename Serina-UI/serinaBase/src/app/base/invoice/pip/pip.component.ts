@@ -100,9 +100,10 @@ export class PipComponent implements OnInit {
       { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
       { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
       { dbColumnname: 'EntityName', columnName: 'Entity' },
+      { dbColumnname: 'docstatus', columnName: 'Status' },
       { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
-      { dbColumnname: 'totalAmount', columnName: 'Amount' },
-      // { dbColumnname: 'documentPaymentStatus', columnName: 'Status' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' }
+      
     ];
     this.columnsToDisplay.forEach((e) => {
       this.columnsFields.push(e.dbColumnname);
