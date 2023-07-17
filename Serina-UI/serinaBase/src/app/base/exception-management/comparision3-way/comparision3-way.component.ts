@@ -1658,39 +1658,42 @@ export class Comparision3WayComponent
       let duplicateAPI_response:string;
       this.SharedService.duplicateGRNCheck(JSON.stringify(arr)).subscribe((data: any) => {
         duplicateAPI_response = data.result;
-      }, err => {
-        this.AlertService.errorObject.detail = "Server error";
-        this.messageService.add(this.AlertService.errorObject);
-      })
-      this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
-        let negativeData = [];
-        let negKey = {};
-        let bool:boolean;
-        for (let key in data?.result){
-          let valuee = data.result[key];
-          this.GRNObjectDuplicate.forEach((ele) => {
-            if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && valuee < ele.Value  ) {
-              negKey[key] = valuee;
-              negativeData.push(valuee);
+        this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
+          let negativeData = [];
+          let negKey = {};
+          let bool:boolean;
+          for (let key in data?.result){
+            let valuee = data.result[key];
+            this.GRNObjectDuplicate.forEach((ele) => {
+              if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && valuee < ele.Value  ) {
+                negKey[key] = valuee;
+                negativeData.push(valuee);
+              }
+            })
+          }
+          if (negativeData.length <= 0) {    
+            if (duplicateAPI_response == 'successful') {
+              this.createGRNWithPO();
+            } else {
+              console.log('hi 1684')
+              this.AlertService.errorObject.detail = duplicateAPI_response;
+              this.messageService.add(this.AlertService.errorObject);
             }
-          })
-        }
-        if (negativeData.length <= 0) {    
-          if (duplicateAPI_response == 'successful') {
-            this.createGRNWithPO();
           } else {
-            this.AlertService.errorObject.detail = duplicateAPI_response;
+            let str:string = JSON.stringify(negKey);
+            this.AlertService.errorObject.detail = `Please check available quantity in the line numbers (${str})`;
             this.messageService.add(this.AlertService.errorObject);
           }
-        } else {
-          let str:string = JSON.stringify(negKey);
-          this.AlertService.errorObject.detail = `Please check available quantity in the line numbers (${str})`;
+        }, err => {
+          this.AlertService.errorObject.detail = "Server error";
           this.messageService.add(this.AlertService.errorObject);
-        }
+        })
       }, err => {
+        console.log('hi 1663')
         this.AlertService.errorObject.detail = "Server error";
         this.messageService.add(this.AlertService.errorObject);
       })
+
     } else {
       alert('There is no lines to create GRN, if you are able to see the lines then please check the quantity');
       this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val=> val.tagName != 'AmountExcTax');
