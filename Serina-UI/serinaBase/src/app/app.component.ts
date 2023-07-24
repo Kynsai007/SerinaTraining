@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
-import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'serinaBase';
 
   constructor(
@@ -97,9 +96,4 @@ export class AppComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-    App.addListener('backButton', () => {
-      window.history.back();
-    });
-  }
 }
