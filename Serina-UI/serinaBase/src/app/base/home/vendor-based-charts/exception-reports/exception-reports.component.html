@@ -1,76 +1,35 @@
 <div class="tableDatDiv">
-  <div> <button class="btnUpload dwnldBtn" (click)="downloadReport()">Download Report</button></div>
-  <div class="filter_inputDash">
-    <p-calendar
-      [(ngModel)]="rangeDates"
-      selectionMode="range"
-      [minDate]="minDate"
-      [maxDate]="maxDate"
-      placeholder="Select dates to Filter"
-      [readonlyInput]="true"
-      [showIcon]="true"
-      showButtonBar="true"
-      inputId="range"
-      (onClearClick)="clearDates()"
-    ></p-calendar>
-    <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
+  <div class="d-flex justify-content-end">
+    <div class="mr-2"> <button class="btnUpload" (click)="downloadReport()">Download Report</button></div>
+    <div class="">
+      <p-calendar
+        [(ngModel)]="rangeDates"
+        selectionMode="range"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        placeholder="Select dates to Filter"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        showButtonBar="true"
+        inputId="range"
+        (onClearClick)="clearDates()"
+      ></p-calendar>
+      <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
+    </div>
   </div>
   <div class="d-flex justify-content-between">
     <div
-      class="card-div d-flex d_flx_row bg-1"
-      [class.active_card]="tabName == 'Total'"
-      (click)="choosepageTab('Total')"
+      *ngFor="let obj of cardObj"
+      class="card-div d-flex d_flx_row" [class]="obj.cls"
+      [class.active_card]="tabName == obj.tab "
+      (click)="choosepageTab(obj.tab)"
     >
       <div class="img-wrapper">
-        <!-- <i class="fa fa-check"></i> -->
-        <mat-icon class="placement" svgIcon="vendor_up"></mat-icon>
+        <mat-icon class="placement" [svgIcon]="obj.icon"></mat-icon>
       </div>
       <div>
-        <div class="f-12">Total Exception Invoices</div>
-        <div class="f-15">{{ totalInv }}</div>
-      </div>
-    </div>
-
-    <div
-      class="card-div d-flex d_flx_row bg-2"
-      [class.active_card]="tabName == 'OCR'"
-      (click)="choosepageTab('OCR')"
-    >
-      <div class="img-wrapper">
-        <!-- <i class="fa fa-exclamation-triangle"></i> -->
-        <mat-icon class="placement" svgIcon="vendor_pr"></mat-icon>
-      </div>
-      <div>
-        <div class="f-12">OCR Queue</div>
-        <div class="f-15">{{ OcrInv }}</div>
-      </div>
-    </div>
-
-    <div
-      class="card-div d-flex d_flx_row bg-3"
-      [class.active_card]="tabName == 'Batch'"
-      (click)="choosepageTab('Batch')"
-    >
-      <div class="img-wrapper">
-        <mat-icon class="placement" svgIcon="vendor_rm"></mat-icon>
-      </div>
-      <div>
-        <div class="f-12">Batch Queue</div>
-        <div class="f-15">{{ batchInv }}</div>
-      </div>
-    </div>
-
-    <div
-      class="card-div d-flex d_flx_row bg-4"
-      [class.active_card]="tabName == 'ERP'"
-      (click)="choosepageTab('ERP')"
-    >
-      <div class="img-wrapper">
-        <mat-icon class="placement" svgIcon="vendor_rej"></mat-icon>
-      </div>
-      <div>
-        <div class="f-12">ERP Queue</div>
-        <div class="f-15">{{ ErpInv }}</div>
+        <div class="f-12">{{ obj.heading }}</div>
+        <div class="f-15">{{ obj.count }}</div>
       </div>
     </div>
   </div>
@@ -110,15 +69,6 @@
         [columnLength]="ColumnLengthbatch"
       >
       </app-table>
-      <!-- <app-exception-table
-        [invoiceColumns]="columnsForbatch"
-        [columnsToDisplay]="batchColumnField"
-        [showPaginatorAllInvoice]="showPaginatorbatch"
-        [ColumnLength]="ColumnLengthbatch"
-        (searchInvoiceData)="searchInvoiceDataV($event)"
-        [columnsData]="batchTableData"
-      >
-      </app-exception-table> -->
     </div>
 
     <!-- ERP invoices Tab -->

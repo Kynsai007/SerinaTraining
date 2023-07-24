@@ -15,10 +15,10 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 })
 export class ExceptionReportsComponent implements OnInit, OnChanges {
   exceptionData: any;
-  totalInv: number;
-  OcrInv: number;
-  batchInv: number;
-  ErpInv: number;
+  // totalInv: number;
+  // OcrInv: number;
+  // batchInv: number;
+  // ErpInv: number;
 
   tabName;
   totalTableData = [];
@@ -57,6 +57,13 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
   filterDataBatch: any[];
   filterDataERP: any[];
   partyType: string;
+
+  cardObj = [
+    { cls: 'bg-1', icon: 'vendor_up', heading: 'Total Exception Invoices', count: 0, tab : 'Total'},
+    { cls: 'bg-2', icon: 'vendor_pr', heading: 'OCR Queue', count: 0, tab : 'OCR'},
+    { cls: 'bg-3', icon: 'vendor_rm', heading: 'Batch Queue', count: 0, tab : 'Batch'},
+    { cls: 'bg-4', icon: 'vendor_rej', heading: 'ERP Queue', count: 0, tab : 'ERP'}
+  ]
   constructor(
     private dataService: DataService,
     private chartsService: ChartsService,
@@ -170,7 +177,6 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
   readExceptionData(query) {
     this.SpinnerService.show();
     this.chartsService.getvendorExceptionSummary(query).subscribe((data) => {
-      console.log(data);
       this.exceptionData = data;
       // this.totalInv = data.data.total[0].count;
       // this.OcrInv = data.data.ocrqueue[0].count;
@@ -196,23 +202,7 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
             this.batchTableData.push(element);
           } 
       });
-      // (element.documentsubstatusID == 7 )&& 
-      // (element.documentsubstatusID == 8 )&& 
-      // (element.documentsubstatusID == 9 )&& 
-      // (element.documentsubstatusID == 14 )&& 
-      // (element.documentsubstatusID == 15 )&& 
-      // (element.documentsubstatusID == 16 )&& 
-      // (element.documentsubstatusID == 17 )&& 
-      // (element.documentsubstatusID == 19 )&& 
-      // (element.documentsubstatusID == 20) && 
-      // (element.documentsubstatusID == 21) && 
-      // (element.documentsubstatusID == 22) && 
-      // (element.documentsubstatusID == 27) && 
-      // (element.documentsubstatusID == 28) && 
-      // (element.documentsubstatusID == 33) && 
-      // (element.documentsubstatusID == 34)  
-      // if (element.documentStatusID == 4 && (element.documentsubstatusID != 4 && element.documentsubstatusID != 31 && element.documentsubstatusID != 35 && element.documentsubstatusID != 36 && element.documentsubstatusID != 38 && element.documentsubstatusID != 39))
-      this.OcrInv = this.OCRTableData.length;
+      this.cardObj[1].count = this.OCRTableData.length;
       if (this.OCRTableData.length > 10) {
         this.showPaginatorOCR = true;
       } else {
@@ -223,8 +213,8 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
       } else {
         this.showPaginatorbatch = false;
       }
-      this.batchInv = this.batchTableData.length;
-      this.ErpInv = this.ERPTableData.length;
+      this.cardObj[2].count = this.batchTableData.length;
+      this.cardObj[3].count = this.ERPTableData.length;
       if (this.ERPTableData.length > 10) {
         this.showPaginatorERP = true;
       } else {
@@ -234,8 +224,8 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
       //   this.SpinnerService.hide();
       // });
       this.totalTableData = this.OCRTableData.concat(this.batchTableData, this.ERPTableData);
-      this.totalInv = this.totalTableData.length;
-      if (this.totalInv > 10) {
+      this.cardObj[0].count = this.totalTableData.length;
+      if (this.cardObj[0].count > 10) {
         this.showPaginatortotal = true;
       } else {
         this.showPaginatortotal = false;
@@ -249,11 +239,7 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
       this.SpinnerService.hide();
     });
   }
-  // readExceptionData(data) {
-  //   // this.SpinnerService.show();
-  //   // this.chartsService.getvendorExceptionSummary().subscribe((data) => {
-
-  // }
+  
   searchInvoiceDataV(evnt) {
 
   }

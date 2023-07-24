@@ -39,44 +39,48 @@
       >
     </li>
   </ul>
-  <div *ngIf=" viewType == 'onboarded'"> <button class="btnUpload dwnldBtn" (click)="downloadReport()">Download Report</button></div>
-  <div class="filter_inputDash" *ngIf="viewType == 'emailException'">
-    <p-calendar
-      [(ngModel)]="rangeDates"
-      selectionMode="range"
-      [minDate]="minDate"
-      [maxDate]="maxDate"
-      placeholder="Select dates to Filter"
-      [readonlyInput]="true"
-      [showIcon]="true"
-      showButtonBar="true"
-      inputId="range"
-      (onClearClick)="clearDates()"
-    ></p-calendar>
+  <div class="d-flex justify-content-end mt-1">
+    <div *ngIf=" viewType == 'onboarded'" class="mr-2"> <button class="btnUpload" (click)="downloadReport()">Download Report</button></div>
+    <div *ngIf="viewType == 'emailException'">
+      <p-calendar
+        [(ngModel)]="rangeDates"
+        selectionMode="range"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        placeholder="Select dates to Filter"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        showButtonBar="true"
+        inputId="range"
+        (onClearClick)="clearDates()"
+      ></p-calendar>
 
-    <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
+      <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
+    </div>
+
+    <div *ngIf=" viewType == 'onboarded'">
+      <p-calendar [(ngModel)]="selectDate" view="month" dateFormat="mm" [showIcon]="true" [yearNavigator]="false" [minDate]="minDate" 
+      [maxDate]="maxDate" [yearRange]='displayYear' placeholder="Select dates to filter.." [readonlyInput]="false"
+      inputId="monthpicker"></p-calendar>
+  
+      <button class="btnUpload filter_btn_m " (click)="applyMonthfilter(selectDate)"> Filter</button>
+    </div>
   </div>
-  <div class="filter_inputDash" *ngIf=" viewType == 'onboarded'">
-    <p-calendar [(ngModel)]="selectDate" view="month" dateFormat="mm" [showIcon]="true" [yearNavigator]="false" [minDate]="minDate" 
-    [maxDate]="maxDate" [yearRange]='displayYear' placeholder="Select dates to filter.." [readonlyInput]="false"
-    inputId="monthpicker"></p-calendar>
+  
 
-    <button class="btnUpload filter_btn_m " (click)="applyMonthfilter(selectDate)"> Filter</button>
-  </div>
-
-  <div  [ngSwitch]="viewType" style="padding-top: 12px">
+  <div  [ngSwitch]="viewType" class="dash_div" style="padding-top: 12px">
     <!-- Process invoices Tab -->
     <div *ngSwitchCase="'Process'">
       <app-process-reports></app-process-reports>
     </div>
 
     <!-- Exception invoices Tab -->
-    <div *ngSwitchCase="'Exception'" class="tableDataDiv">
+    <div *ngSwitchCase="'Exception'" class="tableDaDiv">
       <app-exception-reports></app-exception-reports>
     </div>
 
     <!-- Exception invoices Tab -->
-    <div *ngSwitchCase="'emailException'" class="tableDataDiv">
+    <div *ngSwitchCase="'emailException'" class="tableataDiv">
       <app-table
         [tableData]="exceptionTableData"
         [invoiceColumns]="columnsForException"
@@ -88,7 +92,7 @@
     </div>
 
     <!-- Onboarding Data Tab -->
-    <div *ngSwitchCase="'onboarded'" class="tableDataDiv">
+    <div *ngSwitchCase="'onboarded'" class="tableataDiv">
       <app-table
         [tableData]="onboardTableData"
         [invoiceColumns]="columnsForonboard"

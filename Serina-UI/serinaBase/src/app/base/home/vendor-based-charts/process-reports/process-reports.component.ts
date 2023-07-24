@@ -22,12 +22,12 @@ export class ProcessReportsComponent implements OnInit {
   entity: any;
   invCountByvendor: any;
   vendorSummary: any;
-  totalUploaded: number;
-  invoicedInERP: number;
-  rejectedCount: number;
-  pendingCount: number;
-  errorCount: number;
-  uploadTime:any;
+  // totalUploaded: number;
+  // invoicedInERP: number;
+  // rejectedCount: number;
+  // pendingCount: number;
+  // errorCount: number;
+  // uploadTime:any;
   sourceData = [];
   noDataPAboolean: boolean;
   noDataVndrCountboolean: boolean;
@@ -59,7 +59,14 @@ export class ProcessReportsComponent implements OnInit {
   ColumnLengthtotal: any;
   showPaginatortotal: boolean;
   partyType:string;
-
+  cardObj = [
+    { cls: 'bg-1', icon: 'vendor_up', heading: 'Total Uploaded', count: ''},
+    { cls: 'bg-2', icon: 'vendor_pr', heading: 'Invoiced in ERP', count: ''},
+    { cls: 'bg-3', icon: 'vendor_rm', heading: 'Pending', count: ''},
+    { cls: 'bg-4', icon: 'vendor_rej', heading: 'Rejected', count: ''},
+    { cls: 'bg-5', icon: 'vendor_err', heading: 'Exceptions', count: ''},
+    { cls: 'bg-3', icon: 'vendor_rm', heading: 'Average Upload Time', count: ''}
+  ]
   constructor(
     private chartsService: ChartsService,
     private sharedService: SharedService,
@@ -135,16 +142,6 @@ export class ProcessReportsComponent implements OnInit {
     } else {
       this.noDataSourceboolean = true;
     }
-    // if (this.invoiceByEntityChartdata.length > 1) {
-      // this.noDataSourceEntityboolean = false;
-    //   this.chartsService.drawPieChart(
-    //     'pie_chart_entity',
-    //     'Invoice Count by Entity',
-    //     this.invoiceByEntityChartdata
-    //   );
-    // } else {
-    //   this.noDataSourceEntityboolean = true;
-    // }
 
     if (this.pagesByEntityChartdata.length > 1) {
       this.noDataSourcePagesEntityboolean = false;
@@ -202,65 +199,25 @@ export class ProcessReportsComponent implements OnInit {
   selectVendor(event){
     this.selectedVendorValue = event;
     this.selectedVendor = event.VendorName;
-    // let vendor = ''
-    // if(event.VendorName != 'ALL'){
-    //   vendor = `?vendor=${event.VendorName}`
-    // }
-    
-    // this.chartsData();
-    // this.readInvSummmary(vendor);
-    // this.readvendorAmount(vendor);
-    // this.readInvCountByVendor(vendor);
-    // this.readInvCountBySource(vendor);
-    // this.readInvAgeReport(vendor);
-    // this.getEntitySummary();
-    // this.readSource();
-    // setTimeout(() => {
-    //   this.setConatinerForCharts();
-    // }, 800);
   }
   
 
   chartsData() {
     this.invoiceAmountData = [
-      ['Vendor', 'Amount',{type: 'string', role: 'annotation'}],
-      // ['Mehtab', 8000],
-      // ['Alpha Data', 10000],
-      // ['First Choice', 1900],
-      // ['Metscon', 21000],
+      ['Vendor', 'Amount',{type: 'string', role: 'annotation'}]
     ];
     this.invoiceAgechartData = [
-      ['age', 'InvoiceCount'],
-      // ['0-10', 80, ''],
-      // ['11-20', 10, ''],
-      // ['21-30', 19, ''],
-      // ['>31', 21, ''],
+      ['age', 'InvoiceCount']
     ];
 
     this.invoiceBysourceChartdata = [
-      ['Source', 'Count'],
-      // ['Email', 110, 'color:#89D390'],
-      // ['Serina Portal ', 50, 'color:#5167B2'],
-      // ['Share Point', 50, 'color:#FB4953'],
+      ['Source', 'Count']
     ];
-    // this.invoiceByEntityChartdata = [
-    //   ['Entity', 'Count'],
-    //   // ['AGI', 110],
-    //   // ['AG Masonry ', 50],
-    //   // ['AG Nasco', 50],
-    // ];
     this.pagesByEntityChartdata = [
-      ['Entity', 'Count'],
-      // ['AGI', 110],
-      // ['AG Masonry ', 50],
-      // ['AG Nasco', 50],
+      ['Entity', 'Count']
     ]
     this.invCountByvendor = [
-      ['Vendor', 'Invoices'],
-      // ['Mehtab', 80],
-      // ['Alpha Data', 10],
-      // ['First Choice', 19],
-      // ['Metscon', 210],
+      ['Vendor', 'Invoices']
     ];
   }
 
@@ -271,21 +228,6 @@ export class ProcessReportsComponent implements OnInit {
   }
   selectEntityFilter(e) {
     this.selectedEntityValue = e;
-    // let entity = '';
-    // if(e != ""){
-    //   entity = `?entity=${e}`
-    // }
-    // this.chartsData();
-    // this.readInvSummmary(entity);
-    // this.readvendorAmount(entity);
-    // this.readInvCountByVendor(entity);
-    // this.readInvCountBySource(entity);
-    // this.readInvAgeReport(entity);
-    // this.selectedVendor = '';
-    // this.readSource();
-    // setTimeout(() => {
-    //   this.setConatinerForCharts();
-    // }, 500);
   }
 
   readSource(){
@@ -299,21 +241,6 @@ export class ProcessReportsComponent implements OnInit {
   }
   selectedSource(e){
     this.selectedSourceValue = e;
-    // let source = '';
-    // if(e != ""){
-    //   source = `?source=${e}`
-    // } 
-    // this.chartsData();
-    // this.readInvSummmary(source);
-    // this.readvendorAmount(source);
-    // this.readInvCountByVendor(source);
-    // this.readInvCountBySource(source);
-    // this.readInvAgeReport(source);
-    // this.getEntitySummary();
-    // this.selectedVendor = '';
-    // setTimeout(() => {
-    //   this.setConatinerForCharts();
-    // }, 500);
   }
   readInvCountByEntity(filter) {
     this.SpinnerService.show();
@@ -426,12 +353,12 @@ export class ProcessReportsComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getvendorBasedSummary(filter).subscribe((data: any) => {
       this.vendorSummary = data.data;
-      this.totalUploaded = this.vendorSummary?.totaluploaded[0]?.count;
-      this.invoicedInERP = this.vendorSummary?.erpinvoice[0]?.count;
-      this.pendingCount = this.vendorSummary?.pending[0]?.count;
-      this.rejectedCount = this.vendorSummary?.rejected[0]?.count;
-      this.errorCount = this.vendorSummary?.errorinv[0]?.count;
-      this.uploadTime = this.vendorSummary?.avguptime;
+      this.cardObj[0].count = this.vendorSummary?.totaluploaded[0]?.count;
+      this.cardObj[1].count = this.vendorSummary?.erpinvoice[0]?.count;
+      this.cardObj[2].count= this.vendorSummary?.pending[0]?.count;
+      this.cardObj[3].count = this.vendorSummary?.rejected[0]?.count;
+      this.cardObj[4].count = this.vendorSummary?.errorinv[0]?.count;
+      this.cardObj[5].count = this.vendorSummary?.avguptime;
       this.SpinnerService.hide();
     }, err=>{
       this.SpinnerService.hide();
@@ -445,16 +372,13 @@ export class ProcessReportsComponent implements OnInit {
   }
 
   filterByDate(date) {
-
     this.selectedDateValue = '';
-    console.log(date,this.selectedEntityValue,this.selectedSourceValue)
     let query = '';
     let date1: any;
     let date2: any
     if (date != '' && date != undefined) {
       date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
       date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
-      console.log(date1, date2);
       this.selectedDateValue = date
     }
     if (
@@ -539,8 +463,6 @@ export class ProcessReportsComponent implements OnInit {
     ) {
       query = `?source=${this.selectedSourceValue}&date=${date1}To${date2}`;
     }
-
-    console.log(query)
     this.chartsData();
     this.readInvSummmary(query);
     this.readvendorAmount(query);

@@ -67,6 +67,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   ap_boolean: any;
   selectedStatus: any;
   statusData: Set<string>;
+  exceptionAlertdate:any;
 
   constructor(
     private tagService: TaggingService,
@@ -84,8 +85,23 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.ap_boolean = this.storageService.ap_boolean;
     this.initialData();
-
+    this.dateFunc();
   }
+  dateFunc(){
+    let currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - 4);
+
+    // Extract the year, month, and day from the resulting date
+    let year = currentDate.getFullYear();
+    let month = currentDate.getMonth() + 1; // Month is zero-based, so we add 1
+    let day = currentDate.getDate();
+
+    // Format the date as desired (e.g., "YYYY-MM-DD")
+    let date:any = year + '-' + month.toString().padStart(2, '0') + '-' + day.toString().padStart(2, '0');
+    let normalDate = new Date(date);
+    this.exceptionAlertdate = normalDate.toISOString();
+}
+
   ngOnChanges(changes: SimpleChanges): void {
     // if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
 

@@ -31,10 +31,10 @@ export class ProcessReportserviceComponent implements OnInit {
   noDataOverallboolean: boolean;
   noDataProcessboolean: boolean;
   noDataCountboolean: boolean;
-  totolDownloadCount: number;
-  totalProcessCount: number;
-  totalPendingCount: number;
-  system_check : number;
+  // totolDownloadCount: number;
+  // totalProcessCount: number;
+  // totalPendingCount: number;
+  // system_check : number;
 
   selectedEntityValue = 'ALL';
   selectedDateValue = '';
@@ -51,7 +51,12 @@ export class ProcessReportserviceComponent implements OnInit {
   totalColumnField = [];
   ColumnLengthtotal: any;
   showPaginatortotal: boolean;
-
+  cardObj = [
+    { cls: 'bg-1', icon: 'service_total', heading: 'Total Invoices Downloaded', count: 0},
+    { cls: 'bg-2', icon: 'service_dwn', heading: 'Processed to ERP', count: 0},
+    { cls: 'bg-3', icon: 'service_pr', heading: 'Pending Invoices', count: 0},
+    { cls: 'bg-7', icon: 'service_scn', heading: 'System check', count: 0}
+  ]
   constructor(
     private sharedService: SharedService,
     private chartsService: ChartsService,
@@ -286,10 +291,10 @@ export class ProcessReportserviceComponent implements OnInit {
       this.invoiceBysourceChartdata[2] = [`Exceptions - ${data.data.exceptions}`,data.data.exceptions];
       this.invoiceBysourceChartdata[3] = [`System check - ${data.data.systemcheck}`,data.data.systemcheck];
       this.invoiceBysourceChartdata[4] = [`Downloaded - ${data.data.downloaded}`,data.data.downloaded]
-      this.totolDownloadCount = data.data.downloaded;
-      this.totalProcessCount = data.data.processed;
-      this.totalPendingCount = data.data.exceptions;
-      this.system_check = data.data.systemcheck;
+      this.cardObj[0].count = data.data.downloaded;
+      this.cardObj[1].count = data.data.processed;
+      this.cardObj[2].count = data.data.exceptions;
+      this.cardObj[3].count = data.data.systemcheck;
       this.SpinnerService.hide();
     },err=>{
       this.SpinnerService.hide();

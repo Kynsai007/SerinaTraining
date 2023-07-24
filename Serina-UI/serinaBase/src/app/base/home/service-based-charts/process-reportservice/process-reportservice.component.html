@@ -47,19 +47,19 @@
 </div>
 
 <div class="tableDtDiv">
-  <div class="d-flex">
-    <div class="card-div d-flex mr-3 bg-1">
+  <div class="d-flex f-wrap">
+    <div *ngFor="let obj of cardObj"
+       class="card-div d-flex mr-3 " [class]="obj.cls">
       <div class="img-wrapper">
-        <!-- <i class="fa fa-check"></i> -->
-        <mat-icon class="placement" svgIcon="service_total"></mat-icon>
+        <mat-icon class="placement" [svgIcon]="obj.icon"></mat-icon>
       </div>
       <div>
-        <div class="f-12">Total Invoices Downloaded</div>
-        <div class="f-15">{{ totolDownloadCount }}</div>
+        <div class="f-12">{{ obj.heading }}</div>
+        <div class="f-15">{{ obj.count }}</div>
       </div>
     </div>
 
-    <div class="card-div d-flex mr-3 bg-2">
+    <!-- <div class="card-div d-flex mr-3 bg-2">
       <div class="img-wrapper">
         <mat-icon class="placement" svgIcon="service_dwn"></mat-icon>
       </div>
@@ -71,7 +71,6 @@
 
     <div class="card-div d-flex bg-3 mr-3">
       <div class="img-wrapper">
-        <!-- <i class="fa fa-exclamation-triangle"></i> -->
         <mat-icon class="placement" svgIcon="service_pr"></mat-icon>
       </div>
       <div>
@@ -88,7 +87,7 @@
         <div class="f-12">System check</div>
         <div class="f-15">{{system_check}}</div>
       </div>
-    </div>
+    </div> -->
 
     <!-- <div class="card-div d-flex bg-7">
             <div class="img-wrapper">
@@ -121,7 +120,7 @@
 </div> -->
 
 <div class="charts_height">
-  <div class="d-flex justify-content-between mt-2" style="position: relative">
+  <div class="d-flex justify-content-between mt-2 d-column" style="position: relative">
     <div class="chart_title f-12">Invoice Count by Entity</div>
     <button *ngIf="invoiceByEntityChartdata?.length>0" class="btnUpload dwnload_btn" (click)="downloadReport()">
       <i class="fa fa-download" aria-hidden="true"></i>
@@ -152,7 +151,7 @@
         No Data Available
       </div>
     </div> -->
-    <div class="chart_title f-12" style="left: 52%">
+    <div class="chart_title f-12 l-52">
       Invoice Processed vs Downloaded vs Exceptions
     </div>
     <div class="chart_div">
@@ -163,7 +162,7 @@
     </div>
     
   </div>
-  <div class="d-flex justify-content-between mt-2" style="position: relative">
+  <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
     <div class="chart_title f-12">Processed vs Downloaded per Service Provider</div>
     <div  class="chart_div">
       <div [ngStyle]="{'visibility':!noDataCountboolean ? 'visible':'hidden'}" id="stack_chart" >
@@ -172,7 +171,7 @@
         No Data Available
       </div>
     </div>
-    <div class="chart_title f-12" style="left: 52%">
+    <div class="chart_title f-12 l-52">
       Total Processed Value
     </div>
     <div class="chart_div">
@@ -183,7 +182,7 @@
     </div>
     
   </div>
-  <div class="d-flex justify-content-between mt-2" style="position: relative">
+  <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
     <div class="chart_title f-12">Pending Invoices by Amount</div>
     <div class="chart_div">
       <div [ngStyle]="{'visibility': !noDataPendingboolean ? 'visible':'hidden'}" id="column_chart1" ></div>

@@ -111,20 +111,26 @@ export class BatchProcessComponent implements OnInit {
       if(this.ds.ap_boolean){
         this.invoceDoctype = true;
         this.partytype ='Vendor';
+        this.tagService.batchProcessTab = 'normal';
+        this.viewType = 'normal';
       } else {
         this.partytype ='Customer';
+        this.tagService.batchProcessTab = 'PODoc';
+        this.viewType = 'PODoc';
       }
-      if(!this.tagService.batchProcessTab){
-        if(this.invoceDoctype){
-          this.viewType = 'normal';
-        } else {
-          this.viewType = 'PODoc';
-        }
-        this.tagService.batchProcessTab = this.viewType
+      // if(!this.tagService.batchProcessTab){
+      //   if(this.invoceDoctype){
+      //     this.viewType = 'normal';
+      //   } else {
+      //     this.viewType = 'PODoc';
+      //   }
+      //   console.log(this.viewType)
+      //   this.tagService.batchProcessTab = this.viewType
 
-      } else {
-        this.viewType = this.tagService.batchProcessTab;
-      }
+      // } else {
+      //   this.viewType = this.tagService.batchProcessTab;
+      //   console.log(this.viewType)
+      // }
       
       this.findRoute();
       this.dateRange();

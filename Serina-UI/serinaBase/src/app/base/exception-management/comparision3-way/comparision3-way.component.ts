@@ -1,6 +1,5 @@
 import { AlertService } from './../../../services/alert/alert.service';
 import { ExceptionsService } from './../../../services/exceptions/exceptions.service';
-
 import { AuthenticationService } from './../../../services/auth/auth-service.service';
 import { DataService } from './../../../services/dataStore/data.service';
 import { Subscription } from 'rxjs';
@@ -11,6 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { SharedService } from 'src/app/services/shared.service';
 import { TaggingService } from './../../../services/tagging.service';
 import {
+  ChangeDetectionStrategy,
   Component,
   HostListener,
   OnDestroy,
@@ -18,16 +18,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Location } from '@angular/common';
-import { FormBuilder, Validators, FormGroup, NgForm } from '@angular/forms';
+import { FormBuilder, NgForm } from '@angular/forms';
 import * as $ from 'jquery';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
-import { comaprisionLineData } from './testingLineData';
 import { FormCanDeactivate } from '../../can-deactivate/form-can-deactivate';
 import { SettingsService } from 'src/app/services/settings/settings.service';
 import IdleTimer from '../../idleTimer/idleTimer';
 import * as fileSaver from 'file-saver';
 import { PopupComponent } from '../../popup/popup.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 
 @Component({
@@ -37,11 +36,11 @@ import { take } from 'rxjs/operators';
     './comparision3-way.component.scss',
     '../../invoice/view-invoice/view-invoice.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Comparision3WayComponent
   extends FormCanDeactivate
-  implements OnInit
-{
+  implements OnInit {
   @ViewChild('canvas') canvas;
   zoomX = 1;
   @ViewChild(PdfViewerComponent, { static: false })
@@ -50,23 +49,15 @@ export class Comparision3WayComponent
   @ViewChild('pdfviewer') pdfviewer;
   @ViewChild('form')
   form: NgForm;
-  isEditable: boolean;
   editable: boolean;
-  rect: any;
-  rectCoords: any;
   inputData = [];
-  vendorDetails: FormGroup;
-  isRect: boolean;
-  isTagged: boolean = false;
 
   mergedArray: any;
   inputDisplayArray = [];
   vendorData = [];
   lineDisplayData: any;
-  lineData = [];
   Itype: string;
   updateInvoiceData: any = [];
-  imgArray: { id: string; url: string }[];
   headerName: string;
   editPermissionBoolean: boolean;
   changeApproveBoolean: boolean;
@@ -84,16 +75,12 @@ export class Comparision3WayComponent
   invoiceID: any;
   routeIdCapture: Subscription;
   byteArray: Uint8Array;
-
-  vendorDetalilsEditBoolean: boolean = false;
   displayRuleDialog: boolean;
   displayErrorDialog: boolean;
-  SelectRuleOption = { value: '' };
   SelectErrorOption;
-  givenErrors = ['Alternative', 'Identical', 'Adjustment', 'OCR Error'];
-  givenRules: any;
+  givenErrors = [];
   rejectionComments: string = '';
-  rejectReason:any;
+  rejectReason: any;
 
   grnCreateBoolean: boolean = false;
   GRNObject = [];
@@ -103,19 +90,11 @@ export class Comparision3WayComponent
   userDetails: any;
   showPdf: boolean = false;
   btnText = 'View PDF';
-  lineCompareData;
-  totalLineItems = ['abc', 'xyz'];
   selectedPONumber;
-  poList = [,];
+  poList = [];
   filteredPO: any[];
-  selectedRule = '3 way';
-  lineItemsData: any;
-  tagArray: any[];
 
   lineCount = [];
-  save_rule_boolean: boolean;
-  selectedRuleID: any;
-  approvalType: any;
   currentTab = 'vendor';
   lineItems: any;
   inv_itemcode: any;
@@ -138,10 +117,10 @@ export class Comparision3WayComponent
   grnLineCount: any;
   rotation = 0;
   addrejectcmtBool: boolean;
-  ap_boolean:boolean;
+  ap_boolean: boolean;
   poLineData = [];
-  isAdmin:boolean;
-  GRN_PO_Bool:boolean;
+  isAdmin: boolean;
+  GRN_PO_Bool: boolean;
   GRN_PO_Data = [];
   GRN_PO_tags = [
     { TagName: 'Description', linedata: [] },
@@ -168,12 +147,12 @@ export class Comparision3WayComponent
   grnList: any;
   selectedGRNList = [];
   currentlyOpenedItemIndex = -1;
-  GRNTabData:any;
+  GRNTabData: any;
   grnTabDatalength: number;
   batchData: any;
   progressDailogBool: boolean;
   portalName: string;
-  GRNDialogBool:boolean;
+  GRNDialogBool: boolean;
   headerpop: string;
   descrptonBool = false;
   polineTableData = [
@@ -191,6 +170,11 @@ export class Comparision3WayComponent
   po_num: any;
   subStatusId: any;
   isAmtStr: boolean;
+  flipEnabled: boolean;
+  partytype: string;
+  lineTxt1: string;
+  lineTxt2: string;
+
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -209,9 +193,9 @@ export class Comparision3WayComponent
     private mat_dlg: MatDialog,
   ) {
     super();
-    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg)=>{
-      if(msg == 'mapping'){
-      this.getInvoiceFulldata();
+    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg) => {
+      if (msg == 'mapping') {
+        this.getInvoiceFulldata();
       }
     })
   }
@@ -220,7 +204,17 @@ export class Comparision3WayComponent
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
+    this.flipEnabled = this.dataService.configData.flipBool;
     this.userDetails = this.authService.currentUserValue;
+    if (this.dataService.ap_boolean) {
+      this.partytype = 'vendor';
+      this.lineTxt1 = 'IN';
+      this.lineTxt2 = 'PO';
+    } else {
+      this.partytype = 'customer';
+      this.lineTxt1 = 'PO';
+      this.lineTxt2 = 'SO';
+    }
     if (this.userDetails.user_type == 'vendor_portal') {
       this.portalName = 'vendorPortal';
     } else {
@@ -240,10 +234,8 @@ export class Comparision3WayComponent
       onTimeout: () => {
         if (this.router.url.includes('comparision-docs')) {
           this.router.navigate([`${this.portalName}/ExceptionManagement`]);
-          this.AlertService.errorObject.detail =
-            'Session Expired for Editing Invoice';
-          this.messageService.add(this.AlertService.errorObject);
         }
+        this.alertFun("Session Expired for Editing Invoice");
       },
     });
   }
@@ -255,7 +247,7 @@ export class Comparision3WayComponent
     };
     this.exceptionService
       .updateDocumentLockInfo(JSON.stringify(sessionData))
-      .subscribe((data: any) => {});
+      .subscribe((data: any) => { });
   }
 
   initialData() {
@@ -267,18 +259,18 @@ export class Comparision3WayComponent
     if (this.router.url.includes('Create_GRN_inv_list')) {
       if (this.permissionService.GRNPageAccess == true) {
         this.grnCreateBoolean = true;
-        if(this.GRN_PO_Bool){
+        if (this.GRN_PO_Bool) {
           this.tagService.headerName = 'Create GRN With PO';
           this.getInvoiceFulldata_po();
           this.get_PO_GRN_Lines();
-          
+
         } else {
           this.tagService.headerName = 'Create GRN';
           this.readGRNInvData();
           this.readPOLines();
         }
-        if(this.grnCreateBoolean){
-          this.currentTab =  'line'
+        if (this.grnCreateBoolean) {
+          this.currentTab = 'line'
         }
       } else {
         alert('Sorry!, you do not have access');
@@ -294,12 +286,12 @@ export class Comparision3WayComponent
       this.readMappingData();
       this.getGRNtabData()
       if (this.tagService.editable == true && this.grnCreateBoolean == false) {
-      this.updateSessionTime();
-      this.idleTimer(180, 'Start');
-      this.callSession = setTimeout(() => {
         this.updateSessionTime();
-      }, 250000);
-    }
+        this.idleTimer(180, 'Start');
+        this.callSession = setTimeout(() => {
+          this.updateSessionTime();
+        }, 250000);
+      }
     }
     this.onResize();
     this.Itype = this.tagService.type;
@@ -309,18 +301,11 @@ export class Comparision3WayComponent
     this.approveBtn_boolean = this.tagService.approveBtnBoolean;
     this.headerName = this.tagService.headerName;
     this.userDetails = this.authService.currentUserValue;
-    this.approvalType = this.tagService.approvalType;
     this.financeapproveDisplayBoolean =
       this.settingService.finaceApproveBoolean;
     this.subStatusId = this.dataService.editableInvoiceData?.idDocumentSubstatus;
 
     // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
-    this.lineCompareData = comaprisionLineData;
-  }
-  getRulesData() {
-    this.exceptionService.readBatchRules().subscribe((data: any) => {
-      this.givenRules = data;
-    });
   }
   AddPermission() {
     if (
@@ -346,11 +331,6 @@ export class Comparision3WayComponent
 
   changeTab(val) {
     this.currentTab = val;
-    // if (val == 'line') {
-    //   this.lineTabBoolean = true;
-    // } else {
-    //   this.lineTabBoolean = false;
-    // }
   }
 
   get_PO_GRN_Lines() {
@@ -400,7 +380,6 @@ export class Comparision3WayComponent
   getInvoiceFulldata_po() {
     this.SpinnerService.show();
     this.inputDisplayArray = [];
-    this.lineData = [];
     this.SharedService.getInvoiceInfo().subscribe(
       (data: any) => {
         const pushedArrayHeader = [];
@@ -429,11 +408,7 @@ export class Comparision3WayComponent
       },
       (error) => {
         this.SpinnerService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: 'Server error',
-        });
+        this.alertFun("Server error");
       }
     );
   }
@@ -441,8 +416,6 @@ export class Comparision3WayComponent
   getInvoiceFulldata() {
     this.SpinnerService.show();
     this.inputDisplayArray = [];
-    this.lineData = [];
-    
     this.exceptionService.getInvoiceInfo().subscribe(
       (data: any) => {
         this.lineDisplayData = data.linedata.Result;
@@ -477,23 +450,18 @@ export class Comparision3WayComponent
         };
         this.vendorAcId = this.vendorData['idVendorAccount'];
         this.vendorName = this.vendorData['VendorName'];
-        this.selectedRule = data.ruledata[0].Name;
 
         this.SpinnerService.hide();
       },
       (error) => {
         this.SpinnerService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: 'Server error',
-        });
+        this.alertFun("Server error");
       }
     );
   }
 
-  getPOs(){
-    this.exceptionService.getInvoicePOs().subscribe(((data:any)=>{
+  getPOs() {
+    this.exceptionService.getInvoicePOs().subscribe(((data: any) => {
       this.poList = data;
     }))
   }
@@ -517,8 +485,8 @@ export class Comparision3WayComponent
             });
           } else if (ele.TagName == 'UnitPrice') {
             ele.TagName = 'Inv - UnitPrice';
-          } else if(ele.TagName == 'Description'){
-            if(ele.linedata?.length>0){
+          } else if (ele.TagName == 'Description') {
+            if (ele.linedata?.length > 0) {
               this.descrptonBool = true;
             }
           }
@@ -648,7 +616,7 @@ export class Comparision3WayComponent
           pushedArrayHeader.push(this.mergedArray);
         });
         this.inputData = pushedArrayHeader;
-        let inv_num_data:any = this.inputData.filter(val=>{
+        let inv_num_data: any = this.inputData.filter(val => {
           return val.TagLabel == 'InvoiceId';
         })
         this.invoiceNumber = inv_num_data[0].Value;
@@ -658,18 +626,13 @@ export class Comparision3WayComponent
         };
         this.vendorAcId = this.vendorData['idVendorAccount'];
         this.vendorName = this.vendorData['VendorName'];
-        // this.selectedRule = data.ok.ruledata[0].Name;
         // this.poList = data.all_pos;
         this.isGRNDataLoaded = true;
         this.SpinnerService.hide();
       },
       (error) => {
         this.SpinnerService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: 'Server error',
-        });
+        this.alertFun("Server error");
       }
     );
   }
@@ -711,22 +674,18 @@ export class Comparision3WayComponent
       },
       (error) => {
         this.SpinnerService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: 'Server error',
-        });
+        this.alertFun("Server error");
       }
     );
   }
 
-  DownloadPDF(){
+  DownloadPDF() {
     let extension;
-    if(this.content_type == 'application/pdf'){
+    if (this.content_type == 'application/pdf') {
       extension = '.pdf';
-    } else if(this.content_type == 'image/jpg'){
+    } else if (this.content_type == 'image/jpg') {
       extension = '.jpg';
-    } else if(this.content_type == 'image/png'){
+    } else if (this.content_type == 'image/png') {
       extension = '.png';
     }
     fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
@@ -768,19 +727,17 @@ export class Comparision3WayComponent
           // Draw the image on the canvas
           ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
         };
-
-
       }, 50);
     }
   }
 
   onChangeValue(key, value, data) {
     // this.inputData[0][key]=value;
-    if (key == 'InvoiceTotal' || key == 'SubTotal') { 
+    if (key == 'InvoiceTotal' || key == 'SubTotal') {
       if (value == '' || isNaN(+value)) {
-        this.isAmtStr = true ;
+        this.isAmtStr = true;
       } else {
-        this.isAmtStr = false ;
+        this.isAmtStr = false;
       }
     }
     let updateValue = {
@@ -790,12 +747,12 @@ export class Comparision3WayComponent
     };
     this.updateInvoiceData.push(updateValue);
   }
-  onChangeLineValue(key,value, data) {
-    if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') { 
+  onChangeLineValue(key, value, data) {
+    if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') {
       if (value == '' || isNaN(+value)) {
-        this.isAmtStr = true ;
+        this.isAmtStr = true;
       } else {
-        this.isAmtStr = false ;
+        this.isAmtStr = false;
       }
     }
     let updateValue = {
@@ -807,7 +764,7 @@ export class Comparision3WayComponent
   }
 
   saveChanges() {
-    if(!this.isAmtStr){
+    if (!this.isAmtStr) {
       if (this.updateInvoiceData.length != 0) {
         this.SharedService.updateInvoiceDetails(
           JSON.stringify(this.updateInvoiceData)
@@ -823,62 +780,14 @@ export class Comparision3WayComponent
           },
           (err) => {
             this.updateInvoiceData = [];
-            this.messageService.add({
-              severity: 'error',
-              summary: 'error',
-              detail: 'Server error or Please check the data',
-            });
+            this.alertFun("Server error or Please check the data");
           }
         );
       }
     } else {
       this.updateInvoiceData = [];
-      this.AlertService.errorObject.detail = 'Strings are not allowed in the amount and quantity fields.';
-      this.messageService.add(this.AlertService.errorObject);
+      this.alertFun('Strings are not allowed in the amount and quantity fields.')
     }
-  }
-  onSubmitData() {
-    // this.SpinnerService.show();
-    // console.log(this.updateInvoiceData);
-    // this.SharedService.updateInvoiceDetails(JSON.stringify(this.updateInvoiceData)).subscribe((data: any) => {
-    //   console.log(data);
-    //   if (data.result == 'success') {
-    //     this.messageService.add({
-    //       severity: "info",
-    //       summary: "Updated",
-    //       detail: "Updated Successfully"
-    //     });
-    //     this.getInvoiceFulldata();
-    //   } else {
-    //     this.messageService.add({
-    //       severity: "error",
-    //       summary: "error",
-    //       detail: "Something went wrong"
-    //     });
-    //   }
-    //   this.updateInvoiceData = [];
-    //   this.SpinnerService.hide();
-    // })
-  }
-
-  drawrectangleonHighlight(index) {
-    // var rect = new fabric.Rect({
-    //   left: 100,
-    //   top: 50,
-    //   fill: 'rgba(255,0,0,0.5)',
-    //   width: 100,
-    //   height: 30,
-    //   selectable: false,
-    //   lockMovementX: true,
-    //   lockMovementY: true,
-    //   lockRotation: true,
-    //   transparentCorners: true,
-    //   hasControls: false,
-    // });
-
-    // this.canvas[index].add(rect);
-    // this.canvas[index].setActiveObject(rect);
-    // document.getElementById(index + 1).scrollIntoView();
   }
 
   zoomin() {
@@ -899,103 +808,6 @@ export class Comparision3WayComponent
       this.zoomX = 1;
     }
     (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
-  }
-
-  removeEvents(index) {
-    this.canvas[index].off('mouse:down');
-    this.canvas[index].off('mouse:up');
-    this.canvas[index].off('mouse:move');
-  }
-
-  panning(index) {
-    // this.removeEvents(index);
-    // let panning = false;
-    // let selectable;
-    // this.canvas[index].on('mouse:up', (e) => {
-    //   panning = false;
-    // });
-
-    // this.canvas[index].on('mouse:down', (e) => {
-    //   panning = true;
-    //   selectable = false;
-    // });
-    // this.canvas[index].on('mouse:move', (e) => {
-    //   if (panning && e && e.e) {
-    //     selectable = false;
-    //     var units = 10;
-    //     var delta = new fabric.Point(e.e.movementX, e.e.movementY);
-    //     this.canvas[index].relativePan(delta);
-    //   }
-    // });
-  }
-
-  addVendorDetails() {
-  }
-  onVerify(e) {
-  }
-  submitChanges() {
-    // if (this.userDetails.user_type == 'customer_portal') {
-    //   let submitData = {
-    //     "documentdescription": " "
-    //   }
-    //   this.SpinnerService.show();
-    //   this.SharedService.submitChangesInvoice(JSON.stringify(submitData)).subscribe((data: any) => {
-    //     this.dataService.invoiceLoadedData = [];
-    //     if (data.result) {
-    //       this.messageService.add({
-    //         severity: "success",
-    //         summary: "Updated",
-    //         detail: "Updated Successfully"
-    //       });
-    //       this.SpinnerService.hide();
-    //       setTimeout(() => {
-    //         this._location.back()
-    //       }, 1000);
-    //     }
-    //   }, error => {
-    //     this.messageService.add({
-    //       severity: "error",
-    //       summary: "error",
-    //       detail: error.error
-    //     });
-    //     this.SpinnerService.hide();
-    //   })
-    // } else if (this.userDetails.user_type == 'vendor_portal') {
-    //   this.SharedService.vendorSubmit().subscribe((data: any) => {
-    //     console.log(data);
-    //     this.messageService.add({
-    //       severity: "success",
-    //       summary: "Uploaded",
-    //       detail: "Uploaded to serina successfully"
-    //     });
-    //     setTimeout(() => {
-    //       this.router.navigate(['vendorPortal/invoice/allInvoices']);
-    //     }, 1000);
-    //   }, error => {
-    //     this.messageService.add({
-    //       severity: "error",
-    //       summary: "error",
-    //       detail: error.statusText
-    //     });
-    //   })
-    // }
-  }
-
-  approveChangesManual() {
-    this.exceptionService.send_manual_approval().subscribe(
-      (data: any) => {
-        this.AlertService.addObject.detail =
-          'Send to Manual approval successfully';
-        this.messageService.add(this.AlertService.addObject);
-        setTimeout(() => {
-          this._location.back();
-        }, 2000);
-      },
-      (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
-      }
-    );
   }
 
   approveChangesBatch() {
@@ -1058,36 +870,19 @@ export class Comparision3WayComponent
         /* Error reponse starts*/
         if (errorTypeHead == 'AmountHeader') {
           setTimeout(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'error',
-              detail:
-                'Please verify SubTotal and InvoiceTotal in Header details',
-            });
+            this.alertFun('Please verify SubTotal and InvoiceTotal in Header details');
           }, 50);
         }
         if (errorType == 'emptyHeader') {
-          this.AlertService.errorObject.detail =
-            'Please Check PO Number, Invoice Date, InvoiceId fileds in header details';
-          this.messageService.add(this.AlertService.errorObject);
+          this.alertFun("Please Check PO Number, Invoice Date, InvoiceId fileds in header details");
         }
         if (errorTypeLine == 'AmountLine') {
           setTimeout(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'error',
-              detail:
-                'Please verify Amount, Quntity, unitprice and AmountExcTax in Line details',
-            });
+            this.alertFun('Please verify Amount, Quntity, unitprice and AmountExcTax in Line details');
           }, 10);
         } else if (errorTypeLine == 'quntity') {
           setTimeout(() => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'error',
-              detail:
-                'Please check the Quntity in the Line details',
-            });
+            this.alertFun("Please check the Quntity in the Line details")
           }, 10);
         }
         /* Error reponse end*/
@@ -1100,11 +895,8 @@ export class Comparision3WayComponent
       (data: any) => {
         this.dataService.invoiceLoadedData = [];
         this.SpinnerService.hide();
-        this.AlertService.addObject.detail = 'send to batch successfully';
-        this.AlertService.addObject.summary = 'sent';
-        this.messageService.add(this.AlertService.addObject);
-        let boolean = false;
-        this.SharedService.syncBatchTrigger(`?re_upload=${boolean}`).subscribe((data: any) => { 
+        this.successAlert('send to batch successfully');
+        this.SharedService.syncBatchTrigger(`?re_upload=false`).subscribe((data: any) => {
           this.headerpop = 'Batch Progress'
           this.progressDailogBool = true;
           this.GRNDialogBool = false;
@@ -1115,14 +907,10 @@ export class Comparision3WayComponent
         //     this._location.back();
         //   }
         // }, 3000);
-        
+
       },
       (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: 'Server error',
-        });
+        this.alertFun("Server error");
       }
     );
   }
@@ -1134,7 +922,7 @@ export class Comparision3WayComponent
     this.tagService.headerName = 'Edit Invoice';
     let sub_status = null;
     for (const el of this.batchData) {
-      if(el.status == 0){
+      if (el.status == 0) {
         sub_status = el.sub_status;
       }
     };
@@ -1144,9 +932,7 @@ export class Comparision3WayComponent
         sub_status == 33 ||
         sub_status == 21 ||
         sub_status == 27) {
-        this.AlertService.updateObject.summary = 'Suggestion';
-        this.AlertService.updateObject.detail = 'Please check the values in invoice.';
-        this.messageService.add(this.AlertService.updateObject);
+        this.updateAlert('Suggestion', 'Please check the values in invoice.');
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
@@ -1158,27 +944,27 @@ export class Comparision3WayComponent
         sub_status == 21 ||
         sub_status == 27 ||
         sub_status == 75) {
-        this.AlertService.updateObject.summary = 'Suggestion';
-        this.AlertService.updateObject.detail = 'Please check the values in invoice.';
-        this.messageService.add(this.AlertService.updateObject);
-
+        this.updateAlert('Suggestion', 'Please check the values in invoice.');
       } else if (sub_status == 34) {
-        this.AlertService.updateObject.summary = 'Suggestion';
-        this.AlertService.updateObject.detail = 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.';
-        this.messageService.add(this.AlertService.updateObject)
+        this.updateAlert('Suggestion', 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.')
       } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {
         this.router.navigate([`${this.portalName}/ExceptionManagement`])
-      }else if(sub_status == 70) {
-          this.tagService.approval_selection_boolean = true;
-          this.router.navigate([`${this.portalName}/ExceptionManagement/InvoiceDetails/${this.invoiceID}`])
-          this.AlertService.updateObject.summary = 'Set Approval';
-          this.AlertService.updateObject.detail = 'Please add the approvers';
-          this.currentTab = 'approver_selection';
-      }  else {
+      } else if (sub_status == 70) {
+        this.tagService.approval_selection_boolean = true;
+        this.router.navigate([`${this.portalName}/ExceptionManagement/InvoiceDetails/${this.invoiceID}`]);
+        this.updateAlert('Set Approval', 'Please add the approvers');
+        this.currentTab = 'approver_selection';
+      } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     }
     this.progressDailogBool = false;
+  }
+
+  updateAlert(txt, cmt) {
+    this.AlertService.updateObject.summary = txt;
+    this.AlertService.updateObject.detail = cmt;
+    this.messageService.add(this.AlertService.updateObject);
   }
 
   financeApprove() {
@@ -1195,72 +981,10 @@ export class Comparision3WayComponent
     //     }, 1000);
     //   },
     //   (error) => {
-    //     this.messageService.add({
-    //       severity: 'error',
-    //       summary: 'error',
-    //       detail: error.statusText,
-    //     });
+    // this.alertFun("Server error");
     //   }
     // );
   }
-
-  open_modal() {
-    this.displayRuleDialog = true;
-    this.save_rule_boolean = true;
-  }
-
-  send_review_modal() {
-    this.displayRuleDialog = true;
-    this.save_rule_boolean = false;
-  }
-
-  save_rule() {
-    this.selectedRule = this.SelectRuleOption.value['Name'];
-    this.selectedRuleID = this.SelectRuleOption.value['idDocumentRules'];
-    this.displayRuleDialog = false;
-  }
-
-  sendReview() {
-    this.selectedRule = this.SelectRuleOption.value['Name'];
-    this.selectedRuleID = this.SelectRuleOption.value['idDocumentRules'];
-    this.exceptionService
-      .send_batch_approval_review(this.selectedRuleID)
-      .subscribe(
-        (data: any) => {
-          this.AlertService.addObject.detail =
-            'Send to Batch review successfully';
-          this.messageService.add(this.AlertService.addObject);
-          this.displayRuleDialog = false;
-          setTimeout(() => {
-            this._location.back();
-          }, 2000);
-        },
-        (error) => {
-          this.AlertService.errorObject.detail = error.statusText;
-          this.messageService.add(this.AlertService.errorObject);
-        }
-      );
-  }
-
-  reviewManualApprove() {
-    if (confirm(`Are you sure you want to send for Manual approval?`)) {
-      this.exceptionService.send_review_manual().subscribe(
-        (data: any) => {
-          this.AlertService.addObject.detail =
-            'Send to Manual approval review successfully';
-          this.messageService.add(this.AlertService.addObject);
-          setTimeout(() => {
-            this._location.back();
-          }, 2000);
-        },
-        (error) => {
-          this.AlertService.errorObject.detail = error.statusText;
-          this.messageService.add(this.AlertService.errorObject);
-        }
-      );
-    }
-  }
-
   backToInvoice() {
     if (
       !this.router.url.includes('vendorUpload') ||
@@ -1304,7 +1028,6 @@ export class Comparision3WayComponent
     this.totalPages = pdfData.numPages;
     this.isLoaded = true;
   }
-  textLayerRendered(e: CustomEvent) {}
 
   nextPage() {
     this.page++;
@@ -1312,57 +1035,6 @@ export class Comparision3WayComponent
 
   prevPage() {
     this.page--;
-  }
-  selectedText(): void {}
-
-  search(stringToSearch: string) {
-    this.pdfViewer.pdfFindController.executeCommand('find', {
-      caseSensitive: false,
-      findPrevious: undefined,
-      highlightAll: true,
-      phraseSearch: true,
-      query: stringToSearch,
-    });
-  }
-  hightlight(val) {
-    var pageno = parseInt('1');
-    var pageView = this.pdfViewer.pdfViewer._pages[pageno - 1];
-    //datas - array returning from server contains synctex output values
-    var left = parseInt('530px');
-    var top = parseInt('660px');
-    var width = parseInt('50px');
-    var height = parseInt('20px');
-    //recalculating top value
-    top = pageView.viewport.viewBox[3] - top;
-    var valueArray = [left, top, left + width, top + height];
-    let rect = pageView.viewport.convertToViewportRectangle(valueArray);
-    // rect       = PDFJS.disableTextLayer.normalizeRect(rect);
-    var x = Math.min(rect[0], rect[2]),
-      width = Math.abs(rect[0] - rect[2]);
-    var y = Math.min(rect[1], rect[3]),
-      height = Math.abs(rect[1] - rect[3]);
-    const element = document.createElement('div');
-    element.setAttribute('class', 'overlay-div-synctex');
-    element.style.left = x + 'px';
-    element.style.top = y + 'px';
-    element.style.width = width + 'px';
-    element.style.height = height + 'px';
-    element.style.position = 'absolute';
-    element.style.backgroundColor = 'rgba(200,0,0,0.5)';
-    $('*[data-page-number="' + pageno + '"]').append(element);
-    this.pdfviewer.pdfViewer._scrollIntoView({
-      pageDiv: pageView.div,
-    });
-  }
-
-  onClick(e) {
-    const textLayer = document.getElementsByClassName('TextLayer');
-    const x =
-      window.getSelection().getRangeAt(0).getClientRects()[0].left -
-      textLayer[0].getBoundingClientRect().left;
-    const y =
-      window.getSelection().getRangeAt(0).getClientRects()[0].top -
-      textLayer[0].getBoundingClientRect().top;
   }
 
   viewPdf() {
@@ -1398,13 +1070,11 @@ export class Comparision3WayComponent
     if (confirm(`Are you sure you want to change PO Number?`)) {
       this.exceptionService.updatePONumber(value.PODocumentID).subscribe(
         (data: any) => {
-          this.AlertService.addObject.detail = 'PO Number updated successfully';
-          this.messageService.add(this.AlertService.addObject);
+          this.successAlert('PO Number updated successfully');
           this.getInvoiceFulldata();
         },
         (error) => {
-          this.AlertService.errorObject.detail = error.statusText;
-          this.messageService.add(this.AlertService.errorObject);
+          this.alertFun(error.statusText);
         }
       );
     }
@@ -1447,10 +1117,6 @@ export class Comparision3WayComponent
       itemCodeArray.push(el);
       this.displayErrorDialog = true;
     }
-
-    // if(el != val1){
-
-    // }
   }
 
   cancelSelectErrorRule() {
@@ -1468,14 +1134,12 @@ export class Comparision3WayComponent
       .subscribe(
         (data: any) => {
           this.displayErrorDialog = false;
-          this.AlertService.addObject.detail = 'Line item updated successfully';
-          this.messageService.add(this.AlertService.addObject);
+          this.successAlert('Line item updated successfully');
           this.getInvoiceFulldata();
           this.readMappingData();
         },
         (error) => {
-          this.AlertService.errorObject.detail = error.statusText;
-          this.messageService.add(this.AlertService.errorObject);
+          this.alertFun(error.statusText);
           this.displayErrorDialog = false;
         }
       );
@@ -1494,7 +1158,7 @@ export class Comparision3WayComponent
     }
   }
 
-  rejectKepup(val){
+  rejectKepup(val) {
     this.rejectionComments = val;
   }
 
@@ -1516,130 +1180,119 @@ export class Comparision3WayComponent
         });
         this.displayrejectDialog = false;
         setTimeout(() => {
-          if(this.router.url.includes('ExceptionManagement')){
-          this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+          if (this.router.url.includes('ExceptionManagement')) {
+            this.router.navigate([`${this.portalName}/ExceptionManagement`]);
           } else {
-          this.router.navigate([`${this.portalName}/Create_GRN_inv_list`]);
+            this.router.navigate([`${this.portalName}/Create_GRN_inv_list`]);
           }
         }, 1000);
       },
       (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: 'Something went wrong',
-        });
+        this.alertFun("Server error");
       }
     );
   }
 
-  onChangeGrn(id, val) {}
-  deleteGrnLine(id){
-    if(confirm('Are you sure you want to delete this line?')){
-     this.lineDisplayData = this.lineDisplayData.map(record => {
-      const newLinedata = record.linedata.filter(obj => obj.idDocumentLineItems !== id);
-      return { ...record, linedata: newLinedata };
-    });
-      this.GRNObject = this.GRNObject.filter(val=>{
-      return val.idDocumentLineItems != id
-    })
-    this.grnLineCount =  this.lineDisplayData[0]?.linedata;
+  deleteGrnLine(id) {
+    if (confirm('Are you sure you want to delete this line?')) {
+      this.lineDisplayData = this.lineDisplayData.map(record => {
+        const newLinedata = record.linedata.filter(obj => obj.idDocumentLineItems !== id);
+        return { ...record, linedata: newLinedata };
+      });
+      this.GRNObject = this.GRNObject.filter(val => {
+        return val.idDocumentLineItems != id
+      })
+      this.grnLineCount = this.lineDisplayData[0]?.linedata;
     }
   }
 
   onSave_submit(grnQ, boolean, txt) {
-    if(this.descrptonBool){
+    if (this.descrptonBool) {
       this.GRNObjectDuplicate = this.GRNObject;
-    if (this.GRN_PO_Bool) {
-      this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val=> val.tagName != 'AmountExcTax');
-      this.GRNObjectDuplicate.forEach((val, i) => {
-        if (val.is_mapped == 'Price' && grnQ[val.idDocumentLineItems] != 0 ) {
-          let obj = {
-            Value: grnQ[val.idDocumentLineItems] * val.Value, ErrorDesc: '', idDocumentLineItems: val.idDocumentLineItems, is_mapped: '', tagName: 'AmountExcTax'
+      if (this.GRN_PO_Bool) {
+        this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
+        this.GRNObjectDuplicate.forEach((val, i) => {
+          if (val.is_mapped == 'Price' && grnQ[val.idDocumentLineItems] != 0) {
+            let obj = {
+              Value: grnQ[val.idDocumentLineItems] * val.Value, ErrorDesc: '', idDocumentLineItems: val.idDocumentLineItems, is_mapped: '', tagName: 'AmountExcTax'
+            }
+            this.GRNObjectDuplicate.splice(this.GRNObjectDuplicate.length + 1, 0, obj)
           }
-          this.GRNObjectDuplicate.splice(this.GRNObjectDuplicate.length + 1, 0, obj)
-        }
+        })
+        // this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter((val, ind, arr) => ind == arr.findIndex(v => v.idDocumentLineItems == val.idDocumentLineItems && v.tagName == val.tagName));
 
-      })
-      // this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter((val, ind, arr) => ind == arr.findIndex(v => v.idDocumentLineItems == val.idDocumentLineItems && v.tagName == val.tagName));
-
-    } else {
-      this.validateInvPOUnitPrice();
-    }
-    let emptyBoolean: boolean = false;
-    let commentBoolean = false;
-    this.GRNObjectDuplicate.forEach((ele, ind) => {
-      if (ele.Value === '') {
-        emptyBoolean = true;
-        this.AlertService.errorObject.detail = 'Fields should not be empty!';
-      } else if (ele.Value != ele.old_value && !this.GRN_PO_Bool) {
-        if (
-          ele.ErrorDesc == null ||
-          ele.ErrorDesc == '' ||
-          ele.ErrorDesc == 'None' ||
-          ele.ErrorDesc == 'none'
-        ) {
-          commentBoolean = true;
-          this.AlertService.errorObject.detail =
-            'Please add comments for the Line which you adjusted.';
-        }
-      } else if (ele.Value == 0) {
-        if (this.GRN_PO_Bool) {
-          if (ele.tagName == 'Quantity') {
-            this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.idDocumentLineItems != ele.idDocumentLineItems);
-          }
-          // this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val=> val.tagName != 'AmountExcTax');
-        } else {
-          commentBoolean = true;
-          this.AlertService.errorObject.detail =
-            'Please check the fileds, it sholud not be 0 anywhere';
-        }
-
+      } else {
+        this.validateInvPOUnitPrice();
       }
-    });
-    if (emptyBoolean == false && commentBoolean == false) {
-      
-      if (
-        boolean == true &&
-        confirm('Are you sure you want to create GRN, Please confirm')
-      ) {
-        if (this.GRN_PO_Bool) {
-          this.grnDuplicateCheck()
+      let emptyBoolean: boolean = false;
+      let commentBoolean = false;
+      this.GRNObjectDuplicate.forEach((ele, ind) => {
+        if (ele.Value === '') {
+          emptyBoolean = true;
+          this.AlertService.errorObject.detail = 'Fields should not be empty!';
+        } else if (ele.Value != ele.old_value && !this.GRN_PO_Bool) {
+          if (
+            ele.ErrorDesc == null ||
+            ele.ErrorDesc == '' ||
+            ele.ErrorDesc == 'None' ||
+            ele.ErrorDesc == 'none'
+          ) {
+            commentBoolean = true;
+            this.AlertService.errorObject.detail =
+              'Please add comments for the Line which you adjusted.';
+          }
+        } else if (ele.Value == 0) {
+          if (this.GRN_PO_Bool) {
+            if (ele.tagName == 'Quantity') {
+              this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.idDocumentLineItems != ele.idDocumentLineItems);
+            }
+            // this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val=> val.tagName != 'AmountExcTax');
+          } else {
+            commentBoolean = true;
+            this.AlertService.errorObject.detail =
+              'Please check the fileds, it sholud not be 0 anywhere';
+          }
+        }
+      });
+      if (emptyBoolean == false && commentBoolean == false) {
+
+        if (
+          boolean == true &&
+          confirm('Are you sure you want to create GRN, Please confirm')
+        ) {
+          if (this.GRN_PO_Bool) {
+            this.grnDuplicateCheck()
+          } else {
+            setTimeout(() => {
+              this.CreateGRNAPI(boolean, txt);
+            }, 1000);
+          }
         } else {
-          setTimeout(() => {
-            this.CreateGRNAPI(boolean, txt);
-          }, 1000);
+          if (!this.GRN_PO_Bool) {
+            setTimeout(() => {
+              this.CreateGRNAPI(false, 'GRN data saved successfully');
+            }, 1000);
+          } else {
+            this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
+          }
         }
       } else {
-        if (!this.GRN_PO_Bool) {
-          setTimeout(() => {
-            this.CreateGRNAPI(false, 'GRN data saved successfully');
-          }, 1000);
-        } else {
-          this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val=> val.tagName != 'AmountExcTax');
-        }
+        this.messageService.add(this.AlertService.errorObject);
       }
     } else {
-      this.messageService.add(this.AlertService.errorObject);
-    }
-    } else {
-      this.AlertService.errorObject.detail = "Description in not available, Please check with the technical team.";
-      this.messageService.add(this.AlertService.errorObject);
+      this.alertFun('Description in not available, Please check with the technical team.');
     }
   }
 
   createGRNWithPO() {
     this.SharedService.createGRNWithPO(JSON.stringify(this.GRNObjectDuplicate)).subscribe((data: any) => {
-      this.AlertService.addObject.detail = "GRN Created Successfully";
-      this.messageService.add(this.AlertService.addObject);
+      this.successAlert("GRN Created Successfully");
       setTimeout(() => {
         this.router.navigate(['/customer/Create_GRN_inv_list']);
       }, 2000);
     }, err => {
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
+      this.alertFun('Server error');
     })
-
   }
 
   grnDuplicateCheck() {
@@ -1655,63 +1308,54 @@ export class Comparision3WayComponent
         }
       })
       // const uniqarr = arr.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.line_id == val.line_id && v.quantity == val.quantity));
-      let duplicateAPI_response:string;
+      let duplicateAPI_response: string;
       this.SharedService.duplicateGRNCheck(JSON.stringify(arr)).subscribe((data: any) => {
         duplicateAPI_response = data.result;
         this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
           let negativeData = [];
           let negKey = {};
-          let bool:boolean;
-          for (let key in data?.result){
+          for (let key in data?.result) {
             let valuee = data.result[key];
             this.GRNObjectDuplicate.forEach((ele) => {
-              if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && valuee < ele.Value  ) {
+              if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && valuee < ele.Value) {
                 negKey[key] = valuee;
                 negativeData.push(valuee);
               }
             })
           }
-          if (negativeData.length <= 0) {    
+          if (negativeData.length <= 0) {
             if (duplicateAPI_response == 'successful') {
               this.createGRNWithPO();
             } else {
-              console.log('hi 1684')
-              this.AlertService.errorObject.detail = duplicateAPI_response;
-              this.messageService.add(this.AlertService.errorObject);
+              this.alertFun(duplicateAPI_response);
             }
           } else {
-            let str:string = JSON.stringify(negKey);
-            this.AlertService.errorObject.detail = `Please check available quantity in the line numbers (${str})`;
-            this.messageService.add(this.AlertService.errorObject);
+            let str: string = JSON.stringify(negKey);
+            this.alertFun(`Please check available quantity in the line numbers (${str})`);
           }
         }, err => {
-          this.AlertService.errorObject.detail = "Server error";
-          this.messageService.add(this.AlertService.errorObject);
+          this.alertFun('Server error');
         })
       }, err => {
-        console.log('hi 1663')
-        this.AlertService.errorObject.detail = "Server error";
-        this.messageService.add(this.AlertService.errorObject);
+        this.alertFun('Server error');
       })
-
     } else {
       alert('There is no lines to create GRN, if you are able to see the lines then please check the quantity');
-      this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val=> val.tagName != 'AmountExcTax');
+      this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
     }
   }
 
   CreateGRNAPI(boolean, txt) {
-    if(this.validateUnitpriceBool){
-      if(confirm('Invoice unitprice is not matching with PO. still you want to proceed?')){
+    if (this.validateUnitpriceBool) {
+      if (confirm('Invoice unitprice is not matching with PO. still you want to proceed?')) {
         this.grnAPICall(boolean, txt);
       }
     } else {
       this.grnAPICall(boolean, txt);
     }
-
   }
 
-  grnAPICall(boolean, txt){
+  grnAPICall(boolean, txt) {
     this.SharedService.saveGRNData(
       boolean,
       JSON.stringify(this.GRNObject)
@@ -1736,18 +1380,16 @@ export class Comparision3WayComponent
       },
       (error) => {
         if (error.status == 403) {
-          this.AlertService.errorObject.detail =
-            'Invoice quantity beyond threshold';
+          this.alertFun('Invoice quantity beyond threshold');
         } else {
-          this.AlertService.errorObject.detail = 'Server error';
+          this.alertFun('Server error');
         }
-        this.messageService.add(this.AlertService.errorObject);
       }
     );
   }
-  validateInvPOUnitPrice(){
-    this.SharedService.validateUnitprice(JSON.stringify(this.validatePOInvUnit)).subscribe((data:any)=>{
-      if(data.result.length >0 ){
+  validateInvPOUnitPrice() {
+    this.SharedService.validateUnitprice(JSON.stringify(this.validatePOInvUnit)).subscribe((data: any) => {
+      if (data.result.length > 0) {
         this.validateUnitpriceBool = true;
       } else {
         this.validateUnitpriceBool = false;
@@ -1755,60 +1397,50 @@ export class Comparision3WayComponent
     })
   }
 
-  open_dialog_comp(str){
+  open_dialog_comp(str) {
+    let w = '60%';
+    let h = '70vh'
+    if (str == 'Amend') {
+      this.displayrejectDialog = false;
+      w = '40%';
+      h = '40vh';
+    }
     this.SpinnerService.show();
-    this.getPO_lines(str);
-  }
-  getPO_lines(str) {
-    this.exceptionService.getPOLines('').subscribe((data: any) => {
-      this.poLineData = data.Po_line_details;
-      this.mat_dlg.open(PopupComponent, {
-        width: '60%',
-        height: '70vh',
-        hasBackdrop: false,
-        data: { type: str, resp: this.poLineData }
-      });
-      this.SpinnerService.hide();
-    },err=>{
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
-      this.SpinnerService.hide();
-    })
+    const matdrf: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
+      width: w,
+      height: h,
+      hasBackdrop: false,
+      data: { type: str, resp: this.poLineData, rejectTxt: this.rejectionComments }
+    });
+    this.SpinnerService.hide();
+    if (str == 'Amend') {
+      matdrf.afterClosed().subscribe((resp: any) => {
+        this.rejectionComments = resp;
+        if (resp) {
+          this.Reject();
+        }
+      })
+    }
   }
 
-  // readPOLines(po_num) {
-  //   this.SharedService.readPOLines(po_num).subscribe((data: any) => {
-  //     // this.poLineData = data.PODATA;
-  //     // this.UniqueGRN = data?.GRNDATA?.filter((val1,i,a)=> a.findIndex(val2=>val2.PackingSlip == val1.PackingSlip) === i);
-  //     this.GRNData = data?.GRNDATA
-  //     // let jsonObj = data?.GRNDATA?.map(JSON.stringify);
-  //     // let uniqeSet = new Set(jsonObj);
-  //     // let unique = Array?.from(uniqeSet)?.map(JSON.parse);
-      
-  //     this.po_grn_list = data?.GRNDATA.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip'].every(k=>v2[k] ===val1[k])) === index);
-  //   }, err => {
-  //     this.AlertService.errorObject.detail = "Server error";
-  //     this.messageService.add(this.AlertService.errorObject);
-  //   })
-  // }
-  addGrnLine(val){
+  addGrnLine(val) {
     this.po_grn_line_list = [];
-    val?.value?.forEach(ele=>{
-      this.GRNData.filter(el=>{
-        if(ele.PackingSlip == el.PackingSlip){
+    val?.value?.forEach(ele => {
+      this.GRNData.filter(el => {
+        if (ele.PackingSlip == el.PackingSlip) {
           this.po_grn_line_list.push(el)
         }
       });
     })
     let arr = [];
-    this.po_grn_line_list?.forEach(val=>{
-        let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
-        arr.push({PackingSlip:val.PackingSlip,POLineNumber:val.POLineNumber,GRNField:ele});
-      })
-      this.po_grn_line_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
+    this.po_grn_line_list?.forEach(val => {
+      let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
+      arr.push({ PackingSlip: val.PackingSlip, POLineNumber: val.POLineNumber, GRNField: ele });
+    })
+    this.po_grn_line_list = arr.filter((val1, index, arr) => arr.findIndex(v2 => ['PackingSlip', 'POLineNumber'].every(k => v2[k] === val1[k])) === index);
     this.PO_GRN_Number_line = this.po_grn_line_list;
   }
-  filterPO_GRNnumber(event){
+  filterPO_GRNnumber(event) {
     let filtered: any[] = [];
     let query = event.query;
 
@@ -1822,62 +1454,58 @@ export class Comparision3WayComponent
     }
     this.filteredPO_GRN = filtered;
   }
-  editGRNData(){
+  editGRNData() {
     this.getGrnData();
     this.displayRuleDialog = true;
   }
-  getGrnData(){
+  getGrnData() {
     this.SpinnerService.show();
-    this.exceptionService.get_grn_data().subscribe((data:any)=>{
+    this.exceptionService.get_grn_data().subscribe((data: any) => {
       this.PO_GRN_Number_line = data;
       this.SpinnerService.hide();
-    },err=>{
+    }, err => {
       this.SpinnerService.hide();
     })
   }
-  deleteGRNEdit(index,data){
-    this.PO_GRN_Number_line.splice(index,1)
+  deleteGRNEdit(index, data) {
+    this.PO_GRN_Number_line.splice(index, 1)
   }
-  
-  ChangeGRNData(){
+
+  ChangeGRNData() {
     let grnNumberList = [];
-    this.PO_GRN_Number_line.forEach(el=>{
-      grnNumberList.push(el.PackingSlip) 
+    this.PO_GRN_Number_line.forEach(el => {
+      grnNumberList.push(el.PackingSlip)
     })
     grnNumberList = [...new Set(grnNumberList)]
-    let obj ={
-      "MultiPoList":this.PO_GRN_Number_line,
+    let obj = {
+      "MultiPoList": this.PO_GRN_Number_line,
       "grn_documentID": grnNumberList.toString()
     }
-    if(confirm("Are you sure you want to change GRN data?")){
+    if (confirm("Are you sure you want to change GRN data?")) {
       this.SpinnerService.show();
-      this.exceptionService.update_GRN_data(obj).subscribe((data:any)=>{
+      this.exceptionService.update_GRN_data(obj).subscribe((data: any) => {
         this.SpinnerService.hide();
-        this.AlertService.addObject.detail = "GRN Data updated";
-        this.messageService.add(this.AlertService.addObject);
+        this.successAlert("GRN Data updated")
         this.displayRuleDialog = false;
-      }, err=>{
+      }, err => {
         this.SpinnerService.hide();
-        this.AlertService.errorObject.detail = "Please try after sometime";
-        this.messageService.add(this.AlertService.errorObject);
+        this.alertFun('Please try after sometime');
         this.displayRuleDialog = false;
       })
     }
   }
 
-  ChangeGRNDataR(){
-    if(this.selectedGRNList.length > 0) {
+  ChangeGRNDataR() {
+    if (this.selectedGRNList.length > 0) {
       this.progressDailogBool = false;
       let arr = [];
-      this.selectedGRNList.forEach(el=>{
+      this.selectedGRNList.forEach(el => {
         arr.push(el.docheaderID)
       })
-      this.SharedService.updateGRNnumber(JSON.stringify(arr)).subscribe(data=>{
-        this.AlertService.addObject.detail = "GRN Data Updated, please send the invoice to batch";
-        this.messageService.add(this.AlertService.addObject);
-      },err=>{
-        this.AlertService.errorObject.detail = "Server error";
-        this.messageService.add(this.AlertService.errorObject);
+      this.SharedService.updateGRNnumber(JSON.stringify(arr)).subscribe(data => {
+        this.successAlert("GRN Data Updated, please send the invoice to batch");
+      }, err => {
+        this.alertFun('Server error');
       })
     }
   }
@@ -1896,37 +1524,36 @@ export class Comparision3WayComponent
   //       this.AlertService.addObject.detail = "GRN Data Updated, please send the invoice to batch";
   //       this.messageService.add(this.AlertService.addObject);
   //     },err=>{
-  //       this.AlertService.errorObject.detail = "Server error";
-  //       this.messageService.add(this.AlertService.errorObject);
+  // this.alertFun('Server error');
   //     })
   //   }
   // }
 
-  getGRNtabData(){
-    this.SharedService.getGRNTabData().subscribe((data:any)=>{
+  getGRNtabData() {
+    this.SharedService.getGRNTabData().subscribe((data: any) => {
       this.GRNTabData = data?.result;
-      this.grnTabDatalength =Object.keys(this.GRNTabData).length;
+      this.grnTabDatalength = Object.keys(this.GRNTabData).length;
     })
   }
 
   setOpened(itemIndex) {
     this.currentlyOpenedItemIndex = itemIndex;
   }
-  
+
   setClosed(itemIndex) {
-    if(this.currentlyOpenedItemIndex === itemIndex) {
+    if (this.currentlyOpenedItemIndex === itemIndex) {
       this.currentlyOpenedItemIndex = -1;
     }
   }
 
-  opengrnDailog(){
+  opengrnDailog() {
     this.GRNDialogBool = true;
     this.progressDailogBool = true;
     this.headerpop = 'Select GRN'
   }
 
-  getPODocId(po_num){
-    this.SharedService.get_poDoc_id(po_num).subscribe((data:any)=>{
+  getPODocId(po_num) {
+    this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
       this.poDocId = data.result;
     })
   }
@@ -1941,37 +1568,39 @@ export class Comparision3WayComponent
       }
       this.SpinnerService.hide();
     }, err => {
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
+      this.alertFun('Server error');
       this.SpinnerService.hide();
     })
   }
-  refreshPO(){
+  refreshPO() {
     this.SpinnerService.show();
-    this.SharedService.updatePO(this.poDocId).subscribe((data:any)=>{
+    this.SharedService.updatePO(this.poDocId).subscribe((data: any) => {
       this.readPOLines();
       this.SpinnerService.hide();
-      this.AlertService.addObject.detail = 'PO data updated.';
-      this.messageService.add(this.AlertService.addObject);
-    },err=>{
+      this.successAlert('PO data updated.');
+    }, err => {
       this.SpinnerService.hide();
-      this.AlertService.errorObject.detail = 'Server error';
-      this.messageService.add(this.AlertService.errorObject);
+      this.alertFun('Server error');
     })
   }
+  alertFun(txt) {
+    this.AlertService.errorObject.detail = txt;
+    this.messageService.add(this.AlertService.errorObject);
+  }
+  successAlert(txt) {
+    this.AlertService.addObject.severity = 'success';
+    this.AlertService.addObject.detail = txt;
+    this.messageService.add(this.AlertService.addObject);
+  }
   ngOnDestroy() {
-    // if( this.grnCreateBoolean == false){
-      let sessionData = {
-        session_status: false,
-        "client_address": JSON.parse(localStorage.getItem('userIp'))
-      };
-      this.exceptionService
-        .updateDocumentLockInfo(sessionData)
-        .subscribe((data: any) => {});
-      // clearInterval(this.timer);
-      clearTimeout(this.callSession);
-    // }
-    // this.timer = null;
+    let sessionData = {
+      session_status: false,
+      "client_address": JSON.parse(localStorage.getItem('userIp'))
+    };
+    this.exceptionService
+      .updateDocumentLockInfo(sessionData)
+      .subscribe((data: any) => { });
+    clearTimeout(this.callSession);
     this.AlertService.addObject.severity = 'success';
     this.tagService.financeApprovePermission = false;
     this.tagService.approveBtnBoolean = false;

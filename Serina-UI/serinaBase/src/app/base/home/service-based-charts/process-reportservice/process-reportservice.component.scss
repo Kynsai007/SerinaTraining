@@ -29,3 +29,15 @@
   }
 
 }
+@media screen and (max-width: 800px){
+  .filters_div {
+      position: relative;
+      top: 0 !important;
+      left: 0;
+  }
+  .filter_inputDash {
+    top: 4px !important;
+    position: relative;
+    left: 0;
+  }
+}

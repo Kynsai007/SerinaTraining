@@ -60,6 +60,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   ap_boolean:boolean;
   switchtext:string = "";
   cust_type: string;
+  isDesktop:boolean;
+  sidebarMode = 'side';
 
   constructor(
     public router: Router,
@@ -102,6 +104,13 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     // this.readVendorNames();
   }
   appendScript (){
+    if(window.screen.width >= 576){
+      this.sidebarMode = 'side';
+      this.isDesktop = true;
+    } else {
+      this.sidebarMode = 'over';
+      this.isDesktop = false;
+    }
     const script = this.renderer.createElement('script');
     script.type = 'text/javascript';
     script.src = 'https://datasemanticschatbots.in/bot_script/Serina Bot/cGluZWFwcGxl';
@@ -212,59 +221,60 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   // read User permissions
   getPermissions() {
     if (this.userDetails) {
-      if (this.userDetails.permissioninfo.User == 1) {
-        this.addUsersBoolean = true;
-        this.permissionService.addUsersBoolean = true;
-      }
-      if (this.userDetails.permissioninfo.Permissions == 1) {
-        this.permissionService.addUserRoleBoolean = true;
-      }
-      if (this.userDetails.permissioninfo.allowServiceTrigger == 1) {
-        this.serviceTriggerBoolean = true
-        this.permissionService.serviceTriggerBoolean = true;
-      }
-      if (this.userDetails.permissioninfo.is_epa == 1) {
-        this.excpetionPageAccess = true
-        this.permissionService.excpetionPageAccess = true;
-      }
-      if (this.userDetails.permissioninfo.is_gpa == 1) {
-        this.GRNPageAccess = true
-        this.permissionService.GRNPageAccess = true;
-      }
-      if (this.userDetails.permissioninfo.is_spa == 1) {
-        this.settingsPageAccess = true
-        this.permissionService.settingsPageAccess = true;
-      }
-      if (this.userDetails.permissioninfo.is_vspa == 1) {
-        this.vendor_SP_PageAccess = true
-        this.permissionService.vendor_SP_PageAccess = true;
-      }
-      if (this.userDetails.permissioninfo.NameOfRole == 'Customer Super Admin') {
-        this.isSuperAdmin= true
-        this.permissionService.isSuperAdmin = true;
+      const permissionInfo = this.userDetails.permissioninfo;
+      const permissionService = this.permissionService;
+
+      this.addUsersBoolean = permissionInfo.User === 1;
+      permissionService.addUsersBoolean = this.addUsersBoolean;
+
+      permissionService.addUserRoleBoolean = permissionInfo.Permissions === 1;
+      this.serviceTriggerBoolean = permissionInfo.allowServiceTrigger === 1;
+      permissionService.serviceTriggerBoolean = this.serviceTriggerBoolean;
+
+      this.excpetionPageAccess = permissionInfo.is_epa === 1;
+      permissionService.excpetionPageAccess = this.excpetionPageAccess;
+
+      this.GRNPageAccess = permissionInfo.is_gpa === 1;
+      permissionService.GRNPageAccess = this.GRNPageAccess;
+
+      this.settingsPageAccess = permissionInfo.is_spa === 1;
+      permissionService.settingsPageAccess = this.settingsPageAccess;
+
+      this.vendor_SP_PageAccess = permissionInfo.is_vspa === 1;
+      permissionService.vendor_SP_PageAccess = this.vendor_SP_PageAccess;
+
+      this.isSuperAdmin = permissionInfo.NameOfRole === 'Customer Super Admin';
+      permissionService.isSuperAdmin = this.isSuperAdmin;
+
+      const accessPermissionTypeId = permissionInfo.AccessPermissionTypeId;
+
+      switch (accessPermissionTypeId) {
+        case 1:
+          permissionService.viewBoolean = true;
+          permissionService.editBoolean = false;
+          permissionService.changeApproveBoolean = false;
+          permissionService.financeApproveBoolean = false;
+          break;
+        case 2:
+          permissionService.viewBoolean = true;
+          permissionService.editBoolean = true;
+          permissionService.changeApproveBoolean = false;
+          permissionService.financeApproveBoolean = false;
+          break;
+        case 3:
+          permissionService.viewBoolean = true;
+          permissionService.editBoolean = true;
+          permissionService.changeApproveBoolean = true;
+          permissionService.financeApproveBoolean = false;
+          break;
+        case 4:
+          permissionService.viewBoolean = true;
+          permissionService.editBoolean = true;
+          permissionService.changeApproveBoolean = true;
+          permissionService.financeApproveBoolean = true;
+          break;
       }
 
-      if (this.userDetails.permissioninfo.AccessPermissionTypeId == 1) {
-        this.permissionService.viewBoolean = true;
-        this.permissionService.editBoolean = false;
-        this.permissionService.changeApproveBoolean = false;
-        this.permissionService.financeApproveBoolean = false;
-      } else if (this.userDetails.permissioninfo.AccessPermissionTypeId == 2) {
-        this.permissionService.viewBoolean = true;
-        this.permissionService.editBoolean = true;
-        this.permissionService.changeApproveBoolean = false;
-        this.permissionService.financeApproveBoolean = false;
-      } else if (this.userDetails.permissioninfo.AccessPermissionTypeId == 3) {
-        this.permissionService.viewBoolean = true;
-        this.permissionService.editBoolean = true;
-        this.permissionService.changeApproveBoolean = true;
-        this.permissionService.financeApproveBoolean = false;
-      } else if (this.userDetails.permissioninfo.AccessPermissionTypeId == 4) {
-        this.permissionService.viewBoolean = true;
-        this.permissionService.editBoolean = true;
-        this.permissionService.changeApproveBoolean = true;
-        this.permissionService.financeApproveBoolean = true;
-      }
     }
   }
 

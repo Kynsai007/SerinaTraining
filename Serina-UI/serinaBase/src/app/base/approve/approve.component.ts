@@ -145,7 +145,7 @@ export class ApproveComponent implements OnInit {
       this.tagService.financeApprovePermission = true;
       this.sharedService.invoiceID = e.idDocument;
     } else {
-      alert('Do not have access to finance approve');
+      alert('Do not have access to approve');
     }
   }
   backToInvoice() {

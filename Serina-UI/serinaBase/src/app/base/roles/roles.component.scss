@@ -374,8 +374,8 @@ td{
         font-weight: 600;
     }
     .p-multiselect-panel .p-multiselect-items .p-multiselect-item {
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 12px !important;
+        font-weight: 600 !important;
     }
     .p-auto .p-autocomplete {
         width: 100% !important;
@@ -383,6 +383,13 @@ td{
     .p-autocomplete .p-autocomplete-panel{
         width: 100% !important;
     }
+    .p-autocomplete-items{
+        font-size: 12px !important;
+        font-weight: 600 !important;
+    }
+}
+.btnAction {
+    margin-top: 0px !important;
 }
 
 @media screen and (max-width: 800px) {

@@ -608,6 +608,25 @@
                 </div>
                 <div class="permisionDivdescription">Description</div>
               </div>
+
+              <div class="mb-3">
+                <div class="permisionDiv">
+                  <div>
+                    <span class="textth"> Flip PO approval access</span>
+                    <span class="f-right">
+                      <label class="switch">
+                        <input
+                          type="checkbox"
+                          [checked]="is_fpa"
+                          [(ngModel)]="is_fpa"
+                        />
+                        <span class="slider round"></span>
+                      </label>
+                    </span>
+                  </div>
+                </div>
+                <div class="permisionDivdescription">Description</div>
+              </div>
             </div>
 
             <div class="col-sm-4">
@@ -679,6 +698,24 @@
                           type="checkbox"
                           [checked]="GRNPageBoolean"
                           [(ngModel)]="GRNPageBoolean"
+                        />
+                        <span class="slider round"></span>
+                      </label>
+                    </span>
+                  </div>
+                </div>
+                <div class="permisionDivdescription">Description</div>
+              </div>
+              <div class="mb-3">
+                <div class="permisionDiv">
+                  <div>
+                    <span class="textth"> Flip PO access</span>
+                    <span class="f-right">
+                      <label class="switch">
+                        <input
+                          type="checkbox"
+                          [checked]="is_fp"
+                          [(ngModel)]="is_fp"
                         />
                         <span class="slider round"></span>
                       </label>

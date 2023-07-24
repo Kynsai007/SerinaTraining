@@ -18,19 +18,26 @@ export class PopupComponent implements OnInit {
   uploadBool: boolean = false;
   GRNData = [];
   po_num:string;
+  approveBool : boolean = false;
+  entityList = [];
+  approverList:any;
+  rejectionComments:string;
+
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
     private ES: ExceptionsService,
     private alert: AlertService,
     private message : MessageService,
     private spin: NgxSpinnerService,
+    private mat_dlg: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit(): void {
     this.type = this.data.type;
-    this.po_num = this.data.po_num
-    let grn = this.data.grnLine;
+    this.rejectionComments = this.data.rejectTxt
+    this.po_num = this.data?.po_num
+    let grn = this.data?.grnLine;
     if (grn) {
       grn?.forEach(el => {
         let obj = { LineNumber: el.POLineNumber, grnpackagingid: el.PackingSlip };
@@ -41,6 +48,8 @@ export class PopupComponent implements OnInit {
       this.component = 'normal';
     } else if (this.type == 'flip line') {
       this.component = 'mapping';
+    } else if (this.type == 'editApprover'){
+      this.approveBool = true
     }
     if (this.data.comp == 'upload') {
       this.uploadBool = true;
@@ -56,8 +65,14 @@ export class PopupComponent implements OnInit {
       if (data?.result) {
         this.dialogRef.close();
         this.ES.popupmsg.next(this.component);
-        this.alert.addObject.detail = "PO flip is successful"
-        this.message.add(this.alert.addObject)
+        this.alert.addObject.detail = "PO flip is successful, Please see the approvers."
+        this.message.add(this.alert.addObject);
+        this.approveBool = true;
+        // this.mat_dlg.open(FlipApprovalComponent, {
+        //   width: '60%',
+        //   height: '70vh',
+        //   hasBackdrop: false
+        // });
       } else {
         this.alert.errorObject.detail = data?.error
         this.message.add(this.alert.errorObject)
@@ -107,7 +122,8 @@ export class PopupComponent implements OnInit {
     })
   }
   onSubmitRequest(val) {
-    console.log(val)
+    console.log(this.rejectionComments);
+    this.dialogRef.close(this.rejectionComments);
   }
 
   validateFlip() {

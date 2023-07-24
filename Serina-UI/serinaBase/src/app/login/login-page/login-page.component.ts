@@ -198,11 +198,11 @@ export class LoginPageComponent implements OnInit {
   getInstancedata(){
     this.settingService.readConfig().subscribe((resp:any)=>{
       this.instanceInfo = {...resp.InstanceModel,...resp.ERPModel };
+      // this.dataStoreService.configData.flipBool = true;
       this.dataStoreService.configData = this.instanceInfo ;
       this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
       this.vendorInvoiceAccess = this.instanceInfo?.vendorInvoices;
     })
-
   }
   login() {
     this.submitted = true;

@@ -259,6 +259,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   isBatchTriggered: boolean;
   isAmtStr: boolean;
   subStatusId: any;
+  flipEnabled: boolean;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -287,6 +288,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
+    this.flipEnabled = this.dataService.configData.flipBool;
     this.ERP = this.dataService.configData.erpname;
     this.route.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;
@@ -442,9 +444,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       onTimeout: () => {
         if (this.router.url.includes('ExceptionManagement/InvoiceDetails')) {
           this.router.navigate([`${this.portalName}/ExceptionManagement`]);
-          this.AlertService.errorObject.detail =
-            'Session Expired for Editing Invoice';
-          this.messageService.add(this.AlertService.errorObject);
+          this.errorTriger('Session Expired for Editing Invoice');
         }
       },
     });
@@ -605,11 +605,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       },
       (error) => {
         this.SpinnerService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: 'Server error',
-        });
+        this.errorTriger('Server error');
       }
     );
   }
@@ -657,11 +653,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       },
       (error) => {
         this.SpinnerService.hide();
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: 'Server error',
-        });
+        this.errorTriger('Server error');
       }
     );
   }
@@ -776,18 +768,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           },
           (err) => {
             this.updateInvoiceData = [];
-            this.messageService.add({
-              severity: 'error',
-              summary: 'error',
-              detail: 'Server error or Please check the data',
-            });
+            this.errorTriger('Server error or Please check the data');
           }
         );
       }
     } else {
       this.updateInvoiceData = [];
-      this.AlertService.errorObject.detail = 'Strings are not allowed in the amount and quantity fields.';
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger('Strings are not allowed in the amount and quantity fields.');
     }
   }
   onSubmitData() {
@@ -883,46 +870,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   onVerify(e) {
   }
   submitChanges() {
-    // if (this.vendorUplaodBoolean === false) {
-    //   // let submitData = {
-    //   //   "documentdescription": null
-    //   // }
-    //   // this.SpinnerService.show();
-    //   // this.SharedService.submitChangesInvoice(JSON.stringify(submitData)).subscribe((data: any) => {
-    //   //   this.dataService.invoiceLoadedData = [];
-    //   //   if (data.result) {
-    //   //     this.messageService.add({
-    //   //       severity: "success",
-    //   //       summary: "Updated",
-    //   //       detail: "Updated Successfully"
-    //   //     });
-    //   //     this.SpinnerService.hide();
-    //   //     setTimeout(() => {
-    //   //       this._location.back()
-    //   //     }, 1000);
-    //   //   }
-    //   // }, error => {
-    //   //   this.messageService.add({
-    //   //     severity: "error",
-    //   //     summary: "error",
-    //   //     detail: error.error
-    //   //   });
-    //   //   this.SpinnerService.hide();
-    //   // })
-
-    //   this.exceptionService.send_batch_approval_review(this.exceptionService.selectedRuleId).subscribe((data:any)=>{
-    //     console.log(data);
-    //     this.AlertService.addObject.detail = "Send to Batch review successfully";
-    //     this.messageService.add(this.AlertService.addObject);
-    //     // this.displayRuleDialog = false;
-    //     setTimeout(() => {
-    //       this._location.back();
-    //     }, 2000);
-    //   },error=>{
-    //     this.AlertService.errorObject.detail = error.statusText;
-    //     this.messageService.add(this.AlertService.errorObject);
-    //   })
-    // } else {
     if(this.documentTypeId == 3){
       if (this.isLCMInvoice == false) {
         this.getInvoiceFulldata();
@@ -963,15 +910,20 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               element.TagName == 'Quantity' ||
               element.TagName == 'UnitPrice' ||
               element.TagName == 'AmountExcTax' ||
-              element.TagName == 'Amount'
+              element.TagName == 'Amount' ||
+              element.TagName == 'Description' 
             ) {
               element.linedata.forEach((ele1) => {
-                if (
-                  ele1.DocumentLineItems?.Value == '' ||
-                  isNaN(+ele1.DocumentLineItems?.Value)
+                if (element.TagName != 'Description' &&
+                  (ele1.DocumentLineItems?.Value == '' ||
+                  isNaN(+ele1.DocumentLineItems?.Value))
                 ) {
                   count++;
                   errorTypeLine = 'AmountLine';
+                }
+                if(element.TagName == 'Description'){
+                  count++
+                  errorTypeLine = 'description';
                 }
   
                 if (element.TagName == 'Quantity') {
@@ -994,40 +946,26 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             if (errorTypeHead == 'AmountHeader') {
               this.currentTab = 'head';
               setTimeout(() => {
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'error',
-                  detail:
-                    'Please verify SubTotal and InvoiceTotal in Header details',
-                });
+                this.errorTriger('Please verify SubTotal and InvoiceTotal in Header details');
               }, 50);
             }
             if (errorType == 'emptyHeader') {
               this.currentTab = 'head';
-              this.AlertService.errorObject.detail =
-                'Please Check PO Number, Invoice Date, InvoiceId fileds in header details';
-              this.messageService.add(this.AlertService.errorObject);
+              this.errorTriger('Please Check PO Number, Invoice Date, InvoiceId fileds in header details');
             }
             if (errorTypeLine == 'AmountLine') {
               setTimeout(() => {
                 this.currentTab = 'line';
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'error',
-                  detail:
-                    'Please verify Amount, Quntity, unitprice and AmountExcTax in Line details',
-                });
+                this.errorTriger('Please verify Amount, Quntity, unitprice and AmountExcTax in Line details');
               }, 10);
             } else if (errorTypeLine == 'quntity') {
               setTimeout(() => {
                 this.currentTab = 'line';
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'error',
-                  detail:
-                    'Please check the Quntity in the Line details',
-                });
+                this.errorTriger('Please check the Quntity in the Line details');
               }, 10);
+            } else if(errorTypeLine == 'description') {
+                this.currentTab = 'line';
+                this.errorTriger('Please check the Description in the Line details');
             }
             /* Error reponse end*/
           }
@@ -1036,8 +974,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         if (this.LCMDataTable.length > 0) {
           this.captureComments('LCM', null);
         } else {
-          this.AlertService.errorObject.detail = 'Please add LCM lines';
-          this.messageService.add(this.AlertService.errorObject);
+          this.errorTriger('Please add LCM lines');
         }
       }
     } else if(this.documentTypeId == 1) {
@@ -1046,6 +983,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.vendorSubmitPO();
       }, 2000);
     }
+  }
+
+  errorTriger(error){
+    this.AlertService.errorObject.detail = error;
+    this.messageService.add(this.AlertService.errorObject);
   }
   SaveLCM(obj) {
     this.SharedService.saveLCMdata(JSON.stringify([obj]), true).subscribe((data: any) => {
@@ -1056,12 +998,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.LCMLineForm.control.patchValue(this.LCMObj);
         this.readSavedLCMLineData();
       } else if (data?.error) {
-        this.AlertService.errorObject.detail = data?.error;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTriger(data?.error);
       }
     }, err => {
-      this.AlertService.errorObject.detail = 'Server error';
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger('Server error');
     })
   }
 
@@ -1090,8 +1030,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
     }, err => {
       this.displayrejectDialog = false;
-      this.AlertService.errorObject.detail = 'Server error';
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger('Server error');
       this.SpinnerService.hide();
     })
 
@@ -1152,11 +1091,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             this.reuploadBoolean == true
           ) {
             if (data[0] == 0) {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Rejected',
-                detail: data[1],
-              });
+              this.errorTriger(data[1]);
             } else {
               this.messageService.add({
                 severity: 'success',
@@ -1181,11 +1116,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         // }, 4000);
       },
       (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: error.statusText,
-        });
+        this.errorTriger('Server error');
       }
     );
   }
@@ -1285,11 +1216,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         }, 2000);
       },
       (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: error.statusText,
-        });
+        this.errorTriger('Server error');
       }
     );
   }
@@ -1302,11 +1229,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this._location.back();
       }, 1000);
     },err=>{
-      this.messageService.add({
-        severity: 'error',
-        summary: 'error',
-        detail: "Server error",
-      });
+      this.errorTriger('Server error');
     })
   }
 
@@ -1320,8 +1243,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         }, 2000);
       },
       (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTriger(error.statusText);
       }
     );
   }
@@ -1397,8 +1319,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         }
       }
     }, err => {
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger("Server error");
       this.displayrejectDialog = false;
     })
   };
@@ -1418,14 +1339,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         });
         this.displayrejectDialog = false;
       } else {
-        this.AlertService.errorObject.detail = "Item code already exist, Please try other item code";
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTriger('Item code already exist, Please try other item code');
       }
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger('Server error');
       this.displayrejectDialog = false;
     })
   }
@@ -1448,11 +1367,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         }, 1000);
       },
       (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'error',
-          detail: error.statusText,
-        });
+        this.errorTriger(error.statusText);
         this.displayrejectDialog = false;
       }
     );
@@ -1491,11 +1406,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           }, 1000);
         },
         (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'error',
-            detail: error.error,
-          });
+          this.errorTriger("Server error");
         }
       );
     } else {
@@ -1515,11 +1426,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           }, 1000);
         },
         (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'error',
-            detail: 'Something went wrong',
-          });
+          this.errorTriger("Something went wrong");
         }
       );
     }
@@ -1726,8 +1633,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         }),
         catchError((err: any) => {
           this.progress = null;
-          this.AlertService.errorObject.detail = 'Server error';
-          this.messageService.add(this.AlertService.errorObject);
+          this.errorTriger("Server error");
           this.SpinnerService.hide()
           return throwError(err.message);
         })
@@ -1747,8 +1653,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.messageService.add(this.AlertService.addObject);
       },
       (err) => {
-        this.AlertService.errorObject.detail = 'Server error';
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTriger("Server error");
       }
     );
   }
@@ -1828,11 +1733,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     }, err => {
       this.SpinnerService.hide();
       if (err.status == 403) {
-        this.AlertService.errorObject.detail = 'Approvers are not available for this combination';
+        this.errorTriger("Approvers are not available for this combination");
       } else {
-        this.AlertService.errorObject.detail = 'Server error';
+        this.errorTriger("Server error");
       }
-      this.messageService.add(this.AlertService.errorObject);
 
     })
 
@@ -1857,8 +1761,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       if (this.preApproveBoolean == true) {
         this.sendApprovalAPI();
       } else {
-        this.AlertService.errorObject.detail = 'Please add pre approval comments';
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTriger("Please add pre approval comments");
       }
     }
   }
@@ -1876,8 +1779,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       }
     },
       (err) => {
-        this.AlertService.errorObject.detail = 'Server error';
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTriger("Server error");
       })
   }
   filterEnttity(event) {
@@ -1945,8 +1847,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
-      this.AlertService.errorObject.detail = 'Server error';
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger("Server error");
     })
   }
   filterLCMLine(event) {
@@ -1999,8 +1900,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
-      this.AlertService.errorObject.detail = 'Server error';
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger("Server error");
     })
   }
   filterCost(event) {
@@ -2059,9 +1959,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.AlertService.addObject.detail = data.data;
         this.messageService.add(this.AlertService.addObject);
       } else if (data?.error) {
-        let str = data.error.toString()
-        this.AlertService.errorObject.detail = str;
-        this.messageService.add(this.AlertService.errorObject);
+        let str = data.error.toString();
+        this.errorTriger(str);
       }
       // this.LCMDataTable = data;
       // this.readSavedLCMLineData()
@@ -2070,8 +1969,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
-      this.AlertService.errorObject.detail = "Server error"
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger("Server error");
     })
     delete this.uploadExcelValue;
   }
@@ -2104,37 +2002,58 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     })
   }
   open_dialog_comp(str){
+    let w = '60%';
+    let h = '70vh'
+    if(str == 'Amend'){
+      this.displayrejectDialog = false;
+      w = '40%';
+      h = '40vh';
+    }
     this.SpinnerService.show();
-    this.getPO_lines(str);
+    const matdrf:MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
+      width: w,
+      height: h,
+      hasBackdrop: false,
+      data: { type: str, resp: this.poLineData,rejectTxt: this.rejectionComments }
+    });
+    this.SpinnerService.hide();
+    if(str == 'Amend') {
+      matdrf.afterClosed().subscribe((resp:any)=>{
+        this.rejectionComments = resp;
+        if(resp){
+          this.Reject();
+        }
+      })
+    }
   }
 
-  getPO_lines(str) {
-    this.exceptionService.getPOLines('').subscribe((data: any) => {
-      let poLineData = data.Po_line_details;
-      this.mat_dlg.open(PopupComponent,{ 
-        width : '60%',
-        height: '70vh',
-        hasBackdrop: false,
-        data : { type: str, comp:'ocr', resp: poLineData,grnLine:''}});
-      this.SpinnerService.hide();
-    },err=>{
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
-      this.SpinnerService.hide();
-    })
-  }
+  // getPO_lines(str) {
+  //   this.exceptionService.getPOLines('').subscribe((data: any) => {
+  //     let poLineData = data.Po_line_details;
+  //     this.mat_dlg.open(PopupComponent,{ 
+  //       width : '60%',
+  //       height: '70vh',
+  //       hasBackdrop: false,
+  //       data : { type: str, comp:'ocr', resp: poLineData,grnLine:''}});
+  //     this.SpinnerService.hide();
+  //   },err=>{
+  //     this.errorTriger("Server error");
+  //     this.SpinnerService.hide();
+  //   })
+  // }
   readPOLines() {
     this.exceptionService.getPOLines('').subscribe((data: any) => {
       this.poLineData = data.Po_line_details;
-        if (this.poLineData?.length > 0) {
+      if(this.poLineData){
+        if (Object?.keys(this.poLineData[0])?.length > 0) {
           this.POlineBool = true;
         } else {
           this.POlineBool = false;
         }
+      }
       this.SpinnerService.hide();
     }, err => {
-      this.AlertService.errorObject.detail = "Server error";
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger("Server error");
       this.SpinnerService.hide();
     })
   }
@@ -2153,8 +2072,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.messageService.add(this.AlertService.addObject);
     },err=>{
       this.SpinnerService.hide();
-      this.AlertService.errorObject.detail = 'Server error';
-      this.messageService.add(this.AlertService.errorObject);
+      this.errorTriger("Server error");
     })
   }
 

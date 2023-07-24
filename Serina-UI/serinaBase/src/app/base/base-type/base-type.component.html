@@ -1,6 +1,6 @@
 <mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer class="example-sidenav sideBar d-flex" mode="side" opened [ngStyle]="{ backgroundColor: !ap_boolean? '#162F65':'#272727'}">
-    <div class="d_desk">
+  <mat-drawer #drawer class="example-sidenav sideBar d-flex" [mode]="sidebarMode" [opened]="isDesktop" [ngStyle]="{ backgroundColor: !ap_boolean? '#162F65':'#272727'}">
+    <div class="d_desk1">
       <div class="logotitle" *ngIf="ap_boolean">
         <div class="logoPlaceholder">
           <img
@@ -267,13 +267,13 @@
 
   <div class="example-sidenav-content">
     <div class="bodyContent">
-      <div class="d_desk">
+      <div class="d_desk1">
         <i
           class="fa fa-bars menu_icon f-16"
           aria-hidden="true"
           (click)="drawer.toggle()"
         ></i>
-        <div class="f-right">
+        <div class="f-right d_desk">
           <span class="userName last_log f-11">
             <span>Last login :&nbsp; </span>
             {{ last_login1 | date: "medium" }} <span style="color: crimson;">{{timezone}}</span> &nbsp; &nbsp;
@@ -326,8 +326,8 @@
         </div>
       </div>
 
-      <nav class="d_mobile">
-        <div class="logotitle">
+      <nav class="d_mobile1">
+        <!-- <div class="logotitle">
           <div class="logoPlaceholder">
             <img
               class="logo_img"
@@ -347,7 +347,7 @@
           <label for="toggle-nav">
             <span class="menu-icon"></span>
           </label>
-        </div>
+        </div> -->
         <section class="pos_rel" *ngIf="menubarBoolean">
           <div class="routeLinks route_mobile">
             <div

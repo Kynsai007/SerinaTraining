@@ -250,6 +250,8 @@ export class RolesComponent implements OnInit {
   totalC_users: any;
   ap_boolean: any;
   party_type: string;
+  is_fp: boolean;
+  is_fpa: boolean;
   constructor(
     private dataService: DataService,
     private messageService: MessageService,
@@ -442,6 +444,8 @@ export class RolesComponent implements OnInit {
         this.GRNPageBoolean = this.roleInfoDetails.is_gpa;
         this.vendorPageBoolean = this.roleInfoDetails.is_vspa;
         this.settingsPageBoolean = this.roleInfoDetails.is_spa;
+        this.is_fp = this.roleInfoDetails.is_fp;
+        this.is_fpa = this.roleInfoDetails.is_fpa;
 
         if (this.roleInfoDetails.AccessPermissionTypeId === 4) {
           this.viewInvoiceBoolean = true;
@@ -606,6 +610,8 @@ export class RolesComponent implements OnInit {
       is_gpa: this.GRNPageBoolean,
       is_vspa: this.vendorPageBoolean,
       is_spa: this.settingsPageBoolean,
+      is_fp : this.is_fp,
+      is_fpa:this.is_fpa
     };
   }
 

@@ -656,6 +656,8 @@ $secondary_color: var(--secondary1-color);
     font-weight: bold;
     margin-left: -26px;
     z-index: 0;
+    position: sticky;
+    top: 0;
 }
 .pl-80 {
     padding-left: 80px;
@@ -1034,6 +1036,17 @@ option:hover {
   .break_word {
     word-break: break-all;
   }
+  @keyframes blink {
+    0% { background-color: #ff2f00; }
+    50% { background-color: rgb(241, 241, 233); }
+    100% { background-color: #ff2f00; }
+  }
+  
+  /* Apply the animation to an element */
+  .blinking-element {
+    // animation: blink 1s infinite;
+    background-color: orangered;
+  }
 
   .p-button.p-button-text {
       font-size: 12px;
@@ -1045,6 +1058,9 @@ option:hover {
   }
   .text-type {
     text-transform: capitalize;
+  }
+  .l-52 {
+    left: 52% !important;
   }
   @media screen and (max-width: 576px){ 
     .d_mobile {
@@ -1063,6 +1079,22 @@ option:hover {
         font-size: 12px !important;
         white-space: normal !important;
      }
+     .sideBar {
+        width:167px !important;
+     }
+     .l-52 {
+        left: 0% !important;
+      }
+    .d-column {
+        flex-direction: column;
+    }
+    .chart_div {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .p-calendar .p-inputtext {
+        width: 110px !important;
+    }
   }
   @media screen and(max-width:800px) {
     .img-wrapper {

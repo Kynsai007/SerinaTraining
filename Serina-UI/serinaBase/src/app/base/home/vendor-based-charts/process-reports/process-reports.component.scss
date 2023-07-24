@@ -168,10 +168,34 @@
   .img-wrapper {
     width: 30px;
     height: 30px;
-    margin: 0 15px 0 0;
+    margin: 0;
     padding: 3px 4px;
   }
   .d_flx_row {
     flex-direction: column;
+  }
+  .card-div{
+    min-width: 100px !important;
+    text-align: center;
+    max-width: fit-content;
+    display: flex !important;
+    align-items: center;
+    flex-direction: column;
+  }
+  .f-wrap {
+    flex-wrap: wrap;
+  }
+  .filters_div {
+    position: relative;
+    top: -13px;
+    left: 0;
+  }
+  .selectFilter {
+    width: 115px;
+  }
+  .filter_inputDash {
+    top: 55px;
+    position: relative;
+    left: 0;
   }
 }

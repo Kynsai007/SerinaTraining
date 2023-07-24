@@ -67,73 +67,21 @@
   </div>
 </div>
 <div class="tableDtDiv">
-  <div class="d-flex justify-content-between">
-    <div class="card-div d-flex d_flx_row bg-1">
+  <div class="d-flex justify-content-between f-wrap">
+    <div *ngFor="let obj of cardObj" class="card-div d-flex d_flx_row" [class]="obj.cls">
       <div class="img-wrapper">
-        <!-- <i class="fa fa-check"></i> -->
-        <mat-icon class="placement" svgIcon="vendor_up"></mat-icon>
+        <mat-icon class="placement" [svgIcon]="obj.icon"></mat-icon>
       </div>
       <div>
-        <div class="f-12">Total Uploaded</div>
-        <div class="f-15">{{ totalUploaded }}</div>
-      </div>
-    </div>
-
-    <div class="card-div d-flex d_flx_row bg-2">
-      <div class="img-wrapper">
-        <!-- <i class="fa fa-exclamation-triangle"></i> -->
-        <mat-icon class="placement" svgIcon="vendor_pr"></mat-icon>
-      </div>
-      <div>
-        <div class="f-12">Invoiced in ERP</div>
-        <div class="f-15">{{ invoicedInERP }}</div>
-      </div>
-    </div>
-    
-    <div class="card-div d-flex d_flx_row bg-3">
-      <div class="img-wrapper">
-        <mat-icon class="placement" svgIcon="vendor_rm"></mat-icon>
-      </div>
-      <div>
-        <div class="f-12">Pending</div>
-        <div class="f-15">{{ pendingCount }}</div>
-      </div>
-    </div>
-
-    <div class="card-div d-flex d_flx_row bg-4">
-      <div class="img-wrapper">
-        <mat-icon class="placement" svgIcon="vendor_rej"></mat-icon>
-      </div>
-      <div>
-        <div class="f-12">Rejected</div>
-        <div class="f-15">{{ rejectedCount }}</div>
-      </div>
-    </div>
-
-    <div class="card-div d-flex d_flx_row bg-5">
-      <div class="img-wrapper">
-        <mat-icon class="placement" svgIcon="vendor_err"></mat-icon>
-      </div>
-      <div>
-        <div class="f-12">Exceptions</div>
-        <div class="f-15">{{ errorCount }}</div>
-      </div>
-    </div>
-
-    <div class="card-div d-flex d_flx_row bg-3">
-      <div class="img-wrapper">
-        <mat-icon class="placement" svgIcon="vendor_rm"></mat-icon>
-      </div>
-      <div>
-        <div class="f-12">Average Upload Time</div>
-        <div class="f-15">{{ uploadTime }}</div>
+        <div class="f-12">{{ obj.heading }}</div>
+        <div class="f-15">{{ obj.count }}</div>
       </div>
     </div>
   </div>
 </div>
 
 <div class="charts_height">
-  <div class="d-flex justify-content-between mt-2" style="position: relative">
+  <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
     <div class="chart_title f-12">Invoice Count by Entity</div>
     <button *ngIf="invoiceByEntityChartdata?.length>0" class="btnUpload dwnload_btn" (click)="downloadReport()">
       <i class="fa fa-download" aria-hidden="true"></i>
@@ -155,7 +103,7 @@
       </div>
     </div>
 
-    <div class="chart_title f-12"  style="left: 52%">Aging in Serina</div>
+    <div class="chart_title f-12 l-52">Aging in Serina</div>
     <div class="chart_div">
       <div [ngStyle]="{'visibility': !noDataAgeboolean ? 'visible':'hidden'}" id="vendor_clm_chart1" ></div>
       <div [ngStyle]="{'visibility': noDataAgeboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
@@ -163,7 +111,7 @@
       </div>
     </div>
   </div>
-  <div class="d-flex justify-content-between mt-2" style="position: relative">
+  <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
     <div class="chart_title f-12">Invoice Pending by Amount</div>
     <div  class="chart_div">
       <div [ngStyle]="{'visibility':!noDataPAboolean ? 'visible':'hidden'}" id="vendor_clm_chart" >
@@ -172,7 +120,7 @@
         No Data Available
       </div>
     </div>
-    <div class="chart_title f-12" style="left: 52%">
+    <div class="chart_title f-12 l-52">
       Invoice Count by {{partyType}}
     </div>
     <div class="chart_div">
@@ -183,7 +131,7 @@
     </div>
     
   </div>
-  <div class="d-flex justify-content-between mt-2" style="position: relative">
+  <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
 
     
     <div class="chart_title f-12">

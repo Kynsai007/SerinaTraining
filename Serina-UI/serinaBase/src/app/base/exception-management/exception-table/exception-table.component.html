@@ -177,7 +177,7 @@
                 *ngSwitchDefault
               >
               <span *ngIf=" col.field == 'CreatedOn' || col.field == 'documentDate'">
-                <span *ngIf="invoiceData[col?.field]">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yy, h:mm a' }}</span>  
+                <span *ngIf="invoiceData[col?.field]"  [ngClass]="invoiceData[col?.field] < exceptionAlertdate ? 'blinking-element': ''">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yy, h:mm a' }}</span>  
               </span>
               <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate'">{{
                 invoiceData[col.field]
