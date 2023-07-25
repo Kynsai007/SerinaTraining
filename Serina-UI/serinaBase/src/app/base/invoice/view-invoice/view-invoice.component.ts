@@ -260,6 +260,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   isAmtStr: boolean;
   subStatusId: any;
   flipEnabled: boolean;
+  docType: number;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -288,6 +289,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
+    if(this.ap_boolean) {
+      this.docType = 3
+    } else {
+      this.docType = 1
+    }
     this.flipEnabled = this.dataService.configData.flipBool;
     this.ERP = this.dataService.configData.erpname;
     this.route.queryParams.subscribe(params => {
@@ -336,6 +342,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.getGRNtabData();
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
+    } else if (this.router.url.includes('SODetails')) {
+      this.Itype = 'Sales Order';
     } else if (this.router.url.includes('GRNDetails')) {
       this.Itype = 'GRN';
     }
@@ -527,7 +535,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           return (val.TagLabel == 'PurchaseOrder');
         });
         this.po_num = po_num_data[0]?.Value;
-        if(this.po_num){
+        if(this.po_num && this.ap_boolean){
           this.getPODocId(this.po_num);
         }
         // this.getGRNnumbers(this.po_num);
@@ -1056,9 +1064,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         }
         let query = '';
         if (this.GRNUploadID) {
-          query = `?re_upload=${this.reuploadBoolean}&grnreuploadID=${this.GRNUploadID}`;
+          query = `?re_upload=${this.reuploadBoolean}&doctype=${this.docType}&grnreuploadID=${this.GRNUploadID}`;
         } else {
-          query = `?re_upload=${this.reuploadBoolean}`;
+          query = `?re_upload=${this.reuploadBoolean}&doctype=${this.docType}`;
         }
 
         // this.SharedService.triggerBatch(query).subscribe((data: any) => {

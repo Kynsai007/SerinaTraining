@@ -70,7 +70,8 @@ const routes: Routes = [
             children:[
               { path:'allInvoices', component:AllInvoicesComponent },
               { path:'PO', component:AllInvoicesComponent },
-              { path: 'GRN', component:GrnComponent },
+              { path:'SO', component:AllInvoicesComponent },
+              { path: 'GRN', component:AllInvoicesComponent },
               { path: 'archived' , component:AllInvoicesComponent },
               { path: 'rejected' , component:AllInvoicesComponent },
               { path: 'GRNExceptions' , component:AllInvoicesComponent },
@@ -84,6 +85,10 @@ const routes: Routes = [
           },
           {
             path: 'invoice/PODetails/:id',
+            component: ViewInvoiceComponent,
+          },
+          {
+            path: 'invoice/SODetails/:id',
             component: ViewInvoiceComponent,
           },
           {

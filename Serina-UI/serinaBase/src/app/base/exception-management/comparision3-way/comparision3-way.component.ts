@@ -174,6 +174,7 @@ export class Comparision3WayComponent
   partytype: string;
   lineTxt1: string;
   lineTxt2: string;
+  docType: number;
 
   constructor(
     fb: FormBuilder,
@@ -206,12 +207,14 @@ export class Comparision3WayComponent
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
     this.flipEnabled = this.dataService.configData.flipBool;
     this.userDetails = this.authService.currentUserValue;
-    if (this.dataService.ap_boolean) {
+    if (this.ap_boolean) {
       this.partytype = 'vendor';
+      this.docType = 3;
       this.lineTxt1 = 'IN';
       this.lineTxt2 = 'PO';
     } else {
       this.partytype = 'customer';
+      this.docType = 1;
       this.lineTxt1 = 'PO';
       this.lineTxt2 = 'SO';
     }
@@ -279,12 +282,14 @@ export class Comparision3WayComponent
     } else {
       this.getInvoiceFulldata();
       // this.getRulesData();
-      this.getPOs();
-      this.readPOLines();
-      this.readLineItems();
-      this.readErrorTypes();
-      this.readMappingData();
-      this.getGRNtabData()
+      if(this.ap_boolean){
+        this.getPOs();
+        this.readPOLines();
+        this.readLineItems();
+        this.readErrorTypes();
+        this.readMappingData();
+        this.getGRNtabData()
+      }
       if (this.tagService.editable == true && this.grnCreateBoolean == false) {
         this.updateSessionTime();
         this.idleTimer(180, 'Start');
@@ -416,7 +421,7 @@ export class Comparision3WayComponent
   getInvoiceFulldata() {
     this.SpinnerService.show();
     this.inputDisplayArray = [];
-    this.exceptionService.getInvoiceInfo().subscribe(
+    this.exceptionService.getInvoiceInfo_map(this.docType).subscribe(
       (data: any) => {
         this.lineDisplayData = data.linedata.Result;
         this.lineDisplayData.forEach((element, index, arr) => {
@@ -896,7 +901,7 @@ export class Comparision3WayComponent
         this.dataService.invoiceLoadedData = [];
         this.SpinnerService.hide();
         this.successAlert('send to batch successfully');
-        this.SharedService.syncBatchTrigger(`?re_upload=false`).subscribe((data: any) => {
+        this.SharedService.syncBatchTrigger(`?re_upload=false&doctype=${this.docType}`).subscribe((data: any) => {
           this.headerpop = 'Batch Progress'
           this.progressDailogBool = true;
           this.GRNDialogBool = false;

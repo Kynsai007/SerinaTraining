@@ -75,6 +75,16 @@
                 >PO({{ poArrayLength }})</a
               >
             </li>
+            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess && !invoceDoctype">
+              <a
+                [ngClass]="
+                  route.url == SOTab ? 'active-tab' : ''
+                "
+                class="nav-link"
+                (click)="menuChange('so')"
+                >SO({{ soArrayLength }})</a
+              >
+            </li>
             <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess && invoceDoctype">
               <a
                 [ngClass]="
@@ -201,6 +211,18 @@
                 [columnLength]="allPOColumnLength"
                 (searchInvoiceData)="searchInvoiceDataV($event)"
                 *ngIf="route.url == POTab"
+              ></app-all-invoices>
+
+              <app-all-invoices
+                [tableData]="soDisplayData"
+                [invoiceColumns]="poColumns"
+                [columnsToDisplay]="columnstodisplayPO"
+                [showPaginatorAllInvoice]="showPaginatorSOTable"
+                (sideBarBoolean)="showSidebar($event)"
+                (paginationEvent) = "paginate($event)"
+                [columnLength]="allPOColumnLength"
+                (searchInvoiceData)="searchInvoiceDataV($event)"
+                *ngIf="route.url == SOTab"
               ></app-all-invoices>
 
               <app-all-invoices

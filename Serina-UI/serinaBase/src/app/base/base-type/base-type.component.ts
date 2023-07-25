@@ -72,6 +72,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     private serviceBased: ServiceInvoiceService,
     private exceptionService: ExceptionsService,
     // private _mqttService: MqttService,
+    private chartSerivce : ChartsService,
     private chartService: ChartsService,
     private alertService: AlertService,
     private authService: AuthenticationService,
@@ -176,12 +177,16 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
         this.switchtext = "AR";
         this.cust_type = 'Vendor';
         this.invoceDoctype = true;
+        this.chartSerivce.docType = 3;
+        this.SharedService.docType = 3;
       } else {
         this.DocumentPageRoute = 'invoice/PO';
         this.ap_boolean = false;
         this.switchtext = "AP";
         this.dataStoreService.ap_boolean = false;
         this.cust_type = 'Customer';
+        this.chartSerivce.docType = 1;
+        this.SharedService.docType = 1;
       }
     // } else {
     //   if(this.ap_boolean){

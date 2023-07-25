@@ -201,7 +201,7 @@
         pTooltip="PO Lines details"
         tooltipPosition="top"
         (click)="changeTab('hide', 'poline')"
-        *ngIf="Itype == 'Invoice' && !isServiceData && POlineBool"
+        *ngIf="Itype == 'Invoice' && !isServiceData && POlineBool && ap_boolean"
       >
         <a
           class="nav-link"

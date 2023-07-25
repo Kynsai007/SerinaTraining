@@ -65,6 +65,7 @@ export class SharedService {
   po_doc_id: any;
   po_num:string;
   spAccountSub = new BehaviorSubject<any>([])
+  docType: any;
 
   constructor(private http: HttpClient) { }
 
@@ -495,7 +496,10 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentARCList/${this.userId}${data}`).pipe(retry(2));
   }
   getRejecteddata(data) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentRejectList/${this.userId}${data}`).pipe(retry(2));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentRejectList/${this.userId}${data}&doctype=${this.docType}`).pipe(retry(2));
+  }
+  getSOdata(data) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readDocumentSOList/${this.userId}${data}`).pipe(retry(2));
   }
 
   getGRNExceptionData(data) {

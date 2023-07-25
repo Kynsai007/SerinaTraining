@@ -59,8 +59,8 @@ export class ExceptionsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_mappeditem/${this.invoiceID}`).pipe(retry(3))
   }
 
-  getInvoiceInfo():Observable<any> {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/testlinedata/${this.userId}/invoiceid/${this.invoiceID}`).pipe(retry(3))
+  getInvoiceInfo_map(docType):Observable<any> {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/testlinedata/${this.userId}/invoiceid/${this.invoiceID}?doctype=${docType}`).pipe(retry(3))
   }
 
   getInvoicePOs():Observable<any> {

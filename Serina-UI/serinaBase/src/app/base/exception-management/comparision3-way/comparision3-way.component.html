@@ -30,7 +30,7 @@
     </button> -->
         
     
-    <button class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2" [ngClass]="(subStatusId == 75 || subStatusId == 17) ? 'bt-hlt':''" (click)="opengrnDailog()">Select GRN</button>
+    <button *ngIf="ap_boolean" class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2" [ngClass]="(subStatusId == 75 || subStatusId == 17) ? 'bt-hlt':''" (click)="opengrnDailog()">Select GRN</button>
     <button
       *ngIf="flipEnabled && (subStstusId == 8 || subStstusId == 16 || subStstusId == 21 || subStstusId == 27)"
       class="btnUpload btn_extra_bg m-t-neg ml-2"
@@ -48,7 +48,7 @@
     <button class="btnUpload" (click)="viewPdf()">{{ btnText }}</button>
   </div>
 
-  <div *ngIf="submitBtn_boolean" class="changePOInput">
+  <div *ngIf="submitBtn_boolean && ap_boolean" class="changePOInput">
     <p-autoComplete
       [(ngModel)]="selectedPONumber"
       (onSelect)="onSelectPO($event)"
@@ -127,7 +127,7 @@
         pTooltip="PO Lines details"
         tooltipPosition="top"
         (click)="changeTab('poline')"
-        *ngIf="Itype == 'Invoice'"
+        *ngIf="Itype == 'Invoice' && partytype == 'vendor'"
       >
         <a
           class="nav-link"
@@ -288,7 +288,7 @@
                   <div class="represent_color po_color"></div>
                   <div class="f-12">
                     <span *ngIf="partytype == 'vendor'">PO</span>  
-                    <span *ngIf="partytype == 'customer'">Sales Order</span>
+                    <span *ngIf="partytype == 'customer'"> Proposed Sales Order</span>
                   </div>
                 </div>
 
@@ -298,7 +298,7 @@
               </div> -->
               </div>
 
-              <table class="w-100 mt-2">
+              <table *ngIf="partytype == 'vendor'" class="w-100 mt-2">
                 <tr>
                   <td class="count_line">
                     <span class="f-12 p-2" style="margin-top: -6px">S.No</span>
@@ -324,7 +324,7 @@
                       <div *ngFor="let data2 of data.linedetails" class="mb-3">
                         <div
                           [ngClass]="
-                            data2.invline[0]?.DocumentLineItems.isError >= 1
+                            data2?.invline[0]?.DocumentLineItems?.isError >= 1
                               ? 'error-border'
                               : ''
                           "
@@ -530,6 +530,159 @@
                             [ngClass]="!editable ? 'input_disabled' : ''"
                           />
                         </div> -->
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <table *ngIf="partytype == 'customer'" class="w-100 mt-2">
+                <tr>
+                  <td class="count_line">
+                    <span class="f-12 p-2" style="margin-top: -6px">S.No</span>
+                    <div
+                      class="f-12 mb-3 count-h"
+                      *ngFor="let tagName of lineCount; let i = index"
+                    >
+                      {{ i + 1 }}
+                    </div>
+                  </td>
+                  <td
+                    class="f-13"
+                    *ngFor="let tagName of lineDisplayData"
+                    [ngStyle]="{
+                      width:
+                        tagName?.tagname == 'Description'
+                          ? '500px'
+                          : '200px'
+                    }"
+                  >
+                    <span class="f-13 p-2">{{ tagName.tagname }}</span>
+                    <div *ngFor="let data of tagName.items">
+                      <div *ngFor="let data2 of data.linedetails" class="mb-3">
+                        <div
+                          [ngClass]="
+                            data2?.polinedata[0]?.DocumentLineItems?.isError >= 1
+                              ? 'error-border'
+                              : ''
+                          "
+                        >
+                          <div
+                            class="f-12 td_padding invoice_color doc_height"
+                            [attr.data-text]="lineTxt1"
+                            [ngClass]="
+                              tagName.tagname == 'Description' ? 'textType' : ''
+                            "
+                          >
+                            <div
+                              class="error-block"
+                              [ngClass]="
+                                data2.polinedata[0]?.DocumentLineItems.isError >= 1
+                                  ? 'error-symbol'
+                                  : ''
+                              "
+                              [pTooltip]="
+                                data2.polinedata[0]?.DocumentLineItems?.ErrorDesc
+                              "
+                              tooltipPosition="top"
+                            ></div>
+                            <input
+                              type="text"
+                              #lineInput
+                              [title]="
+                                data2.polinedata[0]?.DocumentLineItems.Value
+                              "
+                              [value]="
+                                data2.polinedata[0]?.DocumentLineItems.Value
+                              "
+                              class="f-12 input_disabled"
+                              style="text-transform: lowercase"
+                              [disabled]="!editable || fin_boolean"
+                              (change)="
+                                onChangeLineValue(
+                                  tagName.tagname,
+                                  lineInput.value,
+                                  data2.polinedata[0]?.DocumentLineItems
+                                )
+                              "
+                              (blur)="saveChanges()"
+                              [ngClass]="!editable ? 'input_disabled' : ''"
+                              [ngStyle]="{
+                                width:
+                                  tagName.tagname == 'Description'
+                                    ? '-webkit-fill-available'
+                                    : '60px'
+                              }"
+                            />
+                            <span
+                              *ngIf="data2.polinedata[0]?.DocumentUpdates"
+                              class="prev_value"
+                              [title]="
+                                data2.polinedata[0]?.DocumentUpdates.OldValue
+                              "
+                              >prev:
+                              {{
+                                data2.polinedata[0]?.DocumentUpdates.OldValue
+                              }}</span
+                            >
+                          </div>
+                          <div
+                            class="f-12 td_padding po_color doc_height"
+                            [attr.data-text]="lineTxt2"
+                            [ngClass]="
+                              tagName.tagname == 'Description' ? 'textType' : ''
+                            "
+                          >
+                            <div class="error-block"></div>
+                            <input
+                              type="text"
+                              [title]="data2.solinedata[0]?.DocumentLineItems?.Value"
+                              [value]="data2.solinedata[0]?.DocumentLineItems?.Value"
+                              class="f-12 input_disabled"
+                              style="text-transform: lowercase"
+                              disabled
+                              [ngClass]="!editable ? 'input_disabled' : ''"
+                              [ngStyle]="{
+                                width:
+                                  tagName.tagname == 'Description'
+                                    ? '-webkit-fill-available'
+                                    : '60px'
+                              }"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td
+                    [ngStyle]="{ width: mappedData?.length == 0 ? '' : '25%' }"
+                  >
+                    <!-- <div class="visiblity_hidden">Dummy Data</div> -->
+                    <span class="f-13 p-2 mapping_line"
+                      >Line items mapping</span
+                    >
+                    <div style="margin-top: -5px">
+                      <div *ngFor="let data of lineCount">
+                        <div
+                          *ngFor="let data2 of data.linedetails"
+                          class="mb-3"
+                        >
+                          <div class="f-12 td_padding invoice_color doc_height">
+                            <input
+                              type="text"
+                              [title]="data2.polinedata[0]?.Value"
+                              [value]="data2.polinedata[0]?.Value"
+                              class="f-12 input_disabled visiblity_hidden"
+                              style="text-transform: lowercase"
+                              (blur)="displayErrorDialog = true"
+                              [disabled]="!editable || fin_boolean"
+                              [ngClass]="!editable ? 'input_disabled' : ''"
+                            />
+                          </div>
+                          <div class="f-12 td_padding po_color doc_height">
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -195,7 +195,9 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     let route:string;
     if(this.router.url.includes('PO')){
       route = 'PODetails';
-    } else if(this.router.url.includes('GRN') && !this.router.url.includes('GRNExceptions')){
+    } else if(this.router.url.includes('SO')){
+      route = 'SODetails';
+    }  else if(this.router.url.includes('GRN') && !this.router.url.includes('GRNExceptions')){
       route = 'GRNDetails';
     } else {
       route = 'InvoiceDetails';      

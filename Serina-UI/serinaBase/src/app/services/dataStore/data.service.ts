@@ -150,6 +150,13 @@ export class DataService {
   idDocumentType: number;
   ap_boolean:any;
   doc_status_tab: any;
+  searchSOStr = '';
+  SODisplayData = [];
+  soArrayLength: any;
+  SOPaginationFisrt = 1;
+  SOPaginationRowLength = 10;
+  offsetCountSO = 1;
+  pageCountVariableSO = 0;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
