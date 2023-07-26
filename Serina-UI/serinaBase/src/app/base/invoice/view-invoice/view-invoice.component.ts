@@ -928,10 +928,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
                 ) {
                   count++;
                   errorTypeLine = 'AmountLine';
-                }
-                if(element.TagName == 'Description'){
-                  count++
-                  errorTypeLine = 'description';
+                } else if(element.TagName == 'Description'){
+                  if(ele1.DocumentLineItems?.Value == ''){
+                    count++
+                    errorTypeLine = 'description';
+                  }
                 }
   
                 if (element.TagName == 'Quantity') {
