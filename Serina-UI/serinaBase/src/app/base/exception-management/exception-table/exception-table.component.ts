@@ -284,9 +284,16 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
                 e.documentsubstatusID == 21 ||
                 e.documentsubstatusID == 27 ||
                 e.documentsubstatusID == 75) {
-                this.router.navigate([
-                  `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
-                ]);
+                  if(this.tagService.batchProcessTab == 'PODoc'){
+                    this.router.navigate([
+                      `${this.portalName}/ExceptionManagement/batchProcess/SO_generate/${e.idDocument}`,
+                    ]);
+                  } else {
+                    this.router.navigate([
+                      `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
+                    ]);
+                  }
+                
               } else {
                 this.ExceptionsService.selectedRuleId = e.ruleID;
                 this.router.navigate([

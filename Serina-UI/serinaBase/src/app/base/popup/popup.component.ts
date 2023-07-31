@@ -22,6 +22,7 @@ export class PopupComponent implements OnInit {
   entityList = [];
   approverList:any;
   rejectionComments:string;
+  approversSendData: any;
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -49,7 +50,8 @@ export class PopupComponent implements OnInit {
     } else if (this.type == 'flip line') {
       this.component = 'mapping';
     } else if (this.type == 'editApprover'){
-      this.approveBool = true
+      this.approveBool = true;
+      this.flipApproverlist();
     }
     if (this.data.comp == 'upload') {
       this.uploadBool = true;
@@ -63,11 +65,19 @@ export class PopupComponent implements OnInit {
     this.spin.show();
     this.ES.flip_po(JSON.stringify(this.selectedPOLines)).subscribe((data: any) => {
       if (data?.result) {
-        this.dialogRef.close();
-        this.ES.popupmsg.next(this.component);
-        this.alert.addObject.detail = "PO flip is successful, Please see the approvers."
-        this.message.add(this.alert.addObject);
-        this.approveBool = true;
+        if(data.Flippo_Approval){
+          this.flipApproverlist();
+          this.alert.addObject.detail = "PO flip is successful, Please set the approvers."
+          this.message.add(this.alert.addObject);
+          this.approveBool = true;
+        } else {
+          this.ES.popupmsg.next(this.component);
+          this.alert.addObject.detail = "PO flip is successful"
+          this.message.add(this.alert.addObject);
+          this.dialogRef.close();
+        }
+
+
         // this.mat_dlg.open(FlipApprovalComponent, {
         //   width: '60%',
         //   height: '70vh',
@@ -122,7 +132,6 @@ export class PopupComponent implements OnInit {
     })
   }
   onSubmitRequest(val) {
-    console.log(this.rejectionComments);
     this.dialogRef.close(this.rejectionComments);
   }
 
@@ -133,7 +142,6 @@ export class PopupComponent implements OnInit {
       GRNdata: this.GRNData
     }
     this.ES.validateFlipPO(JSON.stringify(obj),this.po_num).subscribe((data:string) => {
-      console.log(data)
       if (data == 'success') {
         this.ES.popupmsg.next(this.component);
         this.alert.addObject.detail = "PO flip is successful";
@@ -150,6 +158,36 @@ export class PopupComponent implements OnInit {
       this.spin.hide();
     });
 
+  }
+
+  flipApproverlist(){
+    this.ES.getFlipApprovers().subscribe((data:any)=>{
+      let resultData = data?.result;
+      this.approverList= data?.result
+      let array = [];
+      let list = [];
+      let count = 0;
+      for (const item in resultData) {
+        count = count + 1;
+        // list = resultData[item].sort((a, b) => a.priority - b.priority);
+        // console.log(item)
+        // this.approverList[`${item}`] = list;
+        // console.log(item)
+        array.push(resultData[item][0]);
+      }
+      this.approversSendData = array;
+    })
+  }
+  onSelectApprovers(val,i){
+
+  }
+
+  setApprover(){
+    this.ES.setFlipApproval(JSON.stringify(this.approversSendData)).subscribe((data)=>{
+      this.alert.addObject.detail = "Successfully sent for Approvals"
+      this.message.add(this.alert.addObject);
+      this.dialogRef.close('success');
+    })
   }
 
 }

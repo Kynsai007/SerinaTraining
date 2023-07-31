@@ -156,7 +156,7 @@
 
   <div *ngIf="approveBool">
     <div class="d-flex justify-content-between flex-wrap f-12">
-      <div>
+      <!-- <div>
         <label>Select Entity</label>
         <select
           class="form-control inputHeight"
@@ -169,7 +169,7 @@
             {{ entity.EntityName }}
           </option>
         </select>
-      </div>
+      </div> -->
       <!-- <div>
         <label>Select Department</label>
         <select
@@ -190,12 +190,13 @@
         <!-- <div>{{item.value | json}}</div> -->
         <select
           class="form-control inputHeight"
+          (change)="onSelectApprovers($event.target.value, i)"
         >
           <option
             *ngFor="let element of item.value"
-            [value]="element.User.idUser"
+            [value]="element.user_id"
           >
-            {{ element.User.firstName }} {{ element.User.lastName }}
+            {{ element.name }}
           </option>
         </select>
       </div>
@@ -208,7 +209,7 @@
     </div>
 
     <div class="mt-4 d-flex justify-content-center mb-3">
-      <button class="btn btnVender bg-btn-success mr-3" type="submit"> Save </button>
+      <button class="btn btnVender bg-btn-success mr-3" type="submit" (click)="setApprover()"> Submit </button>
       <button class="btn btnVender bg-btn-cancel" type="button" mat-dialog-close> Cancel </button>
     </div>
   </div>

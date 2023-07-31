@@ -205,7 +205,7 @@ export class Comparision3WayComponent
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
-    this.flipEnabled = this.dataService.configData.flipBool;
+    this.flipEnabled = true;
     this.userDetails = this.authService.currentUserValue;
     if (this.ap_boolean) {
       this.partytype = 'vendor';
@@ -1566,7 +1566,11 @@ export class Comparision3WayComponent
   readPOLines() {
     this.exceptionService.getPOLines('').subscribe((data: any) => {
       this.poLineData = data.Po_line_details;
-      if (Object?.keys(this.poLineData[0])?.length > 0) {
+      this.poLineData.forEach(el=>{
+        el.RemainPurchFinancial = 0;
+      })
+      console.log(this.poLineData)
+      if (this.poLineData?.length > 0) {
         this.POlineBool = true;
       } else {
         this.POlineBool = false;

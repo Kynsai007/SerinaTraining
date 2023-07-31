@@ -56,12 +56,19 @@
   PO Amend request
 </button> -->
   <button
-    *ngIf="flipEnabled && subStatusId == 34"
+    *ngIf="portalName == 'customer' && flipEnabled && subStatusId == 34"
     class="btnUpload btn_extra_bg mr-2"
     (click)="open_dialog_comp('flip')"
   >
     Flip PO
   </button>
+  <button
+      *ngIf="portalName == 'customer'&& is_fp && (subStatusId == 78 || subStatusId == 77)"
+      class="btnUpload btn_extra_bg mr-2"
+      (click)="open_dialog_comp('editApprover')"
+    >
+      <span *ngIf="subStatusId == 78">Set</span><span *ngIf="subStatusId == 77">Edit</span> Approvers
+    </button>
   <button
     class="btnUpload btn_extra_bg"
     (click)="captureComments('AddLine', null)"
@@ -1258,12 +1265,20 @@
             (editPermissionBoolean ||
               changeApproveBoolean ||
               financeApproveBoolean) &&
-            (submitBtn_boolean || vendorUplaodBoolean)
+            (submitBtn_boolean || vendorUplaodBoolean) && subStatusId != 77
           "
           class="btn btnVender bg-btn-success"
           (click)="submitChanges()"
         >
           Next
+        </button>
+
+        <button
+          *ngIf="(subStatusId == 77 && is_fpa)"
+          class="btn btnVender bg-btn-success"
+          (click)="FlipApprove()"
+        >
+          Approve
         </button>
 
         <button

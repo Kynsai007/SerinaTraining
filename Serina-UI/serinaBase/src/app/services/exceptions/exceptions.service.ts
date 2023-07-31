@@ -118,6 +118,16 @@ export class ExceptionsService {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/validateFlipPO/${this.userId}?po_num=${po_num}`,data)
   }
 
+  getFlipApprovers(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/getFlipPoApprovers/${this.userId}?inv_id=${this.invoiceID}`)
+  }
+  setFlipApproval(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/savefliPoapprovers/${this.userId}?inv_id=${this.invoiceID}`,data)
+  }
+  approveFlip(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/flippoDocumentApprove/${this.userId}?inv_id=${this.invoiceID}`,data)
+  }
+
   update_GRN_data(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/updateGRNdata/${this.userId}/idDocument/${this.invoiceID}`,data)
   }
@@ -127,5 +137,9 @@ export class ExceptionsService {
   }
   getMsg(){
     return this.popupmsg.asObservable();
+  }
+
+  getDocumentDetails(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/readlinedata/${this.userId}/poid/${this.invoiceID}`)
   }
 }

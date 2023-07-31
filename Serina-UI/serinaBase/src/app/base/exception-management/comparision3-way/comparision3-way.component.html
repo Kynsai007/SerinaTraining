@@ -32,7 +32,7 @@
     
     <button *ngIf="ap_boolean" class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2" [ngClass]="(subStatusId == 75 || subStatusId == 17) ? 'bt-hlt':''" (click)="opengrnDailog()">Select GRN</button>
     <button
-      *ngIf="flipEnabled && (subStstusId == 8 || subStstusId == 16 || subStstusId == 21 || subStstusId == 27)"
+      *ngIf="portalName == 'customer' && flipEnabled && (subStatusId == 8 || subStatusId == 16 || subStatusId == 21 || subStatusId == 27)"
       class="btnUpload btn_extra_bg m-t-neg ml-2"
       (click)="open_dialog_comp('flip line')"
     >

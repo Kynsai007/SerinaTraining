@@ -261,6 +261,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   subStatusId: any;
   flipEnabled: boolean;
   docType: number;
+  is_fp: boolean;
+  is_fpa: boolean;
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -300,6 +302,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.uploadtime = params.uploadtime;
     })
     this.userDetails = this.authService.currentUserValue;
+    this.is_fp = this.userDetails.permissioninfo.is_fp;
+    this.is_fpa = this.userDetails.permissioninfo.is_fpa;
     if (this.userDetails.user_type == 'vendor_portal') {
       this.portalName = 'vendorPortal';
     } else {
@@ -2033,7 +2037,33 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           this.Reject();
         }
       })
+    } else {
+      matdrf.afterClosed().subscribe((resp:any)=>{
+        if(resp == 'success'){
+          setTimeout(() => {
+            this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+          }, 1000);
+        }
+      })
     }
+  }
+
+  FlipApprove(){
+    this.exceptionService.approveFlip('').subscribe((data:any)=>{
+      // if(data?.result?.Approval) {
+      //   this.readDepartment();
+      //   this.readCategoryData();
+      //   this.approval_selection_boolean = true;
+      //   this.AlertService.updateObject.summary = 'Set Approval';
+      //   this.AlertService.updateObject.detail = 'Please add the approvers';
+      //   this.currentTab = 'approver_selection';
+      // }
+      this.AlertService.addObject.detail = "Approved.";
+        this.messageService.add(this.AlertService.addObject);
+        setTimeout(() => {
+          this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+        }, 1000);
+    })
   }
 
   // getPO_lines(str) {

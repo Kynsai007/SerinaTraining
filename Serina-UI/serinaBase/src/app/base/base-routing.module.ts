@@ -30,6 +30,7 @@ import { CanDeactivateGuard } from './can-deactivate/can-deactivate.guard';
 import { UploadSectionComponent } from '../main-content/upload-section/upload-section.component';
 import { ErrorPageComponent } from '../error-page/error-page.component';
 import { BusinessChartsComponent } from './home/business-charts/business-charts.component';
+import { SalesOrderMappingComponent } from './exception-management/sales-order-mapping/sales-order-mapping.component';
 
 const routes: Routes = [
   { 
@@ -139,6 +140,10 @@ const routes: Routes = [
           {
             path: 'ExceptionManagement/batchProcess/comparision-docs/:id',
             component: Comparision3WayComponent,canDeactivate: [CanDeactivateGuard]
+          },
+          {
+            path: 'ExceptionManagement/batchProcess/SO_generate/:id',
+            component: SalesOrderMappingComponent
           },
           
           {

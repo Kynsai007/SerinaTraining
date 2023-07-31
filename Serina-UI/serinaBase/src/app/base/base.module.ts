@@ -48,6 +48,7 @@ import { CreateGRNComponent } from './create-grn/create-grn.component';
 import { HelpComponent } from './help/help.component';
 import { PopupComponent } from './popup/popup.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
+import { SalesOrderMappingComponent } from './exception-management/sales-order-mapping/sales-order-mapping.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
     CreateGRNComponent,
     HelpComponent,
     PopupComponent,
-    ConfirmationComponent
+    ConfirmationComponent,
+    SalesOrderMappingComponent
   ],
   imports: [
     CommonModule,
