@@ -96,23 +96,16 @@ export class FrUpdateSpComponent implements OnInit {
       sessionStorage.removeItem("currentFolder");
     }
     if (this.sharedService.SPDetails) {
-      console.log(this.sharedService.SPDetails);
       this.SPData = this.sharedService.SPDetails;
       this.SPName = this.sharedService.SPDetails.ServiceProviderName;
     }
     if (!this.SPName) {
-      console.log(this.sharedService.currentSPData);
       this.SPData = this.sharedService.currentSPData;
       this.SPName = this.sharedService.currentSPData.ServiceProviderName;
     }
     this.getAccuracyScore();
-    //this.getSPAccounts();
     this.getfrConfig();
-    //this.getSynonyms();
     this.getModalList();
-    //this.getRules();
-    //this.getAmountRules();
-    
   }
   
   ngAfterContentInit() : void {
@@ -199,6 +192,7 @@ export class FrUpdateSpComponent implements OnInit {
       })
       this.modelData = selected[0];
       this.mobservice.setModelData(this.modelData);
+      sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
       this.FolderPath = this.modelData.folderPath;
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
     }
@@ -235,7 +229,7 @@ export class FrUpdateSpComponent implements OnInit {
     this.sharedService.getFrConfig().subscribe((data: any) => {
       this.frLoadBoolean = true;
       this.FRConfigData = [data];
-      sessionStorage.setItem('configData',JSON.stringify(data));
+      sessionStorage.setItem('configData',JSON.stringify([data]));
       this.sharedService.frData = this.FRConfigData;
     })
   }
@@ -397,7 +391,6 @@ export class FrUpdateSpComponent implements OnInit {
     this.enableMetaDataBoolean = value;
   }
   getModalList() {
-    console.log(this.SPData);
     this.sharedService.getModalListSP(this.SPData.idServiceProvider).subscribe((data: any) => {
       this.modalList = data;
       if(this.modalList.length == 0){

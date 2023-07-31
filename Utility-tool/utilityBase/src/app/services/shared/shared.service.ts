@@ -264,7 +264,7 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/getTrainTestResults/${modal_id}`);
   }
   getTaggingInfo(container,folderpath,connstr,documentId): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_tagging_info/${documentId}`,{headers:new HttpHeaders({'container':container,'connection_string':connstr,"path":folderpath})});
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_tagging_info/${documentId}`,{headers:new HttpHeaders({'container':container,'connstr':connstr,"path":folderpath})});
   }
   getAnalyzeResult(frobj):Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result/${frobj['container']}`,{headers:new HttpHeaders({'filename':frobj['filename'],'connstr':frobj['connstr'],'fr_endpoint':frobj['fr_endpoint'],'fr_key':frobj['fr_key'],'account':frobj['account']})});

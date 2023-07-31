@@ -407,7 +407,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   
   async setup(){
       try {
-        if(!this.modelData){
+        if(!this.modelData || !this.frConfigData){
           this.modelData = JSON.parse(sessionStorage.getItem("modelData"));
           this.frConfigData = JSON.parse(sessionStorage.getItem("configData")); 
         }
