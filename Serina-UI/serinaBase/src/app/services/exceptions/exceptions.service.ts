@@ -142,4 +142,7 @@ export class ExceptionsService {
   getDocumentDetails(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/readlinedata/${this.userId}/poid/${this.invoiceID}`)
   }
+  readMasterData(v_id){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/readMasterData/${this.userId}/${v_id}`)
+  }
 }

@@ -157,6 +157,8 @@ export class DataService {
   SOPaginationRowLength = 10;
   offsetCountSO = 1;
   pageCountVariableSO = 0;
+  poLineData = [];
+  arenaMasterData: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

@@ -48,13 +48,14 @@
             *ngFor="let col of columns"
             [pTooltip]="col.columnDescription"
             tooltipPosition="top"
-            [ngStyle]="{ width: col.columnName === 'Status' ? '20%' : '',backgroundColor : invoceDoctype ? '#313971' : '#a72845'}"
+            [ngClass]="invoceDoctype ? 'ap_bgClor' : 'ar_bgClr'"
+            [ngStyle]="{ width: col.columnName === 'Status' ? '20%' : ''}"
             [pSortableColumn]="col.dbColumnname"
           >
             {{ col.columnName }}
           </th>
           <th class="action_Zindex" 
-            [ngStyle]="{backgroundColor : invoceDoctype ? '#313971' : '#a72845'}">
+            [ngClass]="invoceDoctype ? 'ap_bgClor' : 'ar_bgClr'">
             Actions
             <i
               *ngIf="

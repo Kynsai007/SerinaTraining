@@ -1,114 +1,116 @@
 <section>
   <div class="d-flex justify-content-between">
-    <h6 class="f-14" *ngIf="!approveBool">
+    <h6 class="f-14">
       <span *ngIf="type == 'flip' || type == 'flip line'"
         >Please select the lines</span
       >
       <span *ngIf="type == 'Amend'">Please change the template body</span>
+      <span *ngIf="type == 'editApprover'">Please add the approvers</span>
+      <span *ngIf="type == 'poMaster'">Select line to match</span>
     </h6>
 
-    <h6 class="f-14" *ngIf="approveBool">
-      <span>Please add the approvers</span>
-    </h6>
+    <!-- <h6 class="f-14" *ngIf="approveBool">
+      <span></span>
+    </h6> -->
     <div>
       <i class="fa fa-close" style="cursor: pointer" mat-dialog-close></i>
     </div>
   </div>
 
-  <div *ngIf="!approveBool">
+  <div *ngIf="type.includes('flip')">
     <form
-    *ngIf="type == 'flip' || type == 'flip line'"
-    #polines="ngForm"
-    (ngSubmit)="onSubmit(polines.value)"
-  >
-    <div class="tb_div">
-      <table class="table table-bordered f-11" *ngIf="POLineData[0]?.Name">
-        <tr class="f-12 tb_head">
-          <th>
-            <input
-              class="mt-1"
-              type="checkbox"
-              name="selectAll"
-              (change)="onSelectAll($event.target.checked)"
-            />
-          </th>
-          <th>Description</th>
-          <th>PO Quantity</th>
-          <th>Balance Quantity</th>
-          <th>Quantity</th>
-          <th>Unit price</th>
-          <th>Disc Amount</th>
-          <th>Disc Percent</th>
-        </tr>
-        <tr *ngFor="let line of POLineData">
-          <td>
-            <input
-              type="checkbox"
-              [name]="line.Name"
-              [checked]="line.isSelected"
-              (change)="onSelect($event.target.checked, line)"
-            />
-          </td>
-          <td>{{ line.Name }}</td>
-          <td>{{ line.PurchQty }}</td>
-          <td>{{ line.RemainPurchFinancial }}</td>
-          <td>
-            <input
-              [id]="line.LineNumber"
-              #qty
-              type="text"
-              value="{{ line.PurchQty }}"
-              class="form-control f-11"
-              style="width: 70px"
-              (change)="changeQty(qty.value, line.LineNumber)"
-            />
-          </td>
-          <td>{{ line.UnitPrice }}</td>
-          <td>{{ line.DiscAmount }}</td>
-          <td>{{ line.DiscPercent }}</td>
-        </tr>
-      </table>
-    </div>
-    <div class="text-center f-13" *ngIf="!POLineData[0]?.Name">
-      PO lines are not availabe to flip
-    </div>
-    <div
-      class="mt-4 d-flex justify-content-center mb-3"
-      *ngIf="POLineData[0]?.Name"
+      *ngIf="type == 'flip' || type == 'flip line'"
+      #polines="ngForm"
+      (ngSubmit)="onSubmit(polines.value)"
     >
-      <button
-        *ngIf="!uploadBool"
-        class="btn btnVender bg-btn-success mr-3"
-        type="submit"
-        [disabled]="selectedPOLines.length == 0"
+      <div class="tb_div">
+        <table class="table table-bordered f-11" *ngIf="POLineData[0]?.Name">
+          <tr class="f-12 tb_head">
+            <th>
+              <input
+                class="mt-1"
+                type="checkbox"
+                name="selectAll"
+                (change)="onSelectAll($event.target.checked)"
+              />
+            </th>
+            <th>Description</th>
+            <th>PO Quantity</th>
+            <th>Balance Quantity</th>
+            <th>Quantity</th>
+            <th>Unit price</th>
+            <th>Disc Amount</th>
+            <th>Disc Percent</th>
+          </tr>
+          <tr *ngFor="let line of POLineData">
+            <td>
+              <input
+                type="checkbox"
+                [name]="line.Name"
+                [checked]="line.isSelected"
+                (change)="onSelect($event.target.checked, line)"
+              />
+            </td>
+            <td>{{ line.Name }}</td>
+            <td>{{ line.PurchQty }}</td>
+            <td>{{ line.RemainPurchFinancial }}</td>
+            <td>
+              <input
+                [id]="line.LineNumber"
+                #qty
+                type="text"
+                value="{{ line.PurchQty }}"
+                class="form-control f-11"
+                style="width: 70px"
+                (change)="changeQty(qty.value, line.LineNumber)"
+              />
+            </td>
+            <td>{{ line.UnitPrice }}</td>
+            <td>{{ line.DiscAmount }}</td>
+            <td>{{ line.DiscPercent }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="text-center f-13" *ngIf="!POLineData[0]?.Name">
+        PO lines are not availabe to flip
+      </div>
+      <div
+        class="mt-4 d-flex justify-content-center mb-3"
+        *ngIf="POLineData[0]?.Name"
       >
-        Flip
-      </button>
-      <button
-        *ngIf="uploadBool"
-        class="btn btnVender bg-btn-success mr-3"
-        type="button"
-        [disabled]="selectedPOLines.length == 0"
-        (click)="validateFlip()"
-      >
-        Validate
-      </button>
-      <button
-        class="btn btnVender bg-btn-cancel"
-        type="button"
-        mat-dialog-close
-      >
-        Cancel
-      </button>
-    </div>
-  </form>
+        <button
+          *ngIf="!uploadBool"
+          class="btn btnVender bg-btn-success mr-3"
+          type="submit"
+          [disabled]="selectedPOLines.length == 0"
+        >
+          Flip
+        </button>
+        <button
+          *ngIf="uploadBool"
+          class="btn btnVender bg-btn-success mr-3"
+          type="button"
+          [disabled]="selectedPOLines.length == 0"
+          (click)="validateFlip()"
+        >
+          Validate
+        </button>
+        <button
+          class="btn btnVender bg-btn-cancel"
+          type="button"
+          mat-dialog-close
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
 
-  <form
-    *ngIf="type == 'Amend'"
-    #poAmend="ngForm"
-    (ngSubmit)="onSubmitRequest(poAmend.value)"
-  >
-    <!-- <label for="email" class="f-13">Recipient email ID</label>
+    <form
+      *ngIf="type == 'Amend'"
+      #poAmend="ngForm"
+      (ngSubmit)="onSubmitRequest(poAmend.value)"
+    >
+      <!-- <label for="email" class="f-13">Recipient email ID</label>
     <input
       type="email"
       name="recipient"
@@ -118,7 +120,7 @@
       placeholder="abc@example.com"
     /> -->
 
-    <!-- <label for="sub" class="f-13">Please Add Subject</label>
+      <!-- <label for="sub" class="f-13">Please Add Subject</label>
     <input
       type="text"
       name="subject"
@@ -129,32 +131,34 @@
       placeholder="Regarding PO..."
     /> -->
 
-    <label for="body" class="f-12">Please Add your inputs for the rejection comments</label>
-    <textarea
-      name="body"
-      id="body"
-      class="form-control f-12"
-      [(ngModel)]="rejectionComments"
-      required
-      placeholder="body"
-    >
-    </textarea>
-    <div class="mt-4 d-flex justify-content-center mb-3">
-      <button class="btn btnVender bg-btn-success mr-3" type="submit">
-        Reject & Send 
-      </button>
-      <button
-        class="btn btnVender bg-btn-cancel"
-        type="button"
-        mat-dialog-close
+      <label for="body" class="f-12"
+        >Please Add your inputs for the rejection comments</label
       >
-        Cancel
-      </button>
-    </div>
-  </form>
+      <textarea
+        name="body"
+        id="body"
+        class="form-control f-12"
+        [(ngModel)]="rejectionComments"
+        required
+        placeholder="body"
+      >
+      </textarea>
+      <div class="mt-4 d-flex justify-content-center mb-3">
+        <button class="btn btnVender bg-btn-success mr-3" type="submit">
+          Reject & Send
+        </button>
+        <button
+          class="btn btnVender bg-btn-cancel"
+          type="button"
+          mat-dialog-close
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
   </div>
 
-  <div *ngIf="approveBool">
+  <div *ngIf="type == 'editApprover'">
     <div class="d-flex justify-content-between flex-wrap f-12">
       <!-- <div>
         <label>Select Entity</label>
@@ -192,10 +196,7 @@
           class="form-control inputHeight"
           (change)="onSelectApprovers($event.target.value, i)"
         >
-          <option
-            *ngFor="let element of item.value"
-            [value]="element.user_id"
-          >
+          <option *ngFor="let element of item.value" [value]="element.user_id">
             {{ element.name }}
           </option>
         </select>
@@ -209,8 +210,111 @@
     </div>
 
     <div class="mt-4 d-flex justify-content-center mb-3">
-      <button class="btn btnVender bg-btn-success mr-3" type="submit" (click)="setApprover()"> Submit </button>
-      <button class="btn btnVender bg-btn-cancel" type="button" mat-dialog-close> Cancel </button>
+      <button
+        class="btn btnVender bg-btn-success mr-3"
+        type="submit"
+        (click)="setApprover()"
+      >
+        Submit
+      </button>
+      <button
+        class="btn btnVender bg-btn-cancel"
+        type="button"
+        mat-dialog-close
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="type == 'poMaster'">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item mr-2">
+        <a
+          class="nav-link active"
+          id="order-tab"
+          data-toggle="tab"
+          href="#order"
+          role="tab"
+          aria-controls="order"
+          aria-selected="true"
+          >Order History
+        </a>
+      </li>
+      <li class="nav-item mr-2">
+        <a
+          class="nav-link"
+          id="alternate-tab"
+          data-toggle="tab"
+          href="#alternate"
+          role="tab"
+          aria-controls="alternate"
+          aria-selected="false"
+          >Alternative Items</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="master-tab"
+          data-toggle="tab"
+          href="#master"
+          role="tab"
+          aria-controls="master"
+          aria-selected="false"
+          >Arena Master Data</a
+        >
+      </li>
+    </ul>
+
+    <div class="tabDiv tab-content" id="myTabContent">
+      <div
+        class="tab-pane fade show active"
+        id="order"
+        role="tabpanel"
+        aria-labelledby="order-tab"
+      >
+        <table class="table f-12">
+          <tr class="tHead">
+            <th *ngFor="let head of lineTable">{{ head }}</th>
+          </tr>
+          <tr
+            *ngFor="let poLine of orderHistoryData?.order_history; let i = index"
+            class="tbdytr"
+          >
+            <td>{{ poLine.Description }}</td>
+            <td>{{ poLine.Unit }}</td>
+            <td>{{ poLine.UnitPrice }}</td>
+            <td>{{ poLine.Quantity }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div
+        class="tab-pane fade"
+        id="alternate"
+        role="tabpanel"
+        aria-labelledby="alternate-tab"
+      ></div>
+
+      <div
+        class="tab-pane fade"
+        id="master"
+        role="tabpanel"
+        aria-labelledby="master-tab"
+      >
+        <table class="table f-12">
+          <tr class="tHead">
+            <th *ngFor="let head of lineTable">{{ head }}</th>
+          </tr>
+          <tr *ngFor="let poLine of orderHistoryData?.master_data; let i = index" class="tbdytr">
+            <td>{{ poLine.description }}</td>
+            <!-- <td>{{ poLine.Unit }}</td>
+            <td>{{ poLine.UnitPrice }}</td>
+            <td>{{ poLine.Quantity }}</td> -->
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
 </section>

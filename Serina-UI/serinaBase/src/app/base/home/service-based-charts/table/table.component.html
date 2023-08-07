@@ -27,11 +27,11 @@
           [pSortableColumn]="col.field"
           [pTooltip]="col.header"
           tooltipPosition="top"
-          [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
+          [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
         >
           {{ col.header }}
         </th>
-        <th *ngIf="downloadBoolean" class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions</th>
+        <th *ngIf="downloadBoolean" class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">Actions</th>
       </tr>
       <tr *ngIf="!(router.url.includes('processReports') ||router.url.includes('serviceBasedReports'))">
         <td *ngFor="let col of columns">

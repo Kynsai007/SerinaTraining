@@ -4,11 +4,12 @@ import { AlertService } from 'src/app/services/alert/alert.service';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DataService } from 'src/app/services/dataStore/data.service';
 
 @Component({
   selector: 'app-popup',
   templateUrl: './popup.component.html',
-  styleUrls: ['./popup.component.scss']
+  styleUrls: ['./popup.component.scss','../invoice/view-invoice/view-invoice.component.scss']
 })
 export class PopupComponent implements OnInit {
   POLineData = [];
@@ -23,6 +24,9 @@ export class PopupComponent implements OnInit {
   approverList:any;
   rejectionComments:string;
   approversSendData: any;
+  lineTable = [ 'Description','Unit','Price','Quantity'];
+  orderHistoryData: any;
+  masterData: any;
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -30,6 +34,7 @@ export class PopupComponent implements OnInit {
     private alert: AlertService,
     private message : MessageService,
     private spin: NgxSpinnerService,
+    private ds : DataService,
     private mat_dlg: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
@@ -47,15 +52,27 @@ export class PopupComponent implements OnInit {
     }
     if (this.type == 'flip') {
       this.component = 'normal';
+      this.flipPOFun();
     } else if (this.type == 'flip line') {
       this.component = 'mapping';
+      this.flipPOFun();
     } else if (this.type == 'editApprover'){
       this.approveBool = true;
       this.flipApproverlist();
+    } else if(this.type == 'poMaster'){
+      if(!this.ds.arenaMasterData){
+        this.getPOMasterData(this.data.resp);
+      } else {
+        this.orderHistoryData = this.ds.arenaMasterData;
+      }
     }
     if (this.data.comp == 'upload') {
       this.uploadBool = true;
     }
+
+  }
+
+  flipPOFun(){
     this.POLineData = this.data.resp;
     this.POLineData.forEach(val => {
       val.isSelected = false;
@@ -187,6 +204,15 @@ export class PopupComponent implements OnInit {
       this.alert.addObject.detail = "Successfully sent for Approvals"
       this.message.add(this.alert.addObject);
       this.dialogRef.close('success');
+    })
+  }
+
+  getPOMasterData(v_id){
+    this.ES.readMasterData(v_id).subscribe((data:any)=>{
+      console.log(data);
+      this.ds.arenaMasterData = data;
+      this.orderHistoryData = data;
+      // this.masterData = data.master_data;
     })
   }
 

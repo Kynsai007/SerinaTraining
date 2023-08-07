@@ -1,7 +1,7 @@
 <h6 class="headh6">Business Reports</h6>
 <section  class="container-fluid home_main_div">
     <div>
-        <ul class="nav nav-pills">
+        <ul class="nav nav-pills navibar">
           <li class="nav-item mr-1">
             <a
               class="nav-link"
@@ -38,7 +38,7 @@
           <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
         </div> -->
       
-        <div  [ngSwitch]="viewType" style="padding-top: 12px">
+        <div  [ngSwitch]="viewType" style="padding: 10px">
           <!-- Process invoices Tab -->
           <div *ngSwitchCase="'Process'">
             <process-metrics></process-metrics>

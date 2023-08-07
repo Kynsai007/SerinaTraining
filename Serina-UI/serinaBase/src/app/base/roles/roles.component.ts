@@ -11,6 +11,7 @@ import {
 } from 'primeng/api';
 import { SharedService } from 'src/app/services/shared.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { AlertService } from 'src/app/services/alert/alert.service';
 
 export interface UserData {
   name: string;
@@ -154,16 +155,6 @@ export class RolesComponent implements OnInit {
 
   deleteBtnText: string;
 
-  errorObject = {
-    severity: 'error',
-    summary: 'error',
-    detail: 'Something went wrong',
-  };
-  addObject = {
-    severity: 'success',
-    summary: 'Success',
-    detail: 'Created Successfully',
-  };
   updateObject = {
     severity: 'info',
     summary: 'Updated',
@@ -262,7 +253,8 @@ export class RolesComponent implements OnInit {
     private SpinnerService: NgxSpinnerService,
     private _location: Location,
     private settingsService: SettingsService,
-    private primengConfig: PrimeNGConfig
+    private primengConfig: PrimeNGConfig,
+    private Alert : AlertService
   ) {
     routeIn.params.subscribe((params) => {
       this.setupComponent(params['someParam']);
@@ -291,7 +283,6 @@ export class RolesComponent implements OnInit {
       this.getVendorSuperUserList();
       this.financeapproveDisplayBoolean =
         this.settingsService.finaceApproveBoolean;
-        console.log( this.financeapproveDisplayBoolean,this.entityBaseApproveBoolean)
       this.addRoleBoolean = this.permissionService.addUserRoleBoolean;
       this.isVendorportalRequired = this.dataService?.configData?.enablevendorportal;
       this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
@@ -325,14 +316,8 @@ export class RolesComponent implements OnInit {
   DeleteRole() {
     this.sharedService.deleteRole().subscribe((data: any) => {
       if (data.result == 'success') {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Deleted',
-          detail: 'Deleted Successfully',
-        });
+        this.successAlert('Deleted Successfully');
         this.getDisplayTotalRoles();
-      } else {
-        this.messageService.add(this.errorObject);
       }
     });
     this.displayResponsive = false;
@@ -368,29 +353,20 @@ export class RolesComponent implements OnInit {
         .subscribe(
           (data: any) => {
             if (data.result) {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Added',
-                detail: 'Role Created Successfully',
-              });
+              this.successAlert('Role Created Successfully');
               this.getDisplayTotalRoles();
               this.normalRole = true;
               this.CreateNewRole = false;
               this.editUserdata = false;
               delete this.AccessPermissionTypeId;
-            } else {
-              this.messageService.add(this.errorObject);
-              this.getDisplayTotalRoles();
-            }
+            } 
           },
           (error) => {
             if (error.status == 400) {
-              this.errorObject.detail =
-                'Please provide other priorioty, the given priority is already taken.';
+                this.alertFun("Please provide other priorioty, the given priority is already taken.");
             } else {
-              this.errorObject.detail = error.statusText;
+              this.alertFun(error.statusText);
             }
-            this.messageService.add(this.errorObject);
           }
         );
       this.createRoleRequiredBoolean = false;
@@ -628,13 +604,10 @@ export class RolesComponent implements OnInit {
             this.CreateNewRole = false;
             this.editUserdata = false;
             delete this.AccessPermissionTypeId;
-          } else {
-            this.messageService.add(this.errorObject);
           }
         },
         (error) => {
-          this.errorObject.detail = error.statusText;
-          this.messageService.add(this.errorObject);
+          this.alertFun(error.statusText);
         }
       );
   }
@@ -963,8 +936,7 @@ export class RolesComponent implements OnInit {
       }
       this.selectedEntitys.splice(index, 1);
     } else {
-      this.errorObject.detail = 'Atleast one entity required';
-      this.messageService.add(this.errorObject);
+      this.alertFun('Atleast one entity required');
     }
   }
 
@@ -1108,13 +1080,10 @@ export class RolesComponent implements OnInit {
           this.firstName = '';
           this.lastName = '';
           this.updateUsersEntityInfo = [];
-        } else {
-          this.messageService.add(this.errorObject);
         }
       },
       (error) => {
-        this.errorObject.detail = error.statusText;
-        this.messageService.add(this.errorObject);
+        this.alertFun(error.statusText);
       }
     );
   }
@@ -1171,11 +1140,6 @@ export class RolesComponent implements OnInit {
   }
 
   toCreateUser() {
-    let requiredError = {
-      severity: 'error',
-      summary: 'Fill required fields',
-      detail: 'Please fill all the given fields',
-    };
     if (
       this.updateUsersEntityInfo.length > 0 &&
       this.userName != '' &&
@@ -1201,28 +1165,28 @@ export class RolesComponent implements OnInit {
           this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.userPriority &&
           this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove) 
           {
-            this.addUserAPICall(createUserData,requiredError);
+            this.addUserAPICall(createUserData);
           } else {
             this.alertBoolean = true;
             this.displayResponsive = true;
             this.deleteBtnText = 'Please add all the mandatory fields';
           }
       } else {
-            this.addUserAPICall(createUserData,requiredError);
+            this.addUserAPICall(createUserData);
       }
 
       
     } else {
-      this.messageService.add(requiredError);
+      this.alertFun("Please fill all the given fields");
     }
   }
 
-  addUserAPICall(createUserData,requiredError){
+  addUserAPICall(createUserData){
     this.sharedService
     .createNewUser(JSON.stringify(createUserData))
     .subscribe(
       (data) => {
-        this.messageService.add(this.addObject);
+        this.successAlert('User Created Successfully');
         this.normalRole = true;
         this.CreateNewRole = false;
         this.editUserdata = false;
@@ -1237,10 +1201,9 @@ export class RolesComponent implements OnInit {
       },
       (error) => {
         if (error.status == 422) {
-          this.messageService.add(requiredError);
+          this.alertFun("Please fill all the given fields");
         } else {
-          this.errorObject.detail = error.statusText;
-          this.messageService.add(this.errorObject);
+          this.alertFun(error.statusText);
         }
       }
     );
@@ -1267,14 +1230,8 @@ export class RolesComponent implements OnInit {
       .editRole(JSON.stringify(roleData))
       .subscribe((data: any) => {
         if (data.result == 'success') {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Role changed',
-            detail: 'Role Changed Successfully',
-          });
-        } else {
-          this.messageService.add(this.errorObject);
-        }
+          this.successAlert('Role Created Successfully');
+        } 
       });
   }
   getDisplayTotalRoles() {
@@ -1344,8 +1301,7 @@ export class RolesComponent implements OnInit {
     this.sharedService.check_onboardStatus(value).subscribe((data:any)=>{
       this.vendorOnboarderStatus = data.result.vendor_status;
       if(data.result.vendor_status == false){
-        this.errorObject.detail = "Vendor template is not Onboarded yet."
-        this.messageService.add(this.errorObject)
+        this.alertFun("Vendor template is not Onboarded yet.");
       }
     });
   }
@@ -1368,40 +1324,7 @@ export class RolesComponent implements OnInit {
           }
         }
         this.entLengthforup_vendr = value.value.length;
-        // if(val?.itemValue){
-        //   console.log('hi')
-        //   if(arr.includes(val?.itemValue?.idEntity)){
-        //     let arr1 = this.selectedEnt_venor.filter(id=>val?.itemValue?.idEntity === id.idEntity);
-        //     this.updateIdaccessArr.push(arr1[0].idVendorUserAccess);
-        //   } else {
-        //     this.entLengthforup_vendr = this.entitySelection.length;
-        //     if(currentCount >= this.entLengthforup_vendr){
-        //     this.updateVenrEntityAccess.push(val?.itemValue?.idEntity);
-        //     }
-        //   }
-        // } else {
-        //   console.log(val.value)
-        //   if(val?.value?.length>0){
-        //     val.value.forEach(ele=>{
-        //       if(arr.includes(ele?.idEntity)){
-        //         console.log(ele.idEntity)
-        //         let arr1 = this.selectedEnt_venor.filter(id=>ele?.idEntity === id.idEntity);
-        //         this.updateIdaccessArr.push(arr1[0].idVendorUserAccess);
-        //       } else {
-        //         console.log(ele?.idEntity)
-        //         this.entLengthforup_vendr = this.entitySelection.length;
-        //         if(currentCount >= this.entLengthforup_vendr){
-        //         this.updateVenrEntityAccess.push(ele?.idEntity);
-        //         }
-        //       }
-        //     })
-        //   } else {
-        //     let arr1 = []
-        //     this.selectedEnt_venor.forEach(id=>arr1.push(id.idVendorUserAccess));
-        //     this.updateIdaccessArr = arr1;
-        //     this.updateVenrEntityAccess = [];
-        //   }
-        // }
+        
     } else {
       value.value.forEach(ele=>{
         arr.push(ele.idEntity)
@@ -1409,19 +1332,7 @@ export class RolesComponent implements OnInit {
       this.updateIdaccessArr = [];
       this.updateVenrEntityAccess = arr;
     }
-    // this.selectedEnt_venor.filter(ele=>{
 
-    // })
-    // console.log(arr,arr2)
-
-    // let result = this.updateVenrEntityAccess.filter((ent,index)=> index === this.updateVenrEntityAccess.findIndex(
-    //   other=> ent.idEntity === other.idEntity));
-    //   console.log(result)
-    // let final = this.selectedEnt_venor.filter(id=>{
-    //   return
-    // })
-    // this.updateVendorEntitylist = result;
-    
   }
 
   readEntityForVendorOnboard(ven_code,uid) {
@@ -1485,19 +1396,17 @@ export class RolesComponent implements OnInit {
       .createVendorSuperUser(JSON.stringify(vendorSpUserData))
       .subscribe(
         (data: any) => {
-          this.messageService.add(this.addObject);
+          this.successAlert("Created Successfully");
           this.displayAddUserDialog = false;
 
           this.getVendorSuperUserList();
         },
         (error) => {
-          this.errorObject.detail = error.statusText;
-          this.messageService.add(this.errorObject);
+          this.alertFun(error.statusText);
         }
       );
    } else {
-    this.errorObject.detail = "Vendor template is not onboarded";
-    this.messageService.add(this.errorObject);
+    this.alertFun("Vendor template is not Onboarded yet.");
    }
   }
 
@@ -1528,8 +1437,7 @@ export class RolesComponent implements OnInit {
     }
     this.sharedService.updateVendorUserAccess(JSON.stringify(Obj),this.vendorUserId).subscribe((data:any)=>{
       if(this.approveDialog){
-        this.addObject.detail = "Account Activation Done."
-        this.messageService.add(this.addObject);
+        this.successAlert("Account Activation Done.");
       } else {
         this.messageService.add(this.updateObject);
         this.displayAddUserDialog = false;
@@ -1538,8 +1446,7 @@ export class RolesComponent implements OnInit {
       this.updateVenrEntityAccess = [];
       this.updateIdaccessArr = [];
     },err=>{
-      this.errorObject.detail = "Server error";
-      this.messageService.add(this.errorObject);
+      this.alertFun("Server error");
     })
   }
   approveVendoraccess(user){
@@ -1561,21 +1468,18 @@ export class RolesComponent implements OnInit {
       this.updateVendorAccess();
       this.sharedService.activate_vendor_signup(this.vendorUserId).subscribe(
         (data: any) => {
-          this.addObject.detail = data.result;
-          this.messageService.add(this.addObject);
+          this.successAlert(data.result);
           this.approveDialog = false;
           this.vendorUserId = null;
           // this.DisplayCustomerUserDetails();
           this.getVendorSuperUserList();
         },
         (error) => {
-          this.errorObject.detail = error.statusText;
-          this.messageService.add(this.errorObject);
+          this.alertFun("Server error");
         }
       );
     } else {
-      this.errorObject.detail = "Vendor template is not onboarded";
-      this.messageService.add(this.errorObject);
+      this.alertFun("Vendor template is not onboarded");
     }
 
   }
@@ -1589,8 +1493,7 @@ export class RolesComponent implements OnInit {
         this.checkOnboardStatus(this.vendorMatch?.VendorCode);
         this.readEntityForVendorOnboard(this.vendorMatch?.VendorCode, null);
       } else {
-        this.errorObject.detail = "Match not found please select";
-        this.messageService.add(this.errorObject);
+        this.alertFun("Match not found please select");
       }
       // this.onSelectedEntityCode(this.entitySelection,type);
       let arr = [];
@@ -1669,19 +1572,16 @@ export class RolesComponent implements OnInit {
     this.sharedService.resetPassword(this.userEmail).subscribe(
       (data: any) => {
         this.displayResponsive = false;
-        this.addObject.detail = data.result;
-        this.errorObject.detail = data.result;
         if (data.result != 'failed mail') {
-          this.messageService.add(this.addObject);
+          this.successAlert(data.result);
           this.displayResponsive = false;
           this.DisplayCustomerUserDetails();
         } else {
-          this.messageService.add(this.errorObject);
+          this.alertFun(data.result);
         }
       },
       (error) => {
-        this.errorObject.detail = error.statusText;
-        this.messageService.add(this.errorObject);
+        this.alertFun("Server error");
       }
     );
   }
@@ -1699,19 +1599,16 @@ export class RolesComponent implements OnInit {
   resetPassVendorAPI() {
     this.sharedService.resetPassword(this.resetVendorMail).subscribe(
       (data: any) => {
-        this.addObject.detail = data.result;
-        this.errorObject.detail = data.result;
         if (data.result != 'failed mail') {
-          this.messageService.add(this.addObject);
+          this.successAlert(data.result);
           this.displayResponsive = false;
           this.getVendorSuperUserList();
         } else {
-          this.messageService.add(this.errorObject);
+          this.alertFun(data.result);
         }
       },
       (error) => {
-        this.errorObject.detail = error.statusText;
-        this.messageService.add(this.errorObject);
+        this.alertFun("Server error");
       }
     );
   }
@@ -1730,16 +1627,14 @@ export class RolesComponent implements OnInit {
   activa_deactive() {
     this.sharedService.activate_deactivate(this.custuserid).subscribe(
       (data: any) => {
-        this.addObject.detail = data.result;
-        this.messageService.add(this.addObject);
+        this.successAlert(data.result);
         this.displayResponsive = false;
         this.custuserid = null;
         this.DisplayCustomerUserDetails();
         this.getVendorSuperUserList();
       },
       (error) => {
-        this.errorObject.detail = error.statusText;
-        this.messageService.add(this.errorObject);
+        this.alertFun(error.statusText);
       }
     );
   }
@@ -1751,5 +1646,14 @@ export class RolesComponent implements OnInit {
       this.row_customer = event.rows;
       this.first_cust = event.first;
     }
+  }
+  alertFun(txt) {
+    this.Alert.errorObject.detail = txt;
+    this.messageService.add(this.Alert.errorObject);
+  }
+  successAlert(txt) {
+    this.Alert.addObject.severity = 'success';
+    this.Alert.addObject.detail = txt;
+    this.messageService.add(this.Alert.addObject);
   }
 }

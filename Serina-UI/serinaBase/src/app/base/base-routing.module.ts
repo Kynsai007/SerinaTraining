@@ -143,7 +143,7 @@ const routes: Routes = [
           },
           {
             path: 'ExceptionManagement/batchProcess/SO_generate/:id',
-            component: SalesOrderMappingComponent
+            component: Comparision3WayComponent,canDeactivate: [CanDeactivateGuard]
           },
           
           {

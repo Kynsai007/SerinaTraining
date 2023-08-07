@@ -1,0 +1,41 @@
+<div class="refresh_btn"><button class="btnUpload" (click)="refreshPO()">Refresh PO</button></div>
+
+<table class="invert" style="width: 100%" *ngIf="POlineBool">
+    <tr
+      class="invert_tr"
+      *ngFor="let item of polineTableData; let i = index"
+    >
+      <td class="lineName invert_th_td">
+        {{ item.TagName }}
+      </td>
+      <!-- <div>
+                                <div class="linevalue invert_thtd">{{i+1}}</div>
+                              </div> -->
+      <td
+        class="linevalue invert_th_td"
+        *ngFor="let line1 of poLineData; let i = index"
+      >
+        <span>
+          <div
+            *ngFor="let line of line1 | keyvalue"
+            class="d-flex"
+            style="position: relative"
+          >
+            <span *ngIf="line.key == item.TagName">
+              <input
+                type="text"
+                [ngClass]="line.key == 'Name' ? 'w-des' : 'w-sm'"
+                [value]="line.value"
+                [title]="line.value"
+                disabled
+                class="form-control mb-1 inputHeight"
+              />
+            </span>
+          </div>
+        </span>
+      </td>
+    </tr>
+  </table>
+  <div *ngIf="!POlineBool" class="f-13 text-center">
+    No PO lines are available
+  </div>

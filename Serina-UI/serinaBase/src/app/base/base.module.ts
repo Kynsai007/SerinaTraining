@@ -49,6 +49,8 @@ import { HelpComponent } from './help/help.component';
 import { PopupComponent } from './popup/popup.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { SalesOrderMappingComponent } from './exception-management/sales-order-mapping/sales-order-mapping.component';
+import { PoLinesComponent } from './exception-management/po-lines/po-lines.component';
+import { MappedGRNComponent } from './exception-management/mapped-grn/mapped-grn.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +92,9 @@ import { SalesOrderMappingComponent } from './exception-management/sales-order-m
     HelpComponent,
     PopupComponent,
     ConfirmationComponent,
-    SalesOrderMappingComponent
+    SalesOrderMappingComponent,
+    PoLinesComponent,
+    MappedGRNComponent
   ],
   imports: [
     CommonModule,
@@ -112,7 +116,10 @@ import { SalesOrderMappingComponent } from './exception-management/sales-order-m
     BatchProcessComponent,
     InvoiceStatusComponent,
     HelpComponent,
-    PopupComponent
+    PopupComponent,
+    PoLinesComponent,
+    MappedGRNComponent,
+    ConfirmationComponent
   ],
   providers: [
     DatePipe,

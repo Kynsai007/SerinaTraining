@@ -123,11 +123,11 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="EntityName">
+                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="EntityName">
                     Entity Name 
                     <!-- <span style="font-size: 11px">(ERPS code)</span> -->
                   </th>
-                  <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="ServiceProviderName">SP name</th>
+                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="ServiceProviderName">SP name</th>
                 </tr>
                 <tr class="sticky_top">
                   <td>
@@ -293,11 +293,11 @@
                             [pTooltip]="col.columnDescription"
                             tooltipPosition="top"
                             [pSortableColumn]="col.dbColumnname"
-                            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
+                            [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
                           >
                             {{ col.columnName }}
                           </th>
-                          <th class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">
+                          <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">
                             Actions
                             <i
                               class="fa fa-pencil-square-o actionsBtn"
@@ -445,11 +445,11 @@
                             [pTooltip]="column.header"
                             tooltipPosition="top"
                             [pSortableColumn]="column.field"
-                            [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
+                            [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
                           >
                             {{ column.header }}
                           </th>
-                          <th class="action_Zindex f-12 text-center" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions</th>
+                          <th class="action_Zindex f-12 text-center" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">Actions</th>
                         </tr>
                         <tr>
                           <td *ngFor="let col of columns" class="sticky_top">

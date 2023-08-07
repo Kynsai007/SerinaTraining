@@ -43,12 +43,12 @@
 
           <ng-template pTemplate="header">
             <tr>
-              <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="VendorName">Name</th>
-              <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="EntityName">Entity Name</th>
-              <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="TRNNumber">TRN Number</th>
-              <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="VendorCode" class="text-type">{{partyType}} Code</th>
+              <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="VendorName">Name</th>
+              <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="EntityName">Entity Name</th>
+              <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="TRNNumber">TRN Number</th>
+              <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="VendorCode" class="text-type">{{partyType}} Code</th>
               <!-- <th pSortableColumn="Contact">Contact</th> -->
-              <th class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">View</th>
+              <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">View</th>
               <!-- <th>Action</th> -->
             </tr>
             <tr class="sticky_top">

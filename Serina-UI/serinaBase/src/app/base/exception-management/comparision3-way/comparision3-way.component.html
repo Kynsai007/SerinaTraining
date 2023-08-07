@@ -19,7 +19,9 @@
         changeApproveBoolean ||
         financeApproveBoolean) &&
       submitBtn_boolean &&
-      this.currentTab == 'line'
+      this.currentTab == 'line' &&
+      ap_boolean &&
+      !showPdf
     "
   >
     <!-- <button
@@ -28,27 +30,57 @@
     >
       PO Amend request
     </button> -->
-        
-    
-    <button *ngIf="ap_boolean" class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2" [ngClass]="(subStatusId == 75 || subStatusId == 17) ? 'bt-hlt':''" (click)="opengrnDailog()">Select GRN</button>
+
     <button
-      *ngIf="portalName == 'customer' && flipEnabled && (subStatusId == 8 || subStatusId == 16 || subStatusId == 21 || subStatusId == 27)"
+      *ngIf="ap_boolean"
+      class="btnUpload m-t-neg btn_extra_bg ml-2 mr-2"
+      [ngClass]="subStatusId == 75 || subStatusId == 17 ? 'bt-hlt' : ''"
+      (click)="opengrnDailog()"
+    >
+      Select GRN
+    </button>
+    <button
+      *ngIf="
+        portalName == 'customer' &&
+        flipEnabled &&
+        (subStatusId == 8 ||
+          subStatusId == 16 ||
+          subStatusId == 21 ||
+          subStatusId == 27)
+      "
       class="btnUpload btn_extra_bg m-t-neg ml-2"
       (click)="open_dialog_comp('flip line')"
     >
       Flip PO
     </button>
   </div>
-  <div class="viewPdf" style="right: 100px" *ngIf="!isPdfAvailable">
+  <!-- <div class="viewPdf" style="right: 100px" *ngIf="!isPdfAvailable && ap_boolean">
     <button class="btnUpload" (click)="DownloadPDF()">
       <i class="fa fa-download" aria-hidden="true"></i>
     </button>
-  </div>
-  <div class="viewPdf" *ngIf="!isPdfAvailable">
+  </div> -->
+  <div class="viewPdf" *ngIf="!isPdfAvailable && !showPdf && ap_boolean">
     <button class="btnUpload" (click)="viewPdf()">{{ btnText }}</button>
   </div>
 
-  <div *ngIf="submitBtn_boolean && ap_boolean" class="changePOInput">
+  <div *ngIf="!showPdf && !ap_boolean" class="btns_line">
+    <div class="mr-3" *ngIf="!isPdfAvailable">
+      <span class="f-12 pointer" (click)="viewPdf()">{{ btnText }}</span>
+    </div>
+    <div>
+      <button class="f-12 btn_stck mr-3" (click)="viewPdf()">
+        View Stock Availability
+      </button>
+    </div>
+    <div>
+      <button class="f-12 btn_hold" (click)="viewPdf()">Put PO On Hold</button>
+    </div>
+  </div>
+
+  <div
+    *ngIf="submitBtn_boolean && ap_boolean && !showPdf && currentTab == 'line'"
+    class="changePOInput"
+  >
     <p-autoComplete
       [(ngModel)]="selectedPONumber"
       (onSelect)="onSelectPO($event)"
@@ -69,7 +101,12 @@
     class="col-md-12 p-0 pl-1"
     [ngClass]="showPdf ? 'col-lg-5' : 'col-lg-12'"
   >
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <ul
+      class="nav nav-tabs"
+      id="myTab"
+      role="tablist"
+      [ngClass]="showPdf ? 'w-100' : 'w-42'"
+    >
       <li
         class="nav-item mr-2"
         pTooltip="Vendor details"
@@ -84,8 +121,10 @@
           role="tab"
           aria-controls="vendor"
           aria-selected="true"
-          > <span *ngIf="ap_boolean">Vendor</span> <span *ngIf="!ap_boolean">Customer</span> details</a
         >
+          <span *ngIf="ap_boolean">Vendor</span>
+          <span *ngIf="!ap_boolean">Customer</span>
+        </a>
       </li>
       <li
         class="nav-item mr-2"
@@ -105,13 +144,13 @@
         >
       </li>
       <li
-        class="nav-item "
+        class="nav-item"
         pTooltip="Line details"
         tooltipPosition="top"
         (click)="changeTab('line')"
       >
         <a
-          class="nav-link active"
+          class="nav-link active" 
           id="line-tab"
           data-toggle="tab"
           href="#line"
@@ -145,7 +184,7 @@
         class="nav-item ml-2"
         pTooltip="GRN details"
         tooltipPosition="top"
-        *ngIf="!grnCreateBoolean && (grnTabDatalength>0)"
+        *ngIf="!grnCreateBoolean && ap_boolean"
         (click)="changeTab('grn')"
       >
         <a
@@ -211,9 +250,7 @@
             <div class="displayFlex">
               <div *ngFor="let value of inputData">
                 <div style="position: relative">
-                  <label
-                    class="label-head"
-                    style="margin-bottom: -5px"
+                  <label class="label-head" style="margin-bottom: -5px"
                     >{{ value.TagLabel }}
                     <span
                       *ngIf="value.isError >= 1"
@@ -269,17 +306,16 @@
           <!-- line -->
           <div
             class="tab-pane fade show active"
-            [ngClass]="grnCreateBoolean ? 'show active' : ''"
             id="line"
             role="tabpanel"
             aria-labelledby="line-tab"
           >
-            <div *ngIf="!grnCreateBoolean">
+            <div *ngIf="!grnCreateBoolean && partytype != 'customer'">
               <div class="d-flex justify-content-end">
                 <div class="d-flex mr-3">
                   <div class="represent_color invoice_color"></div>
                   <div class="f-12">
-                    <span *ngIf="partytype == 'vendor'">Invoice</span>  
+                    <span *ngIf="partytype == 'vendor'">Invoice</span>
                     <span *ngIf="partytype == 'customer'">PO</span>
                   </div>
                 </div>
@@ -287,8 +323,10 @@
                 <div class="d-flex mr-3">
                   <div class="represent_color po_color"></div>
                   <div class="f-12">
-                    <span *ngIf="partytype == 'vendor'">PO</span>  
-                    <span *ngIf="partytype == 'customer'"> Proposed Sales Order</span>
+                    <span *ngIf="partytype == 'vendor'">PO</span>
+                    <span *ngIf="partytype == 'customer'">
+                      Proposed Sales Order</span
+                    >
                   </div>
                 </div>
 
@@ -314,9 +352,7 @@
                     *ngFor="let tagName of lineDisplayData"
                     [ngStyle]="{
                       width:
-                        tagName?.tagname == 'Description'
-                          ? '500px'
-                          : '200px'
+                        tagName?.tagname == 'Description' ? '500px' : '200px'
                     }"
                   >
                     <span class="f-13 p-2">{{ tagName.tagname }}</span>
@@ -553,9 +589,7 @@
                     *ngFor="let tagName of lineDisplayData"
                     [ngStyle]="{
                       width:
-                        tagName?.tagname == 'Description'
-                          ? '500px'
-                          : '200px'
+                        tagName?.tagname == 'Description' ? '500px' : '200px'
                     }"
                   >
                     <span class="f-13 p-2">{{ tagName.tagname }}</span>
@@ -563,7 +597,8 @@
                       <div *ngFor="let data2 of data.linedetails" class="mb-3">
                         <div
                           [ngClass]="
-                            data2?.polinedata[0]?.DocumentLineItems?.isError >= 1
+                            data2?.polinedata[0]?.DocumentLineItems?.isError >=
+                            1
                               ? 'error-border'
                               : ''
                           "
@@ -578,12 +613,14 @@
                             <div
                               class="error-block"
                               [ngClass]="
-                                data2.polinedata[0]?.DocumentLineItems.isError >= 1
+                                data2.polinedata[0]?.DocumentLineItems
+                                  .isError >= 1
                                   ? 'error-symbol'
                                   : ''
                               "
                               [pTooltip]="
-                                data2.polinedata[0]?.DocumentLineItems?.ErrorDesc
+                                data2.polinedata[0]?.DocumentLineItems
+                                  ?.ErrorDesc
                               "
                               tooltipPosition="top"
                             ></div>
@@ -637,8 +674,12 @@
                             <div class="error-block"></div>
                             <input
                               type="text"
-                              [title]="data2.solinedata[0]?.DocumentLineItems?.Value"
-                              [value]="data2.solinedata[0]?.DocumentLineItems?.Value"
+                              [title]="
+                                data2.solinedata[0]?.DocumentLineItems?.Value
+                              "
+                              [value]="
+                                data2.solinedata[0]?.DocumentLineItems?.Value
+                              "
                               class="f-12 input_disabled"
                               style="text-transform: lowercase"
                               disabled
@@ -681,8 +722,9 @@
                               [ngClass]="!editable ? 'input_disabled' : ''"
                             />
                           </div>
-                          <div class="f-12 td_padding po_color doc_height">
-                          </div>
+                          <div
+                            class="f-12 td_padding po_color doc_height"
+                          ></div>
                         </div>
                       </div>
                     </div>
@@ -692,7 +734,7 @@
             </div>
 
             <!-- Create GRN screen Line details -->
-            <div *ngIf="grnCreateBoolean">
+            <div *ngIf="grnCreateBoolean && partytype != 'customer'">
               <table class="invert" style="width: 100%">
                 <tr class="invert_tr">
                   <td
@@ -716,8 +758,11 @@
                 >
                   <td
                     class="lineName invert_th_td"
-                    *ngIf="!item.TagName.includes('UnitPrice') && !item.TagName.includes('AmountExcTax')"
-                    [ngClass]="item.TagName === 'Actions' ? 'm-l-neg':''"
+                    *ngIf="
+                      !item.TagName.includes('UnitPrice') &&
+                      !item.TagName.includes('AmountExcTax')
+                    "
+                    [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
                   >
                     {{ item.TagName }}
                   </td>
@@ -784,8 +829,7 @@
                           [ngClass]="
                             item.TagName == 'Description' ? 'w-des' : 'w-sm'
                           "
-                          
-                          style="border: 1px solid #efc384;"
+                          style="border: 1px solid #efc384"
                           [name]="line1.idDocumentLineItems"
                           [value]="line1.Value"
                           [title]="line1.Value"
@@ -833,7 +877,7 @@
                       </span> -->
                     </div>
                     <div *ngIf="item.TagName === 'Actions' && GRN_PO_Bool">
-                      <span class="linevalue invert_thtd" >
+                      <span class="linevalue invert_thtd">
                         <button
                           style="border-color: transparent"
                           (click)="deleteGrnLine(line1.idDocumentLineItems)"
@@ -846,158 +890,128 @@
                 </tr>
               </table>
             </div>
+
+            <div
+              *ngIf="partytype == 'customer'"
+              class="d-flex justify-content-between bg-design-all p-2"
+            >
+              <div class="mr-4">
+                <div class="f-14">Purchase Order</div>
+                <table class="table f-12">
+                  <tr class="tHead">
+                    <th>S.No</th>
+                    <th *ngFor="let head of lineTable">{{ head.header }}</th>
+                  </tr>
+                  <tr
+                    *ngFor="let poLine of poLinedata; let i = index"
+                    class="tbdytr"
+                  >
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ poLine.Description }}</td>
+                    <td>{{ poLine.Unit }}</td>
+                    <td>
+                      <input
+                        type="text"
+                        class="in-w"
+                        [(ngModel)]="poLine.UnitPrice"
+                        [value]="poLine.UnitPrice"
+                        [name]="poLine.itemCode"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="in-w"
+                        [(ngModel)]="poLine.Quantity"
+                        [value]="poLine.Quantity"
+                        [name]="poLine.idDocumentLineItems"
+                      />
+                    </td>
+                    <td>{{ poLine.Quantity * poLine.UnitPrice }}</td>
+                  </tr>
+                </table>
+              </div>
+              <div>
+                <div class="f-14">Proposed Sales Order Lines</div>
+                <table class="table f-12">
+                  <tr class="tHead">
+                    <th>S.No</th>
+                    <th *ngFor="let head of lineTable">{{ head.header }}</th>
+                    <th *ngIf="editable">Actions</th>
+                  </tr>
+                  <tr
+                    *ngFor="let soLine of soLinedata; let i = index"
+                    class="tbdytr"
+                  >
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                      <span
+                        [ngStyle]="{
+                          borderBottom:
+                            soLine.Fuzzy_scr >= 80 && soLine.Fuzzy_scr != 100
+                              ? '1px solid #162F65'
+                              : soLine.Fuzzy_scr <= 60
+                              ? '1px solid #FE646F'
+                              : ''
+                        }"
+                        >{{ soLine.Description }}</span
+                      >
+                    </td>
+                    <td>{{ soLine.Unit }}</td>
+                    <td>
+                      <input
+                        type="text"
+                        class="in-w"
+                        [(ngModel)]="soLine.UnitPrice"
+                        [value]="soLine.UnitPrice"
+                        [name]="soLine.itemCode"
+                      />
+                    </td>
+                    <!-- <td><input type="text" class="in-w" [(ngModel)]="soLine.Quantity" [value]="soLine.Quantity" [name]="soLine.idDocumentLineItems"> </td> -->
+
+                    <td>{{ soLine.Quantity }}</td>
+                    <td>{{ soLine.Quantity * soLine.UnitPrice }}</td>
+                    <td *ngIf="editable">
+                      <i
+                        class="fa fa-pencil-square-o pointer f-13 mr-2"
+                        aria-hidden="true"
+                        (click)="open_dialog_comp('poMaster')"
+                      ></i>
+                      <i
+                        class="fa fa-trash-o pointer f-13"
+                        aria-hidden="true"
+                      ></i>
+                    </td>
+                  </tr>
+                </table>
+                <!-- <button>Add line</button> -->
+              </div>
+            </div>
           </div>
         </ng-template>
 
         <!--PO lines-->
         <ng-template #poline>
-        <div
-          *ngIf="currentTab == 'poline'"
-          class="tab-pane fade"
-          id="POline"
-          role="tabpanel"
-          aria-labelledby="POline-tab"
-        >
-          <div class="refresh_btn">
-            <button class="btnUpload" (click)="refreshPO()">Refresh PO</button>
+          <div
+            *ngIf="currentTab == 'poline'"
+            class="tab-pane fade"
+            id="POline"
+            role="tabpanel"
+            aria-labelledby="POline-tab"
+          >
+            <po-lines [po_num]="po_num"></po-lines>
           </div>
-          <table class="invert" style="width: 100%" *ngIf="POlineBool">
-            <tr
-              class="invert_tr"
-              *ngFor="let item of polineTableData; let i = index"
-            >
-              <td class="lineName invert_th_td">
-                {{ item.TagName }}
-              </td>
-              <!-- <div>
-                          <div class="linevalue invert_thtd">{{i+1}}</div>
-                        </div> -->
-              <td
-                class="linevalue invert_th_td"
-                *ngFor="let line1 of poLineData; let i = index"
-              >
-                <span>
-                  <div
-                    *ngFor="let line of line1 | keyvalue"
-                    class="d-flex"
-                    style="position: relative"
-                  >
-                    <span *ngIf="line.key == item.TagName">
-                      <input
-                        type="text"
-                        [ngClass]="line.key == 'Name' ? 'w-des' : 'w-sm'"
-                        [value]="line.value"
-                        [title]="line.value"
-                        disabled
-                        class="form-control mb-1 inputHeight"
-                      />
-                    </span>
-                  </div>
-                </span>
-              </td>
-            </tr>
-          </table>
-          <div *ngIf="!POlineBool" class="f-13 text-center">
-            No PO lines are available
-          </div>
-        </div>
         </ng-template>
+
         <ng-template #grn>
           <div
-          class="tab-pane fade show"
-          id="grn"
-          role="tabpanel"
-          aria-labelledby="grn-tab"
-        >
-        <div *ngIf="!grnCreateBoolean">
-           <div *ngIf="grnTabDatalength>0">
-            <mat-accordion>
-              <div class="row"  *ngFor="let grnitem of GRNTabData | keyvalue; let i = index;">
-                <div class="col-sm-12">
-                  <mat-expansion-panel 
-                  [expanded]="true"
-                   (opened)="setOpened(i)"
-                   (closed)="setClosed(i)" style="margin-top: 10px;">
-                   
-                   <mat-expansion-panel-header class="KPIName">
-                     <mat-panel-title class=" secondheadertoggle">
-                       
-                       <h6 class="kpi-header f-13 faPulsandMinus head-pos">
-                         {{ grnitem.key }}
-                       </h6>
-                      
-                     </mat-panel-title>
-                   </mat-expansion-panel-header>
-                   <ng-container>
-                    <table class="invert" style="width: 100%">
-                      <tr
-                        class="invert_tr"
-                        *ngFor="let item of grnitem.value; let i = index"
-                      >
-                        <td
-                          class="lineName invert_th_td"
-                          [ngStyle]="{
-                            'min-width': item.TagName == 'S.No' ? '40px' : '130px'
-                          }"
-                        >
-                          {{ item.TagName }}
-                        </td>
-                        <!-- <div>
-                              <div class="linevalue invert_thtd">{{i+1}}</div>
-                            </div> -->
-                        <td
-                          class="linevalue invert_th_td"
-                          *ngFor="let line1 of item.linedata; let i = index"
-                        >
-                          <div
-                            *ngFor="let line of line1 | keyvalue"
-                            class="d-flex"
-                            style="position: relative"
-                          >
-                            <div *ngIf="line.key == 'DocumentLineItems'">
-                              <div *ngIf="item.TagName == 'S.No'">
-                                <div class="linevalue invert_thtd p-2">
-                                  {{ line.value.itemCode }}
-                                </div>
-                              </div>
-                              <span
-                                *ngIf="
-                                  item.TagName != 'S.No' && item.TagName != 'Actions'
-                                "
-                              >
-                                <input
-                                  #inputv
-                                  type="text"
-                                  [ngClass]="
-                                    item.TagName == 'Description' ||
-                                    item.TagName == 'Name'
-                                      ? 'w-des'
-                                      : 'w-sm'
-                                  "
-                                  [value]="line.value.Value"
-                                  [title]="line.value.Value"
-                                  readonly
-                                  class="form-control mb-1 inputHeight"
-                                />
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
-                   </ng-container>
-             
-                 </mat-expansion-panel>
-                </div>
-              </div>
-            </mat-accordion>
-           </div>
-
-            <div *ngIf="!(grnTabDatalength>0)" class="d-flex justify-content-center f-13 mt-4">
-              No GRN is mapped with the Invoice.
-            </div>
-        </div>
-        </div>
+            class="tab-pane fade show"
+            id="grn"
+            role="tabpanel"
+            aria-labelledby="grn-tab"
+          >
+            <mapped-grn></mapped-grn>
+          </div>
         </ng-template>
 
         <div
@@ -1020,7 +1034,7 @@
           >
             Reject
           </button>
-          
+
           <button
             *ngIf="submitBtn_boolean"
             class="btn btnVender bg-btn-success"
@@ -1038,7 +1052,7 @@
         </div>
 
         <div
-          *ngIf="grnCreateBoolean && isGRNDataLoaded"
+          *ngIf="grnCreateBoolean && isGRNDataLoaded && !showPdf"
           class="GRN_btn_position"
         >
           <button
@@ -1049,7 +1063,7 @@
             Cancel
           </button>
           <button
-          *ngIf="!GRN_PO_Bool"
+            *ngIf="!GRN_PO_Bool"
             class="btn btnVender bg-btn-cancel mr-3"
             type="button"
             (click)="displayrejectDialog = true"
@@ -1088,83 +1102,88 @@
       </ngx-spinner>
     </div>
   </div>
-  <div *ngIf="showPdf" class="col-lg-7 col-12 maxPage ShowInvoiceTypeSize">
-    <div>
-      <section>
-        <div *ngIf="isImgBoolean" class="canvasConatiner_height">
-          <div id="parentDiv">
-            <canvas #canvas id="canvas1" style="height: 87vh"></canvas>
-          </div>
-          <span class="zoom zoom_pos_img">
-            <span class="zoom-in" (click)="zoomin()"
-              ><i class="fa fa-plus" aria-hidden="true"></i></span
-            ><br />
-            <span class="zoom-out" (click)="zoomout()"
-              ><i class="fa fa-minus" aria-hidden="true"></i
-            ></span>
-          </span>
+  <div *ngIf="showPdf" class="col-lg-7 col-12 ShowInvoiceTypeSize">
+    <section class="maxPage">
+      <div *ngIf="isImgBoolean" class="canvasConatiner_height">
+        <div id="parentDiv" class="docContaner">
+          <canvas #canvas id="canvas1" style="height: 87vh"></canvas>
         </div>
-        <div *ngIf="!isImgBoolean" style="position: relative">
-          <div
-            *ngIf="isLoaded"
-            style="text-align: center; position: fixed; z-index: 100; left: 70%"
-          >
-            <div>
-              <button
-                (click)="prevPage()"
-                [disabled]="page === 1"
-                class="preBtn"
-              >
-                Prev
-              </button>
-              <span class="totalPages">{{ page }} / {{ totalPages }}</span>
-              <button
-                (click)="nextPage()"
-                [disabled]="page === totalPages"
-                class="preBtn"
-              >
-                Next
-              </button>
-            </div>
-
-            <div class="rotate_text">
-              <button class="preBtn" (click)="rotate(-90)">
-                <i class="fa fa-undo" aria-hidden="true"></i>
-              </button>
-              <div class="f-12 ml-1 p-r-t">Rotate</div>
-              <button class="preBtn mr-1" (click)="rotate(90)">
-                <i class="fa fa-repeat" aria-hidden="true"></i>
-              </button>
-            </div>
-
-            <span class="zoom zoom_pos_pdf">
-              <span class="zoom-in" (click)="zoomIn()"
+        <!-- <span class="zoom zoom_pos_img">
+              <span class="zoom-in" (click)="zoomin()"
                 ><i class="fa fa-plus" aria-hidden="true"></i></span
               ><br />
-              <span class="zoom-out" (click)="zoomOut()"
+              <span class="zoom-out" (click)="zoomout()"
                 ><i class="fa fa-minus" aria-hidden="true"></i
               ></span>
-            </span>
-          </div>
+            </span> -->
+      </div>
+      <div *ngIf="!isImgBoolean" style="position: relative" class="docContaner">
+        <pdf-viewer
+          #pdfviewer
+          [src]="showInvoice"
+          style="width: 100%; overflow: auto"
+          [show-all]="true"
+          [zoom]="zoomdata"
+          [original-size]="false"
+          [fit-to-page]="true"
+          [page]="page"
+          [rotation]="rotation"
+          [render-text]="true"
+          [render-text-mode]="2"
+          (after-load-complete)="afterLoadComplete($event)"
+        >
+        </pdf-viewer>
+      </div>
+    </section>
+    <!-- <img [src]="imageUrl" style="width: 100%;height: 80vh;"><br/> -->
+    <div *ngIf="isLoaded" class="d-flex pdf_btns">
+      <div class="zoom mr-3">
+        <span class="zoom-in" (click)="zoomIn()"
+          ><i class="fa fa-search-plus" aria-hidden="true"></i
+        ></span>
+        <span class="zoom-out" (click)="zoomOut()"
+          ><i class="fa fa-search-minus" aria-hidden="true"></i
+        ></span>
+      </div>
+      <div class="pos-r navigatn">
+        <button (click)="prevPage()" [disabled]="page === 1" class="preBtn">
+          <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <span class="totalPages">{{ page }} / {{ totalPages }}</span>
+        <button
+          (click)="nextPage()"
+          [disabled]="page === totalPages"
+          class="preBtn"
+        >
+          <i class="fa fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
 
-          <pdf-viewer
-            #pdfviewer
-            [src]="showInvoice"
-            style="width: 100%; overflow: auto"
-            [show-all]="true"
-            [zoom]="zoomdata"
-            [original-size]="false"
-            [fit-to-page]="true"
-            [page]="page"
-            [rotation]="rotation"
-            [render-text]="true"
-            [render-text-mode]="2"
-            (after-load-complete)="afterLoadComplete($event)"
-          >
-          </pdf-viewer>
-        </div>
-      </section>
-      <!-- <img [src]="imageUrl" style="width: 100%;height: 80vh;"><br/> -->
+      <div class="d-flex ml-3 mr-3">
+        <button class="preBtn" (click)="rotate(-90)">
+          <i class="fa fa-undo" aria-hidden="true"></i>
+        </button>
+        <div class="f-12 ml-1 p-r-t">Rotate</div>
+        <button class="preBtn mr-1" (click)="rotate(90)">
+          <i class="fa fa-repeat" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="pos-r mr-3" title="FullScreen">
+        <span class="material-icons pointer" (click)="toggleFullScreen()">
+          fullscreen
+        </span>
+      </div>
+
+      <div class="mr-3 pos-r" title="Document download">
+        <span class="f-12 pointer" (click)="DownloadPDF()">
+          <i class="fa fa-download" aria-hidden="true"></i>
+        </span>
+      </div>
+
+      <div class="mr-2 pos-r" *ngIf="!isPdfAvailable">
+        <span class="f-12 pointer" (click)="viewPdf()">{{ btnText }}</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1179,88 +1198,88 @@
   [draggable]="false"
   [resizable]="false"
 >
-  <div style="min-height: 50vh;">
-    <div class="d-flex mb-3" style="gap:20px">
+  <div style="min-height: 50vh">
+    <div class="d-flex mb-3" style="gap: 20px">
       <!-- select GRN Number -->
       <p-multiSelect
-      [options]="po_grn_list"
-      placeholder="GRN Number"
-      filter="false"
-      inputStyleClass="form-control mr-2"
-      optionLabel="PackingSlip"
-      [maxSelectedLabels]="3"
-      [selectedItemsLabel]="'{0} items selected'"
-      (onChange)="addGrnLine($event)"
-      name="PO_GRN_Number"
-      ngModel
-      required
-    >
-    </p-multiSelect>
+        [options]="po_grn_list"
+        placeholder="GRN Number"
+        filter="false"
+        inputStyleClass="form-control mr-2"
+        optionLabel="PackingSlip"
+        [maxSelectedLabels]="3"
+        [selectedItemsLabel]="'{0} items selected'"
+        (onChange)="addGrnLine($event)"
+        name="PO_GRN_Number"
+        ngModel
+        required
+      >
+      </p-multiSelect>
 
-  <!-- select GRN Line -->
-    <p-multiSelect
-      [options]="po_grn_line_list"
-      placeholder="GRN Line"
-      filter="false"
-      inputStyleClass="form-control mr-2"
-      optionLabel="GRNField"
-      [maxSelectedLabels]="3"
-      [selectedItemsLabel]="'{0} items selected'"
-      name="PO_GRN_Number_line"
-      ngModel
-      required
-      [(ngModel)]="PO_GRN_Number_line"
-    >
-    </p-multiSelect>
+      <!-- select GRN Line -->
+      <p-multiSelect
+        [options]="po_grn_line_list"
+        placeholder="GRN Line"
+        filter="false"
+        inputStyleClass="form-control mr-2"
+        optionLabel="GRNField"
+        [maxSelectedLabels]="3"
+        [selectedItemsLabel]="'{0} items selected'"
+        name="PO_GRN_Number_line"
+        ngModel
+        required
+        [(ngModel)]="PO_GRN_Number_line"
+      >
+      </p-multiSelect>
 
-    <!-- <button class="btnUpload" >Add</button>  -->
-</div>
-<div>
-  <p-table
-          *ngIf="PO_GRN_Number_line?.length > 0"
-          [value]="PO_GRN_Number_line"
-          [paginator]="false"
-          [columns]="summaryColumn"
-          styleClass="p-datatable-striped"
+      <!-- <button class="btnUpload" >Add</button>  -->
+    </div>
+    <div>
+      <p-table
+        *ngIf="PO_GRN_Number_line?.length > 0"
+        [value]="PO_GRN_Number_line"
+        [paginator]="false"
+        [columns]="summaryColumn"
+        styleClass="p-datatable-striped"
+      >
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th
+              *ngFor="let col of columns"
+              [pTooltip]="col.header"
+              tooltipPosition="top"
+              class="lineName"
+              [ngStyle]="{ width: col.header == 'GRN Number' ? '100px' : '' }"
+            >
+              {{ col.header }}
+            </th>
+            <th class="action_Zindex" style="width: 60px">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-invoiceData
+          let-columns="columns"
+          let-rowIndex="rowIndex"
         >
-          <ng-template pTemplate="header" let-columns>
-            <tr>
-              <th
-                *ngFor="let col of columns"
-                [pTooltip]="col.header"
-                tooltipPosition="top"
-                class="lineName"
-                [ngStyle]="{'width':col.header == 'GRN Number' ? '100px':''}"
-              >
-                {{ col.header }}
-              </th>
-              <th class="action_Zindex" style="width: 60px">Actions</th>
-            </tr>
-          </ng-template>
-          <ng-template
-            pTemplate="body"
-            let-invoiceData
-            let-columns="columns"
-            let-rowIndex="rowIndex"
-          >
-            <tr>
-              <td *ngFor="let col of columns" [title]="invoiceData[col.field]">
-                {{ invoiceData[col.field] }}
-              </td>
-              <td>
-                <i
-                  class="fa fa-trash-o"
-                  style="cursor: pointer"
-                  (click)="deleteGRNEdit(rowIndex, invoiceData)"
-                ></i>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage"> </ng-template>
-          <ng-template pTemplate="paginatorleft"> </ng-template>
-          <ng-template pTemplate="paginatorright"> </ng-template>
-        </p-table>
-</div>
+          <tr>
+            <td *ngFor="let col of columns" [title]="invoiceData[col.field]">
+              {{ invoiceData[col.field] }}
+            </td>
+            <td>
+              <i
+                class="fa fa-trash-o"
+                style="cursor: pointer"
+                (click)="deleteGRNEdit(rowIndex, invoiceData)"
+              ></i>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage"> </ng-template>
+        <ng-template pTemplate="paginatorleft"> </ng-template>
+        <ng-template pTemplate="paginatorright"> </ng-template>
+      </p-table>
+    </div>
   </div>
 
   <ng-template pTemplate="footer">
@@ -1285,40 +1304,71 @@
 </p-dialog>
 
 <!-- Add label-->
-<p-dialog [header]="headerpop" [(visible)]="progressDailogBool" [breakpoints]="{'960px': '75vw'}"
-  [style]="{width: '31vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
-  
+<p-dialog
+  [header]="headerpop"
+  [(visible)]="progressDailogBool"
+  [breakpoints]="{ '960px': '75vw' }"
+  [style]="{ width: '31vw' }"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
   <div *ngIf="!GRNDialogBool">
-    <div class="f-12" *ngIf="!(batchData?.length>0)">Hey, Please hold on the batch is running...</div>
-    <ul class="f-12" *ngIf="batchData?.length>0">
-      <li *ngFor="let st of batchData"> <span [ngStyle]="{'color':st.status == 1 ? 'green':'red'}">{{st.msg}}</span> </li>
+    <div class="f-12" *ngIf="!(batchData?.length > 0)">
+      Hey, Please hold on the batch is running...
+    </div>
+    <ul class="f-12" *ngIf="batchData?.length > 0">
+      <li *ngFor="let st of batchData">
+        <span [ngStyle]="{ color: st.status == 1 ? 'green' : 'red' }">{{
+          st.msg
+        }}</span>
+      </li>
     </ul>
   </div>
-  <div *ngIf="GRNDialogBool" class="text-center" style="min-height: 150px;">
+  <div *ngIf="GRNDialogBool" class="text-center" style="min-height: 150px">
     <!-- select GRN Number -->
     <p-multiSelect
-    [options]="grnList"
-    placeholder="GRN Number"
-    filter="false"
-    inputStyleClass="form-control mr-2"
-    optionLabel="docheaderID"
-    [maxSelectedLabels]="3"
-    [selectedItemsLabel]="'{0} items selected'"
-    name="PO_GRN_Number"
-    [(ngModel)]="selectedGRNList"
-    required
-  >
-  </p-multiSelect>
-
+      [options]="grnList"
+      placeholder="GRN Number"
+      filter="false"
+      inputStyleClass="form-control mr-2"
+      optionLabel="docheaderID"
+      [maxSelectedLabels]="3"
+      [selectedItemsLabel]="'{0} items selected'"
+      name="PO_GRN_Number"
+      [(ngModel)]="selectedGRNList"
+      required
+    >
+    </p-multiSelect>
   </div>
-  <ng-template  pTemplate="footer">
+  <ng-template pTemplate="footer">
     <div class="d-flex justify-content-center">
-      <button *ngIf="!GRNDialogBool" type="button" class="btn btnVender bg-btn-success mt-2" (click)="routeToMapping()">Next</button>
-      <button *ngIf="GRNDialogBool" type="button" class="btn btnVender bg-btn-cancel mt-2 mr-2" (click)="progressDailogBool = false">Cancel</button>
-      <button *ngIf="GRNDialogBool" type="button" class="btn btnVender bg-btn-success mt-2" [disabled]="!(selectedGRNList?.length>0)" (click)="ChangeGRNDataR()">Change</button>
-      
+      <button
+        *ngIf="!GRNDialogBool"
+        type="button"
+        class="btn btnVender bg-btn-success mt-2"
+        (click)="routeToMapping()"
+      >
+        Next
+      </button>
+      <button
+        *ngIf="GRNDialogBool"
+        type="button"
+        class="btn btnVender bg-btn-cancel mt-2 mr-2"
+        (click)="progressDailogBool = false"
+      >
+        Cancel
+      </button>
+      <button
+        *ngIf="GRNDialogBool"
+        type="button"
+        class="btn btnVender bg-btn-success mt-2"
+        [disabled]="!(selectedGRNList?.length > 0)"
+        (click)="ChangeGRNDataR()"
+      >
+        Change
+      </button>
     </div>
-
   </ng-template>
 </p-dialog>
 
@@ -1378,29 +1428,7 @@
   [resizable]="false"
 >
   <div>
-    <!-- <label class="label-head">
-      <input
-        type="radio"
-        name="addLabel"
-        [(ngModel)]="rejectOption.value"
-        value="IT_reject"
-        required
-      />
-      <span class="ml-2 f-13">IT Reject</span>
-    </label>
-    <br />
 
-    <label class="label-head" *ngIf="!isServiceData">
-      <input
-        type="radio"
-        name="addLabel"
-        [(ngModel)]="rejectOption.value"
-        value="vendor_reject"
-        required
-      />
-      <span class="ml-2 f-13"> Vendor Reject</span>
-    </label>
-    <br /> -->
 
     <label class="label-head mt-2 mb-0">Comments</label>
     <textarea

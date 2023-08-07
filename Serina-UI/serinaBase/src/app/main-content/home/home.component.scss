@@ -1,18 +1,19 @@
 .nav-pills .nav-link {
-    border-radius: 10px;
-    background: white;
-    color: #313971;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border: 1px solid #efefef;
-    cursor: pointer;
+  border-radius: 0;
+  /* background: white; */
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  height: 40px;
   }
   
   .active-pill {
     background-color: #f2be42 !important;
     border: 1px solid #f2be42 !important;
-    color: #ffffff !important;
+    color: #000000 !important;
   }
   .tableDataDiv {
     max-height: 86vh;
@@ -22,5 +23,12 @@
     min-height: 85vh;
     background-color: #e5e5e5;
     margin-top: -7px;
-    padding: 10px;
+    max-height: 92vh;
+    padding: 0px;
+  }
+  .navibar {
+    width: 100%;
+    background: black;
+    height: 40px;
+    padding: 0;
   }

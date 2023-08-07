@@ -230,18 +230,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ERP: string;
   documentTypeId: number
   ap_boolean: any;
-  poLineData= [];
+  // poLineData= [];
   isAdmin: boolean;
-  polineTableData = [
-    { TagName: 'LineNumber', linedata: [] },
-    { TagName: 'ItemId', linedata: [] },
-    { TagName: 'Name', linedata: [] },
-    { TagName: 'ProcurementCategory', linedata: [] },
-    { TagName: 'PurchQty', linedata: [] },
-    { TagName: 'UnitPrice', linedata: [] },
-    { TagName: 'DiscAmount', linedata: [] },
-    { TagName: 'DiscPercent', linedata: [] }
-  ]
+
   POlineBool: boolean;
   poDocId: any;
   multiPOBool = false;
@@ -251,8 +242,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   selectedGRNList = [];
   currentTab = 'head';
   currentlyOpenedItemIndex = -1;
-  GRNTabData:any;
-  grnTabDatalength: number;
+  // GRNTabData:any;
+  // grnTabDatalength: number;
   progressDailogBool: boolean;
   batchData: any;
   portalName: string;
@@ -280,6 +271,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private settingsService: SettingsService,
     private route: ActivatedRoute,
     private mat_dlg: MatDialog,
+    private elementRef : ElementRef
   ) {
     this.exceptionService.getMsg().pipe(take(2)).subscribe((msg)=>{
       if(msg == 'normal'){
@@ -341,9 +333,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.readFilePath();
     });
     if (this.router.url.includes('InvoiceDetails')) {
-      this.Itype = 'Invoice';
+      if(this.ap_boolean){
+        this.Itype = 'Invoice';
+      } else {
+        this.Itype = 'PO';
+      }
       
-      this.getGRNtabData();
+      // this.getGRNtabData();
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
     } else if (this.router.url.includes('SODetails')) {
@@ -367,7 +363,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.documentType = this.tagService.documentType;
     this.documentTypeId = this.dataService.idDocumentType;
     this.routeOptions();
+    // if (this.flipEnabled && this.subStatusId == 34){
+    //   this.currentTab = "poline";
+    // }
 
+    console.log(this.currentTab)
   }
 
   routeOptions(){
@@ -540,7 +540,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         });
         this.po_num = po_num_data[0]?.Value;
         if(this.po_num && this.ap_boolean){
-          this.getPODocId(this.po_num);
+          // this.getPODocId(this.po_num);
         }
         // this.getGRNnumbers(this.po_num);
         if (data.ok.vendordata) {
@@ -560,9 +560,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           };
           this.vendorName = this.vendorData['ServiceProviderName'];
         }
-        if(!this.isServiceData && this.Itype == 'Invoice' ){
-          this.readPOLines();
-        }
+        // if(!this.isServiceData && this.Itype == 'Invoice' ){
+        //   this.readPOLines();
+        // }
         if (this.Itype == 'PO') {
           let count = 0;
           let array = data.ok.linedata;
@@ -770,11 +770,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           JSON.stringify(this.updateInvoiceData)
         ).subscribe(
           (data: any) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Saved',
-              detail: 'Changes saved successfully',
-            });
+            this.successAlert("Changes saved successfully.");
   
             this.updateInvoiceData = [];
           },
@@ -1002,11 +998,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.AlertService.errorObject.detail = error;
     this.messageService.add(this.AlertService.errorObject);
   }
+  successAlert(txt) {
+    this.AlertService.addObject.severity = 'success';
+    this.AlertService.addObject.detail = txt;
+    this.messageService.add(this.AlertService.addObject);
+  }
   SaveLCM(obj) {
     this.SharedService.saveLCMdata(JSON.stringify([obj]), true).subscribe((data: any) => {
       if (data?.result) {
-        this.AlertService.addObject.detail = data?.result;
-        this.messageService.add(this.AlertService.addObject);
+        this.successAlert(data?.result)
         this.LCMObj.EntityName = this.EntityName;
         this.LCMLineForm.control.patchValue(this.LCMObj);
         this.readSavedLCMLineData();
@@ -1022,7 +1022,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SpinnerService.show();
     this.SharedService.saveLCMdata(JSON.stringify(this.LCMDataTable), false).subscribe((data: any) => {
       if (data?.result[2] == true) {
-        this.AlertService.addObject.detail = 'LCM Lines added please select Approvers';
+        this.successAlert('LCM Lines added please select Approvers');
         this.isLCMCompleted = true;
         this.selectionTabBoolean = true;
         this.supportTabBoolean = true;
@@ -1032,14 +1032,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.getInvoiceFulldata();
         this.currentTab = 'approver_selection';
       } else {
-        this.AlertService.addObject.detail = 'LCM Lines created';
+        this.successAlert('LCM Lines created');
         setTimeout(() => {
           this._location.back();
         }, 1000);
       }
       this.displayrejectDialog = false;
       this.SpinnerService.hide();
-      this.messageService.add(this.AlertService.addObject);
 
     }, err => {
       this.displayrejectDialog = false;
@@ -1055,16 +1054,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.dataService.invoiceLoadedData = [];
         this.SpinnerService.hide();
         if (this.router.url.includes('ExceptionManagement')) {
-          this.AlertService.addObject.detail = 'send to batch successfully';
-          this.AlertService.addObject.summary = 'sent';
-          this.messageService.add(this.AlertService.addObject);
+          this.successAlert('send to batch successfully');
         } else {
           if (!this.GRNUploadID) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Uploaded',
-              detail: 'Uploaded to serina successfully',
-            });
+            this.successAlert('Uploaded to serina successfully');
           }
         }
         let query = '';
@@ -1073,29 +1066,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         } else {
           query = `?re_upload=${this.reuploadBoolean}&doctype=${this.docType}`;
         }
-
-        // this.SharedService.triggerBatch(query).subscribe((data: any) => {
-        //   if (
-        //     this.vendorUplaodBoolean == true &&
-        //     this.reuploadBoolean == true
-        //   ) {
-        //     if (data[0] == 0) {
-        //       this.messageService.add({
-        //         severity: 'error',
-        //         summary: 'Rejected',
-        //         detail: data[1],
-        //       });
-        //     } else {
-        //       this.messageService.add({
-        //         severity: 'success',
-        //         summary: 'Uploaded',
-        //         detail: data[1],
-        //       });
-        //     }
-        //   }
-
-        //   this.dataService.reUploadData = [];
-        // });
         this.SharedService.syncBatchTrigger(query).subscribe((data: any) => {
           this.progressDailogBool = true;
           this.batchData = data[this.invoiceID]?.complete_status;
@@ -1106,11 +1076,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             if (data[0] == 0) {
               this.errorTriger(data[1]);
             } else {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Uploaded',
-                detail: data[1],
-              });
+              this.successAlert(data[1]);
             }
           }
 
@@ -1212,9 +1178,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       (data: any) => {
         this.SpinnerService.hide();
         // if (this.router.url.includes('ExceptionManagement')) {
-          this.AlertService.addObject.detail = 'Document submitted successfully';
-          this.AlertService.addObject.summary = 'sent';
-          this.messageService.add(this.AlertService.addObject);
+          this.successAlert('Document submitted successfully');
         // } 
          setTimeout(() => {
           if (this.router.url.includes('ExceptionManagement')) {
@@ -1235,9 +1199,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
   serviceSubmit(){
     this.SharedService.serviceSubmit().subscribe((data:any)=>{
-      this.AlertService.addObject.detail = 'send to batch successfully';
-      this.AlertService.addObject.summary = 'sent';
-      this.messageService.add(this.AlertService.addObject);
+      this.successAlert('send to batch successfully');
       setTimeout(() => {
         this._location.back();
       }, 1000);
@@ -1249,8 +1211,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   approveChanges() {
     this.exceptionService.send_batch_approval().subscribe(
       (data: any) => {
-        this.AlertService.addObject.detail = 'Send to batch successfully';
-        this.messageService.add(this.AlertService.addObject);
+        this.successAlert('Send to batch successfully');
         setTimeout(() => {
           this._location.back();
         }, 2000);
@@ -1322,8 +1283,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   removeLine() {
     this.exceptionService.removeLineData(this.item_code).subscribe((data: any) => {
       if (data.status == "deleted") {
-        this.AlertService.addObject.detail = "Line item deleted";
-        this.messageService.add(this.AlertService.addObject);
+        this.successAlert('Line item deleted');
         this.displayrejectDialog = false;
         if (this.isLCMInvoice) {
           this.readSavedLCMLineData();
@@ -1346,8 +1306,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           "itemCode": item
         };
         this.exceptionService.addLineItem(JSON.stringify(addLineData)).subscribe((data: any) => {
-          this.AlertService.addObject.detail = "Line item Added";
-          this.messageService.add(this.AlertService.addObject);
+          this.successAlert('Line item Added');
           this.getInvoiceFulldata();
         });
         this.displayrejectDialog = false;
@@ -1369,11 +1328,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SharedService.financeApprovalPermission(JSON.stringify(desc)).subscribe(
       (data: any) => {
         this.dataService.invoiceLoadedData = [];
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Approved',
-          detail: data.result,
-        });
+        this.successAlert(data.result);
         this.displayrejectDialog = false;
         setTimeout(() => {
           this._location.back();
@@ -1402,37 +1357,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       documentdescription: this.rejectionComments,
       userAmount: 0,
     };
-    if (this.rejectOption.value == 'IT_reject') {
-      this.SharedService.ITRejectInvoice(
-        JSON.stringify(rejectionData)
-      ).subscribe(
-        (data: any) => {
-          this.dataService.invoiceLoadedData = [];
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Rejected',
-            detail: 'Successfully send rejection for IT',
-          });
-          this.displayrejectDialog = false;
-          setTimeout(() => {
-            this._location.back();
-          }, 1000);
-        },
-        (error) => {
-          this.errorTriger("Server error");
-        }
-      );
-    } else {
       this.SharedService.vendorRejectInvoice(
         JSON.stringify(rejectionData)
       ).subscribe(
         (data: any) => {
           this.dataService.invoiceLoadedData = [];
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Rejected',
-            detail: 'Successfully send rejection for Vendor',
-          });
+          this.successAlert("Successfully send rejection for Vendor");
           this.displayrejectDialog = false;
           setTimeout(() => {
             this.router.navigate([`${this.portalName}/ExceptionManagement`]);
@@ -1442,7 +1372,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           this.errorTriger("Something went wrong");
         }
       );
-    }
+    
   }
 
   backToInvoice() {
@@ -1473,10 +1403,42 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     }
   }
   zoomIn() {
-    this.zoomdata = this.zoomdata + 0.1;
+    if(this.isImgBoolean){
+      this.zoomVal = this.zoomVal + 0.2;
+      this.zoomX = this.zoomX + 0.05;
+      this.orgX = this.orgX + '50px';
+      this.orgY = this.orgY + '50px';
+      if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
+        this.zoomVal = 1;
+        this.zoomX = 1;
+        this.orgX = '0px';
+        this.orgY = '0px';
+      }
+      (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
+      (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
+    } else {
+      this.zoomdata = this.zoomdata + 0.1;
+    }
+
+
   }
   zoomOut() {
-    this.zoomdata = this.zoomdata - 0.1;
+    if(this.isImgBoolean) {
+      this.zoomVal = this.zoomVal - 0.2;
+      this.zoomX = this.zoomX - 0.05;
+      // this.orgX  = this.orgX - '50px';
+      // this.orgY  = this.orgY - '50px';
+      if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
+        this.zoomVal = 1;
+        this.zoomX = 1;
+        this.orgX = '0px';
+        this.orgY = '0px';
+      }
+      (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
+      (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
+    } else {
+      this.zoomdata = this.zoomdata - 0.1;
+    }
   }
   afterLoadComplete(pdfData: any) {
     this.totalPages = pdfData.numPages;
@@ -1633,8 +1595,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             this.progress = Math.round((100 / event.total) * event.loaded);
           } else if (event.type == HttpEventType.Response) {
             this.progress = null;
-            this.AlertService.addObject.detail = "Supporting Documents uploaded Successfully";
-            this.messageService.add(this.AlertService.addObject);
+            this.successAlert("Supporting Documents uploaded Successfully");
             this.uploadFileList = [];
             event.body?.result?.forEach(ele => {
               this.support_doc_list.push(ele);
@@ -1661,9 +1622,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         let blob: any = new Blob([response]);
         const url = window.URL.createObjectURL(blob);
         fileSaver.saveAs(blob, doc_name);
-        this.AlertService.addObject.detail =
-          'Document downloaded successfully.';
-        this.messageService.add(this.AlertService.addObject);
+        this.successAlert("Document downloaded successfully.");
       },
       (err) => {
         this.errorTriger("Server error");
@@ -1784,8 +1743,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.AlertService.errorObject.detail = data?.error_status;
         this.messageService.add(this.AlertService.errorObject);
       } else {
-        this.AlertService.addObject.detail = data?.result;
-        this.messageService.add(this.AlertService.addObject);
+        this.successAlert(data?.result);
         setTimeout(() => {
           this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
         }, 1000);
@@ -1968,9 +1926,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         //         data.data.forEach(ele => {
         //           this.LCMDataTable.push(ele);
         //         })
-        this.readSavedLCMLineData()
-        this.AlertService.addObject.detail = data.data;
-        this.messageService.add(this.AlertService.addObject);
+        this.readSavedLCMLineData();
+        this.successAlert(data.data);
       } else if (data?.error) {
         let str = data.error.toString();
         this.errorTriger(str);
@@ -1979,6 +1936,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       // this.readSavedLCMLineData()
       // this.AlertService.addObject.detail="File Uploaded"
       // this.messageService.add(this.AlertService.addObject);
+      // this.successAlert("File Uploaded");
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
@@ -2016,18 +1974,23 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
   open_dialog_comp(str){
     let w = '60%';
-    let h = '70vh'
+    let h = '70vh';
+    let response;
     if(str == 'Amend'){
       this.displayrejectDialog = false;
       w = '40%';
       h = '40vh';
+    } else if(str == 'flip') {
+      this.exceptionService.getPOLines('').subscribe((data: any) => {
+        response = data.Po_line_details;
+      })
     }
     this.SpinnerService.show();
     const matdrf:MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
       width: w,
       height: h,
       hasBackdrop: false,
-      data: { type: str, resp: this.poLineData,rejectTxt: this.rejectionComments }
+      data: { type: str, resp: response,rejectTxt: this.rejectionComments }
     });
     this.SpinnerService.hide();
     if(str == 'Amend') {
@@ -2058,8 +2021,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       //   this.AlertService.updateObject.detail = 'Please add the approvers';
       //   this.currentTab = 'approver_selection';
       // }
-      this.AlertService.addObject.detail = "Approved.";
-        this.messageService.add(this.AlertService.addObject);
+        this.successAlert("Approved.");
         setTimeout(() => {
           this.router.navigate([`${this.portalName}/ExceptionManagement`]);
         }, 1000);
@@ -2080,40 +2042,39 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   //     this.SpinnerService.hide();
   //   })
   // }
-  readPOLines() {
-    this.exceptionService.getPOLines('').subscribe((data: any) => {
-      this.poLineData = data.Po_line_details;
-      if(this.poLineData){
-        if (Object?.keys(this.poLineData[0])?.length > 0) {
-          this.POlineBool = true;
-        } else {
-          this.POlineBool = false;
-        }
-      }
-      this.SpinnerService.hide();
-    }, err => {
-      this.errorTriger("Server error");
-      this.SpinnerService.hide();
-    })
-  }
+  // readPOLines() {
+  //   this.exceptionService.getPOLines('').subscribe((data: any) => {
+  //     this.poLineData = data.Po_line_details;
+  //     if(this.poLineData){
+  //       if (Object?.keys(this.poLineData[0])?.length > 0) {
+  //         this.POlineBool = true;
+  //       } else {
+  //         this.POlineBool = false;
+  //       }
+  //     }
+  //     this.SpinnerService.hide();
+  //   }, err => {
+  //     this.errorTriger("Server error");
+  //     this.SpinnerService.hide();
+  //   })
+  // }
 
-  getPODocId(po_num) {
-    this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
-      this.poDocId = data.result;
-    })
-  }
-  refreshPO(){
-    this.SpinnerService.show();
-    this.SharedService.updatePO(this.poDocId).subscribe((data:any)=>{
-      this.readPOLines();
-      this.SpinnerService.hide();
-      this.AlertService.addObject.detail = 'PO data updated.';
-      this.messageService.add(this.AlertService.addObject);
-    },err=>{
-      this.SpinnerService.hide();
-      this.errorTriger("Server error");
-    })
-  }
+  // getPODocId(po_num) {
+  //   this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
+  //     this.poDocId = data.result;
+  //   })
+  // }
+  // refreshPO(){
+  //   this.SpinnerService.show();
+  //   this.SharedService.updatePO(this.poDocId).subscribe((data:any)=>{
+  //     this.readPOLines();
+  //     this.SpinnerService.hide();
+  //     this.successAlert("PO data updated.");
+  //   },err=>{
+  //     this.SpinnerService.hide();
+  //     this.errorTriger("Server error");
+  //   })
+  // }
 
   mutliPOEdit(str){
    const dailogRef: MatDialogRef<MultiPOComponent> =  this.mat_dlg.open(MultiPOComponent,{ 
@@ -2125,12 +2086,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.mutliplePOTableData = result;
       })
   }
-  getGRNtabData(){
-    this.SharedService.getGRNTabData().subscribe((data:any)=>{
-      this.GRNTabData = data?.result;
-      this.grnTabDatalength =Object.keys(this.GRNTabData).length;
-    })
-  }
+  // getGRNtabData(){
+  //   this.SharedService.getGRNTabData().subscribe((data:any)=>{
+  //     this.GRNTabData = data?.result;
+  //     this.grnTabDatalength =Object.keys(this.GRNTabData).length;
+  //   })
+  // }
 
   setOpened(itemIndex) {
     this.currentlyOpenedItemIndex = itemIndex;
@@ -2141,6 +2102,24 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.currentlyOpenedItemIndex = -1;
     }
   }
+  toggleFullScreen() {
+    const viewerContainer = this.elementRef.nativeElement.querySelector('.docContaner');
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      if (viewerContainer.requestFullscreen) {
+        viewerContainer.requestFullscreen();
+      } else if (viewerContainer.mozRequestFullScreen) { /* Firefox */
+        viewerContainer.mozRequestFullScreen();
+      } else if (viewerContainer.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        viewerContainer.webkitRequestFullscreen();
+      } else if (viewerContainer.msRequestFullscreen) { /* IE/Edge */
+        viewerContainer.msRequestFullscreen();
+      }
+    }
+  }
+
+
   ngOnDestroy() {
     let sessionData = {
       session_status: false,

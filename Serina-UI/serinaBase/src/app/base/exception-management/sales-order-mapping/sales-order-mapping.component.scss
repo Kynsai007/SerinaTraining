@@ -7,8 +7,21 @@
     display: flex;
     justify-content: space-around;
 }
+.pdf_btns {
+    position: relative;
+    z-index: 100;
+    // justify-content: space-between;
+    width: fit-content;
+    background: white;
+    padding: 5px;
+    top: 5px;
+    margin: auto;
+    border-radius: 5px;
+    height: 40px;
+}
 .tabsDiv {
     margin-top: 5px;
+    z-index: 3;
 }
 .w-42 {
     width: 42%;
@@ -17,17 +30,106 @@
     top: 8px;
 }
 
+
+.zoom {
+    box-shadow: none !important;
+}
+.zoom-in {
+    border: none;
+    padding: 0px 10px !important;
+    color: black !important;
+    border-right: 1px solid lightgray;
+    border-bottom: 0 !important;
+    height: auto !important;
+}
+.zoom-out {
+    color: black !important;
+    padding: 0px 10px !important;
+    height: auto !important;
+}
+.preBtn {
+    background: white;
+    cursor: pointer;
+    border: 0 !important;
+}
+.p-r-t {
+    top: 6px !important;
+}
+.pos-r {
+    position: relative;
+    top: 2px;
+}
+.docContainer {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.btns_line {
+    display: flex;
+    position: fixed;
+    background: white;
+    width: 51%;
+    padding: 25px;
+    right: 22px;
+    z-index: 1;
+    top: 40px;
+    justify-content: flex-end;
+}
+
+.btn_stck {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 2px #00000029;
+    border-radius: 5px;
+    opacity: 1;
+    padding: 5px 10px;
+    border: 1px solid;
+}
+.btn_hold {
+    background: #E1E1E1 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 3px #00000029;
+    border-radius: 5px;
+    opacity: 1;
+    padding: 5px 10px;
+    border: 0;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+.tHead {
+    background: #f6f2f2 0% 0% no-repeat padding-box;
+    border-radius: 5px;
+    opacity: 1;
+}
+.table th,
+.table td {
+    border-top: 0;
+    padding: 8px;
+}
+.tbdytr {
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 2px #00000026;
+    border-radius: 5px;
+    opacity: 1;
+    margin: 0px 4px;
+    text-transform: lowercase;
+}
 :host ::ng-deep {
     .nav-tabss .nav-link {
         background: #ffffff !important;
         border: none !important;
     }
-    .nav-tabss .nav-link.active, .nav-tabss .nav-item.show .nav-link {
+    .nav-tabss .nav-link.active,
+    .nav-tabss .nav-item.show .nav-link {
         color: black !important;
         font-size: 13px;
         background-color: white !important;
         font-weight: 600;
-        border-bottom: 5px solid #162F64 !important;
+        border-bottom: 5px solid #162f64 !important;
         border-radius: 0 !important;
         position: relative;
         top: 5px;

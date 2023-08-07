@@ -55,12 +55,13 @@
             *ngFor="let col of columns"
             [pTooltip]="col.columnDescription"
             tooltipPosition="top"
-            [ngStyle]="{ width: col.header === 'Rule' ? '40%' : '' ,backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
+            [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
+            [ngStyle]="{ width: col.header === 'Rule' ? '40%' : '' }"
             [pSortableColumn]="col.field"
           >
             {{ col.header }}
           </th>
-          <th class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions</th>
+          <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">Actions</th>
         </tr>
         <tr>
           <td *ngFor="let col of columns" class="sticky_top">

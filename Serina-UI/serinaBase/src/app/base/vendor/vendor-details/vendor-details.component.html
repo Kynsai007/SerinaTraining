@@ -41,8 +41,8 @@
     
             <ng-template pTemplate="header">
               <tr>
-                <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="VenderCode" class="text-type">{{partyType}} code</th>
-                <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" pSortableColumn="VendorName" class="text-type">{{partyType}} Name</th>
+                <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="VenderCode" class="text-type">{{partyType}} code</th>
+                <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="VendorName" class="text-type">{{partyType}} Name</th>
               </tr>
               <tr class="sticky_top">
                 <td>
@@ -148,10 +148,10 @@
                       <tr>
                         <th style="text-align: center;" *ngFor="let col of columns" [pTooltip]="col.columnDescription"
                           tooltipPosition="top" [pSortableColumn]="col.dbColumnname"
-                          [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">
+                          [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">
                           {{col.columnName}}
                         </th>
-                        <th class="action_Zindex" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">Actions <i class="fa fa-pencil-square-o actionsBtn" style="border: 0;"
+                        <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">Actions <i class="fa fa-pencil-square-o actionsBtn" style="border: 0;"
                             aria-hidden="true" (click)="showSidebar()"></i></th>
                       </tr>
                       <tr>
@@ -228,7 +228,7 @@
                     <ng-template pTemplate="header" let-columns>
                       <tr>
                         <th class="f-12 t-center" *ngFor=" let column of columns" [pTooltip]="column.header" tooltipPosition="top"
-                          [pSortableColumn]="column.field" [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}">
+                          [pSortableColumn]="column.field" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">
                           {{column.header}}
                         </th>
                       </tr>

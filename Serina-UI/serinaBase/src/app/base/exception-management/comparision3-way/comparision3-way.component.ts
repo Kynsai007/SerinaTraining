@@ -12,6 +12,7 @@ import { TaggingService } from './../../../services/tagging.service';
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
@@ -118,7 +119,7 @@ export class Comparision3WayComponent
   rotation = 0;
   addrejectcmtBool: boolean;
   ap_boolean: boolean;
-  poLineData = [];
+  // poLineData = [];
   isAdmin: boolean;
   GRN_PO_Bool: boolean;
   GRN_PO_Data = [];
@@ -147,8 +148,8 @@ export class Comparision3WayComponent
   grnList: any;
   selectedGRNList = [];
   currentlyOpenedItemIndex = -1;
-  GRNTabData: any;
-  grnTabDatalength: number;
+  // GRNTabData: any;
+  // grnTabDatalength: number;
   batchData: any;
   progressDailogBool: boolean;
   portalName: string;
@@ -175,7 +176,15 @@ export class Comparision3WayComponent
   lineTxt1: string;
   lineTxt2: string;
   docType: number;
-
+  poLinedata = [];
+  soLinedata = [];
+  lineTable = [
+    { header: 'Description', field: 'Description'},
+    { header: 'Unit', field: 'Unit'},
+    { header: 'Price', field: 'UnitPrice'},
+    { header: 'Quantity', field: 'Quantity'},
+    { header: 'Amount', field: 'amount'}
+  ];
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -192,6 +201,7 @@ export class Comparision3WayComponent
     private settingService: SettingsService,
     private SharedService: SharedService,
     private mat_dlg: MatDialog,
+    private elementRef : ElementRef
   ) {
     super();
     this.exceptionService.getMsg().pipe(take(2)).subscribe((msg) => {
@@ -227,7 +237,8 @@ export class Comparision3WayComponent
     this.readFilePath();
     this.AddPermission();
     this.isAdmin = this.dataService.isAdmin;
-    this.currentTab = 'line'
+    this.currentTab = 'line';
+    
   }
 
   idleTimer(time, str) {
@@ -235,7 +246,7 @@ export class Comparision3WayComponent
       timeout: time, //expired after 180 secs
       clean: str,
       onTimeout: () => {
-        if (this.router.url.includes('comparision-docs')) {
+        if (this.router.url.includes('comparision-docs') || this.router.url.includes('SO_generate')) {
           this.router.navigate([`${this.portalName}/ExceptionManagement`]);
         }
         this.alertFun("Session Expired for Editing Invoice");
@@ -259,37 +270,52 @@ export class Comparision3WayComponent
       this.exceptionService.invoiceID = params['id'];
       this.invoiceID = params['id'];
     });
-    if (this.router.url.includes('Create_GRN_inv_list')) {
-      if (this.permissionService.GRNPageAccess == true) {
-        this.grnCreateBoolean = true;
-        if (this.GRN_PO_Bool) {
-          this.tagService.headerName = 'Create GRN With PO';
-          this.getInvoiceFulldata_po();
-          this.get_PO_GRN_Lines();
+    this.Itype = this.tagService.type;
 
+    if(this.ap_boolean){
+      if (this.router.url.includes('Create_GRN_inv_list')) {
+        if (this.permissionService.GRNPageAccess == true) {
+          this.grnCreateBoolean = true;
+          if (this.GRN_PO_Bool) {
+            this.tagService.headerName = 'Create GRN With PO';
+            this.getInvoiceFulldata_po();
+            this.get_PO_GRN_Lines();
+  
+          } else {
+            this.tagService.headerName = 'Create GRN';
+            this.readGRNInvData();
+            // this.readPOLines();
+          }
+          if (this.grnCreateBoolean) {
+            this.currentTab = 'line'
+          }
         } else {
-          this.tagService.headerName = 'Create GRN';
-          this.readGRNInvData();
-          this.readPOLines();
-        }
-        if (this.grnCreateBoolean) {
-          this.currentTab = 'line'
+          alert('Sorry!, you do not have access');
+          this.router.navigate(['customer/invoice/allInvoices']);
         }
       } else {
-        alert('Sorry!, you do not have access');
-        this.router.navigate(['customer/invoice/allInvoices']);
+        this.getInvoiceFulldata();
+        // this.getRulesData();
+        if(this.ap_boolean){
+          this.getPOs();
+          // this.readPOLines();
+          this.readLineItems();
+          this.readErrorTypes();
+          this.readMappingData();
+          // this.getGRNtabData();
+        }
+        if (this.tagService.editable == true && this.grnCreateBoolean == false) {
+          this.updateSessionTime();
+          this.idleTimer(180, 'Start');
+          this.callSession = setTimeout(() => {
+            this.updateSessionTime();
+          }, 250000);
+        }
       }
     } else {
-      this.getInvoiceFulldata();
-      // this.getRulesData();
-      if(this.ap_boolean){
-        this.getPOs();
-        this.readPOLines();
-        this.readLineItems();
-        this.readErrorTypes();
-        this.readMappingData();
-        this.getGRNtabData()
-      }
+      this.readDocumentData();
+      this.headerName = 'PO';
+      this.Itype = 'PO';
       if (this.tagService.editable == true && this.grnCreateBoolean == false) {
         this.updateSessionTime();
         this.idleTimer(180, 'Start');
@@ -299,7 +325,6 @@ export class Comparision3WayComponent
       }
     }
     this.onResize();
-    this.Itype = this.tagService.type;
     this.editable = this.tagService.editable;
     this.fin_boolean = this.tagService.financeApprovePermission;
     this.submitBtn_boolean = this.tagService.submitBtnBoolean;
@@ -336,6 +361,42 @@ export class Comparision3WayComponent
 
   changeTab(val) {
     this.currentTab = val;
+    if(val== 'line' || val == 'poline' || val=='grn'){
+      this.showPdf = false;
+      this.btnText = 'View PDF';
+    } else {
+      this.showPdf = true;
+      this.btnText = 'Close';
+    }
+  }
+
+  readDocumentData(){
+    this.exceptionService.getDocumentDetails().subscribe((data:any)=>{
+      console.log(data)
+      this.poLinedata = data.polinedata;
+      this.soLinedata = data.solinedata;
+      const pushedArrayHeader = [];
+        data.headerdata.forEach((element) => {
+          let mergedArray = {
+            ...element.DocumentData,
+            ...element.DocumentTagDef,
+          };
+          mergedArray.DocumentUpdates = element.DocumentUpdates;
+          pushedArrayHeader.push(mergedArray);
+        });
+        this.inputData = pushedArrayHeader;
+        this.vendorData = {
+          ...data.customerdata[0].Vendor,
+          ...data.customerdata[0].VendorAccount,
+          ...data.customerdata[0].VendorUser,
+        };
+        let inv_num_data: any = this.inputData.filter((val) => {
+          return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
+        });
+        this.invoiceNumber = inv_num_data[0]?.Value;
+        this.vendorAcId = this.vendorData['idVendorAccount'];
+        this.vendorName = this.vendorData['VendorName'];
+    })
   }
 
   get_PO_GRN_Lines() {
@@ -446,7 +507,7 @@ export class Comparision3WayComponent
           return (val.TagLabel == 'PurchaseOrder');
         });
         this.po_num = po_num_data[0]?.Value;
-        this.getPODocId(this.po_num);
+        // this.getPODocId(this.po_num);
         this.getGRNnumbers(this.po_num);
         this.vendorData = {
           ...data.Vendordata[0].Vendor,
@@ -1404,18 +1465,25 @@ export class Comparision3WayComponent
 
   open_dialog_comp(str) {
     let w = '60%';
-    let h = '70vh'
+    let h = '70vh';
+    let response;
     if (str == 'Amend') {
       this.displayrejectDialog = false;
       w = '40%';
       h = '40vh';
+    } else if(str == 'flip line') {
+      this.exceptionService.getPOLines('').subscribe((data: any) => {
+        response = data.Po_line_details;
+      })
+    } else if(str == 'poMaster'){
+      response = this.vendorAcId;
     }
     this.SpinnerService.show();
     const matdrf: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
       width: w,
       height: h,
       hasBackdrop: false,
-      data: { type: str, resp: this.poLineData, rejectTxt: this.rejectionComments }
+      data: { type: str, resp: response, rejectTxt: this.rejectionComments }
     });
     this.SpinnerService.hide();
     if (str == 'Amend') {
@@ -1534,12 +1602,12 @@ export class Comparision3WayComponent
   //   }
   // }
 
-  getGRNtabData() {
-    this.SharedService.getGRNTabData().subscribe((data: any) => {
-      this.GRNTabData = data?.result;
-      this.grnTabDatalength = Object.keys(this.GRNTabData).length;
-    })
-  }
+  // getGRNtabData() {
+  //   this.SharedService.getGRNTabData().subscribe((data: any) => {
+  //     this.GRNTabData = data?.result;
+  //     this.grnTabDatalength = Object.keys(this.GRNTabData).length;
+  //   })
+  // }
 
   setOpened(itemIndex) {
     this.currentlyOpenedItemIndex = itemIndex;
@@ -1557,40 +1625,46 @@ export class Comparision3WayComponent
     this.headerpop = 'Select GRN'
   }
 
-  getPODocId(po_num) {
-    this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
-      this.poDocId = data.result;
-    })
-  }
+  // getPODocId(po_num) {
+  //   this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
+  //     this.poDocId = data.result;
+  //   })
+  // }
 
-  readPOLines() {
-    this.exceptionService.getPOLines('').subscribe((data: any) => {
-      this.poLineData = data.Po_line_details;
-      this.poLineData.forEach(el=>{
-        el.RemainPurchFinancial = 0;
-      })
-      console.log(this.poLineData)
-      if (this.poLineData?.length > 0) {
-        this.POlineBool = true;
-      } else {
-        this.POlineBool = false;
+  // readPOLines() {
+  //   this.exceptionService.getPOLines('').subscribe((data: any) => {
+  //     this.poLineData = data.Po_line_details;
+  //   }, err => {
+  //     this.alertFun('Server error');
+  //     this.SpinnerService.hide();
+  //   })
+  // }
+  // refreshPO() {
+  //   this.SpinnerService.show();
+  //   this.SharedService.updatePO(this.poDocId).subscribe((data: any) => {
+  //     this.readPOLines();
+  //     this.SpinnerService.hide();
+  //     this.successAlert('PO data updated.');
+  //   }, err => {
+  //     this.SpinnerService.hide();
+  //     this.alertFun('Server error');
+  //   })
+  // }
+  toggleFullScreen() {
+    const viewerContainer = this.elementRef.nativeElement.querySelector('.docContaner');
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      if (viewerContainer.requestFullscreen) {
+        viewerContainer.requestFullscreen();
+      } else if (viewerContainer.mozRequestFullScreen) { /* Firefox */
+        viewerContainer.mozRequestFullScreen();
+      } else if (viewerContainer.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        viewerContainer.webkitRequestFullscreen();
+      } else if (viewerContainer.msRequestFullscreen) { /* IE/Edge */
+        viewerContainer.msRequestFullscreen();
       }
-      this.SpinnerService.hide();
-    }, err => {
-      this.alertFun('Server error');
-      this.SpinnerService.hide();
-    })
-  }
-  refreshPO() {
-    this.SpinnerService.show();
-    this.SharedService.updatePO(this.poDocId).subscribe((data: any) => {
-      this.readPOLines();
-      this.SpinnerService.hide();
-      this.successAlert('PO data updated.');
-    }, err => {
-      this.SpinnerService.hide();
-      this.alertFun('Server error');
-    })
+    }
   }
   alertFun(txt) {
     this.AlertService.errorObject.detail = txt;
@@ -1615,6 +1689,8 @@ export class Comparision3WayComponent
     this.tagService.approveBtnBoolean = false;
     this.tagService.submitBtnBoolean = false;
     this.dataService.grnWithPOBoolean = false;
+    this.dataService.poLineData = [];
+    delete this.dataService.arenaMasterData;
     this.mat_dlg.closeAll();
   }
 }

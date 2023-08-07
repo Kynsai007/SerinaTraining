@@ -61,6 +61,14 @@ export class ProcessMetricsComponent implements OnInit {
   filterDataPosted: any[];
   filterDataCollections: any[];
   filterDataRejected: any[];
+
+  cardArray = [
+    { id: 1, icon:'vendor_up', heading:'Total Invoices', tabName : 'Total' ,  count:0, clr:'#AEBDF7'},
+    { id: 2, icon:'vendor_rm', heading:'Invoices Under Process', tabName : 'UnderProcess', count:0, clr:'#E6AFFA'},
+    { id: 3, icon:'vendor_pr', heading:'Invoiced', tabName : 'Posted', count:0, clr:'#78DFF0'},
+    { id: 4, icon:'vendor_pr', heading:'Collections', tabName : 'Collections', count:0, clr:'#FFC9A5'},
+    { id: 5, icon:'vendor_rej', heading:'Rejected', tabName : 'Rejected', count:0, clr:'#FEBABA'},
+  ]
   constructor(
     private chartsService: ChartsService,
     private SpinnerService: NgxSpinnerService,
@@ -197,8 +205,9 @@ export class ProcessMetricsComponent implements OnInit {
       //   mergedArr.push(arr);
       // });
       this.totalTableData = data.data;
-      this.totalInv = this.totalTableData.length;
-      if(this.totalInv>10){
+      // this.totalInv = this.totalTableData.length;
+      this.cardArray[0].count = this.totalTableData.length;
+      if(this.cardArray[0].count>10){
         this.showPaginatortotal = true;
       }
     })
@@ -211,8 +220,9 @@ export class ProcessMetricsComponent implements OnInit {
       //   mergedArr.push(arr);
       // });
       this.UnderProcessTableData = data.data;
-      this.UnderProcessInv = this.UnderProcessTableData.length;
-      if(this.UnderProcessInv>10){
+      // this.UnderProcessInv = this.UnderProcessTableData.length;
+      this.cardArray[1].count = this.UnderProcessTableData.length;
+      if(this.cardArray[1].count>10){
         this.showPaginatorUnderProcess = true;
       }
     })
@@ -225,8 +235,9 @@ export class ProcessMetricsComponent implements OnInit {
       //   mergedArr.push(arr);
       // });
       this.PostedTableData = data.data;
-      this.PostedInv = this.PostedTableData.length;
-      if(this.PostedInv>10){
+      // this.PostedInv = this.PostedTableData.length;
+      this.cardArray[2].count = this.PostedTableData.length;
+      if(this.cardArray[2].count>10){
         this.showPaginatorPosted = true;
       }
     })
@@ -239,8 +250,9 @@ export class ProcessMetricsComponent implements OnInit {
       //   mergedArr.push(arr);
       // });
       this.CollectionsTableData = data.data;
-      this.CollectionsInv = this.CollectionsTableData.length;
-      if(this.CollectionsInv>10){
+      // this.CollectionsInv = this.CollectionsTableData.length;
+      this.cardArray[3].count = this.CollectionsTableData.length;
+      if(this.cardArray[3].count>10){
         this.showPaginatorCollections = true;
       }
     })
@@ -253,8 +265,9 @@ export class ProcessMetricsComponent implements OnInit {
       //   mergedArr.push(arr);
       // });
       this.RejectedTableData = data.data;
-      this.RejectedInv = this.RejectedTableData.length;
-      if(this.RejectedInv>10){
+      // this.RejectedInv = this.RejectedTableData.length;
+      this.cardArray[4].count = this.RejectedTableData.length;
+      if(this.cardArray[4].count>10){
         this.showPaginatorCollections = true;
       }
     })
