@@ -358,7 +358,7 @@
                               
                                         <div id="checkBoxes" *ngIf="showCheckboxHeaderDiv" >
                                             <label *ngFor="let header of headerTags">
-                                                <input type="checkbox" (change)="selectHeader($event.target.checked,header.Name)" [checked]="header.Ismendatory" />
+                                                <input type="checkbox" (change)="selectHeader($event.target.checked,header.Name)" [checked]="header.Ismendatory == 1 || headerArray.includes(header.Name)" />
                                                 {{header.Name}} <span *ngIf="header.Ismendatory == 1" style="color: red;">*</span>
                                             </label>
                                               
@@ -386,7 +386,7 @@
                               
                                         <div id="checkBoxes" *ngIf="showCheckboxOptHeaderDiv" >
                                             <label *ngFor="let header of headerOptionalArray">
-                                                <input type="checkbox" (change)="selectHeaderoptional($event.target.checked,header)" />
+                                                <input type="checkbox" (change)="selectHeaderoptional($event.target.checked,header)" [checked]="headerOptTags.includes(header)"/>
                                                 {{header}}
                                             </label>
                                               
@@ -414,7 +414,7 @@
                               
                                         <div id="checkBoxes" *ngIf="showCheckboxLineDiv" >
                                             <label *ngFor="let line of LineTags">
-                                                <input type="checkbox" (change)="selectLineTag($event.target.checked,line.Name)" [checked]="line.Ismendatory"/>
+                                                <input type="checkbox" (change)="selectLineTag($event.target.checked,line.Name)" [checked]="line.Ismendatory == 1 || LineArray.includes(line.Name)"/>
                                                 {{line.Name}} <span *ngIf="line.Ismendatory == 1" style="color: red;">*</span>
                                             </label>
                                               
@@ -442,7 +442,7 @@
                               
                                         <div id="checkBoxes" *ngIf="showCheckboxLineOptDiv" >
                                             <label *ngFor="let line of LineArrayOptinal">
-                                                <input type="checkbox" (change)="selectLineOptTag($event.target.checked,line)"/>
+                                                <input type="checkbox" (change)="selectLineOptTag($event.target.checked,line)" [checked]="LineOptTags.includes(line)"/>
                                                 {{line}}
                                             </label>
                                               
