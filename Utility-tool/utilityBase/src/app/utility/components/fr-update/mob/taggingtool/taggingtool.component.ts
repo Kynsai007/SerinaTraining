@@ -641,36 +641,39 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   clearTableTags(){
     let changes = false;
     let existingfields = [];
-    for(let v of this.fieldsfile['definitions'][this.currenttable+'_object']['fields']){
-      existingfields.push(v.fieldKey);
-    }
-    for(let e of existingfields){
-      let labelindex = this.labelsJson["labels"].findIndex(el => el.label.startsWith(this.currenttable) && el.label.endsWith(e));
-      if(labelindex == -1){
-        this.labelsJson["labels"].push({'label':this.currenttable+"/0/"+e,'key':null,'value':[]});
+    if(this.fieldsfile['definitions']){
+      for(let v of this.fieldsfile['definitions'][this.currenttable+'_object']['fields']){
+        existingfields.push(v.fieldKey);
       }
-    } 
-    for(let l of this.labelsJson["labels"]){
-      if(l.label.startsWith(this.currenttable)){
-        let labelindex = this.labelsJson["labels"].findIndex(el => el.label === l.label);
-        if(!existingfields.includes(this.labelsJson["labels"][labelindex].label.split("/")[2])){
-          this.labelsJson["labels"].splice(labelindex,1);
-          changes = true;
+      for(let e of existingfields){
+        let labelindex = this.labelsJson["labels"].findIndex(el => el.label.startsWith(this.currenttable) && el.label.endsWith(e));
+        if(labelindex == -1){
+          this.labelsJson["labels"].push({'label':this.currenttable+"/0/"+e,'key':null,'value':[]});
+        }
+      } 
+      for(let l of this.labelsJson["labels"]){
+        if(l.label.startsWith(this.currenttable)){
+          let labelindex = this.labelsJson["labels"].findIndex(el => el.label === l.label);
+          if(!existingfields.includes(this.labelsJson["labels"][labelindex].label.split("/")[2])){
+            this.labelsJson["labels"].splice(labelindex,1);
+            changes = true;
+          }
         }
       }
-    }
-    if(changes){
-      let frobj = {
-        'documentId':this.modelData.idDocumentModel,
-        'container':this.frConfigData[0].ContainerName,
-        'connstr':this.frConfigData[0].ConnectionString,
-        'filename':this.modelData.folderPath+"/"+this.currentfile,
-        'saveJson':null,
-        'labelJson':this.labelsJson
+      if(changes){
+        let frobj = {
+          'documentId':this.modelData.idDocumentModel,
+          'container':this.frConfigData[0].ContainerName,
+          'connstr':this.frConfigData[0].ConnectionString,
+          'filename':this.modelData.folderPath+"/"+this.currentfile,
+          'saveJson':null,
+          'labelJson':this.labelsJson
+        }
+        this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
+        })
       }
-      this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
-      })
     }
+    
   }
   onTagHover(event: MouseEvent): void {
     const target = event.target as HTMLElement;
