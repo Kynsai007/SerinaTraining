@@ -346,6 +346,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = this.currenttext;
       this.currentSelection = [];
       this.currenttext = "";
+      let finaljson = this.labelsJson["labels"].filter(item => item.value.length !== 0);
+      console.log(finaljson);
       let frobj = {
         'documentId':this.modelData.idDocumentModel,
         'container':this.frConfigData[0].ContainerName,
@@ -660,6 +662,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
         }
       }
+      let finaljson = this.labelsJson["labels"].filter(item => item.value.length !== 0);
+      console.log(finaljson);
       if(changes){
         let frobj = {
           'documentId':this.modelData.idDocumentModel,
@@ -696,7 +700,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           tagpresent = true;
         }
       }
-      console.log(tagpresent);
       if(tagpresent){
         tagElement.classList.toggle("mark1");
         const index = this.toDelete.indexOf(this.tagid); // Find the index of the element
@@ -788,7 +791,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
             (<HTMLDivElement>document.getElementById("field-"+key)).innerHTML = "";
           }
         }
-        console.log(_this.htmlArray,_this.toDelete);
       }
     });
   }
@@ -817,7 +819,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       'fr_key':this.frConfigData[0].Key1,
       'filename':this.modelData.folderPath+"/"+filename
     }
-    console.log(this.labelsJson);
     if(sessionStorage.getItem("layoutInfo") != null && this.modelData.folderPath+"/"+filename in JSON.parse(sessionStorage.getItem("layoutInfo"))){
       this.analyzing = false;
       this.ready = true;
@@ -1133,7 +1134,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                 }
               }
             }
-            console.log(_this.labelsJson);
+            let finaljson = _this.labelsJson["labels"].filter(item => item.value.length !== 0);
+            console.log(finaljson);
             let frobj = {
               'documentId':_this.modelData.idDocumentModel,
               'container':_this.frConfigData[0].ContainerName,
@@ -1450,11 +1452,12 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           text : s.text,
           boundingBoxes : s.boundingBoxes
         }))
-        console.log(this.labelsJson);
         this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
         (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
         this.currenttext = "";
         this.currentSelection = [];
+        let finaljson = this.labelsJson["labels"].filter(item => item.value.length !== 0);
+        console.log(finaljson);
         let frobj = {
           'documentId':this.modelData.idDocumentModel,
           'container':this.frConfigData[0].ContainerName,
