@@ -159,6 +159,7 @@ export class DataService {
   pageCountVariableSO = 0;
   poLineData = [];
   arenaMasterData: any;
+  isDesktop: boolean;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

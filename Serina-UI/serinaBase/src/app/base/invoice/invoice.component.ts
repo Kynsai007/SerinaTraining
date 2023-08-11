@@ -56,10 +56,10 @@ export class InvoiceComponent implements OnInit {
   soColumns: any;
   archivedColumns: any;
   allColumns: any;
-  columnstodisplayInvoice: any[];
-  columnstodisplayPO: any[];
+  columnstodisplayInvoice = [];
+  columnstodisplayPO = [];
   columnstodisplaySO: any[];
-  columnstodisplayArchived: any[];
+  columnstodisplayArchived = [];
 
   updateColumns: updateColumn[] = [];
   poDispalyData: any[];
@@ -90,7 +90,7 @@ export class InvoiceComponent implements OnInit {
   displayYear: string;
   minDate: Date;
   maxDate: Date;
-  columnstodisplayService: any[];
+  columnstodisplayService = [];
   serviceColumns: any;
   showPaginatorServiceInvoice: boolean;
   serviceinvoiceDispalyData: any[];
@@ -176,6 +176,7 @@ export class InvoiceComponent implements OnInit {
     this.GRNCreateBool = this.dataService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
+    
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
@@ -198,7 +199,6 @@ export class InvoiceComponent implements OnInit {
         } else {
           this.route.navigate([`${this.dataService.doc_status_tab}`]);
         }
-        this.getInvoiceColumns();
         if(this.GRNCreateBool){
           this.readGRNExceptionData();
         }
@@ -214,11 +214,11 @@ export class InvoiceComponent implements OnInit {
       }
     }
     if(this.serviceInvoiceAccess){
-      this.getServiceColumns();
+      // this.getServiceColumns();
       this.getDisplayServiceInvoicedata();
     }
     this.APIParams = `?offset=1&limit=50`;
-
+    this.deviceColumns();
     this.routeForTabs();
     this.dateRange();
     this.findActiveRoute();
@@ -227,9 +227,22 @@ export class InvoiceComponent implements OnInit {
     // this.getDisplayPOData();
     // this.getDisplayGRNdata();
     // this.getDisplayReceiptdata();
-    this.getPOColums();
-    this.getArchivedColumns();
-    this.prepareColumns();
+
+  }
+
+  deviceColumns() {
+    if(this.dataService.isDesktop) {
+      this.getPOColums();
+      this.getArchivedColumns();
+      this.prepareColumns();
+      this.getInvoiceColumns();
+      if(this.serviceInvoiceAccess){
+        this.getServiceColumns();
+      }
+    } else {
+      this.mob_columns();
+      this.prepareColumnsArray_mobile();
+    }
   }
 
   restoreData() {
@@ -1347,4 +1360,67 @@ export class InvoiceComponent implements OnInit {
     }else if (this.route.url == this.serviceInvoiceTab) {
     }
   }
+
+  mob_columns(){
+    this.invoiceColumns = [
+      { columnName : 'Invoice Number', dbColumnname:'docheaderID'},
+      { columnName : 'Vendor Name', dbColumnname:'VendorName'},
+      { columnName : 'Entity', dbColumnname:'EntityName'},
+      { columnName : 'PO Number', dbColumnname:'PODocumentID'}
+    ];
+    this.poColumns = [
+      { columnName : 'Vendor Name', dbColumnname:'VendorName'},
+      { columnName : 'Entity', dbColumnname:'EntityName'},
+      { columnName : 'PO Number', dbColumnname:'docheaderID'},
+      { columnName : 'Status', dbColumnname:'docstatus'}
+    ];
+    this.GRNColumns = [
+      { columnName : 'GRN Number', dbColumnname:'docheaderID'},
+      { columnName : 'Vendor Name', dbColumnname:'VendorName'},
+      // { columnName : 'Entity', dbColumnname:'EntityName'},
+      { columnName : 'PO Number', dbColumnname:'PODocumentID'},
+    ];
+    this.archivedColumns = [
+      { columnName : 'Invoice Number', dbColumnname:'docheaderID'},
+      { columnName : 'Vendor Name', dbColumnname:'VendorName'},
+      { columnName : 'PO Number', dbColumnname:'PODocumentID'},
+      { columnName : 'Payment status', dbColumnname:'PaymentStatus'},
+    ];
+    this.rejectedColumns = this.invoiceColumns;
+    this.serviceColumns = [
+      { columnName : 'Invoice Number', dbColumnname:'docheaderID'},
+      { columnName : 'Service Provider', dbColumnname:'ServiceProviderName'},
+      { columnName : 'Entity', dbColumnname:'EntityName'},
+      { columnName : 'Service Account', dbColumnname:'Account'}
+    ];
+  }
+
+    // to prepare display columns array
+    prepareColumnsArray_mobile() {
+      this.invoiceColumns.filter((element) => {
+        this.columnstodisplayInvoice.push(element.dbColumnname);
+      });
+      this.poColumns.filter((element) => {
+        this.columnstodisplayPO.push(element.dbColumnname);
+      });
+      this.GRNColumns.filter((element) => {
+        this.columnstodisplayGRN.push(element.dbColumnname);
+      });
+      this.archivedColumns.filter((element) => {
+        this.columnstodisplayArchived.push(element.dbColumnname);
+      });
+      this.rejectedColumns.filter((element) => {
+        this.columnstodisplayrejected.push(element.dbColumnname);
+      });
+      this.serviceColumns.filter((element) => {
+        this.columnstodisplayService.push(element.dbColumnname);
+      });
+  
+      this.allInColumnLength = this.invoiceColumns.length + 1;
+      this.allPOColumnLength = this.poColumns.length + 1;
+      this.GRNColumnLength = this.GRNColumns.length + 1;
+      this.allARCColumnLength = this.archivedColumns.length + 1;
+      this.rejectedColumnLength = this.rejectedColumns.length + 1;
+      this.allSRVColumnLength = this.serviceColumns.length + 1;
+    }
 }

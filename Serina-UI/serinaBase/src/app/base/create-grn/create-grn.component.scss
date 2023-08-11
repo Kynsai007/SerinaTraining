@@ -74,3 +74,28 @@
     display: none;
   }
 }
+@media screen and (max-width: 576px) {
+  .tableDataDiv {
+    max-height: 86vh;
+    min-height: 72vh;
+    position: relative;
+    top: 40px;
+  }
+  .positionCreateUpload {
+    right: 11px;
+    top: 103px;
+  }
+  :host ::ng-deep {
+    .searchBar {
+      top: 93px !important;
+      right: 40px !important;
+    }
+    .p-autocomplete {
+      width: 87vw;
+    }
+    .p-multiselect {
+      width: 87vw;
+    }
+  }
+   
+ }

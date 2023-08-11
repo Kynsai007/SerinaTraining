@@ -27,7 +27,7 @@
       [first]="first"
       [globalFilterFields]="columnsToDisplay"
       (onPage)="paginate($event)"
-      styleClass="p-datatable-striped"
+      styleClass="p-datatable"
       responsiveLayout="scroll"
       [columns]="invoiceColumns"
       selectionMode="single"
@@ -54,7 +54,7 @@
           >
             {{ col.columnName }}
           </th>
-          <th class="action_Zindex" 
+          <th class="action_Zindex" *ngIf="isDesktop"
             [ngClass]="invoceDoctype ? 'ap_bgClor' : 'ar_bgClr'">
             Actions
             <i
@@ -70,6 +70,7 @@
               (click)="showSidebar()"
             ></i>
           </th>
+          <th *ngIf="!isDesktop" class="action_Zindex" [ngClass]="invoceDoctype ? 'ap_bgClor' : 'ar_bgClr'" style="width: 54px;"> Action</th>
         </tr>
         <tr>
           <td *ngFor="let col of columns" class="sticky_top">
@@ -122,7 +123,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-invoiceData let-columns="columns">
+      <ng-template *ngIf="isDesktop" pTemplate="body" let-invoiceData let-columns="columns">
         <tr>
           <td
             *ngFor="let col of columns"
@@ -327,6 +328,154 @@
             >
             </span>
           </td>
+        </tr>
+      </ng-template>
+
+      <ng-template *ngIf="!isDesktop" pTemplate="body" let-invoiceData let-columns="columns">
+        <tr class="mob_tr"
+          [ngStyle]="{
+            'background-color':
+              invoiceData.documentStatusID == 4
+                ? '#FEFFD6'
+                : invoiceData.documentStatusID == 1
+                ? '#FEF9EC'
+                : invoiceData.documentStatusID == 2
+                ? '#F3F4FF'
+                : invoiceData.documentStatusID == 7
+                ? '#d0fbdd'
+                : invoiceData.documentStatusID == 12
+                ? '#ECF9ED'
+                : invoiceData.documentStatusID == 13
+                ? '#E9E9E9'
+                :'',
+            'border-color':
+              invoiceData.documentStatusID == 4
+                ? '#DBD51C'
+                : invoiceData.documentStatusID == 1
+                ? '#F3BC45'
+                : invoiceData.documentStatusID == 2
+                ? '#7C83CF'
+                : invoiceData.documentStatusID == 7
+                ? '#14bb12'
+                : invoiceData.documentStatusID == 12
+                ? '#3EB948'
+                : invoiceData.documentStatusID == 13
+                ? '#4D4A4A'
+                : ''
+          }"
+        >
+          <td
+            *ngFor="let col of columns"
+            [title]="invoiceData[col.dbColumnname]"
+          >
+            <div [ngSwitch]="col.dbColumnname">
+              <!-- <div *ngSwitchCase="'docstatus'" style="z-index: 0;">
+                <div *ngFor="let color of bgColorCode">
+                  <td
+                    class="statusType"
+                    *ngIf="invoiceData.documentStatusID == color.id"
+                    [ngStyle]="{
+                      'background-color':
+                        invoiceData.documentStatusID == color.id
+                          ? color.bgcolor
+                          : '',
+                      color:
+                        invoiceData.documentStatusID == color.id
+                          ? color.textColor
+                          : ''
+                    }"
+                  >
+                    {{ invoiceData[col.dbColumnname] }}
+                    <button
+                      *ngIf="invoiceData.documentStatusID == 1"
+                      pTooltip="Trigger Batch"
+                      tooltipPosition="top"
+                      class="f-13 b-0"
+                      style="color: red; font-weight: 800"
+                      (click)="triggerBatch(invoiceData.idDocument)"
+                      [disabled]="
+                        triggerBoolean && invoiceID == invoiceData.idDocument
+                      "
+                    >
+                      <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      *ngIf="invoiceData.documentStatusID == 1 && isAdmin"
+                      pTooltip="Status roll back"
+                      tooltipPosition="top"
+                      class="f-13 b-0"
+                      style="color: red; font-weight: 800"
+                      (click)="changeStatus(invoiceData.idDocument)"
+                    >
+                      <i class="fa fa-undo" aria-hidden="true"></i>
+                    </button>
+                    <i
+                      *ngIf="invoiceData.docstatus == 'Need To Review'"
+                      [pTooltip]="invoiceData?.status"
+                      tooltipPosition="top"
+                      class="f-13 ml-3"
+                      style="color: red; font-weight: 800"
+                    >
+                      !</i
+                    >
+                  </td>
+                </div>
+              </div> -->
+              <div class="elipse" *ngSwitchDefault>
+                <span *ngIf=" col.dbColumnname == 'CreatedOn' || col.dbColumnname == 'documentDate'">
+                  <span *ngIf="invoiceData[col?.dbColumnname] && col.dbColumnname == 'CreatedOn'">{{ invoiceData[col?.dbColumnname] + "Z" | date:'dd-MM-yy, h:mm a' }}</span>  
+                  <span *ngIf="invoiceData[col?.dbColumnname] && col.dbColumnname == 'documentDate'">{{ invoiceData[col?.dbColumnname] + "Z" | date:'dd-MM-yyyy' }}</span>  
+                </span>
+                <span *ngIf=" col.dbColumnname != 'CreatedOn' && col.dbColumnname != 'documentDate'">{{
+                  invoiceData[col.dbColumnname]
+                }}</span>
+              </div>
+            </div>
+          </td>
+          <td *ngIf="!isDesktop">
+            <i
+              class="pi pi-eye f-13 showEye mr-2 font_weight_500"
+              (click)="viewInvoiceDetails(invoiceData)"
+            ></i>
+            <i *ngIf="!router.url.includes('PO')" class="fa fa-chevron-down pointer" aria-hidden="true" (click)="clickDrildown(invoiceData)"></i>
+          </td>
+        </tr>
+        <tr *ngIf="drillBool && invoiceData.idDocument == docId" class="drill_tr mob_tr"
+        [ngStyle]="{
+          'background-color':
+            invoiceData.documentStatusID == 4
+              ? '#FEFFD6'
+              : invoiceData.documentStatusID == 1
+              ? '#FEF9EC'
+              : invoiceData.documentStatusID == 2
+              ? '#F3F4FF'
+              : invoiceData.documentStatusID == 7
+              ? '#d0fbdd'
+              : invoiceData.documentStatusID == 12
+              ? '#ECF9ED'
+              : invoiceData.documentStatusID == 13
+              ? '#E9E9E9'
+              :'',
+          'border-color':
+            invoiceData.documentStatusID == 4
+              ? '#DBD51C'
+              : invoiceData.documentStatusID == 1
+              ? '#F3BC45'
+              : invoiceData.documentStatusID == 2
+              ? '#7C83CF'
+              : invoiceData.documentStatusID == 7
+              ? '#14bb12'
+              : invoiceData.documentStatusID == 12
+              ? '#3EB948'
+              : invoiceData.documentStatusID == 13
+              ? '#4D4A4A'
+              : ''
+        }"
+        >
+          <div *ngFor="let data of drilldownarray" class="drill_div">
+            <div class="f-12">{{data.header}}</div>
+            <div class="f-11">{{data.field}}</div>
+          </div>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

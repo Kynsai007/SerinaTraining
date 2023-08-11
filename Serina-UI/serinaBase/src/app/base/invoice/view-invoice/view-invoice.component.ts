@@ -60,14 +60,14 @@ export interface saveLCM {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewInvoiceComponent implements OnInit, OnDestroy {
-  @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
-  @ViewChild(PdfViewerComponent, { static: false })
-  private pdfViewer: PdfViewerComponent;
-  ctx: CanvasRenderingContext2D;
-  zoomX = 1;
-  orgX = '0px';
-  orgY = '0px';
-  @ViewChild('pdfviewer') pdfviewer;
+  // @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
+  // @ViewChild(PdfViewerComponent, { static: false })
+  // private pdfViewer: PdfViewerComponent;
+  // ctx: CanvasRenderingContext2D;
+  // zoomX = 1;
+  // orgX = '0px';
+  // orgY = '0px';
+  // @ViewChild('pdfviewer') pdfviewer;
   vendorsSubscription: Subscription;
   isEditable: boolean;
   editable: boolean;
@@ -254,6 +254,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   docType: number;
   is_fp: boolean;
   is_fpa: boolean;
+  isDesktop:boolean;
+  documentViewBool:boolean;
+
   constructor(
     private tagService: TaggingService,
     private router: Router,
@@ -271,7 +274,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private settingsService: SettingsService,
     private route: ActivatedRoute,
     private mat_dlg: MatDialog,
-    private elementRef : ElementRef
+    
   ) {
     this.exceptionService.getMsg().pipe(take(2)).subscribe((msg)=>{
       if(msg == 'normal'){
@@ -283,6 +286,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
+    this.isDesktop = this.dataService.isDesktop;
+    this.documentViewBool = this.isDesktop;
     if(this.ap_boolean) {
       this.docType = 3
     } else {
@@ -316,6 +321,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       }, 250000);
     }
   }
+  getPdfBool(event){
+    this.isPdfAvailable = event;
+  }
+  doc_view(){
+    this.showPdf = true;
+    this.documentViewBool = !this.documentViewBool
+  }
   init() {
     if (
       this.router.url.includes('invoice/InvoiceDetails/vendorUpload') ||
@@ -330,7 +342,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.exceptionService.invoiceID = params['id'];
       this.invoiceID = params['id'];
       this.getInvoiceFulldata();
-      this.readFilePath();
+      // this.readFilePath();
     });
     if (this.router.url.includes('InvoiceDetails')) {
       if(this.ap_boolean){
@@ -348,7 +360,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.Itype = 'GRN';
     }
     
-    this.onResize();
+    // this.onResize();
     // this.Itype = this.tagService.type;
     this.editable = this.tagService.editable;
     this.fin_boolean = this.tagService.financeApprovePermission;
@@ -622,114 +634,114 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     );
   }
 
-  readFilePath() {
-    this.showInvoice = '';
-    this.SpinnerService.show();
-    this.SharedService.getInvoiceFilePath().subscribe(
-      (data: any) => {
-        this.content_type = data?.result?.content_type;
-        if (
-          data.result.filepath &&
-          data.result.content_type == 'application/pdf'
-        ) {
-          this.isPdfAvailable = false;
-          this.isImgBoolean = false;
+  // readFilePath() {
+  //   this.showInvoice = '';
+  //   this.SpinnerService.show();
+  //   this.SharedService.getInvoiceFilePath().subscribe(
+  //     (data: any) => {
+  //       this.content_type = data?.result?.content_type;
+  //       if (
+  //         data.result.filepath &&
+  //         data.result.content_type == 'application/pdf'
+  //       ) {
+  //         this.isPdfAvailable = false;
+  //         this.isImgBoolean = false;
 
-          /*covert base64 to blob */
-          this.byteArray = new Uint8Array(
-            atob(data.result.filepath)
-              .split('')
-              .map((char) => char.charCodeAt(0))
-          );
-          this.showInvoice = window.URL.createObjectURL(
-            new Blob([this.byteArray], { type: 'application/pdf' })
-          );
-        } else if (data.result.content_type == 'image/jpg' || data.result.content_type == 'image/png') {
-          let filetype = data.result.content_type
-          this.isPdfAvailable = false;
-          this.isImgBoolean = true;
-          this.byteArray = new Uint8Array(
-            atob(data.result.filepath)
-              .split('')
-              .map((char) => char.charCodeAt(0))
-          );
-          this.showInvoice = window.URL.createObjectURL(
-            new Blob([this.byteArray], { type: filetype })
-          );
-          this.loadImage();
-        } else {
-          this.isPdfAvailable = true;
-          this.showInvoice = '';
-        }
-        this.SpinnerService.hide();
-      },
-      (error) => {
-        this.SpinnerService.hide();
-        this.errorTriger('Server error');
-      }
-    );
-  }
+  //         /*covert base64 to blob */
+  //         this.byteArray = new Uint8Array(
+  //           atob(data.result.filepath)
+  //             .split('')
+  //             .map((char) => char.charCodeAt(0))
+  //         );
+  //         this.showInvoice = window.URL.createObjectURL(
+  //           new Blob([this.byteArray], { type: 'application/pdf' })
+  //         );
+  //       } else if (data.result.content_type == 'image/jpg' || data.result.content_type == 'image/png') {
+  //         let filetype = data.result.content_type
+  //         this.isPdfAvailable = false;
+  //         this.isImgBoolean = true;
+  //         this.byteArray = new Uint8Array(
+  //           atob(data.result.filepath)
+  //             .split('')
+  //             .map((char) => char.charCodeAt(0))
+  //         );
+  //         this.showInvoice = window.URL.createObjectURL(
+  //           new Blob([this.byteArray], { type: filetype })
+  //         );
+  //         this.loadImage();
+  //       } else {
+  //         this.isPdfAvailable = true;
+  //         this.showInvoice = '';
+  //       }
+  //       this.SpinnerService.hide();
+  //     },
+  //     (error) => {
+  //       this.SpinnerService.hide();
+  //       this.errorTriger('Server error');
+  //     }
+  //   );
+  // }
 
-  DownloadPDF() {
-    let extension;
-    if (this.content_type == 'application/pdf') {
-      extension = '.pdf';
-    } else if (this.content_type == 'image/jpg') {
-      extension = '.jpg';
-    } else if (this.content_type == 'image/png') {
-      extension = '.png';
-    }
-    fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
-  }
+  // DownloadPDF() {
+  //   let extension;
+  //   if (this.content_type == 'application/pdf') {
+  //     extension = '.pdf';
+  //   } else if (this.content_type == 'image/jpg') {
+  //     extension = '.jpg';
+  //   } else if (this.content_type == 'image/png') {
+  //     extension = '.png';
+  //   }
+  //   fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
+  // }
 
-  loadImage() {
-    if (this.isImgBoolean == true) {
-      setTimeout(() => {
-        this.zoomVal = 1;
-        (<HTMLDivElement>document.getElementById('canvas1')).style.transform =
-          'scale(' + this.zoomVal + ')';
-        this.ctx = this.canvasRef.nativeElement.getContext('2d');
-        this.canvasRef.nativeElement.width = window.innerWidth;
-        this.canvasRef.nativeElement.height = window.innerHeight;
-        this.drawImagein();
-      }, 50);
+  // loadImage() {
+  //   if (this.isImgBoolean == true) {
+  //     setTimeout(() => {
+  //       this.zoomVal = 1;
+  //       (<HTMLDivElement>document.getElementById('canvas1')).style.transform =
+  //         'scale(' + this.zoomVal + ')';
+  //       this.ctx = this.canvasRef.nativeElement.getContext('2d');
+  //       this.canvasRef.nativeElement.width = window.innerWidth;
+  //       this.canvasRef.nativeElement.height = window.innerHeight;
+  //       this.drawImagein();
+  //     }, 50);
 
-    }
-  }
-  drawImagein() {
+  //   }
+  // }
+  // drawImagein() {
 
-    // const canvas = <HTMLCanvasElement>document.getElementById('canvas1');
-    // canvas.height = window.innerHeight;
-    // canvas.width = window.innerWidth;
-    // const ctx = canvas.getContext('2d');
-    this.imageCanvas = new Image();
-    this.imageCanvas.src = this.showInvoice;
-    let imageWidth, imageHeight;
-    this.imageCanvas.onload = () => {
-      // Calculate the aspect ratio of the image
-      const imageAspectRatio = this.imageCanvas.width / this.imageCanvas.height;
-      // Calculate the aspect ratio of the canvas
-      const canvasAspectRatio = this.canvasRef.nativeElement.width / this.canvasRef.nativeElement.height;
+  //   // const canvas = <HTMLCanvasElement>document.getElementById('canvas1');
+  //   // canvas.height = window.innerHeight;
+  //   // canvas.width = window.innerWidth;
+  //   // const ctx = canvas.getContext('2d');
+  //   this.imageCanvas = new Image();
+  //   this.imageCanvas.src = this.showInvoice;
+  //   let imageWidth, imageHeight;
+  //   this.imageCanvas.onload = () => {
+  //     // Calculate the aspect ratio of the image
+  //     const imageAspectRatio = this.imageCanvas.width / this.imageCanvas.height;
+  //     // Calculate the aspect ratio of the canvas
+  //     const canvasAspectRatio = this.canvasRef.nativeElement.width / this.canvasRef.nativeElement.height;
 
-      // Set the dimensions of the image to fit the canvas while maintaining the aspect ratio
+  //     // Set the dimensions of the image to fit the canvas while maintaining the aspect ratio
 
-      if (imageAspectRatio > canvasAspectRatio) {
-        // The image is wider than the canvas, so set the width of the image to the width of the canvas
-        // and scale the height accordingly
-        imageWidth = this.canvasRef.nativeElement.width;
-        imageHeight = imageWidth / imageAspectRatio;
-      } else {
-        // The image is taller than the canvas, so set the height of the image to the height of the canvas
-        // and scale the width accordingly
-        imageHeight = this.canvasRef.nativeElement.height;
-        imageWidth = imageHeight * imageAspectRatio;
-      }
-      // Draw the image on the canvas
-      this.ctx.drawImage(this.imageCanvas, 0, 0, imageWidth, imageHeight);
+  //     if (imageAspectRatio > canvasAspectRatio) {
+  //       // The image is wider than the canvas, so set the width of the image to the width of the canvas
+  //       // and scale the height accordingly
+  //       imageWidth = this.canvasRef.nativeElement.width;
+  //       imageHeight = imageWidth / imageAspectRatio;
+  //     } else {
+  //       // The image is taller than the canvas, so set the height of the image to the height of the canvas
+  //       // and scale the width accordingly
+  //       imageHeight = this.canvasRef.nativeElement.height;
+  //       imageWidth = imageHeight * imageAspectRatio;
+  //     }
+  //     // Draw the image on the canvas
+  //     this.ctx.drawImage(this.imageCanvas, 0, 0, imageWidth, imageHeight);
 
-    };
+  //   };
 
-  }
+  // }
 
 
   onChangeValue(key, value, data) {
@@ -785,98 +797,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.errorTriger('Strings are not allowed in the amount and quantity fields.');
     }
   }
-  onSubmitData() {
 
-  }
-
-
-  drawrectangleonHighlight() {
-    // var rect = new fabric.Rect({
-    //   left: 100,
-    //   top: 50,
-    //   fill: 'rgba(255,0,0,0.5)',
-    //   width: 100,
-    //   height: 30,
-    //   selectable: false,
-    //   lockMovementX: true,
-    //   lockMovementY: true,
-    //   lockRotation: true,
-    //   transparentCorners: true,
-    //   hasControls: false,
-    // });
-
-    // this.canvas.add(rect);
-    // this.canvas.setActiveObject(rect);
-    // document.getElementById(index + 1).scrollIntoView();
-  }
-
-  zoomin() {
-    // this.isRect = false;
-    // this.canvas.setZoom(this.canvas.getZoom() * 1.1);
-    // this.panning();
-
-    this.zoomVal = this.zoomVal + 0.2;
-    this.zoomX = this.zoomX + 0.05;
-    this.orgX = this.orgX + '50px';
-    this.orgY = this.orgY + '50px';
-    if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
-      this.zoomVal = 1;
-      this.zoomX = 1;
-      this.orgX = '0px';
-      this.orgY = '0px';
-    }
-    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
-    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
-  }
-  zoomout() {
-    // this.isRect = false;
-    // this.canvas.setZoom(this.canvas.getZoom() / 1.1);
-    // this.panning();
-    this.zoomVal = this.zoomVal - 0.2;
-    this.zoomX = this.zoomX - 0.05;
-    // this.orgX  = this.orgX - '50px';
-    // this.orgY  = this.orgY - '50px';
-    if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
-      this.zoomVal = 1;
-      this.zoomX = 1;
-      this.orgX = '0px';
-      this.orgY = '0px';
-    }
-    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
-    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
-  }
-  removeEvents() {
-    // this.canvas.off('mouse:down');
-    // this.canvas.off('mouse:up');
-    // this.canvas.off('mouse:move');
-  }
-
-  panning() {
-    // this.removeEvents();
-    // let panning = false;
-    // let selectable;
-    // this.canvas.on('mouse:up', (e) => {
-    //   panning = false;
-    // });
-
-    // this.canvas.on('mouse:down', (e) => {
-    //   panning = true;
-    //   selectable = false;
-    // });
-    // this.canvas.on('mouse:move', (e) => {
-    //   if (panning && e && e.e) {
-    //     selectable = false;
-    //     var units = 10;
-    //     var delta = new fabric.Point(e.e.movementX, e.e.movementY);
-    //     this.canvas.relativePan(delta);
-    //   }
-    // });
-  }
-
-  addVendorDetails() {
-  }
-  onVerify(e) {
-  }
   submitChanges() {
     if(this.documentTypeId == 3){
       if (this.isLCMInvoice == false) {
@@ -1391,84 +1312,72 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     //   this._location.back();
     // }
   }
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.innerHeight = window.innerHeight;
-    if (this.innerHeight > 550 && this.innerHeight < 649) {
-      this.InvoiceHeight = 500;
-    } else if (this.innerHeight > 650 && this.innerHeight < 700) {
-      this.InvoiceHeight = 560;
-    } else if (this.innerHeight > 750) {
-      this.InvoiceHeight = 660;
-    }
-  }
-  zoomIn() {
-    if(this.isImgBoolean){
-      this.zoomVal = this.zoomVal + 0.2;
-      this.zoomX = this.zoomX + 0.05;
-      this.orgX = this.orgX + '50px';
-      this.orgY = this.orgY + '50px';
-      if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
-        this.zoomVal = 1;
-        this.zoomX = 1;
-        this.orgX = '0px';
-        this.orgY = '0px';
-      }
-      (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
-      (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
-    } else {
-      this.zoomdata = this.zoomdata + 0.1;
-    }
+  // @HostListener('window:resize', ['$event'])
+  // onResize() {
+  //   this.innerHeight = window.innerHeight;
+  //   if (this.innerHeight > 550 && this.innerHeight < 649) {
+  //     this.InvoiceHeight = 500;
+  //   } else if (this.innerHeight > 650 && this.innerHeight < 700) {
+  //     this.InvoiceHeight = 560;
+  //   } else if (this.innerHeight > 750) {
+  //     this.InvoiceHeight = 660;
+  //   }
+  // }
 
+  // zoomIn() {
+  //   if(this.isImgBoolean){
+  //     this.zoomVal = this.zoomVal + 0.2;
+  //     this.zoomX = this.zoomX + 0.05;
+  //     this.orgX = this.orgX + '50px';
+  //     this.orgY = this.orgY + '50px';
+  //     if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
+  //       this.zoomVal = 1;
+  //       this.zoomX = 1;
+  //       this.orgX = '0px';
+  //       this.orgY = '0px';
+  //     }
+  //     (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
+  //     (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
+  //   } else {
+  //     this.zoomdata = this.zoomdata + 0.1;
+  //   }
+  // }
 
-  }
-  zoomOut() {
-    if(this.isImgBoolean) {
-      this.zoomVal = this.zoomVal - 0.2;
-      this.zoomX = this.zoomX - 0.05;
-      // this.orgX  = this.orgX - '50px';
-      // this.orgY  = this.orgY - '50px';
-      if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
-        this.zoomVal = 1;
-        this.zoomX = 1;
-        this.orgX = '0px';
-        this.orgY = '0px';
-      }
-      (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
-      (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
-    } else {
-      this.zoomdata = this.zoomdata - 0.1;
-    }
-  }
-  afterLoadComplete(pdfData: any) {
-    this.totalPages = pdfData.numPages;
-    this.isLoaded = true;
-  }
-  textLayerRendered(e: CustomEvent) { }
+  // zoomOut() {
+  //   if(this.isImgBoolean) {
+  //     this.zoomVal = this.zoomVal - 0.2;
+  //     this.zoomX = this.zoomX - 0.05;
+  //     // this.orgX  = this.orgX - '50px';
+  //     // this.orgY  = this.orgY - '50px';
+  //     if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
+  //       this.zoomVal = 1;
+  //       this.zoomX = 1;
+  //       this.orgX = '0px';
+  //       this.orgY = '0px';
+  //     }
+  //     (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
+  //     (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `translate(${this.orgX},${this.orgY})`;
+  //   } else {
+  //     this.zoomdata = this.zoomdata - 0.1;
+  //   }
+  // }
+  // afterLoadComplete(pdfData: any) {
+  //   this.totalPages = pdfData.numPages;
+  //   this.isLoaded = true;
+  // }
 
-  nextPage() {
-    this.page++;
-  }
+  // nextPage() {
+  //   this.page++;
+  // }
 
-  prevPage() {
-    this.page--;
-  }
+  // prevPage() {
+  //   this.page--;
+  // }
 
-  rotate(angle: number) {
-    this.rotation += angle;
-  }
+  // rotate(angle: number) {
+  //   this.rotation += angle;
+  // }
 
-  convertInchToPixel(arr: any) {
-    // let diagonalpixel = Math.sqrt(Math.pow(window.screen.width,2)+Math.pow(window.screen.height,2));
-    // let diagonalinch = diagonalpixel/72;
-    // let ppi = diagonalpixel/diagonalinch;
-    let ppi = 96;
-    let Height = arr.Height * ppi;
-    let Width = arr.Width * ppi;
-    let Xcord = arr.Xcord * ppi;
-    let Ycord = arr.Ycord * ppi;
-    return [Height, Width, Xcord, Ycord];
-  }
   viewPdf() {
     this.showPdf = !this.showPdf;
     if (this.showPdf != true) {
@@ -1476,61 +1385,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     } else {
       this.btnText = 'Close';
     }
-    this.loadImage();
+    // this.loadImage();
   }
-  hightlight(val) {
-    let boundingBox = this.convertInchToPixel(val);
-    let hgt: number = boundingBox[0];
-    let wdt = boundingBox[1];
-    let xa = boundingBox[2];
-    let ya = boundingBox[3];
-    var pageno = parseInt('1');
-    var pageView = this.pdfViewer.pdfViewer._pages[pageno - 1];
-    //datas - array returning from server contains synctex output values
-    var left = xa;
-    var top = ya;
-    var width = wdt;
-    var height = hgt;
-    //recalculating top value
-    top = pageView.viewport.viewBox[3] - top;
-    var valueArray = [left, top, left + width, top + height];
-    let rect = pageView.viewport.convertToViewportRectangle(valueArray);
-    // rect       = PDFJS.disableTextLayer.normalizeRect(rect);
-    var x = Math.min(rect[0], rect[2]),
-      width = Math.abs(rect[0] - rect[2]);
-    var y = Math.min(rect[1], rect[3]),
-      height = Math.abs(rect[1] - rect[3]);
-    const element = document.createElement('div');
-    element.setAttribute('class', 'overlay-div-synctex');
-    element.style.left = x + 'px';
-    element.style.top = y + 'px';
-    element.style.width = width + 'px';
-    element.style.height = height + 'px';
-    element.style.position = 'absolute';
-    element.style.backgroundColor = 'rgba(200,0,0,0.5)';
-    $('*[data-page-number="' + pageno + '"]').append(element);
-    this.pdfviewer.pdfViewer._scrollIntoView({
-      pageDiv: pageView.div,
-    });
-  }
-
-  onClick(e) {
-    const textLayer = document.getElementsByClassName('TextLayer');
-    const x =
-      window.getSelection().getRangeAt(0).getClientRects()[0].left -
-      textLayer[0].getBoundingClientRect().left;
-    const y =
-      window.getSelection().getRangeAt(0).getClientRects()[0].top -
-      textLayer[0].getBoundingClientRect().top;
-  }
-
-
-
-
-
-
-
-
 
   changeTab(val, currentTab) {
     this.isLCMTab = false;
@@ -1563,7 +1419,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // } else {
     //   this.lineTabBoolean = false;
     // }
-    this.loadImage();
+    // this.loadImage();
   }
   onSelectFileApprove(event) {
     for (let i = 0; i < event.target.files.length; i++) {
@@ -1972,18 +1828,23 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.SpinnerService.hide();
     })
   }
-  open_dialog_comp(str){
+  
+  async open_dialog_comp(str){
     let w = '60%';
-    let h = '70vh';
+    let h = '80vh';
     let response;
     if(str == 'Amend'){
       this.displayrejectDialog = false;
       w = '40%';
       h = '40vh';
     } else if(str == 'flip') {
-      this.exceptionService.getPOLines('').subscribe((data: any) => {
+      try {
+        const data: any = await this.exceptionService.getPOLines('').toPromise();
         response = data.Po_line_details;
-      })
+      } catch (error) {
+        console.error('Error fetching PO lines:', error);
+        return;
+      }
     }
     this.SpinnerService.show();
     const matdrf:MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
@@ -2102,22 +1963,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.currentlyOpenedItemIndex = -1;
     }
   }
-  toggleFullScreen() {
-    const viewerContainer = this.elementRef.nativeElement.querySelector('.docContaner');
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      if (viewerContainer.requestFullscreen) {
-        viewerContainer.requestFullscreen();
-      } else if (viewerContainer.mozRequestFullScreen) { /* Firefox */
-        viewerContainer.mozRequestFullScreen();
-      } else if (viewerContainer.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-        viewerContainer.webkitRequestFullscreen();
-      } else if (viewerContainer.msRequestFullscreen) { /* IE/Edge */
-        viewerContainer.msRequestFullscreen();
-      }
-    }
-  }
+
 
 
   ngOnDestroy() {
@@ -2137,6 +1983,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.tagService.LCM_boolean = false;
     // this.dataService.entityID = undefined;
     // this.SharedService.selectedEntityId = undefined;
+    delete this.SharedService.fileSrc;
     this.vendorsSubscription.unsubscribe();
   }
 }

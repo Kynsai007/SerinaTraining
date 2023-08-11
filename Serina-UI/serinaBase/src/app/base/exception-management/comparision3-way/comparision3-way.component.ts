@@ -42,12 +42,12 @@ import { take } from 'rxjs/operators';
 export class Comparision3WayComponent
   extends FormCanDeactivate
   implements OnInit {
-  @ViewChild('canvas') canvas;
-  zoomX = 1;
-  @ViewChild(PdfViewerComponent, { static: false })
-  private pdfViewer: PdfViewerComponent;
+  // @ViewChild('canvas') canvas;
+  // zoomX = 1;
+  // @ViewChild(PdfViewerComponent, { static: false })
+  // private pdfViewer: PdfViewerComponent;
 
-  @ViewChild('pdfviewer') pdfviewer;
+  // @ViewChild('pdfviewer') pdfviewer;
   @ViewChild('form')
   form: NgForm;
   editable: boolean;
@@ -66,13 +66,13 @@ export class Comparision3WayComponent
   fin_boolean: boolean;
   submitBtn_boolean: boolean;
   approveBtn_boolean: boolean;
-  innerHeight: number;
-  InvoiceHeight: number = 560;
-  zoomdata: number = 1;
-  showInvoice: any;
-  page: number = 1;
-  totalPages: number;
-  isLoaded: boolean = false;
+  // innerHeight: number;
+  // InvoiceHeight: number = 560;
+  // zoomdata: number = 1;
+  // showInvoice: any;
+  // page: number = 1;
+  // totalPages: number;
+  // isLoaded: boolean = false;
   invoiceID: any;
   routeIdCapture: Subscription;
   byteArray: Uint8Array;
@@ -102,7 +102,7 @@ export class Comparision3WayComponent
   po_itemcode: any;
   vendorAcId: any;
   mappedData: any;
-  zoomVal: number = 0.8;
+  // zoomVal: number = 0.8;
 
   isImgBoolean: boolean;
   financeapproveDisplayBoolean: boolean;
@@ -116,7 +116,7 @@ export class Comparision3WayComponent
   content_type: any;
   lineTabBoolean: boolean;
   grnLineCount: any;
-  rotation = 0;
+  // rotation = 0;
   addrejectcmtBool: boolean;
   ap_boolean: boolean;
   // poLineData = [];
@@ -185,6 +185,8 @@ export class Comparision3WayComponent
     { header: 'Quantity', field: 'Quantity'},
     { header: 'Amount', field: 'amount'}
   ];
+  documentViewBool: boolean;
+  isDesktop: boolean;
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -217,6 +219,8 @@ export class Comparision3WayComponent
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
     this.flipEnabled = true;
     this.userDetails = this.authService.currentUserValue;
+    this.isDesktop = this.dataService.isDesktop;
+    this.documentViewBool = this.isDesktop;
     if (this.ap_boolean) {
       this.partytype = 'vendor';
       this.docType = 3;
@@ -234,11 +238,19 @@ export class Comparision3WayComponent
       this.portalName = 'customer'
     }
     this.initialData();
-    this.readFilePath();
+    // this.readFilePath();
     this.AddPermission();
     this.isAdmin = this.dataService.isAdmin;
     this.currentTab = 'line';
     
+  }
+
+  getPdfBool(event){
+    this.isPdfAvailable = event;
+  }
+  doc_view(){
+    this.showPdf = true;
+    this.documentViewBool = !this.documentViewBool
   }
 
   idleTimer(time, str) {
@@ -324,7 +336,7 @@ export class Comparision3WayComponent
         }, 250000);
       }
     }
-    this.onResize();
+    // this.onResize();
     this.editable = this.tagService.editable;
     this.fin_boolean = this.tagService.financeApprovePermission;
     this.submitBtn_boolean = this.tagService.submitBtnBoolean;
@@ -371,8 +383,8 @@ export class Comparision3WayComponent
   }
 
   readDocumentData(){
+    this.SpinnerService.show();
     this.exceptionService.getDocumentDetails().subscribe((data:any)=>{
-      console.log(data)
       this.poLinedata = data.polinedata;
       this.soLinedata = data.solinedata;
       const pushedArrayHeader = [];
@@ -396,6 +408,10 @@ export class Comparision3WayComponent
         this.invoiceNumber = inv_num_data[0]?.Value;
         this.vendorAcId = this.vendorData['idVendorAccount'];
         this.vendorName = this.vendorData['VendorName'];
+        this.SpinnerService.hide();
+    },err=>{ 
+      this.SpinnerService.hide();
+      this.alertFun("Server error");
     })
   }
 
@@ -703,99 +719,99 @@ export class Comparision3WayComponent
     );
   }
 
-  readFilePath() {
-    this.showInvoice = '';
-    this.SpinnerService.show();
-    this.exceptionService.readFilePath().subscribe(
-      (data: any) => {
-        this.content_type = data?.content_type;
-        if (data.filepath && data.content_type == 'application/pdf') {
-          this.isPdfAvailable = false;
-          this.isImgBoolean = false;
-          this.byteArray = new Uint8Array(
-            atob(data.filepath)
-              .split('')
-              .map((char) => char.charCodeAt(0))
-          );
-          this.showInvoice = window.URL.createObjectURL(
-            new Blob([this.byteArray], { type: 'application/pdf' })
-          );
-        } else if (data.content_type == 'image/jpg' || data.content_type == 'image/png') {
-          this.isPdfAvailable = false;
-          this.isImgBoolean = true;
-          this.byteArray = new Uint8Array(
-            atob(data.filepath)
-              .split('')
-              .map((char) => char.charCodeAt(0))
-          );
-          this.showInvoice = window.URL.createObjectURL(
-            new Blob([this.byteArray], { type: data.content_type })
-          );
-          // this.loadImage();
-        } else {
-          this.isPdfAvailable = true;
-          this.showInvoice = '';
-        }
-        this.SpinnerService.hide();
-      },
-      (error) => {
-        this.SpinnerService.hide();
-        this.alertFun("Server error");
-      }
-    );
-  }
+  // readFilePath() {
+  //   this.showInvoice = '';
+  //   this.SpinnerService.show();
+  //   this.exceptionService.readFilePath().subscribe(
+  //     (data: any) => {
+  //       this.content_type = data?.content_type;
+  //       if (data.filepath && data.content_type == 'application/pdf') {
+  //         this.isPdfAvailable = false;
+  //         this.isImgBoolean = false;
+  //         this.byteArray = new Uint8Array(
+  //           atob(data.filepath)
+  //             .split('')
+  //             .map((char) => char.charCodeAt(0))
+  //         );
+  //         this.showInvoice = window.URL.createObjectURL(
+  //           new Blob([this.byteArray], { type: 'application/pdf' })
+  //         );
+  //       } else if (data.content_type == 'image/jpg' || data.content_type == 'image/png') {
+  //         this.isPdfAvailable = false;
+  //         this.isImgBoolean = true;
+  //         this.byteArray = new Uint8Array(
+  //           atob(data.filepath)
+  //             .split('')
+  //             .map((char) => char.charCodeAt(0))
+  //         );
+  //         this.showInvoice = window.URL.createObjectURL(
+  //           new Blob([this.byteArray], { type: data.content_type })
+  //         );
+  //         // this.loadImage();
+  //       } else {
+  //         this.isPdfAvailable = true;
+  //         this.showInvoice = '';
+  //       }
+  //       this.SpinnerService.hide();
+  //     },
+  //     (error) => {
+  //       this.SpinnerService.hide();
+  //       this.alertFun("Server error");
+  //     }
+  //   );
+  // }
 
-  DownloadPDF() {
-    let extension;
-    if (this.content_type == 'application/pdf') {
-      extension = '.pdf';
-    } else if (this.content_type == 'image/jpg') {
-      extension = '.jpg';
-    } else if (this.content_type == 'image/png') {
-      extension = '.png';
-    }
-    fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
-  }
+  // DownloadPDF() {
+  //   let extension;
+  //   if (this.content_type == 'application/pdf') {
+  //     extension = '.pdf';
+  //   } else if (this.content_type == 'image/jpg') {
+  //     extension = '.jpg';
+  //   } else if (this.content_type == 'image/png') {
+  //     extension = '.png';
+  //   }
+  //   fileSaver.saveAs(this.showInvoice, `${this.vendorName}_${this.invoiceNumber}${extension}`);
+  // }
 
-  loadImage() {
-    if (this.isImgBoolean == true) {
-      setTimeout(() => {
-        this.zoomVal = 1;
-        (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
-          'scale(' + this.zoomVal + ')';
+  // loadImage() {
+  //   if (this.isImgBoolean == true) {
+  //     setTimeout(() => {
+  //       this.zoomVal = 1;
+  //       (<HTMLDivElement>document.getElementById('parentDiv')).style.transform =
+  //         'scale(' + this.zoomVal + ')';
 
-        const canvas = <HTMLCanvasElement>document.getElementById('canvas1');
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
-        const ctx = canvas.getContext('2d');
-        let image = new Image();
-        image.src = this.showInvoice;
-        image.onload = function () {
-          // Calculate the aspect ratio of the image
-          const imageAspectRatio = image.width / image.height;
-          // Calculate the aspect ratio of the canvas
-          const canvasAspectRatio = canvas.width / canvas.height;
+  //       const canvas = <HTMLCanvasElement>document.getElementById('canvas1');
+  //       canvas.height = window.innerHeight;
+  //       canvas.width = window.innerWidth;
+  //       const ctx = canvas.getContext('2d');
+  //       let image = new Image();
+  //       image.src = this.showInvoice;
+  //       image.onload = function () {
+  //         // Calculate the aspect ratio of the image
+  //         const imageAspectRatio = image.width / image.height;
+  //         // Calculate the aspect ratio of the canvas
+  //         const canvasAspectRatio = canvas.width / canvas.height;
 
-          // Set the dimensions of the image to fit the canvas while maintaining the aspect ratio
-          let imageWidth, imageHeight;
-          if (imageAspectRatio > canvasAspectRatio) {
-            // The image is wider than the canvas, so set the width of the image to the width of the canvas
-            // and scale the height accordingly
-            imageWidth = canvas.width;
-            imageHeight = imageWidth / imageAspectRatio;
-          } else {
-            // The image is taller than the canvas, so set the height of the image to the height of the canvas
-            // and scale the width accordingly
-            imageHeight = canvas.height;
-            imageWidth = imageHeight * imageAspectRatio;
-          }
+  //         // Set the dimensions of the image to fit the canvas while maintaining the aspect ratio
+  //         let imageWidth, imageHeight;
+  //         if (imageAspectRatio > canvasAspectRatio) {
+  //           // The image is wider than the canvas, so set the width of the image to the width of the canvas
+  //           // and scale the height accordingly
+  //           imageWidth = canvas.width;
+  //           imageHeight = imageWidth / imageAspectRatio;
+  //         } else {
+  //           // The image is taller than the canvas, so set the height of the image to the height of the canvas
+  //           // and scale the width accordingly
+  //           imageHeight = canvas.height;
+  //           imageWidth = imageHeight * imageAspectRatio;
+  //         }
 
-          // Draw the image on the canvas
-          ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
-        };
-      }, 50);
-    }
-  }
+  //         // Draw the image on the canvas
+  //         ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
+  //       };
+  //     }, 50);
+  //   }
+  // }
 
   onChangeValue(key, value, data) {
     // this.inputData[0][key]=value;
@@ -856,25 +872,25 @@ export class Comparision3WayComponent
     }
   }
 
-  zoomin() {
-    this.zoomVal = this.zoomVal + 0.2;
-    this.zoomX = this.zoomX + 0.05;
-    if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
-      this.zoomVal = 1;
-      this.zoomX = 1;
-    }
-    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
-  }
+  // zoomin() {
+  //   this.zoomVal = this.zoomVal + 0.2;
+  //   this.zoomX = this.zoomX + 0.05;
+  //   if (this.zoomVal >= 2.0 && this.zoomX >= 2.0) {
+  //     this.zoomVal = 1;
+  //     this.zoomX = 1;
+  //   }
+  //   (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
+  // }
 
-  zoomout(index) {
-    this.zoomVal = this.zoomVal - 0.2;
-    this.zoomX = this.zoomX - 0.05;
-    if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
-      this.zoomVal = 1;
-      this.zoomX = 1;
-    }
-    (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
-  }
+  // zoomout(index) {
+  //   this.zoomVal = this.zoomVal - 0.2;
+  //   this.zoomX = this.zoomX - 0.05;
+  //   if (this.zoomVal <= 0.5 && this.zoomX <= 0.8) {
+  //     this.zoomVal = 1;
+  //     this.zoomX = 1;
+  //   }
+  //   (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
+  // }
 
   approveChangesBatch() {
     this.getInvoiceFulldata();
@@ -1073,35 +1089,35 @@ export class Comparision3WayComponent
       this._location.back();
     }
   }
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.innerHeight = window.innerHeight;
-    if (this.innerHeight > 550 && this.innerHeight < 649) {
-      this.InvoiceHeight = 500;
-    } else if (this.innerHeight > 650 && this.innerHeight < 700) {
-      this.InvoiceHeight = 560;
-    } else if (this.innerHeight > 750) {
-      this.InvoiceHeight = 660;
-    }
-  }
-  zoomIn() {
-    this.zoomdata = this.zoomdata + 0.1;
-  }
-  zoomOut() {
-    this.zoomdata = this.zoomdata - 0.1;
-  }
-  afterLoadComplete(pdfData: any) {
-    this.totalPages = pdfData.numPages;
-    this.isLoaded = true;
-  }
+  // @HostListener('window:resize', ['$event'])
+  // onResize() {
+  //   this.innerHeight = window.innerHeight;
+  //   if (this.innerHeight > 550 && this.innerHeight < 649) {
+  //     this.InvoiceHeight = 500;
+  //   } else if (this.innerHeight > 650 && this.innerHeight < 700) {
+  //     this.InvoiceHeight = 560;
+  //   } else if (this.innerHeight > 750) {
+  //     this.InvoiceHeight = 660;
+  //   }
+  // }
+  // zoomIn() {
+  //   this.zoomdata = this.zoomdata + 0.1;
+  // }
+  // zoomOut() {
+  //   this.zoomdata = this.zoomdata - 0.1;
+  // }
+  // afterLoadComplete(pdfData: any) {
+  //   this.totalPages = pdfData.numPages;
+  //   this.isLoaded = true;
+  // }
 
-  nextPage() {
-    this.page++;
-  }
+  // nextPage() {
+  //   this.page++;
+  // }
 
-  prevPage() {
-    this.page--;
-  }
+  // prevPage() {
+  //   this.page--;
+  // }
 
   viewPdf() {
     this.showPdf = !this.showPdf;
@@ -1111,12 +1127,12 @@ export class Comparision3WayComponent
       this.btnText = 'Close';
     }
     if (this.isImgBoolean == true) {
-      this.loadImage();
+      // this.loadImage();
     }
   }
-  rotate(angle: number) {
-    this.rotation += angle;
-  }
+  // rotate(angle: number) {
+  //   this.rotation += angle;
+  // }
 
   filterPO(event) {
     let filtered: any[] = [];
@@ -1463,18 +1479,22 @@ export class Comparision3WayComponent
     })
   }
 
-  open_dialog_comp(str) {
+  async open_dialog_comp(str) {
     let w = '60%';
-    let h = '70vh';
+    let h = '80vh';
     let response;
     if (str == 'Amend') {
       this.displayrejectDialog = false;
       w = '40%';
       h = '40vh';
     } else if(str == 'flip line') {
-      this.exceptionService.getPOLines('').subscribe((data: any) => {
+      try {
+        const data: any = await this.exceptionService.getPOLines('').toPromise();
         response = data.Po_line_details;
-      })
+      } catch (error) {
+        console.error('Error fetching PO lines:', error);
+        return;
+      }
     } else if(str == 'poMaster'){
       response = this.vendorAcId;
     }
@@ -1650,22 +1670,22 @@ export class Comparision3WayComponent
   //     this.alertFun('Server error');
   //   })
   // }
-  toggleFullScreen() {
-    const viewerContainer = this.elementRef.nativeElement.querySelector('.docContaner');
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      if (viewerContainer.requestFullscreen) {
-        viewerContainer.requestFullscreen();
-      } else if (viewerContainer.mozRequestFullScreen) { /* Firefox */
-        viewerContainer.mozRequestFullScreen();
-      } else if (viewerContainer.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-        viewerContainer.webkitRequestFullscreen();
-      } else if (viewerContainer.msRequestFullscreen) { /* IE/Edge */
-        viewerContainer.msRequestFullscreen();
-      }
-    }
-  }
+  // toggleFullScreen() {
+  //   const viewerContainer = this.elementRef.nativeElement.querySelector('.docContaner');
+  //   if (document.fullscreenElement) {
+  //     document.exitFullscreen();
+  //   } else {
+  //     if (viewerContainer.requestFullscreen) {
+  //       viewerContainer.requestFullscreen();
+  //     } else if (viewerContainer.mozRequestFullScreen) { /* Firefox */
+  //       viewerContainer.mozRequestFullScreen();
+  //     } else if (viewerContainer.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+  //       viewerContainer.webkitRequestFullscreen();
+  //     } else if (viewerContainer.msRequestFullscreen) { /* IE/Edge */
+  //       viewerContainer.msRequestFullscreen();
+  //     }
+  //   }
+  // }
   alertFun(txt) {
     this.AlertService.errorObject.detail = txt;
     this.messageService.add(this.AlertService.errorObject);
@@ -1691,6 +1711,7 @@ export class Comparision3WayComponent
     this.dataService.grnWithPOBoolean = false;
     this.dataService.poLineData = [];
     delete this.dataService.arenaMasterData;
+    delete this.SharedService.fileSrc;
     this.mat_dlg.closeAll();
   }
 }

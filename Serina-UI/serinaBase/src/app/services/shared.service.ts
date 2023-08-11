@@ -66,6 +66,7 @@ export class SharedService {
   po_num:string;
   spAccountSub = new BehaviorSubject<any>([])
   docType: any;
+  fileSrc: string;
 
   constructor(private http: HttpClient) { }
 

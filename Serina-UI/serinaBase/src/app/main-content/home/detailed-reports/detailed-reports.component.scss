@@ -18,6 +18,9 @@
     left: 0px;
     width: 100%;
   }
+  .l-52 {
+    left: 52%;
+  }
   @media screen and (max-width:1300px) {
     .filter_inputDash {
       top: 83px;
@@ -32,5 +35,35 @@
     .charts_height {
       position: relative;
       top: 20px;
+    }
+  }
+  @media screen and (max-width:576px){
+    .filter_inputDash {
+      position: absolute;
+      top: 88px;
+      background: black;
+      width: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+      margin: 0;
+    }
+    .filter_mob {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .charts_height {
+      top: 35px;
+    }
+    .flx_wrp {
+      flex-wrap: wrap;
+    }
+    .chart_title {
+      position: relative;
+      top: 0px;
+      width: 100%;
+      left: 0;
+    }
+    .l-52 {
+      left: 0;
     }
   }

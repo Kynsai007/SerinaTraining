@@ -1,6 +1,6 @@
 import { SharedService } from 'src/app/services/shared.service';
 import { Router } from '@angular/router';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
@@ -32,16 +32,23 @@ export class TableComponent implements OnInit {
     private alertService: AlertService,
     private sharedService : SharedService,
     private messageService: MessageService,
-    private storageService : DataService
+    private ds : DataService
   ) {}
 
   ngOnInit(): void {
-    this.ap_boolean = this.storageService.ap_boolean;
+    this.ap_boolean = this.ds.ap_boolean;
+
     this.findRutesForDownloadOption();
     if (this.router.url.includes('home')) {
       this.dashboardViewBoolean = true;
     } else {
       this.dashboardViewBoolean = false;
+    }
+  }
+
+  ngOnChanges(changes:SimpleChanges) {
+    if(!this.ds.isDesktop){
+      this.showPaginator = false;
     }
   }
 

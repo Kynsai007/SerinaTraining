@@ -3,7 +3,7 @@
 @import "~font-awesome/css/font-awesome.css";
 
 * {
-    font-family: "Segoe UI Regular", "Segoe UI", Arial;
+    font-family: "Popins Regular", "Segoe UI", Arial;
 }
 html,
 body {
@@ -1082,6 +1082,20 @@ option:hover {
   .l-52 {
     left: 52% !important;
   }
+  .drill_div {
+    // max-width: 120px;
+    display: inline-block;
+    word-break: break-word;
+  }
+  .drill_tr {
+    flex-wrap: wrap;
+    display: flex;
+    width: 94vw;
+    padding: 5px 10px;
+    position: relative;
+    left: -2px;
+    gap: 5px 14px;
+  }
   @media screen and (max-width: 576px){ 
     .d_mobile {
         display: block;
@@ -1091,7 +1105,7 @@ option:hover {
      }
      .p-datatable .p-datatable-tbody > tr > td {
         text-overflow:clip !important;
-        font-size: 12px !important;
+        font-size: 11px !important;
         white-space: normal !important;
      }
      .p-datatable .p-datatable-thead > tr > th {
@@ -1099,6 +1113,10 @@ option:hover {
         font-size: 12px !important;
         white-space: normal !important;
      }
+      .p-datatable table {
+        border-spacing: 0 5px !important;
+        // border-collapse: separate !important;
+      }
      .sideBar {
         width:167px !important;
      }
@@ -1114,6 +1132,10 @@ option:hover {
     }
     .p-calendar .p-inputtext {
         width: 110px !important;
+    }
+    .container-fluid {
+        padding-left: 9px !important;
+        padding-right: 9px !important;
     }
   }
   @media screen and(max-width:800px) {

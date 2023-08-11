@@ -24,7 +24,7 @@
       (ngSubmit)="onSubmit(polines.value)"
     >
       <div class="tb_div">
-        <table class="table table-bordered f-11" *ngIf="POLineData[0]?.Name">
+        <table class="table table-bordered f-11" *ngIf="POLineData.length>0">
           <tr class="f-12 tb_head">
             <th>
               <input
@@ -274,15 +274,33 @@
         role="tabpanel"
         aria-labelledby="order-tab"
       >
+        <div>
+          <input type="text" class="form-control f-12" placeholder="Search" (keyup)="onSearch($event.target.value,'order')" />
+        </div>
         <table class="table f-12">
           <tr class="tHead">
             <th *ngFor="let head of lineTable">{{ head }}</th>
           </tr>
           <tr
-            *ngFor="let poLine of orderHistoryData?.order_history; let i = index"
+            *ngFor="
+              let poLine of orderHistoryData?.order_history;
+              let i = index
+            "
             class="tbdytr"
           >
-            <td>{{ poLine.Description }}</td>
+            <td>
+              <input
+                type="checkbox"
+                class="pos-r mr-1"
+                style="top: 4px"
+                [name]="poLine.Description"
+                [id]="poLine.idDocumentLineItems"
+                (change)="onSelectMaster($event.target.checked, poLine)"
+              />
+              <label [for]="poLine.idDocumentLineItems">{{
+                poLine.Description
+              }}</label>
+            </td>
             <td>{{ poLine.Unit }}</td>
             <td>{{ poLine.UnitPrice }}</td>
             <td>{{ poLine.Quantity }}</td>
@@ -303,12 +321,30 @@
         role="tabpanel"
         aria-labelledby="master-tab"
       >
+        <div>
+          <input type="text" class="form-control f-12" placeholder="Search" (keyup)="onSearch($event.target.value,'master')"/>
+        </div>
         <table class="table f-12">
           <tr class="tHead">
             <th *ngFor="let head of lineTable">{{ head }}</th>
           </tr>
-          <tr *ngFor="let poLine of orderHistoryData?.master_data; let i = index" class="tbdytr">
-            <td>{{ poLine.description }}</td>
+          <tr
+            *ngFor="let poLine of orderHistoryData?.master_data; let i = index"
+            class="tbdytr"
+          >
+            <td>
+              <input
+                type="checkbox"
+                class="pos-r mr-1"
+                style="top: 4px"
+                name="description"
+                [id]="poLine.iditemmetadata"
+                (change)="onSelectMaster($event.target.checked, poLine)"
+              />
+              <label [for]="poLine.iditemmetadata">{{
+                poLine.description
+              }}</label>
+            </td>
             <!-- <td>{{ poLine.Unit }}</td>
             <td>{{ poLine.UnitPrice }}</td>
             <td>{{ poLine.Quantity }}</td> -->

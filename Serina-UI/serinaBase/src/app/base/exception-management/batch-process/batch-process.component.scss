@@ -20,3 +20,25 @@
 .tableDataDiv {
   max-height: 78vh;
 }
+@media screen and (max-width: 800px) {
+  .tableDiv {
+    max-height: 86vh;
+    min-height: 72vh;
+    position: relative;
+    top: 40px;
+  }
+  .filter_input {
+    top: 103px !important;
+    right: auto !important;
+  }
+  .positionCreateUpload {
+    right: 11px;
+    top: 103px;
+  }
+  :host ::ng-deep {
+    .searchBar {
+      top: 93px !important;
+      right: 40px !important;
+    }
+  }
+ }

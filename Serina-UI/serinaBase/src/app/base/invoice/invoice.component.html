@@ -129,7 +129,7 @@
               >
             </li>
           </ul>
-          <ul class="nav nav-tabs d-inline-block" *ngIf="usertypeBoolean && serviceInvoiceAccess "
+          <ul class="nav nav-tabs d-inline-block service_navs" *ngIf="usertypeBoolean && serviceInvoiceAccess "
               [ngClass]="!vendorInvoiceAccess ? 'mr-2':'ml-2'">
             <li class="nav-item service">
               <a
@@ -237,14 +237,7 @@
                 *ngIf="route.url == GRNTab"
               ></app-all-invoices>
 
-              <!-- <app-grn
-                [tableData]="GRNDispalyData"
-                [showPaginatorGRNTable]="showPaginatorGRNTable"
-                (searchInvoiceData)="searchInvoiceDataV($event)"
-                (paginationEvent) = "paginate($event)"
-                *ngIf="route.url == GRNTab"
-              ></app-grn> -->
-              <!-- <app-pip [tableData]="receiptDispalyData" (searchInvoiceData)="searchInvoiceDataV($event)" *ngIf="route.url == '/customer/invoice/paymentInprogress'"></app-pip> -->
+              
               <app-all-invoices
                 [tableData]="archivedDisplayData"
                 [invoiceColumns]="archivedColumns"

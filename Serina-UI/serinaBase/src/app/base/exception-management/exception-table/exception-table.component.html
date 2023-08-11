@@ -48,7 +48,10 @@
           >
             {{ col.header }}
           </th>
-          <th [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}" class="action_Zindex">Actions</th>
+          <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
+            [ngStyle]="{'width': isDesktop? 'auto':'56px'}">
+            Actions
+          </th>
         </tr>
         <tr *ngIf="!batchBoolean">
           <th
@@ -61,7 +64,10 @@
           >
             {{ col.header }}
           </th>
-          <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">Actions</th>
+          <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
+            [ngStyle]="{'width': isDesktop? 'auto':'56px'}">
+            Actions
+          </th>
         </tr>
         <tr>
           <td *ngFor="let col of columns" class="sticky_top">
@@ -191,7 +197,7 @@
               </div>
             </div>
           </td>
-          <td>
+          <td *ngIf="isDesktop">
             <i
               *ngIf="
                 !router.url.includes('ExceptionManagement') &&
@@ -212,6 +218,19 @@
 
             <!-- <i *ngIf="router.url == '/customer/invoice/allInvoices'" pTooltip="Click here to view Full Status details" tooltipPosition="left" class="fa fa-info-circle actionsBtn" (click)="viewStatusPage(invoiceData)"></i> -->
           </td>
+          <td *ngIf="!isDesktop">
+            <i
+              class="fa fa-pencil-square-o f-13 mr-2 font_weight_500"
+              (click)="editInvoice(invoiceData)"
+            ></i>
+            <i *ngIf="router.url.includes('ExceptionManagement')" class="fa fa-chevron-down pointer" aria-hidden="true" (click)="clickDrildown(invoiceData)"></i>
+          </td>
+        </tr>
+        <tr *ngIf="drillBool && invoiceData.idDocument == docId" class="drill_tr mob_tr">
+          <div *ngFor="let data of drilldownarray" class="drill_div">
+            <div class="f-12">{{data.header}}</div>
+            <div class="f-11">{{data.field}}</div>
+          </div>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

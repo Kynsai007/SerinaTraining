@@ -220,12 +220,14 @@
 .count-h {
   min-height: 70px
 }
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1145px) {
   .GRN_btn_position {
     bottom: 15px;
     left: 10px;
     position: absolute;
     display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     justify-content: center;
     right: unset;
     top: unset;

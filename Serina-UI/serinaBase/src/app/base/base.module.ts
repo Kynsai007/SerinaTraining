@@ -51,6 +51,7 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { SalesOrderMappingComponent } from './exception-management/sales-order-mapping/sales-order-mapping.component';
 import { PoLinesComponent } from './exception-management/po-lines/po-lines.component';
 import { MappedGRNComponent } from './exception-management/mapped-grn/mapped-grn.component';
+import { PDFviewComponent } from './exception-management/pdfview/pdfview.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +95,8 @@ import { MappedGRNComponent } from './exception-management/mapped-grn/mapped-grn
     ConfirmationComponent,
     SalesOrderMappingComponent,
     PoLinesComponent,
-    MappedGRNComponent
+    MappedGRNComponent,
+    PDFviewComponent
   ],
   imports: [
     CommonModule,
@@ -119,7 +121,11 @@ import { MappedGRNComponent } from './exception-management/mapped-grn/mapped-grn
     PopupComponent,
     PoLinesComponent,
     MappedGRNComponent,
-    ConfirmationComponent
+    ConfirmationComponent,
+    SalesOrderMappingComponent,
+    PoLinesComponent,
+    MappedGRNComponent,
+    PDFviewComponent
   ],
   providers: [
     DatePipe,

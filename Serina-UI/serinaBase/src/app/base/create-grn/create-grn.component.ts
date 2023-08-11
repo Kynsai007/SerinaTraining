@@ -63,6 +63,7 @@ export class CreateGRNComponent implements OnInit {
   poNumbersList: any;
   poLineData: any;
   @ViewChild('PO_GRNForm')PO_GRNForm : NgForm
+  isDesktop: boolean;
   constructor(
     private tagService: TaggingService,
     private ImportExcelService: ImportExcelService,
@@ -72,13 +73,17 @@ export class CreateGRNComponent implements OnInit {
     private alertService: AlertService,
     private router: Router,
     private permissionService : PermissionService,
-    private dataS : DataService,
+    private ds : DataService,
     private md: MatDialog
   ) { }
 
   ngOnInit(): void {
     if(this.permissionService.GRNPageAccess == true){
       this.viewType = this.tagService.GRNTab;
+      this.isDesktop = this.ds.isDesktop;
+      if(!this.isDesktop){
+        this.mob_columns()
+      }
       this.prepareColumnsArray();
       this.readTableData('');
       if(this.sharedService.po_num){
@@ -90,6 +95,18 @@ export class CreateGRNComponent implements OnInit {
       this.router.navigate(['customer/invoice/allInvoices'])
     }
 
+  }
+
+  mob_columns() {
+    this.ColumnsForGRN = [
+      { field: 'docheaderID', header: 'Invoice Number' },
+      { field: 'VendorName', header: 'Vendor Name' },
+      // { field: 'Name', header: 'Rule' },
+      // { field: 'CreatedOn', header: 'Uploaded Date' },
+      { field: 'PODocumentID', header: 'PO number' },
+      // { field: 'status', header: 'Status' },
+      // { field: 'totalAmount', header: 'Amount' },
+    ];
   }
 
   
@@ -174,7 +191,7 @@ export class CreateGRNComponent implements OnInit {
     })
   }
   readEntity(){
-    this.dataS.entityData.subscribe((data:[])=>{
+    this.ds.entityData.subscribe((data:[])=>{
       this.entityList = data;
     })
   }
@@ -319,9 +336,9 @@ export class CreateGRNComponent implements OnInit {
     
   }
   routeToGRN(val){
-    this.dataS.GRN_PO_Data = [];
-    this.dataS.grnWithPOBoolean = true;
-    this.dataS.GRN_PO_Data = val.PO_GRN_Number_line;
+    this.ds.GRN_PO_Data = [];
+    this.ds.grnWithPOBoolean = true;
+    this.ds.GRN_PO_Data = val.PO_GRN_Number_line;
     this.router.navigate([
       `customer/Create_GRN_inv_list/Inv_vs_GRN_details/${val.PONumber.idDocument}`,
     ]);

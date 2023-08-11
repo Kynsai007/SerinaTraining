@@ -27,6 +27,8 @@ export class PopupComponent implements OnInit {
   lineTable = [ 'Description','Unit','Price','Quantity'];
   orderHistoryData: any;
   masterData: any;
+  orderData: any;
+  textlngth: any;
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -73,10 +75,12 @@ export class PopupComponent implements OnInit {
   }
 
   flipPOFun(){
+    console.log(this.data.resp)
     this.POLineData = this.data.resp;
     this.POLineData.forEach(val => {
       val.isSelected = false;
     })
+    console.log(this.POLineData);
   }
   onSubmit(value) {
     this.spin.show();
@@ -212,8 +216,39 @@ export class PopupComponent implements OnInit {
       console.log(data);
       this.ds.arenaMasterData = data;
       this.orderHistoryData = data;
-      // this.masterData = data.master_data;
+      this.orderData = data.order_history;
+      this.masterData = data.master_data;
     })
   }
 
+  onSelectMaster(evnt,poLine) {
+    console.log(evnt,poLine);
+  }
+
+  onSearch(val,tab){
+    let dataArray ;
+    let dataField:string ;
+    let field:string;
+    if(tab == 'order') {
+      dataArray = this.orderData;
+      dataField = "order_history";
+      field = 'Description';
+    } else if(tab == 'master') {
+      dataArray = this.masterData;
+      dataField = "master_data";
+      field = 'description';
+    }
+    if(val != ''){
+      if(val.length < this.textlngth){
+        this.orderHistoryData[dataField] = dataArray;
+      }
+      this.textlngth = val.length;
+      this.orderHistoryData[dataField] = this.orderHistoryData[dataField].filter((el)=>{
+        return el[field].toLowerCase().includes(val.toLowerCase());
+      })
+    } else {
+      this.orderHistoryData[dataField] = dataArray;
+    }
+    console.log(this.orderHistoryData[dataField])
+  }
 }

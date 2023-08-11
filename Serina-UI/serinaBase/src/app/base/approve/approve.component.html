@@ -84,12 +84,8 @@
                   >
                     {{ col.header }}
                   </th>
-                  <th
-                    *ngIf="!dashboardViewBoolean"
-                    class="action_Zindex"
-                    style="width: 6%"
-                    [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
-                  >
+                  <th *ngIf="!dashboardViewBoolean" class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
+                    [ngStyle]="{'width': isDesktop? '6%':'56px'}">
                     Actions
                   </th>
                 </tr>

@@ -38,7 +38,7 @@
           <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
         </div> -->
       
-        <div  [ngSwitch]="viewType" style="padding: 10px">
+        <div  [ngSwitch]="viewType" style="padding:10px">
           <!-- Process invoices Tab -->
           <div *ngSwitchCase="'Process'">
             <process-metrics></process-metrics>

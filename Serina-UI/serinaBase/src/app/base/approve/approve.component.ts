@@ -69,6 +69,7 @@ export class ApproveComponent implements OnInit {
   ColumnLengthSP: number;
   dashboardViewBoolean: boolean;
   ap_boolean: any;
+  isDesktop: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -76,7 +77,7 @@ export class ApproveComponent implements OnInit {
     private sharedService: SharedService,
     private dateFilterService: DateFilterService,
     private SpinnerService: NgxSpinnerService,
-    private storageService: DataService,
+    private ds: DataService,
     private permissionService: PermissionService,
     private ImportExcelService: ImportExcelService
   ) {}
@@ -87,22 +88,40 @@ export class ApproveComponent implements OnInit {
     this.readServiceInvoiceData();
     this.findColumns();
     this.dateRange();
+
   }
 
   init() {
     this.editPermissionBoolean = this.permissionService.editBoolean;
-    this.ap_boolean = this.storageService.ap_boolean;
+    this.ap_boolean = this.ds.ap_boolean;
+    this.isDesktop = this.ds.isDesktop;
+    if(!this.isDesktop) {
+      this.mob_columns();
+    }
     this.tagService.headerName = 'Approve';
     this.viewType = this.tagService.aprrovalPageTab;
-    this.first = this.storageService.approvalVendorPaginationFirst;
-    this.rows = this.storageService.approvalVendorPaginationRowLength;
-    this.first_service = this.storageService.approvalServicePaginationFirst;
-    this.rows_service = this.storageService.approvalServicePaginationRowLength;
+    this.first = this.ds.approvalVendorPaginationFirst;
+    this.rows = this.ds.approvalVendorPaginationRowLength;
+    this.first_service = this.ds.approvalServicePaginationFirst;
+    this.rows_service = this.ds.approvalServicePaginationRowLength;
     if (this.router.url.includes('home')) {
       this.dashboardViewBoolean = true;
     } else {
       this.dashboardViewBoolean = false;
     }
+  }
+
+  mob_columns(){
+    this.ApprovedColumn = [
+      { field: 'docheaderID', header: 'Invoice Number' },
+      { field: 'VendorName', header: 'Vendor Name' },
+      { field: 'EntityName', header: 'Entity' },
+      // { field: 'documentdescription', header: 'Description' },
+      // { field: 'Approvaltype', header: 'Approval type' },
+      { field: 'PODocumentID', header: 'PO Number' },
+      // { field: 'UpdatedOn', header: 'Last Modified' },
+      // { field: 'totalAmount', header: 'Amount' },
+    ];
   }
 
   findColumns() {
@@ -215,14 +234,14 @@ export class ApproveComponent implements OnInit {
 
   paginateService(event) {
     this.first_service = event.first;
-    this.storageService.approvalServicePaginationFirst = this.first_service;
-    this.storageService.approvalServicePaginationRowLength = event.rows;
+    this.ds.approvalServicePaginationFirst = this.first_service;
+    this.ds.approvalServicePaginationRowLength = event.rows;
   }
 
   paginateVendor(event) {
     this.first = event.first;
-    this.storageService.approvalVendorPaginationFirst = this.first;
-    this.storageService.approvalVendorPaginationRowLength = event.rows;
+    this.ds.approvalVendorPaginationFirst = this.first;
+    this.ds.approvalVendorPaginationRowLength = event.rows;
   }
 
   searchImport(value) {

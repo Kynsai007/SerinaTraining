@@ -91,3 +91,25 @@
   margin-top: 20px;
   margin-right: 20px;
 }
+@media screen and (max-width: 576px) { 
+  .card-div {
+    min-width: 43vw;
+  }
+  .down_filter {
+    float: none;
+    margin-top: 10px;
+    margin-right: 5px; 
+    flex-wrap: wrap;
+  }
+  .selectFilter {
+    width: 130px;
+  }
+}
+@media screen and (max-width: 800px) and (min-width: 577px) { 
+  .card-div {
+    min-width: 27vw;
+  }
+  .pt-55 {
+    padding-top: 55px !important;
+  }
+}

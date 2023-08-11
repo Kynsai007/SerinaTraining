@@ -1,6 +1,7 @@
-<div>
+
     <div class="filter_inputDash">
-        <p-calendar
+        <div class="filter_mob">
+          <p-calendar
           [(ngModel)]="rangeDates"
           selectionMode="range"
           [minDate]="minDate"
@@ -14,6 +15,7 @@
         ></p-calendar>
         <button class="act_btn mr-2 ml-2" (click)="filterByDate(rangeDates)">
           <i class="fa fa-filter"></i></button>
+        </div>
       </div>
     <div class="charts_height">
         <!-- <div class="d-flex justify-content-between mt-2" style="position: relative">
@@ -36,7 +38,7 @@
           </div>
           
         </div> -->
-        <div class="d-flex justify-content-between mt-2" style="position: relative">
+        <div class="d-flex justify-content-between mt-2 flx_wrp" style="position: relative">
           <div class="chart_title f-12">Aging in Serina</div>
           <div class="chart_div">
             <div [ngStyle]="{'visibility': !noDataAgeboolean ? 'visible':'hidden'}" id="vendor_clm_chart1_v" ></div>
@@ -45,7 +47,7 @@
             </div>
           </div>
           
-          <div class="chart_title f-12" style="left: 52%">
+          <div class="chart_title f-12 l-52">
             Most ordered items
           </div>
           <div class="chart_div">
@@ -78,4 +80,3 @@
           <p style="color: rgb(0, 0, 0)"></p>
         </ngx-spinner>
     </div>
-</div>

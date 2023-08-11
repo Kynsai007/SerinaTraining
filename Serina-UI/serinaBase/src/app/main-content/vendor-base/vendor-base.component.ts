@@ -1,7 +1,7 @@
 import { ServiceInvoiceService } from './../../services/serviceBased/service-invoice.service';
 import { DocumentService } from './../../services/vendorPortal/document.service';
 import { SharedService } from './../../services/shared.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
@@ -32,7 +32,10 @@ export class VendorBaseComponent implements OnInit {
   menubarBoolean: boolean;
   excpetionPageAccess: boolean;
   uploadPermissionBoolean: boolean;
-
+  ap_boolean:boolean;
+  isDesktop:boolean;
+  sidebarMode = 'side';
+  timezone: string;
   constructor(private router:Router,
     private settingService : SettingsService,
     private SharedService:SharedService,
@@ -43,7 +46,8 @@ export class VendorBaseComponent implements OnInit {
     private chartService: ChartsService,
     private exceptionService: ExceptionsService,
     private serviceproviderService : ServiceInvoiceService,
-    private DS : DataService) { 
+    private DS : DataService,
+    private renderer: Renderer2) { 
       this.subscription = this.SharedService.getMessage().subscribe(message => {
         this.numberOfNotify = message.Arraylength;
         // if (this.SharedService.keepLogin === true) {
@@ -68,6 +72,8 @@ export class VendorBaseComponent implements OnInit {
     } else {
       this.DS.portalName = 'customer'
     }
+    this.getUserTimezone();
+    this.appendScript();
     this.SharedService.userId = this.userDetails.userdetails.idUser;
     this.serviceproviderService.userId = this.userDetails.userdetails.idUser
     this.SharedService.isCustomerPortal = false;
@@ -82,8 +88,24 @@ export class VendorBaseComponent implements OnInit {
     this.last_login = this.userDetails.last_login;
     this.readVendor();
     this.getPermissions();
+    
     // this.getNotification();
     
+  }
+  appendScript (){
+    if(window.screen.width >= 576){
+      this.sidebarMode = 'side';
+      this.isDesktop = true;
+      this.DS.isDesktop = true;
+    } else {
+      this.sidebarMode = 'over';
+      this.isDesktop = false;
+      this.DS.isDesktop = false;
+    }
+    const script = this.renderer.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://datasemanticschatbots.in/bot_script/Serina Bot/cGluZWFwcGxl';
+
   }
   readConfig(){
     this.settingService.readConfig().subscribe((data:any)=>{
@@ -164,6 +186,10 @@ export class VendorBaseComponent implements OnInit {
   }
   onClickMenu(){
     this.menubarBoolean = !this.menubarBoolean
+  }
+  getUserTimezone(): void {
+    const date = new Date();
+    this.timezone = date.toLocaleTimeString('en', { timeZoneName: 'short' }).split(' ')[2];
   }
   logout(){
     this.authService.logout('');

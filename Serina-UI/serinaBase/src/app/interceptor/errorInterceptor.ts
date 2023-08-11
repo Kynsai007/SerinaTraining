@@ -19,9 +19,13 @@ export class ErrorInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
         return next.handle(request).pipe( catchError((err:HttpErrorResponse) => {
           if(err.status === 401 && !(request.url.includes('login'))){
+            let count = 0;
             if(!this.router.url.includes("/login")){
               this.authService.logout('');
-              alert("Session Expired! Please re-login!");
+              count++
+              if(count <= 1){
+                alert("Session Expired! Please re-login!");
+              }
             }
           }else if(err.status == 502 || 0){
             // alert("System under maintenance");

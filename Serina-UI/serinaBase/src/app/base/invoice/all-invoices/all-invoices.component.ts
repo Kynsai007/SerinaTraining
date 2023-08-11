@@ -75,12 +75,33 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   isAdmin: boolean;
   ERP: string;
   invoceDoctype = false;
+  isDesktop: boolean;
+  drilldownarray = [];
+  drillBool: boolean;
+  docId;
+  // mob_bg_tr = [
+  //   { id:4, name:'Need To Review', borderClr:'#DBD51C', bgClr: '#FEFFD6'},
+  //   { id:2, name: 'Processing Document', borderClr:'#7C83CF', bgClr: '#F3F4FF'},
+  //   { id:1, name: 'System Check In - Progress', borderClr:'#F3BC45', bgClr: '#FEF9EC'},
+  //   { id:4, borderClr:'', bgClr: ''},
+  //   { id:7, name :'Sent to ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+  //   { id:8, name :'Payment Cleared', bgcolor: '#ECF9ED', textColor :'#3EB948'},
+  //   { id:9, name :'Payment Partially Paid', bgcolor: '#F1EBFF', textColor :'#6A5894'},
+  //   { id:10, name :'Invoice Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C'},
+  //   { id:11, name :'Payment Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C'},
+  //   { id:12, name :'PO Open', bgcolor: '#ECF9ED', textColor :'#3EB948'},
+  //   { id:13, name :'PO Closed', bgcolor: '#E9E9E9', textColor :'#4D4A4A'},
+  //   { id:16, name :'ERP Exception', bgcolor: '#fff3e0', textColor :'#b7925b'},
+  //   { id:15, name :'Mismatch value/s', bgcolor: '#ddebc5', textColor :'#818549'},
+  //   { id:14, name :'Posted In ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+  //   { id:24, name :'Set Approval', bgcolor: '#ECF9ED', textColor :'#3EB948'},
+  // ]
 
   constructor(
     private tagService: TaggingService,
     public router: Router,
     private authService: AuthenticationService,
-    private storageService: DataService,
+    private ds: DataService,
     private sharedService: SharedService,
     private AlertService :AlertService,
     private messageService :MessageService,
@@ -96,20 +117,25 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       })
       this.statusData = new Set(mergedStatus);
     }
+    if(!this.isDesktop) {
+      this.showPaginatorAllInvoice = false;
+    } 
   }
 
   ngOnInit(): void {
     this.userType = this.authService.currentUserValue['user_type'];
     let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
+    this.isDesktop = this.ds.isDesktop;
+    
     if(userRole == 'customer super admin' || userRole == 'ds it admin'){
       this.isAdmin = true;
     } else {
       this.isAdmin = false;
     }
-    if(this.storageService.ap_boolean){
+    if(this.ds.ap_boolean){
       this.invoceDoctype = true;
     }
-    this.bgColorCode = this.storageService.bgColorCode;
+    this.bgColorCode = this.ds.bgColorCode;
     this.visibleSidebar2 = this.sharedService.sidebarBoolean;
     this.getRowsData();
     // this.getColumnData();
@@ -132,8 +158,8 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   getRowsData() {
     
     if (this.router.url.includes('allInvoices')) {
-      this.first = this.storageService.allPaginationFirst;
-      this.rows = this.storageService.allPaginationRowLength;
+      this.first = this.ds.allPaginationFirst;
+      this.rows = this.ds.allPaginationRowLength;
       this.stateTable = 'allInvoices';
       this.filter('All')
       let stItem:any = JSON.parse(sessionStorage?.getItem('allInvoices'));
@@ -141,12 +167,12 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
         this.globalSearch = stItem?.filters?.global?.value;
         this.selectedStatus = stItem?.filters?.docstatus?.value;
       } else {
-        this.globalSearch = this.storageService.invoiceGlobe;
+        this.globalSearch = this.ds.invoiceGlobe;
       }
     } 
     else if (this.router.url.includes('PO') ) {
-      this.first = this.storageService.poPaginationFisrt;
-      this.rows = this.storageService.poPaginationRowLength;
+      this.first = this.ds.poPaginationFisrt;
+      this.rows = this.ds.poPaginationRowLength;
       this.stateTable = 'PO';
       let stItem:any = JSON.parse(sessionStorage?.getItem('PO'));
       if(stItem){
@@ -155,8 +181,8 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     }
     else if (this.router.url.includes('archived')) {
-      this.first = this.storageService.archivedPaginationFisrt;
-      this.rows = this.storageService.archivedPaginationRowLength;
+      this.first = this.ds.archivedPaginationFisrt;
+      this.rows = this.ds.archivedPaginationRowLength;
       this.stateTable = 'Archived';
       let stItem:any = JSON.parse(sessionStorage?.getItem('Archived'));
       if(stItem){
@@ -165,8 +191,8 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     } 
     else if (this.router.url.includes('rejected')) {
-      this.first = this.storageService.rejectedPaginationFisrt;
-      this.rows = this.storageService.rejectedPaginationRowLength;
+      this.first = this.ds.rejectedPaginationFisrt;
+      this.rows = this.ds.rejectedPaginationRowLength;
       this.stateTable = 'rejected';
       let stItem:any = JSON.parse(sessionStorage?.getItem('rejected'));
       if(stItem){
@@ -174,15 +200,15 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     } 
     else if (this.router.url.includes('ServiceInvoices')) {
-      this.first = this.storageService.servicePaginationFisrt;
-      this.rows = this.storageService.servicePaginationRowLength;
+      this.first = this.ds.servicePaginationFisrt;
+      this.rows = this.ds.servicePaginationRowLength;
       this.stateTable = 'Service';
       let stItem:any = JSON.parse(sessionStorage?.getItem('Service'));
       if(stItem){
         this.globalSearch = stItem?.filters?.global?.value;
         this.selectedStatus = stItem?.filters?.docstatus?.value;
       } else {
-        this.globalSearch = this.storageService.serviceGlobe;
+        this.globalSearch = this.ds.serviceGlobe;
       }
     } 
   }
@@ -234,7 +260,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
   viewStatusPage(e) {
     this.sharedService.invoiceID = e.idDocument;
-    this.storageService.subStatusId = e.documentsubstatusID;
+    this.ds.subStatusId = e.documentsubstatusID;
     this.router.navigate([`${this.portal_name}/invoice/InvoiceStatus/${e.idDocument}`]);
    
   }
@@ -248,9 +274,9 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
 
   searchInvoice(value) {
     if (this.router.url.includes('allInvoices')) {
-      this.storageService.invoiceGlobe = this.globalSearch;
+      this.ds.invoiceGlobe = this.globalSearch;
     } else if (this.router.url.includes('ServiceInvoices')) {
-      this.storageService.serviceGlobe  = this.globalSearch;
+      this.ds.serviceGlobe  = this.globalSearch;
     } 
     this.searchInvoiceData.emit(this.allInvoice);
   }
@@ -316,7 +342,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
 
   reUpload(val){
     this.router.navigate([`/${this.portal_name}/uploadInvoices`]);
-    this.storageService.reUploadData = val;
+    this.ds.reUploadData = val;
   }
 
   triggerBatch(id){
@@ -382,5 +408,47 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
         this.AlertService.errorObject.detail = "Server error";
         this.messageService.add(this.AlertService.errorObject);
       })
+  }
+
+  clickDrildown(data) {
+    this.drillBool = !this.drillBool;
+    this.docId = data.idDocument;
+    if(this.router.url.includes('allInvoices')) {
+      this.drilldownarray = [
+        { header: 'Upload Date', field: data.CreatedOn },
+        { header: 'Amount', field: data.totalAmount },
+        { header: 'Status', field: data.docstatus },
+        { header: 'Sender', field: data.sender }
+      ]
+    } else if (this.router.url.includes('GRN')){
+      this.drilldownarray = [
+        { header: 'Received Date', field: data.CreatedOn },
+        { header: 'Created By', field: data.firstName },
+        { header: 'Entity', field: data.EntityName },
+        { header: 'Source', field: data.grn_type }
+      ]
+    } else if (this.router.url.includes('archived')){
+      this.drilldownarray = [
+        { header: 'Entity', field: data.EntityName },
+        { header: 'Amount', field: data.totalAmount },
+        { header: 'Due Date', field: data.DueDate },
+        { header: 'Payment Date', field: data.PaymentDate },
+        { header: 'Type of Payment', field: data.TypeOfPayment },
+      ]
+    } else if (this.router.url.includes('rejected')){
+      this.drilldownarray = [
+        { header: 'Description', field: data.documentdescription },
+        { header: 'Amount', field: data.totalAmount },
+        { header: 'Uploaded Date', field: data.CreatedOn }
+      ]
+    } else if(this.router.url.includes('ServiceInvoices')) {
+      this.drilldownarray = [
+        { header: 'Upload Date', field: data.CreatedOn },
+        { header: 'Amount', field: data.totalAmount },
+        { header: 'Status', field: data.docstatus },
+        { header: 'Invoice Date', field: data.documentDate }
+      ]
+    }
+    
   }
 }

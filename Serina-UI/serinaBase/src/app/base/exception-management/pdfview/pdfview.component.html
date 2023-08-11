@@ -1,0 +1,83 @@
+<div>
+    <section class="maxPage">
+        <div *ngIf="isImgBoolean" class="canvasConatiner_height">
+          <div id="parentDiv" class="docContaner">
+            <canvas #canvas id="canvas1" style="height: 87vh"></canvas>
+          </div>
+          <!-- <span class="zoom zoom_pos_img">
+                <span class="zoom-in" (click)="zoomin()"
+                  ><i class="fa fa-plus" aria-hidden="true"></i></span
+                ><br />
+                <span class="zoom-out" (click)="zoomout()"
+                  ><i class="fa fa-minus" aria-hidden="true"></i
+                ></span>
+              </span> -->
+        </div>
+        <div *ngIf="!isImgBoolean" style="position: relative" class="docContaner">
+          <pdf-viewer
+            #pdfviewer
+            [src]="showInvoice"
+            style="width: 100%; overflow: auto"
+            [show-all]="true"
+            [zoom]="zoomdata"
+            [original-size]="false"
+            [fit-to-page]="true"
+            [page]="page"
+            [rotation]="rotation"
+            [render-text]="true"
+            [render-text-mode]="2"
+            (after-load-complete)="afterLoadComplete($event)"
+          >
+          </pdf-viewer>
+        </div>
+      </section>
+      <!-- <img [src]="imageUrl" style="width: 100%;height: 80vh;"><br/> -->
+      <div *ngIf="isLoaded" class="d-flex pdf_btns">
+        <div class="zoom mr-3">
+          <span class="zoom-in" (click)="zoomIn()"
+            ><i class="fa fa-search-plus" aria-hidden="true"></i
+          ></span>
+          <span class="zoom-out" (click)="zoomOut()"
+            ><i class="fa fa-search-minus" aria-hidden="true"></i
+          ></span>
+        </div>
+        <div class="pos-r navigatn">
+          <button (click)="prevPage()" [disabled]="page === 1" class="preBtn">
+            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+          </button>
+          <span class="totalPages">{{ page }} / {{ totalPages }}</span>
+          <button
+            (click)="nextPage()"
+            [disabled]="page === totalPages"
+            class="preBtn"
+          >
+            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+  
+        <div class="d-flex ml-3 mr-3">
+          <button class="preBtn" style="border-right: 1p solid lightgray;" (click)="rotate(-90)">
+            <i class="fa fa-undo" aria-hidden="true"></i>
+          </button>
+          <button class="preBtn mr-1" (click)="rotate(90)">
+            <i class="fa fa-repeat" aria-hidden="true"></i>
+          </button>
+        </div>
+  
+        <div class="pos-r mr-3" title="FullScreen">
+          <span class="material-icons pointer" (click)="toggleFullScreen()">
+            fullscreen
+          </span>
+        </div>
+  
+        <div class="mr-3 pos-r" title="Document download">
+          <span class="f-12 pointer" (click)="DownloadPDF()">
+            <i class="fa fa-download" aria-hidden="true"></i>
+          </span>
+        </div>
+  
+        <div class="mr-2 pos-r" *ngIf="!isPdfAvailable && isDesktop">
+          <span class="f-12 pointer" (click)="viewPdf()">{{ btnText }}</span>
+        </div>
+      </div>
+</div>

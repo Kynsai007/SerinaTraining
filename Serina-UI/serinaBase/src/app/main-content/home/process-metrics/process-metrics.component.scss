@@ -102,3 +102,23 @@
      margin-top: 27px;
     }
   }
+
+  @media screen and (max-width:576px){
+    .filter_inputDash {
+      position: relative;
+      top: -37px;
+      left: -11px;
+      background: black;
+      width: 107%;
+      padding: 5px;
+    }
+    .filter_mob {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .card_mob {
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-start !important;
+    }
+  }

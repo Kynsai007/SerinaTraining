@@ -257,6 +257,29 @@
           </span>
           Roles
         </div>
+
+        <div *ngIf="!isDesktop" class="navLink" data-text="Change Password" (click)="openDialog()">
+          <i
+            class="fa fa-lock f-18 ml-r-12"
+            aria-hidden="true"
+            routerLinkActive="ml-9"
+          ></i>
+          Change Password
+        </div>
+
+        <div
+          *ngIf="!isDesktop"
+          class="navLink"
+          data-text="Logout"
+          (click)="displayResponsivepopup = true"
+        >
+          <i
+            class="fa fa-sign-out f-18 ml-r-12"
+            aria-hidden="true"
+            routerLinkActive="ml-9"
+          ></i>
+          Logout
+        </div>
       </div>
 
       <div class="copy">

@@ -388,11 +388,17 @@ input[type="checkbox"] {
     flex-direction: column;
   }
   .accountSelect {
-    width: 100% !important;
+    width: 87vw !important;
+  }
+  .dashed-border {
+    width: 85vw !important;
+  }
+  .b-type {
+    width: 87vw !important;
   }
   :host ::ng-deep {
     .p-autocomplete {
-      width: 100% !important;
+      width: 87vw !important;
     }
   }
 }

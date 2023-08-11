@@ -68,6 +68,10 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   selectedStatus: any;
   statusData: Set<string>;
   exceptionAlertdate:any;
+  isDesktop: boolean;
+  drilldownarray = [];
+  drillBool: boolean;
+  docId: any;
 
   constructor(
     private tagService: TaggingService,
@@ -75,7 +79,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     private permissionService: PermissionService,
     private authService: AuthenticationService,
     private ExceptionsService: ExceptionsService,
-    private storageService: DataService,
+    private ds: DataService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
     private alertService: AlertService,
@@ -83,7 +87,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    this.ap_boolean = this.storageService.ap_boolean;
+    this.ap_boolean = this.ds.ap_boolean;
     this.initialData();
     this.dateFunc();
   }
@@ -113,16 +117,20 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     if (this.router.url.includes('ExceptionManagement')) {
       this.filter('All', 'status');
     }
+    if(!this.isDesktop){
+      this.showPaginatorAllInvoice = false;
+    }
     // }
   }
   initialData() {
     this.userType = this.authService.currentUserValue['user_type'];
+    this.isDesktop = this.ds.isDesktop;
     if (this.userType == 'vendor_portal') {
       this.portalName = 'vendorPortal';
     } else {
       this.portalName = 'customer';
     }
-    this.bgColorCode = this.storageService.bgColorCode;
+    this.bgColorCode = this.ds.bgColorCode;
     this.visibleSidebar2 = this.sharedService.sidebarBoolean;
 
     if (this.router.url.includes('home')) {
@@ -142,44 +150,44 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     }
     // if (this.tagService.batchProcessTab == 'normal') {
     //   this.batchBoolean = true;
-    //   this.first = this.storageService.exc_batch_edit_page_first;
-    //   this.rows = this.storageService.exc_batch_edit_page_row_length;
+    //   this.first = this.ds.exc_batch_edit_page_first;
+    //   this.rows = this.ds.exc_batch_edit_page_row_length;
     // } else {
     //   this.batchBoolean = false;
-    //   this.first = this.storageService.exc_batch_approve_page_first;
-    //   this.rows = this.storageService.exc_batch_approve_page_row_length;
+    //   this.first = this.ds.exc_batch_approve_page_first;
+    //   this.rows = this.ds.exc_batch_approve_page_row_length;
     // }
     if (this.router.url.includes('ExceptionManagement')) {
       if (this.tagService.batchProcessTab == 'normal') {
         this.batchBoolean = true;
-        this.first = this.storageService.exc_batch_edit_page_first;
-        this.rows = this.storageService.exc_batch_edit_page_row_length;
+        this.first = this.ds.exc_batch_edit_page_first;
+        this.rows = this.ds.exc_batch_edit_page_row_length;
         let stItem: any = JSON.parse(sessionStorage?.getItem('editException'));
         if (stItem) {
           this.globalSearch = stItem?.filters?.global?.value;
         } else {
-          this.globalSearch = this.storageService.exception_G_S;
+          this.globalSearch = this.ds.exception_G_S;
         }
 
         this.stateTable = 'editException';
       } else {
         this.batchBoolean = false;
-        this.first = this.storageService.exc_batch_approve_page_first;
-        this.rows = this.storageService.exc_batch_approve_page_row_length;
+        this.first = this.ds.exc_batch_approve_page_first;
+        this.rows = this.ds.exc_batch_approve_page_row_length;
         this.stateTable = 'approvalPending';
         let stItem: any = JSON.parse(sessionStorage?.getItem('approvalPending'));
         if (stItem) {
           this.globalSearch = stItem?.filters?.global?.value;
         } else {
-          this.globalSearch = this.storageService.exception_A_G_S;
+          this.globalSearch = this.ds.exception_A_G_S;
         }
       }
 
     } else if (this.router.url.includes('Create_GRN_inv_list')) {
-      this.first = this.storageService.create_GRN_page_first;
-      this.rows = this.storageService.create_GRN_page_row_length;
+      this.first = this.ds.create_GRN_page_first;
+      this.rows = this.ds.create_GRN_page_row_length;
       this.stateTable = "GRN Creation";
-      this.globalSearch = this.storageService.createGrn_G_S;
+      this.globalSearch = this.ds.createGrn_G_S;
     }
   }
 
@@ -207,16 +215,16 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     if (this.router.url.includes('ExceptionManagement')) {
 
       if (this.tagService.batchProcessTab != 'normal') {
-        this.storageService.exc_batch_approve_page_first = this.first;
-        this.storageService.exc_batch_approve_page_row_length = event.rows;
+        this.ds.exc_batch_approve_page_first = this.first;
+        this.ds.exc_batch_approve_page_row_length = event.rows;
       } else {
-        this.storageService.exc_batch_edit_page_first = this.first;
-        this.storageService.exc_batch_edit_page_row_length = event.rows;
+        this.ds.exc_batch_edit_page_first = this.first;
+        this.ds.exc_batch_edit_page_row_length = event.rows;
 
       }
     } else if (this.router.url.includes('Create_GRN_inv_list')) {
-      this.storageService.create_GRN_page_first = this.first;
-      this.storageService.create_GRN_page_row_length = event.rows;
+      this.ds.create_GRN_page_first = this.first;
+      this.ds.create_GRN_page_row_length = event.rows;
     }
   }
 
@@ -224,17 +232,17 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.searchInvoiceData.emit(this.allInvoice);
     if (this.router.url.includes('ExceptionManagement')) {
       if (this.tagService.batchProcessTab == 'normal') {
-        this.storageService.exception_G_S = value;
+        this.ds.exception_G_S = value;
       } else {
-        this.storageService.exception_A_G_S = value;
+        this.ds.exception_A_G_S = value;
       }
     } else if (this.router.url.includes('Create_GRN_inv_list')) {
-      this.storageService.createGrn_G_S = value;
+      this.ds.createGrn_G_S = value;
     }
   }
   filter(value, dbCl) {
     this.selectedStatus = value;
-    // this.storageService.allSelected
+    // this.ds.allSelected
     if (value != 'All') {
       this.allInvoice.filter(value || ' ', dbCl, 'contains')
 
@@ -255,14 +263,14 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     // this.dataService.entityID = undefined;
     // this.SharedService.selectedEntityId = undefined;
 
-    this.storageService.editableInvoiceData = e;
+    this.ds.editableInvoiceData = e;
     this.ExceptionsService.invoiceID = e.idDocument;
     this.tagService.editable = true;
     this.sharedService.invoiceID = e.idDocument;
     this.tagService.documentType = e.UploadDocType;
-    this.storageService.idDocumentType = e.idDocumentType
+    this.ds.idDocumentType = e.idDocumentType
     if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`) {
-      this.storageService.grnWithPOBoolean = false;
+      this.ds.grnWithPOBoolean = false;
       this.router.navigate([
         `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
       ]);
@@ -299,7 +307,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
                 this.router.navigate([
                   `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
                 ]);
-                this.storageService.entityID = e.idEntity;
+                this.ds.entityID = e.idEntity;
                 this.sharedService.selectedEntityId = e.idEntity;
                 if (e.documentsubstatusID == 29) {
 
@@ -348,7 +356,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
             this.tagService.submitBtnBoolean = true;
             this.tagService.headerName = 'Edit Invoice';
             this.tagService.approval_selection_boolean = true;
-            this.storageService.entityID = e.idEntity;
+            this.ds.entityID = e.idEntity;
             this.sharedService.selectedEntityId = e.idEntity;
             // this.ExceptionsService.selectedRuleId = e?.ruleID;
             this.router.navigate([
@@ -365,5 +373,26 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         this.MessageService.add(this.alertService.errorObject);
       });
     }
+  }
+
+  clickDrildown(data) {
+    this.drillBool = !this.drillBool;
+    this.docId = data.idDocument;
+      // if(this.router.url.includes('ExceptionManagement')){
+        this.drilldownarray = [
+          { header: 'Upload Date', field: data.CreatedOn },
+          { header: 'PO number', field: data.PODocumentID },
+          { header: 'Amount', field: data.totalAmount },
+          { header: 'Sender', field: data.sender }
+        ]
+      // } else if(this.router.url.includes('Create_GRN_inv_list')) {
+      //   this.drilldownarray = [
+      //     { header: 'Upload Date', field: data.CreatedOn },
+      //     { header: 'Entity', field: data.EntityName },
+      //     { header: 'Amount', field: data.totalAmount }
+      //   ]
+      // }
+
+    
   }
 }

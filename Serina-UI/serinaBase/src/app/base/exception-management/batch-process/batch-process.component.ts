@@ -89,6 +89,8 @@ export class BatchProcessComponent implements OnInit {
   maxDate: Date;
   portalName:string;
 
+  isDesktop: boolean;
+
   constructor(
     private tagService: TaggingService,
     private ImportExcelService: ImportExcelService,
@@ -107,6 +109,7 @@ export class BatchProcessComponent implements OnInit {
   ngOnInit(): void {
     this.apprveBool = this.ds.configData?.enableApprovals;
     this.portalName = this.ds.portalName;
+    this.isDesktop = this.ds.isDesktop;
     if(this.permissionService.excpetionPageAccess == true){
       if(this.ds.ap_boolean){
         this.invoceDoctype = true;
@@ -131,7 +134,9 @@ export class BatchProcessComponent implements OnInit {
       //   this.viewType = this.tagService.batchProcessTab;
       //   console.log(this.viewType)
       // }
-      
+      if(!this.isDesktop){
+        this.mob_columns();
+      }
       this.findRoute();
       this.dateRange();
     } else{
@@ -144,6 +149,27 @@ export class BatchProcessComponent implements OnInit {
     this.dateFilterService.dateRange();
     this.minDate = this.dateFilterService.minDate;
     this.maxDate = this.dateFilterService.maxDate;
+  }
+
+  mob_columns() {
+    this.ColumnsForBatch = [
+      { field: 'docheaderID', header: 'Invoice Number' },
+      { field: 'VendorName', header: 'Vendor Name' },
+      { field: 'EntityName', header: 'Entity Name' },
+      { field: 'status', header: 'Status' },
+    ];
+    this.ColumnsForBatchPO = [
+      { field: 'VendorName', header: 'Customer Name' },
+      { field: 'EntityName', header: 'Entity Name' },
+      { field: 'PODocumentID', header: 'PO number' },
+      { field: 'status', header: 'Status' },
+    ];
+    this.serviceColumns = [
+      { field: 'docheaderID', header: 'Invoice Number' },
+      { field: 'ServiceProviderName', header: 'Serviceprovider Name' },
+      { field: 'Account', header: 'Serviceprovider A/C' },
+      { field: 'status', header: 'Status' },
+    ];
   }
 
   findRoute() {
@@ -348,4 +374,5 @@ export class BatchProcessComponent implements OnInit {
   clearDates() {
     this.filterByDate('');
   }
+
 }

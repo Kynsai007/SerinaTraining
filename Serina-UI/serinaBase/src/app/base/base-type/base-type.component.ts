@@ -108,9 +108,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     if(window.screen.width >= 576){
       this.sidebarMode = 'side';
       this.isDesktop = true;
+      this.dataStoreService.isDesktop = true;
     } else {
       this.sidebarMode = 'over';
       this.isDesktop = false;
+      this.dataStoreService.isDesktop = false;
     }
     const script = this.renderer.createElement('script');
     script.type = 'text/javascript';
