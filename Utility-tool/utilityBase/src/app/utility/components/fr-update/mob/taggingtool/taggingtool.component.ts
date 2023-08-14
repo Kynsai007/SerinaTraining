@@ -346,7 +346,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = this.currenttext;
       this.currentSelection = [];
       this.currenttext = "";
-      let finaljson = this.labelsJson["labels"].filter(item => item.value.length !== 0);
+      let finaljson = this.labelsJson;
+      let labels = finaljson["labels"].filter(item => item.value.length !== 0);
+      finaljson["labels"] = labels;
       console.log(finaljson);
       let frobj = {
         'documentId':this.modelData.idDocumentModel,
@@ -662,7 +664,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
         }
       }
-      let finaljson = this.labelsJson["labels"].filter(item => item.value.length !== 0);
+      let finaljson = this.labelsJson;
+      let labels = finaljson["labels"].filter(item => item.value.length !== 0);
+      finaljson["labels"] = labels;
       console.log(finaljson);
       if(changes){
         let frobj = {
@@ -1134,7 +1138,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                 }
               }
             }
-            let finaljson = _this.labelsJson["labels"].filter(item => item.value.length !== 0);
+            let finaljson = _this.labelsJson;
+            let labels = finaljson["labels"].filter(item => item.value.length !== 0);
+            finaljson["labels"] = labels;
             console.log(finaljson);
             let frobj = {
               'documentId':_this.modelData.idDocumentModel,
@@ -1456,7 +1462,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
         this.currenttext = "";
         this.currentSelection = [];
-        let finaljson = this.labelsJson["labels"].filter(item => item.value.length !== 0);
+        let finaljson = this.labelsJson;
+        let labels = finaljson["labels"].filter(item => item.value.length !== 0);
+        finaljson["labels"] = labels;
         console.log(finaljson);
         let frobj = {
           'documentId':this.modelData.idDocumentModel,
