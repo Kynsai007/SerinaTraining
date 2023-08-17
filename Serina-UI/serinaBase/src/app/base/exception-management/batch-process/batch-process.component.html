@@ -1,7 +1,7 @@
 <h6 *ngIf="!dashboardViewBoolean" class="headh6">{{heading}}</h6>
 
 <div class="container-fluid">
-  <div>
+  
     <div *ngIf="!dashboardViewBoolean">
       <ul class="nav nav-tabs">
         <li class="nav-item mr-1" *ngIf="invoceDoctype || !isVendorBoolean">
@@ -9,7 +9,7 @@
             class="nav-link"
             [class.active-tab]="viewType == 'normal'"
             (click)="chooseEditedpageTab('normal')"
-            >Exception Invoices({{ dataLength }})</a
+            >Exceptions({{ dataLength }})</a
           >
         </li>
         <li class="nav-item mr-1" *ngIf="isVendorBoolean && !invoceDoctype">
@@ -29,7 +29,7 @@
           >
         </li>
       </ul>
-
+      <div style="position: relative;">
       <div class="positionCreateUpload">
         <button class="btnUpload mr-2" (click)="exportExcel()">
           <i class="fa fa-download" aria-hidden="true"></i>

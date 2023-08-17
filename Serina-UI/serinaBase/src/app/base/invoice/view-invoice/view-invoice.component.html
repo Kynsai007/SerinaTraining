@@ -428,7 +428,7 @@
           >
             Edit MultiPO
           </button>
-          <div *ngIf="!isDesktop && editable" class="d-flex mb-1" style="gap:5px">
+          <div *ngIf="!isDesktop && editable && editPermissionBoolean" class="d-flex mb-1" style="gap:5px">
             <button
               *ngIf="multiPOBool && currentTab == 'line'"
               class="btnUpload bg-blue edt_mul_btn mr-2"

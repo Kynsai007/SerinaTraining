@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
+    count: number = 0;
     constructor(private authService: AuthenticationService,
       private alertSrvice : AlertService,
       private messageService : MessageService,
@@ -19,11 +20,11 @@ export class ErrorInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
         return next.handle(request).pipe( catchError((err:HttpErrorResponse) => {
           if(err.status === 401 && !(request.url.includes('login'))){
-            let count = 0;
+            this.count = 0;
             if(!this.router.url.includes("/login")){
               this.authService.logout('');
-              count++
-              if(count <= 1){
+              this.count++
+              if(this.count <= 1){
                 alert("Session Expired! Please re-login!");
               }
             }

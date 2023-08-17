@@ -1,8 +1,18 @@
-:host ::ng-deep .p-sidebar {
+:host ::ng-deep {
+  .mat-sidenav-content {
+    max-height: 90vh;
+    overflow: auto;
+  }
+  .p-sidebar {
     background: #272727;
     color: #f2be42;
     overflow: auto;
     overflow-x: hidden;
+}
+}
+.max_h {
+  max-height: 90vh;
+  overflow: auto;
 }
 .clor{
     color:#f2be42; ;

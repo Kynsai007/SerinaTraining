@@ -870,7 +870,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           /* Line Details Validation end*/
   
           if (count == 0) {
-            this.vendorSubmit();
+            if (!this.isServiceData) {
+              this.vendorSubmit();
+            } else {
+              this.serviceSubmit();
+            }
           } else {
             /* Error reponse starts*/
             if (errorTypeHead == 'AmountHeader') {
@@ -925,13 +929,16 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.messageService.add(this.AlertService.addObject);
   }
   SaveLCM(obj) {
+    this.SpinnerService.show();
     this.SharedService.saveLCMdata(JSON.stringify([obj]), true).subscribe((data: any) => {
       if (data?.result) {
+        this.SpinnerService.hide();
         this.successAlert(data?.result)
         this.LCMObj.EntityName = this.EntityName;
         this.LCMLineForm.control.patchValue(this.LCMObj);
         this.readSavedLCMLineData();
       } else if (data?.error) {
+        this.SpinnerService.hide();
         this.errorTriger(data?.error);
       }
     }, err => {
@@ -1693,14 +1700,14 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   OnSelectLine(event) {
     this.selectedLCMLine = event.PoLineDescription;
     this.itemId = event.values.ItemId;
-    this.selectedVoyage = event.values.Voyage;
-    this.act_val = event.values.ActualizedValue;
-    this.est_val = event.values.EstimatedValue;
-    this.max_allocation = event.values.AllocateRange;
+    // this.selectedVoyage = event.values.Voyage;
+    // this.act_val = event.values.ActualizedValue;
+    // this.est_val = event.values.EstimatedValue;
+    // this.max_allocation = event.values.AllocateRange;
     this.lineNumber = event.values.LineNumber;
     this.ContextTableId = event.values.ContextTableId;
     this.ContextRecId = event.values.ContextRecId;
-    this.AGIVesselNumber = event.values.AGIVesselNumber;
+    // this.AGIVesselNumber = event.values.AGIVesselNumber;
     this.readChargeCode(event.values.dataAreaId, this.ContextRecId, this.ContextTableId)
   }
   // filterVoyage(event){
@@ -1746,6 +1753,16 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   onSelectCost(event) {
     this.selectedCost = event.MarkupCode;
     this.MarkupTransRecId = event.MarkupTransRecId;
+    this.SpinnerService.show();
+    this.SharedService.getEstActValue(this.selectedPONumber,this.lineNumber,event.MarkupCode).subscribe((data:any)=>{
+      this.selectedVoyage = data.voyage;
+      this.act_val = data.act_val;
+      this.est_val = data.est_val;
+      this.AGIVesselNumber = data.vessel_num;
+      this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+    })
   }
   AddLCMLine(value) {
     let Obj = {
@@ -1828,7 +1845,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.SpinnerService.hide();
     })
   }
-  
+
   async open_dialog_comp(str){
     let w = '60%';
     let h = '80vh';

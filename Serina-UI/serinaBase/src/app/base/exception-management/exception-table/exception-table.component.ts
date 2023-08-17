@@ -268,7 +268,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.tagService.editable = true;
     this.sharedService.invoiceID = e.idDocument;
     this.tagService.documentType = e.UploadDocType;
-    this.ds.idDocumentType = e.idDocumentType
+    this.ds.idDocumentType = e.idDocumentType;
     if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`) {
       this.ds.grnWithPOBoolean = false;
       this.router.navigate([

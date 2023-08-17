@@ -1,1 +1,281 @@
-<p>multi-po works!</p>
+<div>
+    <div>
+        <div class="f-16 d-flex justify-content-end" (click)="closeDlg()" style="cursor: pointer;">
+            <i class="fa fa-close"></i>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div>
+            <label class="f-12 mb-0">Select Dates for PO</label><br />
+            <p-calendar
+              [(ngModel)]="rangeDates"
+              selectionMode="range"
+              [minDate]="minDate"
+              [maxDate]="maxDate"
+              showButtonBar="true"
+              (onClearClick)="clearDates()"
+              placeholder="Select dates to Filter"
+              [readonlyInput]="true"
+              [showIcon]="true"
+              inputId="range"
+            ></p-calendar>
+            <button class="btnUpload filter_btn_m" (click)="filterData(rangeDates)">
+              <!-- <i class="fa fa-filter" aria-hidden="true"></i> -->
+              Filter
+            </button>
+          </div>
+    
+          <div class="d-flex align-items-center">
+            <button class="btnUpload filter_btn_m" (click)="downloadTemplate()">
+              Download Template
+            </button>
+            <!-- <button class="btnUpload filter_btn_m">
+              Upload Excel
+            </button> -->
+            <div style="margin-top: 7px">
+              <input
+                type="file"
+                id="custom-upload"
+                [(ngModel)]="uploadExcelValue"
+                (change)="onChange($event)"
+                hidden
+                #inputFile
+                accept=".xls,.xlsx"
+              />
+              <label for="custom-upload" class="btnUpload filter_btn_m f-12 mr-2"
+                ><span style="position: relative; top: 5px"
+                  >Upload Excel</span
+                ></label
+              >
+            </div>
+          </div>
+        </div>
+        <form
+          class="d-flex flex-wrap"
+          style="gap: 0px 5px"
+          #multiPO="ngForm"
+          (ngSubmit)="addMultiPOLines(multiPO.value)"
+        >
+          <div>
+            <label class="f-12 mb-0">Select PO Number</label><br />
+            <p-autoComplete
+              placeholder="PO Number"
+              (onSelect)="selectedPO($event)"
+              [group]="false"
+              [suggestions]="filteredPO"
+              (completeMethod)="filterPOnumber($event)"
+              field="PODocumentID"
+              optionDisabled="idDocument"
+              [dropdown]="true"
+              showEmptyMessage="true"
+              [style]="{ width: '160px' }"
+              name="PODocumentID"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.PODocumentID }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+    
+          <div>
+            <label class="f-12 mb-0">Select PO Line</label><br />
+            <p-autoComplete
+              placeholder="PO Description"
+              (onSelect)="selectedPOLine($event)"
+              [group]="false"
+              [suggestions]="filteredPOLines"
+              (completeMethod)="filterPOLine($event)"
+              field="Name"
+              [dropdown]="true"
+              name="Name"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.Name }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+    
+          <div>
+            <label class="f-12 mb-0">Select GRN Number</label><br />
+            <p-autoComplete
+              placeholder="GRN Number"
+              (onSelect)="selectedGRN($event, 'grn_num')"
+              [group]="false"
+              [suggestions]="filteredGRN"
+              (completeMethod)="filterGRNnumber($event, 'grn_num')"
+              field="PackingSlip"
+              [dropdown]="true"
+              showEmptyMessage="true"
+              [style]="{ width: '160px' }"
+              name="GRN_number"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.PackingSlip }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+    
+          <div>
+            <label class="f-12 mb-0">Select GRN Line</label><br />
+            <p-autoComplete
+              placeholder="GRN Description"
+              (onSelect)="selectedGRN($event, 'grn_line')"
+              [group]="false"
+              [suggestions]="filteredGRN"
+              (completeMethod)="filterGRNnumber($event, 'grn_line')"
+              field="Name"
+              [dropdown]="true"
+              name="GRN_Name"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.Name }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+          <div>
+            <label class="f-12 mb-0">PO Unitprice</label><br />
+            <input
+              type="text"
+              class="form-control accountSelect width-100"
+              name="POLineAmount"
+              [(ngModel)]="PO_amount_line"
+              required
+              readonly
+            />
+          </div>
+    
+          <div>
+            <label class="f-12 mb-0">PO Qty</label><br />
+            <input
+              type="text"
+              class="form-control accountSelect width-100"
+              name="ConsumedPOQty"
+              [(ngModel)]="PO_qty"
+              required
+            />
+          </div>
+    
+          <div>
+            <label class="f-12 mb-0">GRN Line Amount</label><br />
+            <input
+              type="text"
+              class="form-control accountSelect width-100"
+              name="GRNLineAmount"
+              [(ngModel)]="GRN_amount_line"
+              required
+              readonly
+            />
+          </div>
+          <div>
+            <label class="f-12 mb-0">GRN Qty</label><br />
+            <input
+              type="text"
+              class="form-control accountSelect width-100"
+              name="GRNQty"
+              [(ngModel)]="GRN_qty"
+              required
+            />
+          </div>
+    
+          <div>
+            <label class="f-12 mb-0"></label><br />
+            <button
+              class="btnUpload"
+              [disabled]="multiPO.invalid"
+              [ngStyle]="{ cursor: multiPO.invalid ? 'not-allowed' : 'pointer' }"
+            >
+              + Add
+            </button>
+          </div>
+        </form>
+    
+        <div class="mt-1">
+          <!-- <app-table
+            [tableData]="mutliplePOTableData"
+            [invoiceColumns]="summaryColumn"
+            [showPaginator]="showPaginatorSummary"
+            [columnsToFilter]="summaryColumnField"
+            [columnLength]="ColumnLengthVendor"
+          >
+          </app-table> -->
+          <p-table
+            *ngIf="mutliplePOTableData?.length > 0"
+            [value]="mutliplePOTableData"
+            [paginator]="false"
+            [columns]="summaryColumn"
+            styleClass="p-datatable-striped"
+          >
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th
+                  *ngFor="let col of columns"
+                  [pTooltip]="col.header"
+                  tooltipPosition="top"
+                  class="lineName"
+                >
+                  {{ col.header }}
+                </th>
+                <th class="action_Zindex" style="width: 60px">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template
+              pTemplate="body"
+              let-invoiceData
+              let-columns="columns"
+              let-rowIndex="rowIndex"
+            >
+              <tr>
+                <td *ngFor="let col of columns" [title]="invoiceData[col.field]">
+                  {{ invoiceData[col.field] }}
+                </td>
+                <td>
+                  <i
+                    class="fa fa-trash-o"
+                    style="cursor: pointer"
+                    (click)="deleteMultiPO(rowIndex, invoiceData)"
+                  ></i>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage"> </ng-template>
+            <ng-template pTemplate="paginatorleft"> </ng-template>
+            <ng-template pTemplate="paginatorright"> </ng-template>
+          </p-table>
+        </div>
+    
+        <p-toast></p-toast>
+      </div>
+    
+        <div class="d-flex justify-content-center mt-3">
+          <button
+            type="button"
+            class="btn btnVender bg-btn-cancel mr-3"
+            (click)="closeDlg()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btnVender bg-btn-success"
+            [disabled]="mutliplePOTableData?.length < 1"
+            (click)="updateMultiPO()"
+          >
+            Update
+          </button>
+        </div>
+</div>

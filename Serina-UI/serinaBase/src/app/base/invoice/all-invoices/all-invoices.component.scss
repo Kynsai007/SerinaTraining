@@ -94,7 +94,16 @@ button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
+.t_search {
+  border: 1px solid lightgray;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin: 3px;
+  width: 97%;
+}
+.t_search:focus {
+  outline: 0;
+}
 @media screen and (max-width:576px) {
   .mob_tr {
     border-left: 4px solid white;

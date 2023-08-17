@@ -160,6 +160,7 @@ export class DataService {
   poLineData = [];
   arenaMasterData: any;
   isDesktop: boolean;
+  vendorId: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

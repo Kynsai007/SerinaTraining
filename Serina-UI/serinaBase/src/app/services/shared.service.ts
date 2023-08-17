@@ -511,9 +511,17 @@ export class SharedService {
   readCustomerVendorAccountsData(vId) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/vendorAccount/${this.userId}/idVendor/${vId}`).pipe(retry(2));
   }
+  readServiceAccounts(sp_id,e_id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceprovideraccountdetails/idService/${sp_id}?u_id=${this.userId}`).pipe(retry(2));
+  
+
+  }
 
   readUploadPOData(poNumber) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readPOData/${this.userId}/idInvoice/${poNumber}`).pipe(retry(2));
+  }
+  getServiceList(id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceproviderlist/${this.userId}?ent_id=${id}`);
   }
 
   // OCR
@@ -555,6 +563,9 @@ export class SharedService {
   }
   getChargesCode(dataArea, ContextRecId, ContextTableId) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/MultiPo/chargescode/${dataArea}/${ContextRecId}/${ContextTableId}`)
+  }
+  getEstActValue(poNum,poLineNum,charge){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getEstimateAndActualValue/${this.userId}/${poNum}/${poLineNum}/${charge}`);
   }
   saveLCMdata(data, bool) {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/saveLCMLineData/${this.userId}?inv_id=${this.invoiceID}&save_type=${bool}`, data)

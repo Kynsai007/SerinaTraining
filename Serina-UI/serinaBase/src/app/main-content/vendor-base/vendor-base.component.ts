@@ -62,6 +62,7 @@ export class VendorBaseComponent implements OnInit {
   ngOnInit(): void {
     this.DS.configData = JSON.parse(sessionStorage.getItem('configData'));
     this.DS.ap_boolean = JSON.parse(sessionStorage.getItem('ap_boolean'));
+    this.ap_boolean = this.DS.ap_boolean;
     if(!this.DS.configData){
       this.readConfig();
     }

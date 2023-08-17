@@ -34,14 +34,13 @@
   }
 }
 .searchInput{
-  margin-top: 0;
+  margin: 0;
   width: 130px;
 }
 
 .downlod_btn {
-  position: relative;
-  top: -50px;
-  right: -132px;
+  position: absolute;
+  top: -37px;
 }
 .nav_pane_width{
   max-width: 70%;
@@ -52,6 +51,17 @@
   position: relative;
   z-index: 121;
 }
+.left_ser {
+  left: -45px;
+}
+.tableFilters {
+  display: flex;
+  justify-content: right;
+}
+.reversed {
+  flex-direction: row-reverse;
+}
+
 @media screen and (max-width: 800px) and (min-width:577px) {
   .uni_dwn_btn {
     right: -40px !important;
@@ -93,20 +103,32 @@
   }
   :host ::ng-deep {
     .searchBar {
-      top: 114px !important;
-      right: 49px !important;
+      top: 0 !important;
+      position: relative !important;
+      right: 44 !important;
+      height: 43px;
     }
   }
   .positionCreateUpload {
-    top: 124px !important;
+    right: 0 !important;
+    top: 11px !important;
+    display: flex;
   }
   .filter_input {
-    top: 124px !important;
+    top: 11px !important;
     right: auto;
   }
-  .service_navs {
-    position: absolute;
-    top: 32px;
-    right: 0;
+  // .service_navs {
+  //   position: absolute;
+  //   top: 32px;
+  //   right: 0;
+  // }
+  .downlod_btn {
+    // position: relative;
+    top: 41px;
+    // right: 100px;
+  }
+  .left_ser {
+    left: -80px;
   }
  }

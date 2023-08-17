@@ -130,6 +130,7 @@ export class InvoiceComponent implements OnInit {
   serviceInvoiceAccess: boolean;
   invoceDoctype = false;
   partyType: string;
+  isDesktop: boolean;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -176,7 +177,7 @@ export class InvoiceComponent implements OnInit {
     this.GRNCreateBool = this.dataService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
-    
+    this.isDesktop = this.dataService.isDesktop;
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
@@ -255,27 +256,27 @@ export class InvoiceComponent implements OnInit {
     this.filterForArchived();
     this.poDispalyData = this.dataService.poLoadedData;
     this.poArrayLength = this.dataService.POtableLength;
-    if (this.poDispalyData.length > 10) {
+    if (this.poDispalyData.length > 10 && this.isDesktop) {
       this.showPaginatorPOTable = true;
     }
     this.soDisplayData = this.dataService.SODisplayData;
     this.soArrayLength = this.dataService.soArrayLength;
-    if (this.soDisplayData.length > 10) {
+    if (this.soDisplayData.length > 10 && this.isDesktop) {
       this.showPaginatorSOTable = true;
     }
     this.GRNDispalyData = this.dataService.GRNLoadedData;
     this.GRNArrayLength = this.dataService.GRNTableLength;
-    if (this.GRNDispalyData.length > 10) {
+    if (this.GRNDispalyData.length > 10 && this.isDesktop) {
       this.showPaginatorGRNTable = true;
     }
     this.archivedDisplayData = this.dataService.archivedDisplayData;
     this.archivedLength = this.dataService.ARCTableLength;
-    if (this.archivedDisplayData.length > 10) {
+    if (this.archivedDisplayData.length > 10 && this.isDesktop) {
       this.showPaginatorArchived = true;
     }
     this.rejectedDisplayData = this.dataService.rejectedDisplayData;
     this.rejectedLength = this.dataService.rejectTableLength;
-    if (this.rejectedDisplayData.length > 10) {
+    if (this.rejectedDisplayData.length > 10 && this.isDesktop) {
       this.showPaginatorRejected = true;
     }
     this.receiptDispalyData = this.dataService.receiptLoadedData;
@@ -349,6 +350,9 @@ export class InvoiceComponent implements OnInit {
     ];
 
     if (this.portal_name == 'customer') {
+      if(!this.partyType) {
+        this.partyType = 'Service'
+      }
       this.rejectedColumns.unshift({
         dbColumnname: 'VendorName',
         columnName: `${this.partyType} Name`,
@@ -464,7 +468,7 @@ export class InvoiceComponent implements OnInit {
 
       this.filterData = this.invoiceDispalyData;
       this.allInvoiceLength = this.invoiceDispalyData.length;
-      if (this.invoiceDispalyData.length > 10) {
+      if (this.invoiceDispalyData.length > 10 && this.isDesktop) {
         this.showPaginatorAllInvoice = true;
       }
     }, 500);
@@ -495,7 +499,7 @@ export class InvoiceComponent implements OnInit {
         this.dataService.poLoadedData = this.poDispalyData;
         this.poArrayLength = data.ok.total_po;
         this.dataService.POtableLength = data.ok.total_po;
-        if (this.poDispalyData.length > 10) {
+        if (this.poDispalyData.length > 10 && this.isDesktop) {
           this.showPaginatorPOTable = true;
         }
         this.SpinnerService.hide();
@@ -525,7 +529,7 @@ export class InvoiceComponent implements OnInit {
       this.dataService.GRNLoadedData = this.GRNDispalyData;
       this.dataService.GRNTableLength = data.grn_total;
       this.GRNArrayLength = data.grn_total;
-      if (this.GRNDispalyData.length > 10) {
+      if (this.GRNDispalyData.length > 10 && this.isDesktop) {
         this.showPaginatorGRNTable = true;
       }
       this.SpinnerService.hide();
@@ -578,7 +582,7 @@ export class InvoiceComponent implements OnInit {
           }
         }
       });
-      if (this.archivedLength > 10) {
+      if (this.archivedLength > 10 && this.isDesktop) {
         this.showPaginatorArchived = true;
       }
       this.SpinnerService.hide();
@@ -628,7 +632,7 @@ export class InvoiceComponent implements OnInit {
       this.dataService.rejectedDisplayData = this.rejectedDisplayData;
       this.dataService.rejectTableLength = data?.result?.ven?.ok?.total_rejected;
       this.rejectedLength = data?.result?.ven?.ok?.total_rejected;
-      if (this.rejectedDisplayData.length > 10) {
+      if (this.rejectedDisplayData.length > 10 && this.isDesktop) {
         this.showPaginatorRejected = true;
       }
       this.SpinnerService.hide();
@@ -656,7 +660,7 @@ export class InvoiceComponent implements OnInit {
       this.dataService.SODisplayData = this.soDisplayData;
       this.dataService.soArrayLength = data?.ok?.total_po;
       this.soArrayLength = data?.ok?.total_po;
-      if (this.soDisplayData.length > 10) {
+      if (this.soDisplayData.length > 10 && this.isDesktop) {
         this.showPaginatorSOTable = true;
       }
       this.SpinnerService.hide();
@@ -682,7 +686,7 @@ export class InvoiceComponent implements OnInit {
         this.dataService.GRNExcpDispalyData.concat(invoicePushedArray);
       this.dataService.GRNExcpTableLength = this.GRNExcpDispalyData.length;
       this.GRNExcpLength = this.GRNExcpDispalyData.length;
-      if (this.GRNExcpDispalyData.length > 10) {
+      if (this.GRNExcpDispalyData.length > 10 && this.isDesktop) {
         this.showPaginatorGRNExcp = true;
       }
     })
@@ -727,7 +731,7 @@ export class InvoiceComponent implements OnInit {
             this.filterDataService = this.serviceinvoiceDispalyData;
             this.dataService.serviceinvoiceLoadedData = allInvoicesService;
             this.serviceInvoiceLength = this.serviceinvoiceDispalyData.length;
-            if (this.serviceinvoiceDispalyData.length > 10) {
+            if (this.serviceinvoiceDispalyData.length > 10 && this.isDesktop) {
               this.showPaginatorServiceInvoice = true;
             }
             // this.filterDataArchived = this.archivedDisplayData;

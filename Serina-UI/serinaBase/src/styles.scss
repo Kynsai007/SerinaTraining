@@ -34,7 +34,7 @@ $secondary_color: var(--secondary1-color);
     // width: 94%;
     height: 100vh;
     padding: 0px;
-    overflow-x: auto;
+    overflow-x: hidden;
     background-color: $primary_color;
   }
 
@@ -43,6 +43,7 @@ $secondary_color: var(--secondary1-color);
     padding: 0px;
     border-radius: 0px 10px 10px 10px;
     border: 1px solid #efefef;
+    min-height: 70vh;
 }
 // material side nav
 .mat-drawer.mat-drawer-end {
@@ -56,6 +57,7 @@ $secondary_color: var(--secondary1-color);
 }
 .mat-drawer-content {
     height: 100vh !important;
+    overflow: hidden !important;
 }
 .mat-drawer-inner-container {
     overflow: hidden !important;
@@ -800,7 +802,7 @@ option:hover {
 // calender
 .filter_input {
     position: absolute;
-    top: 56px;
+    top: -34px;;
     right: 215px;
   }
   .filter_inputDash {
@@ -865,6 +867,9 @@ option:hover {
     height: 30px;
     width: 30px;
     color: white;
+  }
+  .input-group {
+    width:auto !important;
   }
 // radio btn
 .mat-radio-button.mat-accent .mat-radio-inner-circle,
@@ -1090,7 +1095,7 @@ option:hover {
   .drill_tr {
     flex-wrap: wrap;
     display: flex;
-    width: 94vw;
+    width: 90vw;
     padding: 5px 10px;
     position: relative;
     left: -2px;
@@ -1136,6 +1141,9 @@ option:hover {
     .container-fluid {
         padding-left: 9px !important;
         padding-right: 9px !important;
+    }
+    .cdk-overlay-pane {
+        width: 80% !important;
     }
   }
   @media screen and(max-width:800px) {

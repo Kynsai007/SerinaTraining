@@ -15,6 +15,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { TaggingService } from 'src/app/services/tagging.service';
 import { DocumentService } from 'src/app/services/vendorPortal/document.service';
 import { environment } from 'src/environments/environment';
+import { WebSocketService } from 'src/app/services/ws/websocket.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { DatePipe } from '@angular/common';
 import * as fileSaver from 'file-saver';
@@ -51,6 +52,7 @@ export class UploadSectionComponent implements OnInit {
   updateData: {};
   progressWidth: string;
   uplaodInvoiceDialog: boolean;
+  progressbar: number;
 
   processStage = '';
 
@@ -112,7 +114,7 @@ export class UploadSectionComponent implements OnInit {
     { field: 'POLineNumber', header: 'PO LineNumber' },
     { field: 'GRNNumber', header: 'GRN Number' },
     { field: 'GRNLineDescription', header: 'GRN Description' },
-    { field: 'POLineAmount', header: 'PO Line Amount' },
+    { field: 'POLineAmount', header: 'PO UnitPrice' },
     { field: 'ConsumedPOQty', header: 'PO Qty' },
     { field: 'GRNLineAmount', header: 'GRN Line Amount' },
     { field: 'GRNQty', header: 'GRN Qty' },
@@ -151,13 +153,13 @@ export class UploadSectionComponent implements OnInit {
   approverDialog: boolean;
   uploadInvoicesListData = [];
   quickUploadTable = [
-    { header: "Entity", field: 'EntityName'},
+    { header: "Entity", field: 'EntityName' },
     { header: "Vendor name", field: 'VendorName' },
-    { header: "Invoice Type", field: 'invoiceType'},
+    { header: "Invoice Type", field: 'invoiceType' },
     { header: "PO Number", field: 'PONumber' },
     { header: "GRN Data", field: 'po_grn_data' },
-    { header: "Department", field: 'departmentName'},
-    { header: "Invoices", field: 'attchedInvoice'},
+    { header: "Department", field: 'departmentName' },
+    { header: "Invoices", field: 'attchedInvoice' },
     { header: "Supprot Docs", field: 'attchedSupport' },
     { header: "Approvers", field: 'approvers' },
   ]
@@ -186,10 +188,10 @@ export class UploadSectionComponent implements OnInit {
   isQuickUploadbool: boolean;
   bothOptBoolean: boolean;
   progressBarObj = [
-    { statusName: 'Initializing', status : '', percent:''},
-    { statusName: 'Pre-Processing', status : '',percent:''},
-    { statusName: 'Post-Processing', status : '',percent:''},
-    { statusName: 'Completed', status : '',percent:''},
+    { statusName: 'Initializing', status: '', percent: '' },
+    { statusName: 'Pre-Processing', status: '', percent: '' },
+    { statusName: 'Post-Processing', status: '', percent: '' },
+    { statusName: 'Completed', status: '', percent: '' },
   ]
   po_grn_list = [];
   po_grn_line_list = [];
@@ -200,11 +202,42 @@ export class UploadSectionComponent implements OnInit {
   slectedPOLineDetails: any;
   currencyList: any[];
   selectedCurrency = '';
-  flipBool:boolean;
-  isPOFlipped:boolean;
+  flipBool: boolean;
+  isPOFlipped: boolean;
   flipPOData = [];
   UniqueGRNPO: any;
+  slctinvoicelimit: boolean = false;
   portal_name = 'vendorPortal';
+
+  selectedOption: string;
+  serviceData: any[] = [];
+  filteredService: any;
+  mergefilteredService: any;
+  fulldata: any[] = [];
+  filterfulldata: any[] = [];
+  finalfiltereddata: any[] = [];
+  fileToUpload: any;
+  // client: any;
+  account_number: number;
+  socket: WebSocket;
+  inputElement: HTMLInputElement;
+  fileContent: string;
+  messages = [];
+  selectedFile: Blob;
+  sp_id: any;
+  serviceAccounts: any;
+  filteredServiceAccount: any[];
+  selectedServiceAccount: any;
+  accountsData: any;
+  selectedInvoiceType: any;
+  selectedEntity: string;
+  returnmessage: boolean;
+  event: string;
+  percentage: any;
+  final: string;
+  reason: any;
+  serviceInvoiceAccess: boolean;
+  vendorAccess: boolean;
 
   constructor(
     private http: HttpClient,
@@ -220,43 +253,61 @@ export class UploadSectionComponent implements OnInit {
     private messageService: MessageService,
     private serviceProviderService: ServiceInvoiceService,
     private datepipe: DatePipe,
-    private PS : PermissionService,
+    private webSocketService: WebSocketService,
+    private PS: PermissionService,
     private exceptionService: ExceptionsService,
     private mat_dlg: MatDialog
   ) {
-    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg)=>{
-      if(msg == 'normal'){
-      this.isPOFlipped = true;
+    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg) => {
+      if (msg == 'normal') {
+        this.isPOFlipped = true;
       }
     })
-   }
+  }
 
   ngOnInit(): void {
     this.userDetails = this.authenticationService.currentUserValue['userdetails'];
     this.DocumentTypes = this.dataService.configData.documentTypes;
-    if(this.dataService.ap_boolean){
+    this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
+    this.vendorAccess = this.dataService?.configData?.vendorInvoices;
+    if (!this.vendorAccess && this.serviceInvoiceAccess) {
+      this.selectedOption = 'Service';
+    } else {
+      this.selectedOption = 'Vendor';
+    }
+    if (this.dataService.ap_boolean) {
       this.document_type = 'Invoice';
     } else {
       this.document_type = 'Purchase Orders'
     }
     this.isCustomerPortal = this.sharedService.isCustomerPortal;
-    if(this.isCustomerPortal){
+    if (this.isCustomerPortal) {
       this.portal_name = "customer"
     }
-    if(this.PS.uploadPermissionBoolean){
-      if(this.userDetails?.uploadOpt == 'Quick Upload' && this.isCustomerPortal){
-        this.viewType = 'quick';
-        this.isQuickUploadbool = true;
-        this.bothOptBoolean = false;
-      } else if (this.userDetails?.uploadOpt == 'Both' && this.isCustomerPortal){
-        this.viewType = 'ideal';
-        this.isQuickUploadbool = false;
-        this.bothOptBoolean = true;
-      } else {
-        this.viewType = 'ideal';
-        this.isQuickUploadbool = false;
-        this.bothOptBoolean = false;
-      }
+    if (this.PS.uploadPermissionBoolean) {
+      this.permissions();
+    }
+    else {
+      // alert("Sorry, you don't have access!")
+      this.route.navigate([`${this.portal_name}/invoice/allInvoices`]);
+    }
+
+  }
+
+  permissions() {
+    if (this.userDetails?.uploadOpt == 'Quick Upload' && this.isCustomerPortal) {
+      this.viewType = 'quick';
+      this.isQuickUploadbool = true;
+      this.bothOptBoolean = false;
+    } else if (this.userDetails?.uploadOpt == 'Both' && this.isCustomerPortal) {
+      this.viewType = 'ideal';
+      this.isQuickUploadbool = false;
+      this.bothOptBoolean = true;
+    } else {
+      this.viewType = 'ideal';
+      this.isQuickUploadbool = false;
+      this.bothOptBoolean = false;
+    }
     this.seconds = "00";
     this.minutes = "00";
 
@@ -271,15 +322,9 @@ export class UploadSectionComponent implements OnInit {
     } else {
       this.reuploadBoolean = false;
     }
-    } 
-    else {
-      // alert("Sorry, you don't have access!")
-      this.route.navigate([`${this.portal_name}/invoice/allInvoices`]);
-    }
-
   }
 
-  chooseTab(val){
+  chooseTab(val) {
     this.viewType = val;
   }
   // Set date range
@@ -329,8 +374,8 @@ export class UploadSectionComponent implements OnInit {
   getEntitySummary() {
     this.serviceProviderService.getSummaryEntity().subscribe((data: any) => {
       let arr = [];
-      data?.result?.forEach(ele=>{
-        ele.EntityName1 = `${ele.EntityName}`;
+      data?.result?.forEach(ele => {
+        ele.EntityName1 = `${ele.EntityName} - ${ele.EntityCode}`;
         arr.push({ EntityName: ele.EntityName1, idEntity: ele.idEntity })
       })
       this.entity = arr;
@@ -341,6 +386,18 @@ export class UploadSectionComponent implements OnInit {
     this.docService.readVendorAccountsData(ent_id).subscribe((data: any) => {
       this.vendorAccount = data.result;
     });
+  }
+  selectType(value) {
+
+    this.entity = '';
+    this.displaySelectPdfBoolean = false;
+    this.getEntitySummary();
+    if (value === 'Service invoice') {
+      this.selectedOption = 'Service';
+    }
+    else if (value === 'Vendor invoice') {
+      this.selectedOption = 'Vendor';
+    }
   }
 
   // selectEntity(value){
@@ -383,10 +440,10 @@ export class UploadSectionComponent implements OnInit {
       } else if (val == 'multiPO') {
         this.poTypeBoolean = false;
         this.readPONumbers(this.s_date, this.e_date);
-          this.mutliPODailog = true;
-          this.multiBtn = 'Submit';
+        this.mutliPODailog = true;
+        this.multiBtn = 'Submit';
         this.POnumberBoolean = false;
-      }else if (val == 'LCM') {
+      } else if (val == 'LCM') {
         this.LCMBoolean = 'Yes';
         this.POnumberBoolean = false;
         this.getCurrency(this.vendorAccountId);
@@ -407,15 +464,22 @@ export class UploadSectionComponent implements OnInit {
     // })
     if (this.isCustomerPortal == true) {
       this.quickUploadForm.controls['vendor'].reset();
-      this.getCustomerVendors();
-     this.readDepartment();
-     // this.dropdown.show();
-     this.afVendor = true
-     // this.vdropdown.autofocus = true;
-     let event = {
-       query: ''
-     }
-     this.filterVendor(event);
+      // this.getCustomerVendors();
+      this.readDepartment();
+      // this.dropdown.show();
+      if (this.selectedOption == 'Service') {
+        // this.getEntitySummary();
+        this.filteredService = '';
+        this.getServiceList();
+      }
+      if (this.selectedOption == 'Vendor') {
+        this.selectedVendor = '';
+        this.getCustomerVendors();
+      }
+      let event = {
+        query: ''
+      }
+      this.filterVendor(event);
     } else {
       this.getVendorAccountsData(value.idEntity);
     }
@@ -433,6 +497,16 @@ export class UploadSectionComponent implements OnInit {
         })
         this.vendorAccount = arr;
         // this.filteredVendors = arr;
+      });
+  }
+  getServiceList() {
+    this.sharedService
+      .getServiceList(this.selectedEntityId)
+      .subscribe((data: any) => {
+        console.log(data)
+        this.filteredService = data.map(element => element.ServiceProvider);
+        this.serviceData = data.map(element => element.ServiceProvider);
+
       });
   }
   onSelectAccountByEntity(val) {
@@ -472,6 +546,12 @@ export class UploadSectionComponent implements OnInit {
       this.filteredVendors = this.vendorAccount;
     }
   }
+  filterServices(value) {
+    let query = value.query.toLowerCase();
+    this.filteredService = this.serviceData.filter(
+      (service) => service.ServiceProviderName.toLowerCase().includes(query)
+    );
+  }
 
   selectVendorAccount_vdr(value) {
     this.vendorAccountId = value;
@@ -503,8 +583,40 @@ export class UploadSectionComponent implements OnInit {
         }
       });
   }
-  getCurrency(vId){
-    this.sharedService.getCurrency(vId).subscribe((data:any)=>{
+  selectService(value) {
+    this.sp_id = value;
+    this.selectedServiceAccount = '';
+
+    this.getAccountsByService(this.sp_id);
+  }
+  getAccountsByService(val) {
+
+    this.sharedService.readServiceAccounts(val, this.selectedEntityId).subscribe((data: any) => {
+
+      this.serviceAccounts = data;
+
+    })
+  }
+
+
+  filterServicesAccount(value) {
+    let query = value.query.toLowerCase();
+    this.filteredServiceAccount = this.serviceAccounts?.filter(
+      (account) => account.Account.toLowerCase().includes(query)
+    );
+
+  }
+  selectServiceAccount(value) {
+    this.selectedServiceAccount = value.Account;
+    this.displaySelectPdfBoolean = true;
+    this.selectedServiceAccount = value.Account;
+    this.webSocketService.userId = this.sharedService.userId;
+    this.webSocketService.service_account = this.selectedServiceAccount;
+    this.webSocketService.authToken = this.authenticationService.currentUserValue.token;
+    this.webSocketService.connectWebsocket();
+  }
+  getCurrency(vId) {
+    this.sharedService.getCurrency(vId).subscribe((data: any) => {
       this.currencyList = data;
       this.selectedCurrency = data[0];
     })
@@ -541,7 +653,7 @@ export class UploadSectionComponent implements OnInit {
 
   selectedPO(event) {
     // if (this.mutliPODailog) {
-      this.readPOLines(event.PODocumentID);
+    this.readPOLines(event.PODocumentID);
     // }
     this.selectedPONumber = event.PODocumentID;
     this.multiPO.controls['Name'].reset();
@@ -552,7 +664,7 @@ export class UploadSectionComponent implements OnInit {
     this.multiPO.controls['GRNLineAmount'].reset();
     this.multiPO.controls['ConsumedPOQty'].reset();
   }
-  filterPO_GRNnumber(event){
+  filterPO_GRNnumber(event) {
     let filtered: any[] = [];
     let query = event.query;
 
@@ -596,35 +708,35 @@ export class UploadSectionComponent implements OnInit {
   readPOLines(po_num) {
     this.sharedService.readPOLines(po_num).subscribe((data: any) => {
       this.poLineData = data.PODATA;
-      this.UniqueGRN = data?.GRNDATA?.filter((val1,i,a)=> a.findIndex(val2=>val2.PackingSlip == val1.PackingSlip) === i);
+      this.UniqueGRN = data?.GRNDATA?.filter((val1, i, a) => a.findIndex(val2 => val2.PackingSlip == val1.PackingSlip) === i);
       this.GRNData = data?.GRNDATA
       // let jsonObj = data?.GRNDATA?.map(JSON.stringify);
       // let uniqeSet = new Set(jsonObj);
       // let unique = Array?.from(uniqeSet)?.map(JSON.parse);
 
-      this.po_grn_list = data?.GRNDATA.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip'].every(k=>v2[k] ===val1[k])) === index);
+      this.po_grn_list = data?.GRNDATA.filter((val1, index, arr) => arr.findIndex(v2 => ['PackingSlip'].every(k => v2[k] === val1[k])) === index);
     }, err => {
       this.alertService.errorObject.detail = "Server error";
       this.messageService.add(this.alertService.errorObject);
     })
   }
-  addGrnLine(val){
+  addGrnLine(val) {
     this.po_grn_line_list = [];
-    val?.value?.forEach(ele=>{
-      this.GRNData.filter(el=>{
-        if(ele.PackingSlip == el.PackingSlip){
+    val?.value?.forEach(ele => {
+      this.GRNData.filter(el => {
+        if (ele.PackingSlip == el.PackingSlip) {
           this.po_grn_line_list.push(el)
         }
       });
     })
     let arr = [];
-    this.po_grn_line_list?.forEach(val=>{
-        let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
-        arr.push({PackingSlip:val.PackingSlip,POLineNumber:val.POLineNumber,GRNField:ele});
-      })
-      this.po_grn_line_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
+    this.po_grn_line_list?.forEach(val => {
+      let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
+      arr.push({ PackingSlip: val.PackingSlip, POLineNumber: val.POLineNumber, GRNField: ele });
+    })
+    this.po_grn_line_list = arr.filter((val1, index, arr) => arr.findIndex(v2 => ['PackingSlip', 'POLineNumber'].every(k => v2[k] === val1[k])) === index);
     this.PO_GRN_Number_line = this.po_grn_line_list;
-    if(this.PO_GRN_Number_line.length>0){
+    if (this.PO_GRN_Number_line.length > 0) {
       this.flipBool = true;
     } else {
       this.flipBool = false;
@@ -648,7 +760,7 @@ export class UploadSectionComponent implements OnInit {
   selectedPOLine(event) {
     this.selectedPOlinevalue = event.Name;
     this.slectedPOLineDetails = event;
-    this.UniqueGRNPO = this.GRNData.filter(el=> event.LineNumber == el.POLineNumber);
+    this.UniqueGRNPO = this.GRNData.filter(el => event.LineNumber == el.POLineNumber);
     // let obj = {
     //   PODocumentID : this.selectedPONumber,
     //   Name : event.Name,
@@ -657,7 +769,7 @@ export class UploadSectionComponent implements OnInit {
     // }
     // this.multiPO.control.patchValue(obj);
     this.PO_desc_line = event.Name;
-    this.PO_amount_line = event.UnitPrice * event.PurchQty;
+    this.PO_amount_line = event.UnitPrice;
     this.PO_qty = event.PurchQty;
     this.multiPO.controls['GRN_Name'].reset();
     this.multiPO.controls['GRN_number'].reset();
@@ -692,7 +804,7 @@ export class UploadSectionComponent implements OnInit {
   selectedGRN(event, name) {
     if (name == 'grn_num') {
       this.GRN_number = event.PackingSlip;
-      this.GRNLineData = this.GRNData.filter(ele => (ele.PackingSlip === event.PackingSlip) &&(ele.POLineNumber == this.slectedPOLineDetails.LineNumber) );
+      this.GRNLineData = this.GRNData.filter(ele => (ele.PackingSlip === event.PackingSlip) && (ele.POLineNumber == this.slectedPOLineDetails.LineNumber));
       this.multiPO.controls['GRN_Name'].reset();
     } else {
       this.GRN_desc_line = event.Name;
@@ -793,7 +905,7 @@ export class UploadSectionComponent implements OnInit {
   }
   readSavedLines() {
     this.spinnerService.show();
-    this.sharedService.readSavedLines(this.multiPO_filepath).subscribe((data:any)=>{
+    this.sharedService.readSavedLines(this.multiPO_filepath).subscribe((data: any) => {
       this.spinnerService.hide();
     }, err => {
       this.spinnerService.hide();
@@ -803,13 +915,13 @@ export class UploadSectionComponent implements OnInit {
 
   submitMultiPO() {
     let query = '';
-    if(this.multiPO_filepath != ''){
-      query =`?filename=${this.multiPO_filepath}`
+    if (this.multiPO_filepath != '') {
+      query = `?filename=${this.multiPO_filepath}`
     }
-    this.sharedService.saveMultiPO(JSON.stringify(this.mutliplePOTableData),query).subscribe((data: any) => {
+    this.sharedService.saveMultiPO(JSON.stringify(this.mutliplePOTableData), query).subscribe((data: any) => {
       this.multiPO_filepath = data.Result;
       this.mutliPODailog = false;
-      if(this.viewType == 'ideal'){
+      if (this.viewType == 'ideal') {
         this.poTypeBoolean = true;
       }
       this.alertService.addObject.detail = "Line details data saved."
@@ -822,22 +934,24 @@ export class UploadSectionComponent implements OnInit {
 
   onSelectFile(event) {
     let isSupportedFiletype = !!event.target.files[0].name.match(/(.png|.jpg|.pdf|.html|.htm)/);
-    if(isSupportedFiletype){
+    if (isSupportedFiletype) {
       this.isuploadable = false;
       this.dragfile = false;
+      this.inputElement = event.target as HTMLInputElement;
+      this.convertFileToUint8Array(event.target.files[0]);
       this.invoiceUploadDetails = event.target.files[0];
       if (event.target.files && event.target.files[0]) {
         var reader = new FileReader();
         reader.readAsDataURL(event.target.files[0]); // read file as data url
-  
+
         reader.onload = (event) => {
           // called once readAsDataURL is completed
           this.url = event.target.result;
           var img = new Image();
-          img.onload = () => {};
+          img.onload = () => { };
         };
       }
-  
+
       this.fileDataProcess(event);
       for (var i = 0; i < event.target.files.length; i++) {
         this.name = event.target.files[i].name;
@@ -859,16 +973,18 @@ export class UploadSectionComponent implements OnInit {
   // drop file in upload file selection
   fileDrop(event) {
     let isSupportedFiletype = !!event[0].name.match(/(.png|.jpg|.pdf|.html|.htm)/);
-    if(isSupportedFiletype){
+    if (isSupportedFiletype) {
+      // this.inputElement = event.target as HTMLInputElement;
+      this.convertFileToUint8Array(event[0]);
       this.invoiceUploadDetails = event[0];
       this.isuploadable = false;
       this.dragfile = true;
-  
+
       if (event && event[0]) {
         var reader = new FileReader();
-  
+
         reader.readAsDataURL(event[0]); // read file as data url
-  
+
         reader.onload = (event) => {
           // called once readAsDataURL is completed
           this.url = event.target;
@@ -879,7 +995,7 @@ export class UploadSectionComponent implements OnInit {
         this.type = event[i].type;
         this.size = event[i].size;
       }
-  
+
       this.size = this.size / 1024 / 1024;
       this.fileDataProcess(event);
     } else {
@@ -1008,7 +1124,7 @@ export class UploadSectionComponent implements OnInit {
               this.progressBarObj[count].status = 'Passed'
               this.progressBarObj[count].percent = this.updateData['percentage'];
               this.progressWidth = this.updateData['percentage'];
-              count = count+1;
+              count = count + 1;
               if (this.progressText == 'ERROR') {
                 alert('ERROR');
               }
@@ -1037,8 +1153,8 @@ export class UploadSectionComponent implements OnInit {
                   // this.tagService.createInvoice = true;
                   // this.tagService.invoicePathBoolean = true;
                   this.tagService.documentType = this.progressEvent.UploadDocType;
-                  let id:number
-                  if(this.document_type == 'Purchase Orders'){
+                  let id: number
+                  if (this.document_type == 'Purchase Orders') {
                     id = 1;
                   } else {
                     id = 3
@@ -1174,6 +1290,7 @@ export class UploadSectionComponent implements OnInit {
       for (var i = 0; i < event.target.files?.length; i++) {
         this.invoiceDocList.push(event.target.files[i]);
         this.invoiceFilename = event.target.files[i].name;
+        this.slctinvoicelimit = true;
       }
     } else {
       for (var i = 0; i < event.target.files?.length; i++) {
@@ -1243,7 +1360,7 @@ export class UploadSectionComponent implements OnInit {
       Approver = this.approverNameListFinal
 
     }
-    this.PO_GRN_Number_line?.forEach(el=>{
+    this.PO_GRN_Number_line?.forEach(el => {
       po_grn_data.push(el.GRNField)
     })
     let obj = {
@@ -1268,9 +1385,10 @@ export class UploadSectionComponent implements OnInit {
       "po_number": val.PONumber?.PODocumentID,
       "multi_po_path": multiPath,
       "supporting_doc_names": this.supportFileNamelist,
-      "po_grn_data":this.PO_GRN_Number_line,
-      "Currency" : this.selectedCurrency,
-      "flippo_data": this.flipPOData
+      "po_grn_data": this.PO_GRN_Number_line,
+      "Currency": this.selectedCurrency,
+      "flippo_data": this.flipPOData,
+      "up_lt": val.pageLimit
     }
     this.uploadInvoicesListData.push(obj);
     this.APIPostData.push(APIObj);
@@ -1343,29 +1461,116 @@ export class UploadSectionComponent implements OnInit {
       this.mutliplePOTableData.splice(index, 1);
     }
   }
-  open_dialog_comp(str){
+  open_dialog_comp(str) {
     this.spinnerService.show();
     this.getPO_lines(str);
   }
-  
-  getPO_lines(str){
+
+  getPO_lines(str) {
     let query = `?po_number=${this.selectedPONumber}`;
-    this.exceptionService.getPOLines(query).subscribe((data:any)=>{
+    this.exceptionService.getPOLines(query).subscribe((data: any) => {
       let poLineData = data.Po_line_details;
-      const dailogRef: MatDialogRef<PopupComponent> =  this.mat_dlg.open(PopupComponent,{ 
-        width : '60%',
+      const dailogRef: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
+        width: '60%',
         height: '70vh',
         hasBackdrop: false,
-        data : { type: str, comp:'upload', resp: poLineData,grnLine:this.PO_GRN_Number_line}});
-        dailogRef.afterClosed().subscribe(result=>{
-          this.flipPOData = result;
-        })
+        data: { type: str, comp: 'upload', resp: poLineData, grnLine: this.PO_GRN_Number_line }
+      });
+      dailogRef.afterClosed().subscribe(result => {
+        this.flipPOData = result;
+      })
       this.spinnerService.hide();
-    },err=>{
+    }, err => {
       this.alertService.errorObject.detail = "Server error";
       this.messageService.add(this.alertService.errorObject);
       this.spinnerService.hide();
     })
+  }
+
+  uploadService() {
+    this.processStage = 'Uploading invoice started';
+    this.sendFile();
+    this.returnmessage = true;
+    const progressUpdates = [];
+    this.webSocketService.getMessageSubject().subscribe((message) => {
+      this.messages.push(message);
+      progressUpdates.push(message);
+      const variabletest = JSON.parse(message)
+      const events = variabletest.event;
+
+      let index = 0;
+      const lastMessageIndex = this.messages.length - 1; // Store the index of the last message.
+      const displayInterval = setInterval(() => {
+        if (index < this.messages.length) {
+          const update = this.messages[index];
+          const percentage = JSON.parse(update).percentage;
+          const event = JSON.parse(update).event;
+          this.progressbar = percentage;
+          this.progressText = event;
+          if (index === this.messages.length - 1) {
+            const lastEvent = JSON.parse(this.messages[lastMessageIndex]).event;
+            const lastreason = JSON.parse(this.messages[lastMessageIndex]).reason;
+            const doc_id = JSON.parse(this.messages[lastMessageIndex]).doc_id;
+            // Check if it's the last event.
+            if (lastreason != '') {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'error',
+                detail: lastreason,
+              });
+            }
+            if (lastEvent == 'File Processed successfully.') {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'File Uploaded',
+                detail: lastEvent,
+              });
+              this.route.navigate([
+                `customer/invoice/InvoiceDetails/CustomerUpload/${doc_id}`,
+              ]);
+              this.tagService.isUploadScreen = true;
+              this.tagService.displayInvoicePage = false;
+              this.tagService.editable = true;
+              this.tagService.submitBtnBoolean = true;
+              this.sharedService.invoiceID = doc_id;
+              this.tagService.headerName = 'Review Invoice';
+
+            }
+            this.webSocketService.close();
+          }
+          index++;
+
+        } else {
+          // Stop the interval when all elements have been displayed.
+          clearInterval(displayInterval);
+        }
+      }, 1000);
+    });
+
+
+
+  }
+  convertFileToUint8Array(file: File) {
+    const reader = new FileReader();
+    reader.onload = (event: ProgressEvent<FileReader>) => {
+      if (event.target?.result instanceof ArrayBuffer) {
+        const arrayBuffer = event.target.result;
+        const uint8Array = new Uint8Array(arrayBuffer);
+        const base64String = new Blob([uint8Array], { type: 'application/pdf' });
+        this.selectedFile = base64String;
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  sendFile() {
+    if (this.selectedFile) {
+      this.webSocketService.sendFile(this.selectedFile);
+    } else {
+
+      // Handle case where no file is selected
+
+    }
   }
   ngOnDestroy() {
     this.mat_dlg.closeAll();

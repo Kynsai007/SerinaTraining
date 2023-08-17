@@ -117,16 +117,16 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       })
       this.statusData = new Set(mergedStatus);
     }
-    if(!this.isDesktop) {
-      this.showPaginatorAllInvoice = false;
-    } 
+
   }
 
   ngOnInit(): void {
     this.userType = this.authService.currentUserValue['user_type'];
     let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
     this.isDesktop = this.ds.isDesktop;
-    
+    if(!this.isDesktop) {
+      this.showPaginatorAllInvoice = false;
+    } 
     if(userRole == 'customer super admin' || userRole == 'ds it admin'){
       this.isAdmin = true;
     } else {

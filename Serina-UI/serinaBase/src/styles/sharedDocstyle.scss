@@ -51,7 +51,7 @@
     .positionCreateUpload {
       position: absolute;
       right: 10px;
-      top: 56px;
+      top: -36px;
       z-index: 11
     }
     .p-sidebar {
@@ -349,11 +349,12 @@
       //   font-size: 8px;
       // }
       .searchInput {
-        width: 60%;
+        width: 120px;
       }
       .tableDataDiv {
-        margin-top: 40px;
+        // margin-top: 40px;
       }
+      
     }
     @media screen and (max-width: 1200px) and (min-width: 800px) {
       .searchBar {

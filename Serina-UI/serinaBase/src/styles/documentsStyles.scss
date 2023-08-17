@@ -146,6 +146,9 @@
             // .tableSearchInput{
             //     // font-size: 8px;
             // }
+            .searchIcon {
+                display: none;
+            }
             .statusType{
                 // font-size: 8px;
                 font-weight: 600;
@@ -181,23 +184,10 @@
                 font-weight: 600;
             }
           }
-        //   @media screen and (max-width: 576px) {
-        //     .nav_pane_width {
-        //       flex-wrap: wrap;
-        //       max-width:100%;
-        //       position: relative;
-        //     }
-        //     .searchBar {
-        //       top: 138px !important;
-        //       right: 49px !important;
-        //     }
-        //     .positionCreateUpload {
-        //       top: 148px !important;
-        //     }
-        //     .filter_input {
-        //       top: 148px !important;
-        //       right: auto;
-        //     }
-        //    }
+          @media screen and (max-width: 576px) {
+            .searchInput{
+                width: 120px;
+            }
+           }
     }
 }
