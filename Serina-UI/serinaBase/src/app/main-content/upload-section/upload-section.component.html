@@ -366,7 +366,7 @@
                 <button
                   class="btn btnVender bg-btn-success"
                   [disabled]="progress || OcrProgress"
-                  (click)="uploadInvoice()"
+                  (click)="selectedOption === 'Vendor' ? uploadInvoice() : uploadService()"
                 >
                   Upload
                 </button>

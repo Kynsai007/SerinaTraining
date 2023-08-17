@@ -221,6 +221,7 @@ export class Comparision3WayComponent
     this.userDetails = this.authService.currentUserValue;
     this.isDesktop = this.dataService.isDesktop;
     this.documentViewBool = this.isDesktop;
+    this.AddPermission();
     if (this.ap_boolean) {
       this.partytype = 'vendor';
       this.docType = 3;
@@ -239,7 +240,7 @@ export class Comparision3WayComponent
     }
     this.initialData();
     // this.readFilePath();
-    this.AddPermission();
+    
     this.isAdmin = this.dataService.isAdmin;
     this.currentTab = 'line';
     

@@ -1031,6 +1031,7 @@ export class UploadSectionComponent implements OnInit {
     this.uploader.queue.length = 0;
     this.OcrProgress = 0;
     this.progress = null;
+    this.returnmessage = false;
     this.evtSource.close();
   }
 

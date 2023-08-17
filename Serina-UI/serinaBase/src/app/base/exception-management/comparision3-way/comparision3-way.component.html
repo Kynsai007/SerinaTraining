@@ -69,12 +69,12 @@
       <span class="f-12 pointer" (click)="viewPdf()">{{ btnText }}</span>
     </div>
     <div>
-      <button class="f-12 btn_stck mr-3" (click)="viewPdf()">
+      <button *ngIf="editable" class="f-12 btn_stck mr-3" (click)="viewPdf()">
         View Stock Availability
       </button>
     </div>
     <div>
-      <button class="f-12 btn_hold" (click)="viewPdf()">Put PO On Hold</button>
+      <button *ngIf="editable" class="f-12 btn_hold" (click)="viewPdf()">Put PO On Hold</button>
     </div>
   </div>
 

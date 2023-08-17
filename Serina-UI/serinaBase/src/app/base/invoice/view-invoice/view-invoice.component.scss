@@ -51,7 +51,7 @@
   padding: 8px;
   padding-left: 0;
   height: 90vh;
-  overflow: auto;
+  overflow: hidden;
   margin-top: 0;
 }
 .vendor-body {
@@ -112,14 +112,16 @@ a {
 // }
 .tabsDiv {
   position: relative;
-  height: 82vh;
+  max-height: 82vh;
+  min-height: 78vh;
   margin-top: 5px;
   z-index: 3;
+  overflow-y: auto;
 }
 
 .tabDiv {
-  max-height: 68vh;
-  min-height: 68vh;
+  max-height: 70vh;
+  min-height: 62vh;
   overflow-y: auto;
   // background: white;
   // border-radius: 0px 10px 10px 10px;

@@ -43,7 +43,7 @@
       (editPermissionBoolean ||
         changeApproveBoolean ||
         financeApproveBoolean) &&
-      (submitBtn_boolean || vendorUplaodBoolean) &&
+      (submitBtn_boolean || vendorUplaodBoolean) && editable &&
       currentTab == 'line' &&
       isDesktop
     "
@@ -310,7 +310,7 @@
       <div *ngIf="!isDesktop && !isPdfAvailable" class="vi_mb_btn f-12" (click)="doc_view()">
         <i class="fa fa-eye"></i> View Document
       </div>
-      <div class="tabDiv tab-content" id="myTabContent" [ngClass]="uploadtime? '':'mt-4'">
+      <div class="tabDiv tab-content" id="myTabContent" [ngClass]="(isServiceData || uploadtime)? '':'mt-4'">
         <!-- vendor -->
         <div
           class="tab-pane fade"

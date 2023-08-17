@@ -79,6 +79,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   drilldownarray = [];
   drillBool: boolean;
   docId;
+  ap_boolean :boolean;
   // mob_bg_tr = [
   //   { id:4, name:'Need To Review', borderClr:'#DBD51C', bgClr: '#FEFFD6'},
   //   { id:2, name: 'Processing Document', borderClr:'#7C83CF', bgClr: '#F3F4FF'},
@@ -124,6 +125,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     this.userType = this.authService.currentUserValue['user_type'];
     let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
     this.isDesktop = this.ds.isDesktop;
+    this.ap_boolean = this.ds.ap_boolean;
     if(!this.isDesktop) {
       this.showPaginatorAllInvoice = false;
     } 
@@ -132,7 +134,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     } else {
       this.isAdmin = false;
     }
-    if(this.ds.ap_boolean){
+    if(this.ap_boolean){
       this.invoceDoctype = true;
     }
     this.bgColorCode = this.ds.bgColorCode;
@@ -233,10 +235,18 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
         `/vendorPortal/invoice/${route}/${e.idDocument}`,
       ]);
     } else if (this.userType == 'customer_portal') {
-      if(e.documentsubstatusID != 30){
-        this.router.navigate([`customer/invoice/${route}/${e.idDocument}`]);
+      if(this.ap_boolean){
+        if(e.documentsubstatusID != 30 ){
+          this.router.navigate([`customer/invoice/${route}/${e.idDocument}`]);
+        } else {
+          this.router.navigate([`customer/invoice/comparision-docs/${e.idDocument}`]);
+        }
       } else {
-        this.router.navigate([`customer/invoice/comparision-docs/${e.idDocument}`]);
+        if(e.documentsubstatusID != 29 && route == 'PODetails') {
+          this.router.navigate([`customer/ExceptionManagement/batchProcess/SO_generate/${e.idDocument}`]);
+        } else {
+          this.router.navigate([`customer/invoice/${route}/${e.idDocument}`]);
+        }
       }
     }
     this.tagService.createInvoice = true;
