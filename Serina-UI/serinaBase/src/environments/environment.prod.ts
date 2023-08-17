@@ -10,7 +10,7 @@ export const environment = {
 };
 
 export const environment1  = {
-  // hostname: `${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
+  hostname: `${location.href.split("https://")[1].split(".serinaplus.com")[0]}.centralindia.cloudapp.azure.com`,
   // port: 443,
   // protocol: 'wss',
   // path: '/console',
