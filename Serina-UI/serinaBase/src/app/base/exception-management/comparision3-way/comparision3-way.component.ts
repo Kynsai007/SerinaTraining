@@ -525,7 +525,9 @@ export class Comparision3WayComponent
         });
         this.po_num = po_num_data[0]?.Value;
         // this.getPODocId(this.po_num);
-        this.getGRNnumbers(this.po_num);
+        if(this.docType == 3){
+          this.getGRNnumbers(this.po_num);
+        }
         this.vendorData = {
           ...data.Vendordata[0].Vendor,
           ...data.Vendordata[0].VendorAccount,
@@ -893,7 +895,7 @@ export class Comparision3WayComponent
   //   (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
   // }
 
-  approveChangesBatch() {
+  beforeBatchTrigger() {
     this.getInvoiceFulldata();
     setTimeout(() => {
       let count = 0;
@@ -918,35 +920,37 @@ export class Comparision3WayComponent
         }
       });
 
-      this.lineDisplayData.forEach((element) => {
-        if (
-          element.tagname == 'Quantity' ||
-          element.tagname == 'UnitPrice' ||
-          element.tagname == 'AmountExcTax' ||
-          element.tagname == 'Amount'
-        ) {
-          element.items.forEach((ele) => {
-            ele.linedetails.forEach((ele1) => {
-              if (
-                ele1.invline[0].DocumentLineItems?.Value == '' ||
-                isNaN(+ele1.invline[0].DocumentLineItems?.Value)
-              ) {
-                count++;
-                errorTypeLine = 'AmountLine';
-              }
-
-              if (element.tagname == 'Quantity') {
+      if(this.docType == 3){
+        this.lineDisplayData.forEach((element) => {
+          if (
+            element.tagname == 'Quantity' ||
+            element.tagname == 'UnitPrice' ||
+            element.tagname == 'AmountExcTax' ||
+            element.tagname == 'Amount'
+          ) {
+            element.items.forEach((ele) => {
+              ele.linedetails.forEach((ele1) => {
                 if (
-                  ele1.invline[0].DocumentLineItems?.Value == 0
+                  ele1?.invline[0].DocumentLineItems?.Value == '' ||
+                  isNaN(+ele1?.invline[0].DocumentLineItems?.Value)
                 ) {
                   count++;
-                  errorTypeLine = 'quntity';
+                  errorTypeLine = 'AmountLine';
                 }
-              }
+  
+                if (element.tagname == 'Quantity') {
+                  if (
+                    ele1?.invline[0].DocumentLineItems?.Value == 0
+                  ) {
+                    count++;
+                    errorTypeLine = 'quntity';
+                  }
+                }
+              });
             });
-          });
-        }
-      });
+          }
+        });
+      }
       if (count == 0) {
         this.sendToBatch();
       } else {
@@ -983,7 +987,11 @@ export class Comparision3WayComponent
           this.headerpop = 'Batch Progress'
           this.progressDailogBool = true;
           this.GRNDialogBool = false;
-          this.batchData = data[this.invoiceID]?.complete_status;
+          if(this.docType == 3) {
+            this.batchData = data[this.invoiceID]?.complete_status;
+          } else if(this.docType == 1) {
+            this.batchData = data.batchresp;
+          }
         });
         // setTimeout(() => {
         //   if (this.router.url.includes('ExceptionManagement')) {
@@ -1015,7 +1023,7 @@ export class Comparision3WayComponent
         sub_status == 33 ||
         sub_status == 21 ||
         sub_status == 27) {
-        this.updateAlert('Suggestion', 'Please check the values in invoice.');
+        this.updateAlert('Suggestion', 'Please check the values in the document.');
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
@@ -1027,7 +1035,7 @@ export class Comparision3WayComponent
         sub_status == 21 ||
         sub_status == 27 ||
         sub_status == 75) {
-        this.updateAlert('Suggestion', 'Please check the values in invoice.');
+        this.updateAlert('Suggestion', 'Please check the values in the document.');
       } else if (sub_status == 34) {
         this.updateAlert('Suggestion', 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.')
       } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {

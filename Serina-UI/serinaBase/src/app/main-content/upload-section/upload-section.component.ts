@@ -1045,7 +1045,7 @@ export class UploadSectionComponent implements OnInit {
   uploadInvoice() {
     this.seconds = "00";
     this.minutes = "00";
-    this.processStage = '0/2 (step 1) : Uploading document started';
+    this.processStage = '0/2 (step 1) : Document uploading initiated';
     this.progress = 1;
     const formData = new FormData();
     formData.append('file', this.invoiceUploadDetails);
@@ -1089,7 +1089,7 @@ export class UploadSectionComponent implements OnInit {
               detail: 'File Uploaded, OCR Process started Successfully',
             });
             this.processStage =
-              '1/2 (step 2): Upload document done, OCR in progress.';
+              '1/2 (step 2): Document upload completed, OCR processing underway.';
 
             /* OCR Process Starts*/
             this.OcrProgress = 1;
@@ -1489,7 +1489,7 @@ export class UploadSectionComponent implements OnInit {
   }
 
   uploadService() {
-    this.processStage = 'Uploading invoice started';
+    this.processStage = 'Invoice uploading initiated';
     this.sendFile();
     this.returnmessage = true;
     const progressUpdates = [];

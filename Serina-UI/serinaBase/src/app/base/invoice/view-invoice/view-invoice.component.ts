@@ -378,8 +378,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // if (this.flipEnabled && this.subStatusId == 34){
     //   this.currentTab = "poline";
     // }
-
-    console.log(this.currentTab)
   }
 
   routeOptions(){
@@ -387,13 +385,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       if(this.documentType == 'multipo'){
         this.multiPOBool = true;
         this.currentTab = "line";
-      }      
-      
+      } 
       this.isLinenonEditable = true;
     }
 
     if (this.approval_selection_boolean == true && this.isLCMInvoice == true) {
-
       this.supportTabBoolean = false;
       this.isLCMTab = true;
       this.readPONumbersLCM(this.dataService.entityID);
@@ -419,6 +415,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.selectionTabBoolean = false;
     }
   }
+  // cost allocation selection based on ERP
   ERPCostAllocation() {
     if (this.ERP == 'JD') {
       this.allocationFileds = [
@@ -460,7 +457,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       ]
     }
   }
-
+  // timer function for the user activity on document
   idleTimer(time, str) {
     this.timer = new IdleTimer({
       timeout: time, //expired after 180 secs
@@ -473,7 +470,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  // Updating the user session for editing the document
   updateSessionTime() {
     let sessionData = {
       session_status: true,
@@ -994,22 +991,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         } else {
           query = `?re_upload=${this.reuploadBoolean}&doctype=${this.docType}`;
         }
-        this.SharedService.syncBatchTrigger(query).subscribe((data: any) => {
-          this.progressDailogBool = true;
-          this.batchData = data[this.invoiceID]?.complete_status;
-          if (
-            this.vendorUplaodBoolean == true &&
-            this.reuploadBoolean == true
-          ) {
-            if (data[0] == 0) {
-              this.errorTriger(data[1]);
-            } else {
-              this.successAlert(data[1]);
-            }
-          }
-
-          this.dataService.reUploadData = [];
-        })
+        this.batchProcess(query);
         // setTimeout(() => {
         //   if (this.router.url.includes('ExceptionManagement')) {
         //     this._location.back();
@@ -1026,6 +1008,28 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.errorTriger('Server error');
       }
     );
+  }
+
+  batchProcess(query){
+    this.SharedService.syncBatchTrigger(query).subscribe((data: any) => {
+      this.progressDailogBool = true;
+      if(this.docType == 3) {
+        this.batchData = data[this.invoiceID]?.complete_status;
+      } else if(this.docType == 1) {
+        this.batchData = data.batchresp;
+      }
+      if (
+        this.vendorUplaodBoolean == true &&
+        this.reuploadBoolean == true
+      ) {
+        if (data[0] == 0) {
+          this.errorTriger(data[1]);
+        } else {
+          this.successAlert(data[1]);
+        }
+      }
+      this.dataService.reUploadData = [];
+    })
   }
 
   routeToMapping() {
@@ -1105,20 +1109,21 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.SharedService.vendorSubmitPO(this.reuploadBoolean, this.uploadtime).subscribe(
       (data: any) => {
         this.SpinnerService.hide();
+        this.batchProcess(`?re_upload=${this.reuploadBoolean}&doctype=${this.docType}`);
         // if (this.router.url.includes('ExceptionManagement')) {
           this.successAlert('Document submitted successfully');
         // } 
-         setTimeout(() => {
-          if (this.router.url.includes('ExceptionManagement')) {
-            this._location.back();
-          } else {
-            if (this.userDetails.user_type == 'vendor_portal') {
-              this.router.navigate(['vendorPortal/invoice/allInvoices']);
-            } else {
-              this.router.navigate(['customer/invoice/allInvoices']);
-            }
-          }
-        }, 2000);
+        //  setTimeout(() => {
+        //   if (this.router.url.includes('ExceptionManagement')) {
+        //     this._location.back();
+        //   } else {
+        //     if (this.userDetails.user_type == 'vendor_portal') {
+        //       this.router.navigate(['vendorPortal/invoice/allInvoices']);
+        //     } else {
+        //       this.router.navigate(['customer/invoice/allInvoices']);
+        //     }
+        //   }
+        // }, 2000);
       },
       (error) => {
         this.errorTriger('Server error');
