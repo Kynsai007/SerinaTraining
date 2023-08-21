@@ -31,6 +31,7 @@ import * as fileSaver from 'file-saver';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PopupComponent } from '../../popup/popup.component';
 import { MultiPOComponent } from 'src/app/main-content/multi-po/multi-po.component';
+import { MatAccordion } from '@angular/material/expansion';
 
 
 export interface getApproverData {
@@ -256,6 +257,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   is_fpa: boolean;
   isDesktop:boolean;
   documentViewBool:boolean;
+  linedata_mobile = [];
+  @ViewChild(MatAccordion) accordion: MatAccordion;
 
   constructor(
     private tagService: TaggingService,
@@ -596,14 +599,47 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               count = count + 9;
               val.id = count;
             }
+            // this.lineCount = val.linedata;
           });
           this.lineDisplayData = array.sort((a, b) => a.id - b.id);
         } else {
           this.lineDisplayData = data.ok.linedata;
-          this.lineDisplayData.unshift({
-            TagName: 'S.No',
-            idDocumentLineItemTags: 1,
-          });
+          // this.lineCount = this.lineDisplayData[0].linedata;
+            // console.log(this.lineCount)
+          if(this.isDesktop){
+            this.lineDisplayData.unshift({
+              TagName: 'S.No',
+              idDocumentLineItemTags: 1,
+            });
+
+          } else {
+            // Get the maximum number of linedata entries across all tags
+            const maxLinedataEntries = Math.max(...this.lineDisplayData.map(tag => tag.linedata.length));
+
+            // Iterate through the index of linedata entries
+            for (let dataIndex = 0; dataIndex < maxLinedataEntries; dataIndex++) {
+              const transformedData = [];
+
+              // Iterate through the received data
+              this.lineDisplayData.forEach(tag => {
+                const tagName = tag.TagName;
+                const linedata = tag.linedata[dataIndex];
+
+                // Create an object with the TagName and linedata for the current index
+                const tagObject = {
+                  TagName: tagName,
+                  linedata: linedata
+                };
+
+                // Add the tagObject to the transformedData array
+                transformedData.push(tagObject);
+              });
+
+              // Add the transformedData array for the current index to the main array
+              this.linedata_mobile.push(transformedData);
+            }
+            console.log(this.linedata_mobile);
+          }
           if (this.editable) {
             this.lineDisplayData.push({
               TagName: 'Actions',

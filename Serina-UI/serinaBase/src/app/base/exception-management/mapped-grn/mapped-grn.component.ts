@@ -9,6 +9,7 @@ import { SharedService } from 'src/app/services/shared.service';
 export class MappedGRNComponent implements OnInit {
   grnTabDatalength:number;
   GRNTabData: {};
+  currentlyOpenedItemIndex = -1;
 
   constructor(private SharedService: SharedService) { }
 
@@ -20,5 +21,16 @@ export class MappedGRNComponent implements OnInit {
       this.GRNTabData = data?.result;
       this.grnTabDatalength = Object.keys(this.GRNTabData).length;
     })
+  }
+
+  
+  setOpened(itemIndex) {
+    this.currentlyOpenedItemIndex = itemIndex;
+  }
+
+  setClosed(itemIndex) {
+    if (this.currentlyOpenedItemIndex === itemIndex) {
+      this.currentlyOpenedItemIndex = -1;
+    }
   }
 }

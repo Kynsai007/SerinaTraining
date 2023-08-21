@@ -589,6 +589,13 @@ a {
       top: 5px;
   }
 }
+.line_mob{
+  background: lightblue;
+    width: fit-content;
+    padding: 4px 10px;
+    border-radius: 5px;
+    margin-top:4px;
+}
 @media screen and (max-width:1200px) {
   .zoom_pos_pdf {
     left: -160px;
@@ -617,6 +624,9 @@ a {
   :host ::ng-deep {
     .ng2-pdf-viewer-container {
       margin-top: 25px;
+    }
+    .mat-expansion-panel-body {
+      padding: 0 14px 16px;
     }
   }
   .doc_cls_btn {
@@ -649,4 +659,11 @@ a {
     top: 0;
     right: 0;
   }
+  .old_value {
+    position: relative;
+    top: -3px;
+  }
+  // .inputHeight {
+  //   width: 120px;
+  // }
 }

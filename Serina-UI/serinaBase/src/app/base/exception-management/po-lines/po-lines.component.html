@@ -1,6 +1,6 @@
 <div class="refresh_btn"><button class="btnUpload" (click)="refreshPO()">Refresh PO</button></div>
 
-<table class="invert" style="width: 100%" *ngIf="POlineBool">
+<table class="invert" style="width: 100%" *ngIf="POlineBool && isDesktop">
     <tr
       class="invert_tr"
       *ngFor="let item of polineTableData; let i = index"
@@ -8,9 +8,6 @@
       <td class="lineName invert_th_td">
         {{ item.TagName }}
       </td>
-      <!-- <div>
-                                <div class="linevalue invert_thtd">{{i+1}}</div>
-                              </div> -->
       <td
         class="linevalue invert_th_td"
         *ngFor="let line1 of poLineData; let i = index"
@@ -36,6 +33,45 @@
       </td>
     </tr>
   </table>
+
+<div *ngIf="POlineBool && !isDesktop">
+  <div class="example-action-buttons f-12">
+    <button mat-button (click)="accordion.openAll()">Expand All</button>
+    <button mat-button (click)="accordion.closeAll()">Collapse All</button>
+  </div>
+  <mat-accordion multi>
+    <div *ngFor="let a of poLineData; let i = index;">
+        <mat-expansion-panel 
+        [expanded]="true"
+          (opened)="setOpened(i)"
+          (closed)="setClosed(i)" style="margin-top: 10px;">
+          
+          <mat-expansion-panel-header class="KPIName">
+            <mat-panel-title class=" secondheadertoggle">
+              <h6 class="f-12 line_mob">Line number - {{i+1}}</h6>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <ng-container>
+            <div class="d-flex flex-wrap">
+              <div *ngFor="let b of a | keyvalue" >
+                <label [for]="b.key" class="label-head" style="margin-bottom: -5px">
+                  {{b.key}}
+                </label>
+                <input
+                  type="text"
+                  [value]="b.value"
+                  [title]="b.value"
+                  disabled
+                  class="form-control mb-1 inputHeight"
+                />
+              </div>
+            </div>
+          </ng-container>
+    
+        </mat-expansion-panel>
+    </div>
+  </mat-accordion>
+</div>
   <div *ngIf="!POlineBool" class="f-13 text-center">
     No PO lines are available
   </div>

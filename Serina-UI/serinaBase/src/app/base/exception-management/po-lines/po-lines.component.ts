@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { MatAccordion } from '@angular/material/expansion';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
@@ -26,6 +27,9 @@ export class PoLinesComponent implements OnInit {
     { TagName: 'DiscPercent', linedata: [] }
   ]
   poLineData = [];
+  isDesktop: boolean;
+  currentlyOpenedItemIndex = -1;
+  @ViewChild(MatAccordion) accordion: MatAccordion;
 
   constructor(private SharedService: SharedService,
     private SpinnerService : NgxSpinnerService,
@@ -36,7 +40,7 @@ export class PoLinesComponent implements OnInit {
 
   ngOnInit(): void {
     this.readPOLines();
-    
+    this.isDesktop = this.ds.isDesktop;
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.getPODocId(changes?.po_num?.currentValue);
@@ -86,5 +90,14 @@ export class PoLinesComponent implements OnInit {
     this.AlertService.addObject.severity = 'success';
     this.AlertService.addObject.detail = txt;
     this.messageService.add(this.AlertService.addObject);
+  }
+  setOpened(itemIndex) {
+    this.currentlyOpenedItemIndex = itemIndex;
+  }
+
+  setClosed(itemIndex) {
+    if (this.currentlyOpenedItemIndex === itemIndex) {
+      this.currentlyOpenedItemIndex = -1;
+    }
   }
 }
