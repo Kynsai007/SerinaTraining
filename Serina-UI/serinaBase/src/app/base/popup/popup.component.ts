@@ -29,6 +29,10 @@ export class PopupComponent implements OnInit {
   masterData: any;
   orderData: any;
   textlngth: any;
+  updateSOObj: any;
+  line_num:number;
+  v_a_id: any;
+  so_id: any;
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -62,8 +66,11 @@ export class PopupComponent implements OnInit {
       this.approveBool = true;
       this.flipApproverlist();
     } else if(this.type == 'poMaster'){
+      this.v_a_id = this.data.resp.v_a_id;
+      this.line_num = this.data.resp.itemCode;
+      this.so_id = this.data.resp.so_id;
       if(!this.ds.arenaMasterData){
-        this.getPOMasterData(this.data.resp);
+        this.getPOMasterData(this.v_a_id);
       } else {
         this.orderHistoryData = this.ds.arenaMasterData;
       }
@@ -221,8 +228,11 @@ export class PopupComponent implements OnInit {
     })
   }
 
-  onSelectMaster(evnt,poLine) {
-    console.log(evnt,poLine);
+  onSelectMaster(des) {
+    this.updateSOObj = {
+      "so_line_number": this.line_num,
+      "Value": des
+    }
   }
 
   onSearch(val,tab){
@@ -249,6 +259,14 @@ export class PopupComponent implements OnInit {
     } else {
       this.orderHistoryData[dataField] = dataArray;
     }
-    console.log(this.orderHistoryData[dataField])
+  }
+
+  updateMapping() {
+    console.log(this.so_id,this.v_a_id,this.updateSOObj);
+    this.ES.updateSOmap(this.so_id,this.v_a_id,this.updateSOObj).subscribe((data)=>{
+      this.alert.addObject.detail = "SO Line is mapped successfully";
+      this.message.add(this.alert.addObject);
+      this.dialogRef.close('Mapped');
+    })
   }
 }

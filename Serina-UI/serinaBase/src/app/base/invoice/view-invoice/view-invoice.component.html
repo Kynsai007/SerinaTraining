@@ -595,8 +595,8 @@
           </table>
           <div *ngIf="!isDesktop">
             <div class="example-action-buttons f-12">
-              <button mat-button (click)="accordion.openAll()">Expand All</button>
-              <button mat-button (click)="accordion.closeAll()">Collapse All</button>
+              <button mat-button class="f-12" (click)="accordion.openAll()">Expand All</button>
+              <button mat-button class="f-12" (click)="accordion.closeAll()">Collapse All</button>
             </div>
             <mat-accordion multi>
               <div *ngFor="let lined of linedata_mobile; let i = index;">

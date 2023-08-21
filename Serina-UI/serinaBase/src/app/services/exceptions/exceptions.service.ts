@@ -145,4 +145,7 @@ export class ExceptionsService {
   readMasterData(v_id){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/readMasterData/${this.userId}/${v_id}`)
   }
+  updateSOmap(so_id,v_a_id,data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/update_line_mapping_so/${so_id}/${v_a_id}/${this.userId}`,data)
+  }
 }

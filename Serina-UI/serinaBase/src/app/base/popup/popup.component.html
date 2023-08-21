@@ -24,7 +24,11 @@
       (ngSubmit)="onSubmit(polines.value)"
     >
       <div class="tb_div">
-        <table style="border-collapse: collapse" class="table table-bordered f-11" *ngIf="POLineData.length>0">
+        <table
+          style="border-collapse: collapse"
+          class="table table-bordered f-11"
+          *ngIf="POLineData.length > 0"
+        >
           <tr class="f-12 tb_head">
             <th>
               <input
@@ -275,7 +279,12 @@
         aria-labelledby="order-tab"
       >
         <div>
-          <input type="text" class="form-control f-12" placeholder="Search" (keyup)="onSearch($event.target.value,'order')" />
+          <input
+            type="text"
+            class="form-control f-12"
+            placeholder="Search"
+            (keyup)="onSearch($event.target.value, 'order')"
+          />
         </div>
         <table class="table f-12">
           <tr class="tHead">
@@ -290,12 +299,12 @@
           >
             <td>
               <input
-                type="checkbox"
+                type="radio"
                 class="pos-r mr-1"
                 style="top: 4px"
-                [name]="poLine.Description"
+                name="SOMap"
                 [id]="poLine.idDocumentLineItems"
-                (change)="onSelectMaster($event.target.checked, poLine)"
+                (change)="onSelectMaster(poLine.Description)"
               />
               <label [for]="poLine.idDocumentLineItems">{{
                 poLine.Description
@@ -322,7 +331,12 @@
         aria-labelledby="master-tab"
       >
         <div>
-          <input type="text" class="form-control f-12" placeholder="Search" (keyup)="onSearch($event.target.value,'master')"/>
+          <input
+            type="text"
+            class="form-control f-12"
+            placeholder="Search"
+            (keyup)="onSearch($event.target.value, 'master')"
+          />
         </div>
         <table class="table f-12">
           <tr class="tHead">
@@ -334,12 +348,12 @@
           >
             <td>
               <input
-                type="checkbox"
+                type="radio"
                 class="pos-r mr-1"
                 style="top: 4px"
-                name="description"
+                name="SOMap"
                 [id]="poLine.iditemmetadata"
-                (change)="onSelectMaster($event.target.checked, poLine)"
+                (change)="onSelectMaster(poLine.description)"
               />
               <label [for]="poLine.iditemmetadata">{{
                 poLine.description
@@ -351,6 +365,25 @@
           </tr>
         </table>
       </div>
+    </div>
+    <div
+      class="mt-4 d-flex justify-content-center mb-3"
+    >
+      <button
+        class="btn btnVender bg-btn-success mr-3"
+        type="submit"
+        [disabled]="!updateSOObj"
+        (click)="updateMapping()"
+      >
+        Update
+      </button>
+      <button
+        class="btn btnVender bg-btn-cancel"
+        type="button"
+        mat-dialog-close
+      >
+        Cancel
+      </button>
     </div>
   </div>
 </section>

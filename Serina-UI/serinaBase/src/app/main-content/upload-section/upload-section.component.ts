@@ -1182,11 +1182,18 @@ export class UploadSectionComponent implements OnInit {
             });
             this.evtSource.onerror = (err) => {
               clearInterval(timer);
-              this.messageService.add({
-                severity: 'error',
-                summary: 'error',
-                detail: 'Something went wrong, Plase try again',
-              });
+              let error = ''
+              if(this.progressText == "Duplicate Invoice Uploaded!") {
+               error = 'Duplicate Invoice Uploaded!';
+              } else {
+                error = 'Something went wrong, Plase try again';
+              }
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'error',
+                  detail: error,
+                });
+              
               this.processStage = '';
               this.evtSource.close();
             };
@@ -1519,6 +1526,7 @@ export class UploadSectionComponent implements OnInit {
                 summary: 'error',
                 detail: lastreason,
               });
+              this.returnmessage = false;
             }
             if (lastEvent == 'File Processed successfully.') {
               this.messageService.add({

@@ -50,7 +50,7 @@
           subStatusId == 27)
       "
       class="btnUpload btn_extra_bg m-t-neg ml-2"
-      (click)="open_dialog_comp('flip line')"
+      (click)="open_dialog_comp('flip line','')"
     >
       Flip PO
     </button>
@@ -333,7 +333,7 @@
                     subStatusId == 27)
                 "
                 class="btnUpload btn_extra_bg m-t-neg ml-2"
-                (click)="open_dialog_comp('flip line')"
+                (click)="open_dialog_comp('flip line','')"
               >
                 Flip PO
               </button>
@@ -1014,7 +1014,7 @@
                       <i
                         class="fa fa-pencil-square-o pointer f-13 mr-2"
                         aria-hidden="true"
-                        (click)="open_dialog_comp('poMaster')"
+                        (click)="open_dialog_comp('poMaster',soLine.itemCode)"
                       ></i>
                       <i
                         class="fa fa-trash-o pointer f-13"

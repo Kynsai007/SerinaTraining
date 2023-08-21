@@ -179,14 +179,15 @@ export class Comparision3WayComponent
   poLinedata = [];
   soLinedata = [];
   lineTable = [
-    { header: 'Description', field: 'Description'},
-    { header: 'Unit', field: 'Unit'},
-    { header: 'Price', field: 'UnitPrice'},
-    { header: 'Quantity', field: 'Quantity'},
-    { header: 'Amount', field: 'amount'}
+    { header: 'Description', field: 'Description' },
+    { header: 'Unit', field: 'Unit' },
+    { header: 'Price', field: 'UnitPrice' },
+    { header: 'Quantity', field: 'Quantity' },
+    { header: 'Amount', field: 'amount' }
   ];
   documentViewBool: boolean;
   isDesktop: boolean;
+  so_id: any;
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -203,7 +204,7 @@ export class Comparision3WayComponent
     private settingService: SettingsService,
     private SharedService: SharedService,
     private mat_dlg: MatDialog,
-    private elementRef : ElementRef
+    private elementRef: ElementRef
   ) {
     super();
     this.exceptionService.getMsg().pipe(take(2)).subscribe((msg) => {
@@ -240,16 +241,16 @@ export class Comparision3WayComponent
     }
     this.initialData();
     // this.readFilePath();
-    
+
     this.isAdmin = this.dataService.isAdmin;
     this.currentTab = 'line';
-    
+
   }
 
-  getPdfBool(event){
+  getPdfBool(event) {
     this.isPdfAvailable = event;
   }
-  doc_view(){
+  doc_view() {
     this.showPdf = true;
     this.documentViewBool = !this.documentViewBool
   }
@@ -285,7 +286,7 @@ export class Comparision3WayComponent
     });
     this.Itype = this.tagService.type;
 
-    if(this.ap_boolean){
+    if (this.ap_boolean) {
       if (this.router.url.includes('Create_GRN_inv_list')) {
         if (this.permissionService.GRNPageAccess == true) {
           this.grnCreateBoolean = true;
@@ -293,7 +294,7 @@ export class Comparision3WayComponent
             this.tagService.headerName = 'Create GRN With PO';
             this.getInvoiceFulldata_po();
             this.get_PO_GRN_Lines();
-  
+
           } else {
             this.tagService.headerName = 'Create GRN';
             this.readGRNInvData();
@@ -309,7 +310,7 @@ export class Comparision3WayComponent
       } else {
         this.getInvoiceFulldata();
         // this.getRulesData();
-        if(this.ap_boolean){
+        if (this.ap_boolean) {
           this.getPOs();
           // this.readPOLines();
           this.readLineItems();
@@ -374,7 +375,7 @@ export class Comparision3WayComponent
 
   changeTab(val) {
     this.currentTab = val;
-    if(val== 'line' || val == 'poline' || val=='grn'){
+    if (val == 'line' || val == 'poline' || val == 'grn') {
       this.showPdf = false;
       this.btnText = 'View PDF';
     } else {
@@ -383,34 +384,35 @@ export class Comparision3WayComponent
     }
   }
 
-  readDocumentData(){
+  readDocumentData() {
     this.SpinnerService.show();
-    this.exceptionService.getDocumentDetails().subscribe((data:any)=>{
+    this.exceptionService.getDocumentDetails().subscribe((data: any) => {
       this.poLinedata = data.polinedata;
       this.soLinedata = data.solinedata;
+      this.so_id = data.so_id;
       const pushedArrayHeader = [];
-        data.headerdata.forEach((element) => {
-          let mergedArray = {
-            ...element.DocumentData,
-            ...element.DocumentTagDef,
-          };
-          mergedArray.DocumentUpdates = element.DocumentUpdates;
-          pushedArrayHeader.push(mergedArray);
-        });
-        this.inputData = pushedArrayHeader;
-        this.vendorData = {
-          ...data.customerdata[0].Vendor,
-          ...data.customerdata[0].VendorAccount,
-          ...data.customerdata[0].VendorUser,
+      data.headerdata.forEach((element) => {
+        let mergedArray = {
+          ...element.DocumentData,
+          ...element.DocumentTagDef,
         };
-        let inv_num_data: any = this.inputData.filter((val) => {
-          return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
-        });
-        this.invoiceNumber = inv_num_data[0]?.Value;
-        this.vendorAcId = this.vendorData['idVendorAccount'];
-        this.vendorName = this.vendorData['VendorName'];
-        this.SpinnerService.hide();
-    },err=>{ 
+        mergedArray.DocumentUpdates = element.DocumentUpdates;
+        pushedArrayHeader.push(mergedArray);
+      });
+      this.inputData = pushedArrayHeader;
+      this.vendorData = {
+        ...data.customerdata[0].Vendor,
+        ...data.customerdata[0].VendorAccount,
+        ...data.customerdata[0].VendorUser,
+      };
+      let inv_num_data: any = this.inputData.filter((val) => {
+        return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
+      });
+      this.invoiceNumber = inv_num_data[0]?.Value;
+      this.vendorAcId = this.vendorData['idVendorAccount'];
+      this.vendorName = this.vendorData['VendorName'];
+      this.SpinnerService.hide();
+    }, err => {
       this.SpinnerService.hide();
       this.alertFun("Server error");
     })
@@ -525,7 +527,7 @@ export class Comparision3WayComponent
         });
         this.po_num = po_num_data[0]?.Value;
         // this.getPODocId(this.po_num);
-        if(this.docType == 3){
+        if (this.docType == 3) {
           this.getGRNnumbers(this.po_num);
         }
         this.vendorData = {
@@ -920,7 +922,7 @@ export class Comparision3WayComponent
         }
       });
 
-      if(this.docType == 3){
+      if (this.docType == 3) {
         this.lineDisplayData.forEach((element) => {
           if (
             element.tagname == 'Quantity' ||
@@ -937,7 +939,7 @@ export class Comparision3WayComponent
                   count++;
                   errorTypeLine = 'AmountLine';
                 }
-  
+
                 if (element.tagname == 'Quantity') {
                   if (
                     ele1?.invline[0].DocumentLineItems?.Value == 0
@@ -987,9 +989,9 @@ export class Comparision3WayComponent
           this.headerpop = 'Batch Progress'
           this.progressDailogBool = true;
           this.GRNDialogBool = false;
-          if(this.docType == 3) {
+          if (this.docType == 3) {
             this.batchData = data[this.invoiceID]?.complete_status;
-          } else if(this.docType == 1) {
+          } else if (this.docType == 1) {
             this.batchData = data.batchresp;
           }
         });
@@ -1488,7 +1490,7 @@ export class Comparision3WayComponent
     })
   }
 
-  async open_dialog_comp(str) {
+  async open_dialog_comp(str, line_num) {
     let w = '60%';
     let h = '80vh';
     let response;
@@ -1496,7 +1498,7 @@ export class Comparision3WayComponent
       this.displayrejectDialog = false;
       w = '40%';
       h = '40vh';
-    } else if(str == 'flip line') {
+    } else if (str == 'flip line') {
       try {
         const data: any = await this.exceptionService.getPOLines('').toPromise();
         response = data.Po_line_details;
@@ -1504,8 +1506,14 @@ export class Comparision3WayComponent
         console.error('Error fetching PO lines:', error);
         return;
       }
-    } else if(str == 'poMaster'){
-      response = this.vendorAcId;
+    } else if (str == 'poMaster') {
+      let obj = {
+        v_a_id: this.vendorAcId,
+        itemCode: +line_num,
+        so_id : this.so_id
+      }
+      console.log(obj);
+      response = obj;
     }
     this.SpinnerService.show();
     const matdrf: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
@@ -1515,14 +1523,20 @@ export class Comparision3WayComponent
       data: { type: str, resp: response, rejectTxt: this.rejectionComments }
     });
     this.SpinnerService.hide();
-    if (str == 'Amend') {
-      matdrf.afterClosed().subscribe((resp: any) => {
+
+    matdrf.afterClosed().subscribe((resp: any) => {
+      if (str == 'Amend') {
         this.rejectionComments = resp;
         if (resp) {
           this.Reject();
         }
-      })
-    }
+      } else if(str == 'poMaster'){
+        if(resp){
+          this.readDocumentData();
+        }
+      }
+
+    })
   }
 
   addGrnLine(val) {
