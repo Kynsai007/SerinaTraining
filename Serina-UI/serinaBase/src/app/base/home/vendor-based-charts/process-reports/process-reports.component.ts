@@ -83,6 +83,7 @@ export class ProcessReportsComponent implements OnInit {
       this.partyType = 'Vendor';
     } else {
       this.partyType = 'Customer';
+      this.cardObj[1].heading = "SO Created in ERP";
     }
     this.readInvSummmary('');
     this.readVendors();
