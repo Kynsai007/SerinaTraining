@@ -118,6 +118,10 @@ export class ExceptionsService {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/validateFlipPO/${this.userId}?po_num=${po_num}`,data)
   }
 
+  validateReturns(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/Validate_returnlines/${this.userId}`,data)
+  }
+
   getFlipApprovers(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/getFlipPoApprovers/${this.userId}?inv_id=${this.invoiceID}`)
   }

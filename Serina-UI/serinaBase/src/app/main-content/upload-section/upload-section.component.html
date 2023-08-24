@@ -391,22 +391,6 @@
         class="d-flex flex-wrap ml-2"
         style="gap: 5px"
       >
-        <!-- <div class="selectFilter">
-      <label class="f-13 mb-0">Select Entity</label><br />
-      <select
-        class="form-control accountSelect f-12"
-        (change)="selectEntity($event.target.value)"
-        name="entity"
-        ngModel
-        required
-      >
-        <option value="" style="font-weight: 500">Select Entity</option>
-        <option *ngFor="let entity of entity" [value]="entity.idEntity">
-          {{ entity.EntityName }}
-        </option>
-      </select>
-    </div> -->
-
         <div>
           <label class="f-13 mb-0">Select Entity</label><br />
           <p-autoComplete
@@ -481,11 +465,8 @@
             ngModel
             required
           >
-            <option value=""></option>
-            <option value="LCM">LCM</option>
-            <option value="nonPO">Non-PO</option>
-            <option value="singlePO">Single PO</option>
-            <option value="multiPO">Multiple PO</option>
+            <option value="" disabled></option>
+            <option *ngFor="let item of invTypeArr" [value]="item.value">{{ item.name }}</option>
           </select>
         </div>
 
@@ -503,8 +484,21 @@
           </select>
         </div>
 
+        <div *ngIf="selectedInvoiceType == 'singlePO' || selectedInvoiceType == 'nonPO'">
+          <label class="f-13 mb-0">Select Category</label>
+          <select
+            class="form-control accountSelect f-12"
+            [(ngModel)]="selectedCategory"
+            name="category"
+            ngModel
+          >
+            <option value="" disabled></option>
+            <option *ngFor="let item of categoryArr" [value]="item.value">{{ item.name }}</option>
+          </select>
+        </div>
+
         <!-- select PO Number -->
-        <div *ngIf="POnumberBoolean">
+        <div *ngIf="selectedInvoiceType == 'singlePO'">
           <label class="f-13 mb-0">Select PO Number</label><br />
           <p-autoComplete
             placeholder="Select PO Number"
@@ -527,8 +521,32 @@
           </p-autoComplete>
         </div>
 
+        <!-- select Invoice Number -->
+        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory == 'returns'">
+          <label class="f-13 mb-0">Select Invoice Number</label><br />
+          <p-autoComplete
+            placeholder="Select Invoice Number"
+            (onSelect)="selectedInv($event)"
+            [group]="false"
+            [forceSelection]="true"
+            [suggestions]="filteredInv"
+            (completeMethod)="filterInvnumber($event)"
+            field="docheaderID"
+            [dropdown]="true"
+            name="PONumber"
+            ngModel
+            required
+          >
+            <ng-template let-group pTemplate="group">
+              <div class="flex align-items-center">
+                <span class="f-12">{{ group.docheaderID }}</span>
+              </div>
+            </ng-template>
+          </p-autoComplete>
+        </div>
+
         <!-- select GRN Number -->
-        <div *ngIf="POnumberBoolean">
+        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory != 'returns'">
           <label class="f-13 mb-0">Select GRN</label><br />
           <p-multiSelect
             [options]="po_grn_list"
@@ -547,7 +565,7 @@
         </div>
 
         <!-- select GRN Line -->
-        <div *ngIf="POnumberBoolean">
+        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory != 'returns'">
           <label class="f-13 mb-0">Select GRN Line</label><br />
           <p-multiSelect
             [options]="po_grn_line_list"
@@ -565,7 +583,7 @@
           </p-multiSelect>
         </div>
 
-        <div *ngIf="POnumberBoolean">
+        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory != 'returns'">
           <div style="visibility: hidden">visible</div>
           <button
             class="img-browse b-0 mt-0 bg-gray"

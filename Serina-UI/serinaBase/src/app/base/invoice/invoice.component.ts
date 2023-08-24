@@ -705,6 +705,7 @@ export class InvoiceComponent implements OnInit {
               ...element.EntityBody,
               ...element.ServiceProvider,
               ...element.ServiceAccount,
+              ...element.DocumentSubStatus
             };
             // invoiceData.append('docStatus',element.docStatus)
             invoiceData['docstatus'] = element.docstatus;

@@ -25,7 +25,7 @@ import { FormGroup, NgForm } from '@angular/forms';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { DomSanitizer } from '@angular/platform-browser';
 import IdleTimer from '../../idleTimer/idleTimer';
-import { catchError, map, take} from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { HttpEventType } from '@angular/common/http';
 import * as fileSaver from 'file-saver';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -255,8 +255,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   docType: number;
   is_fp: boolean;
   is_fpa: boolean;
-  isDesktop:boolean;
-  documentViewBool:boolean;
+  isDesktop: boolean;
+  documentViewBool: boolean;
   linedata_mobile = [];
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
@@ -277,11 +277,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private settingsService: SettingsService,
     private route: ActivatedRoute,
     private mat_dlg: MatDialog,
-    
+
   ) {
-    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg)=>{
-      if(msg == 'normal'){
-      this.getInvoiceFulldata();
+    this.exceptionService.getMsg().pipe(take(2)).subscribe((msg) => {
+      if (msg == 'normal') {
+        this.getInvoiceFulldata();
       }
     })
   }
@@ -291,7 +291,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.ap_boolean = this.dataService.ap_boolean;
     this.isDesktop = this.dataService.isDesktop;
     this.documentViewBool = this.isDesktop;
-    if(this.ap_boolean) {
+    if (this.ap_boolean) {
       this.docType = 3
     } else {
       this.docType = 1
@@ -313,7 +313,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.ERPCostAllocation();
     this.AddPermission();
     this.readVendors();
-    this.isAdmin =  this.dataService.isAdmin;
+    this.isAdmin = this.dataService.isAdmin;
     if (this.tagService.editable == true) {
       this.updateSessionTime();
       this.getEntity();
@@ -324,10 +324,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       }, 250000);
     }
   }
-  getPdfBool(event){
+  getPdfBool(event) {
     this.isPdfAvailable = event;
   }
-  doc_view(){
+  doc_view() {
     this.showPdf = true;
     this.documentViewBool = !this.documentViewBool
   }
@@ -348,12 +348,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       // this.readFilePath();
     });
     if (this.router.url.includes('InvoiceDetails')) {
-      if(this.ap_boolean){
+      if (this.ap_boolean) {
         this.Itype = 'Invoice';
       } else {
         this.Itype = 'PO';
       }
-      
+
       // this.getGRNtabData();
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
@@ -362,7 +362,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     } else if (this.router.url.includes('GRNDetails')) {
       this.Itype = 'GRN';
     }
-    
+
     // this.onResize();
     // this.Itype = this.tagService.type;
     this.editable = this.tagService.editable;
@@ -383,12 +383,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // }
   }
 
-  routeOptions(){
+  routeOptions() {
     if (this.documentType == 'lcm' || this.documentType == 'multipo') {
-      if(this.documentType == 'multipo'){
+      if (this.documentType == 'multipo') {
         this.multiPOBool = true;
         this.currentTab = "line";
-      } 
+      }
       this.isLinenonEditable = true;
     }
 
@@ -551,7 +551,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           return (val.TagLabel == 'PurchaseOrder');
         });
         this.po_num = po_num_data[0]?.Value;
-        if(this.po_num && this.ap_boolean){
+        if (this.po_num && this.ap_boolean) {
           // this.getPODocId(this.po_num);
         }
         // this.getGRNnumbers(this.po_num);
@@ -605,8 +605,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         } else {
           this.lineDisplayData = data.ok.linedata;
           // this.lineCount = this.lineDisplayData[0].linedata;
-            // console.log(this.lineCount)
-          if(this.isDesktop){
+          // console.log(this.lineCount)
+          if (this.isDesktop) {
             this.lineDisplayData.unshift({
               TagName: 'S.No',
               idDocumentLineItemTags: 1,
@@ -618,12 +618,23 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
             // Iterate through the index of linedata entries
             for (let dataIndex = 0; dataIndex < maxLinedataEntries; dataIndex++) {
-              const transformedData = [];
+              const transformedData:any = [];
+              let hasError = false;
+              let hasUpdated = false;
 
               // Iterate through the received data
               this.lineDisplayData.forEach(tag => {
                 const tagName = tag.TagName;
                 const linedata = tag.linedata[dataIndex];
+                const itemData = linedata.DocumentLineItems;
+
+                // Check if any isError is 1
+                if (itemData.isError === 1) {
+                  hasError = true;
+                }
+                if (itemData.IsUpdated === 1) {
+                  hasUpdated = true;
+                }
 
                 // Create an object with the TagName and linedata for the current index
                 const tagObject = {
@@ -634,7 +645,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
                 // Add the tagObject to the transformedData array
                 transformedData.push(tagObject);
               });
-
+              transformedData.hasError = hasError;
+              transformedData.hasUpdated = hasUpdated;
               // Add the transformedData array for the current index to the main array
               this.linedata_mobile.push(transformedData);
             }
@@ -779,11 +791,11 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   onChangeValue(key, value, data) {
     // this.inputData[0][key]=value;
-    if (key == 'InvoiceTotal' || key == 'SubTotal') { 
+    if (key == 'InvoiceTotal' || key == 'SubTotal') {
       if (value == '' || isNaN(+value)) {
-        this.isAmtStr = true ;
+        this.isAmtStr = true;
       } else {
-        this.isAmtStr = false ;
+        this.isAmtStr = false;
       }
     }
     let updateValue = {
@@ -793,12 +805,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     };
     this.updateInvoiceData.push(updateValue);
   }
-  onChangeLineValue(key,value, data) {
-    if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') { 
+  onChangeLineValue(key, value, data) {
+    if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') {
       if (value == '' || isNaN(+value)) {
-        this.isAmtStr = true ;
+        this.isAmtStr = true;
       } else {
-        this.isAmtStr = false ;
+        this.isAmtStr = false;
       }
     }
     let updateValue = {
@@ -809,14 +821,14 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.updateInvoiceData.push(updateValue);
   }
   saveChanges() {
-    if(!this.isAmtStr){
+    if (!this.isAmtStr) {
       if (this.updateInvoiceData.length != 0) {
         this.SharedService.updateInvoiceDetails(
           JSON.stringify(this.updateInvoiceData)
         ).subscribe(
           (data: any) => {
             this.successAlert("Changes saved successfully.");
-  
+
             this.updateInvoiceData = [];
           },
           (err) => {
@@ -832,7 +844,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   submitChanges() {
-    if(this.documentTypeId == 3){
+    if (this.documentTypeId == 3) {
       if (this.isLCMInvoice == false) {
         this.getInvoiceFulldata();
         this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
@@ -856,7 +868,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             } else if (
               data.TagLabel == 'PurchaseOrder' ||
               data.TagLabel == 'InvoiceDate' ||
-              data.TagLabel == 'InvoiceId' 
+              data.TagLabel == 'InvoiceId'
             ) {
               if (data.Value == '') {
                 errorType = 'emptyHeader';
@@ -865,7 +877,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             }
           });
           /* header Validation end*/
-  
+
           /* Line Details Validation starts*/
           this.lineDisplayData.forEach((element) => {
             if (
@@ -873,22 +885,22 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               element.TagName == 'UnitPrice' ||
               element.TagName == 'AmountExcTax' ||
               element.TagName == 'Amount' ||
-              element.TagName == 'Description' 
+              element.TagName == 'Description'
             ) {
               element.linedata.forEach((ele1) => {
                 if (element.TagName != 'Description' &&
                   (ele1.DocumentLineItems?.Value == '' ||
-                  isNaN(+ele1.DocumentLineItems?.Value))
+                    isNaN(+ele1.DocumentLineItems?.Value))
                 ) {
                   count++;
                   errorTypeLine = 'AmountLine';
-                } else if(element.TagName == 'Description'){
-                  if(ele1.DocumentLineItems?.Value == ''){
+                } else if (element.TagName == 'Description') {
+                  if (ele1.DocumentLineItems?.Value == '') {
                     count++
                     errorTypeLine = 'description';
                   }
                 }
-  
+
                 if (element.TagName == 'Quantity') {
                   if (
                     ele1.DocumentLineItems?.Value == 0
@@ -901,7 +913,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             }
           });
           /* Line Details Validation end*/
-  
+
           if (count == 0) {
             if (!this.isServiceData) {
               this.vendorSubmit();
@@ -930,9 +942,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
                 this.currentTab = 'line';
                 this.errorTriger('Please check the Quntity in the Line details');
               }, 10);
-            } else if(errorTypeLine == 'description') {
-                this.currentTab = 'line';
-                this.errorTriger('Please check the Description in the Line details');
+            } else if (errorTypeLine == 'description') {
+              this.currentTab = 'line';
+              this.errorTriger('Please check the Description in the Line details');
             }
             /* Error reponse end*/
           }
@@ -944,15 +956,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           this.errorTriger('Please add LCM lines');
         }
       }
-    } else if(this.documentTypeId == 1) {
+    } else if (this.documentTypeId == 1) {
       this.getInvoiceFulldata();
       setTimeout(() => {
-      this.vendorSubmitPO();
+        this.vendorSubmitPO();
       }, 2000);
     }
   }
 
-  errorTriger(error){
+  errorTriger(error) {
     this.AlertService.errorObject.detail = error;
     this.messageService.add(this.AlertService.errorObject);
   }
@@ -1046,12 +1058,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     );
   }
 
-  batchProcess(query){
+  batchProcess(query) {
     this.SharedService.syncBatchTrigger(query).subscribe((data: any) => {
       this.progressDailogBool = true;
-      if(this.docType == 3) {
+      if (this.docType == 3) {
         this.batchData = data[this.invoiceID]?.complete_status;
-      } else if(this.docType == 1) {
+      } else if (this.docType == 1) {
         this.batchData = data.batchresp;
       }
       if (
@@ -1083,8 +1095,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     if (this.portalName == 'vendorPortal') {
       if (sub_status == 8 ||
         sub_status == 16 ||
-        sub_status == 33||
-        sub_status == 21||
+        sub_status == 33 ||
+        sub_status == 21 ||
         sub_status == 27) {
         this.router.navigate([
           `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${this.invoiceID}`,
@@ -1093,50 +1105,50 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-    if (sub_status == 8 ||
-      sub_status == 16 ||
-      sub_status == 17 ||
-      sub_status == 33 ||
-      sub_status == 21 ||
-      sub_status == 27 ||
-      sub_status == 75) {
-      this.router.navigate([
-        `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${this.invoiceID}`,
-      ]);
-    } else if (sub_status == 34 || sub_status == 51 || sub_status == 54 || sub_status == 70 || sub_status == 71)  {
-      if(sub_status == 34){
-        this.AlertService.updateObject.summary = 'Suggestion';
-        this.AlertService.updateObject.detail = 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.';
-      } else if(sub_status == 51) {
-        this.AlertService.updateObject.summary = 'LCM Invoice';
-        this.AlertService.updateObject.detail = 'Please add the lines for the LCM invoice.';
-        this.currentTab = 'LCM';
-      } else if(sub_status == 54) {
-        this.AlertService.updateObject.summary = 'MultiPO Invoice';
-        this.AlertService.updateObject.detail = 'Please Check the invoice total is not matching with the lines.';
-        this.currentTab = 'line';
-      } else if(sub_status == 70) {
-        if(this.portalName == 'customer'){
-          this.approval_selection_boolean = true;
-          this.AlertService.updateObject.summary = 'Set Approval';
-          this.AlertService.updateObject.detail = 'Please add the approvers';
-          this.currentTab = 'approver_selection';
-        } else {
-          this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+      if (sub_status == 8 ||
+        sub_status == 16 ||
+        sub_status == 17 ||
+        sub_status == 33 ||
+        sub_status == 21 ||
+        sub_status == 27 ||
+        sub_status == 75) {
+        this.router.navigate([
+          `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${this.invoiceID}`,
+        ]);
+      } else if (sub_status == 34 || sub_status == 51 || sub_status == 54 || sub_status == 70 || sub_status == 71) {
+        if (sub_status == 34) {
+          this.AlertService.updateObject.summary = 'Suggestion';
+          this.AlertService.updateObject.detail = 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.';
+        } else if (sub_status == 51) {
+          this.AlertService.updateObject.summary = 'LCM Invoice';
+          this.AlertService.updateObject.detail = 'Please add the lines for the LCM invoice.';
+          this.currentTab = 'LCM';
+        } else if (sub_status == 54) {
+          this.AlertService.updateObject.summary = 'MultiPO Invoice';
+          this.AlertService.updateObject.detail = 'Please Check the invoice total is not matching with the lines.';
+          this.currentTab = 'line';
+        } else if (sub_status == 70) {
+          if (this.portalName == 'customer') {
+            this.approval_selection_boolean = true;
+            this.AlertService.updateObject.summary = 'Set Approval';
+            this.AlertService.updateObject.detail = 'Please add the approvers';
+            this.currentTab = 'approver_selection';
+          } else {
+            this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+          }
+
         }
-        
-      } 
-      // else if(sub_status == 71) {
-      //   this.AlertService.updateObject.summary = 'Approval pending';
-      //   this.AlertService.updateObject.detail = 'Please change the approvers if you have any issues.';
-      // }
-      this.routeOptions();
-      this.messageService.add(this.AlertService.updateObject)
-    } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {
-      this.router.navigate([`${this.portalName}/ExceptionManagement`]);
-    } else {
-      this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
-    }
+        // else if(sub_status == 71) {
+        //   this.AlertService.updateObject.summary = 'Approval pending';
+        //   this.AlertService.updateObject.detail = 'Please change the approvers if you have any issues.';
+        // }
+        this.routeOptions();
+        this.messageService.add(this.AlertService.updateObject)
+      } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {
+        this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+      } else {
+        this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+      }
     }
     this.progressDailogBool = false;
   }
@@ -1147,7 +1159,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         this.SpinnerService.hide();
         this.batchProcess(`?re_upload=${this.reuploadBoolean}&doctype=${this.docType}`);
         // if (this.router.url.includes('ExceptionManagement')) {
-          this.successAlert('Document submitted successfully');
+        this.successAlert('Document submitted successfully');
         // } 
         //  setTimeout(() => {
         //   if (this.router.url.includes('ExceptionManagement')) {
@@ -1166,13 +1178,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       }
     );
   }
-  serviceSubmit(){
-    this.SharedService.serviceSubmit().subscribe((data:any)=>{
+  serviceSubmit() {
+    this.SharedService.serviceSubmit().subscribe((data: any) => {
       this.successAlert('send to batch successfully');
       setTimeout(() => {
         this._location.back();
       }, 1000);
-    },err=>{
+    }, err => {
       this.errorTriger('Server error');
     })
   }
@@ -1326,22 +1338,22 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       documentdescription: this.rejectionComments,
       userAmount: 0,
     };
-      this.SharedService.vendorRejectInvoice(
-        JSON.stringify(rejectionData)
-      ).subscribe(
-        (data: any) => {
-          this.dataService.invoiceLoadedData = [];
-          this.successAlert("Successfully send rejection for Vendor");
-          this.displayrejectDialog = false;
-          setTimeout(() => {
-            this.router.navigate([`${this.portalName}/ExceptionManagement`]);
-          }, 1000);
-        },
-        (error) => {
-          this.errorTriger("Something went wrong");
-        }
-      );
-    
+    this.SharedService.vendorRejectInvoice(
+      JSON.stringify(rejectionData)
+    ).subscribe(
+      (data: any) => {
+        this.dataService.invoiceLoadedData = [];
+        this.successAlert("Successfully send rejection for Vendor");
+        this.displayrejectDialog = false;
+        setTimeout(() => {
+          this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+        }, 1000);
+      },
+      (error) => {
+        this.errorTriger("Something went wrong");
+      }
+    );
+
   }
 
   backToInvoice() {
@@ -1795,13 +1807,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.selectedCost = event.MarkupCode;
     this.MarkupTransRecId = event.MarkupTransRecId;
     this.SpinnerService.show();
-    this.SharedService.getEstActValue(this.selectedPONumber,this.lineNumber,event.MarkupCode).subscribe((data:any)=>{
+    this.SharedService.getEstActValue(this.selectedPONumber, this.lineNumber, event.MarkupCode).subscribe((data: any) => {
       this.selectedVoyage = data.voyage;
       this.act_val = data.act_val;
       this.est_val = data.est_val;
       this.AGIVesselNumber = data.vessel_num;
       this.SpinnerService.hide();
-    },err=>{
+    }, err => {
       this.SpinnerService.hide();
     })
   }
@@ -1887,15 +1899,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     })
   }
 
-  async open_dialog_comp(str){
+  async open_dialog_comp(str) {
     let w = '60%';
     let h = '80vh';
     let response;
-    if(str == 'Amend'){
+    if (str == 'Amend') {
       this.displayrejectDialog = false;
       w = '40%';
       h = '40vh';
-    } else if(str == 'flip') {
+    } else if (str == 'flip') {
       try {
         const data: any = await this.exceptionService.getPOLines('').toPromise();
         response = data.Po_line_details;
@@ -1905,23 +1917,23 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       }
     }
     this.SpinnerService.show();
-    const matdrf:MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
+    const matdrf: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
       width: w,
       height: h,
       hasBackdrop: false,
-      data: { type: str, resp: response,rejectTxt: this.rejectionComments }
+      data: { type: str, resp: response, rejectTxt: this.rejectionComments }
     });
     this.SpinnerService.hide();
-    if(str == 'Amend') {
-      matdrf.afterClosed().subscribe((resp:any)=>{
+    if (str == 'Amend') {
+      matdrf.afterClosed().subscribe((resp: any) => {
         this.rejectionComments = resp;
-        if(resp){
+        if (resp) {
           this.Reject();
         }
       })
     } else {
-      matdrf.afterClosed().subscribe((resp:any)=>{
-        if(resp == 'success'){
+      matdrf.afterClosed().subscribe((resp: any) => {
+        if (resp == 'success') {
           setTimeout(() => {
             this.router.navigate([`${this.portalName}/ExceptionManagement`]);
           }, 1000);
@@ -1930,8 +1942,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     }
   }
 
-  FlipApprove(){
-    this.exceptionService.approveFlip('').subscribe((data:any)=>{
+  FlipApprove() {
+    this.exceptionService.approveFlip('').subscribe((data: any) => {
       // if(data?.result?.Approval) {
       //   this.readDepartment();
       //   this.readCategoryData();
@@ -1940,10 +1952,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       //   this.AlertService.updateObject.detail = 'Please add the approvers';
       //   this.currentTab = 'approver_selection';
       // }
-        this.successAlert("Approved.");
-        setTimeout(() => {
-          this.router.navigate([`${this.portalName}/ExceptionManagement`]);
-        }, 1000);
+      this.successAlert("Approved.");
+      setTimeout(() => {
+        this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+      }, 1000);
     })
   }
 
@@ -1995,15 +2007,16 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   //   })
   // }
 
-  mutliPOEdit(str){
-   const dailogRef: MatDialogRef<MultiPOComponent> =  this.mat_dlg.open(MultiPOComponent,{ 
-      width : '85%',
+  mutliPOEdit(str) {
+    const dailogRef: MatDialogRef<MultiPOComponent> = this.mat_dlg.open(MultiPOComponent, {
+      width: '85%',
       height: '85vh',
       hasBackdrop: false,
-      data : {type:str, lines:this.mutliplePOTableData}});
-      dailogRef.afterClosed().subscribe(result=>{
-        this.mutliplePOTableData = result;
-      })
+      data: { type: str, lines: this.mutliplePOTableData }
+    });
+    dailogRef.afterClosed().subscribe(result => {
+      this.mutliplePOTableData = result;
+    })
   }
   // getGRNtabData(){
   //   this.SharedService.getGRNTabData().subscribe((data:any)=>{
@@ -2015,9 +2028,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   setOpened(itemIndex) {
     this.currentlyOpenedItemIndex = itemIndex;
   }
-  
+
   setClosed(itemIndex) {
-    if(this.currentlyOpenedItemIndex === itemIndex) {
+    if (this.currentlyOpenedItemIndex === itemIndex) {
       this.currentlyOpenedItemIndex = -1;
     }
   }

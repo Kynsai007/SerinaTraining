@@ -605,8 +605,8 @@
                     (opened)="setOpened(i)"
                     (closed)="setClosed(i)" style="margin-top: 10px;">
                     
-                    <mat-expansion-panel-header class="KPIName">
-                      <mat-panel-title class=" secondheadertoggle">
+                    <mat-expansion-panel-header class="KPIName" [ngStyle]="{ 'background-color': lined.hasError ? '#fff4d2':lined.hasUpdated? '#d2e8f9':''}">
+                      <mat-panel-title class=" secondheadertoggle" >
                         <h6 class="f-12 line_mob">Line number - {{i+1}}</h6>
                       </mat-panel-title>
                     </mat-expansion-panel-header>
@@ -1340,7 +1340,8 @@
           class="btn btnVender bg-btn-success"
           (click)="submitChanges()"
         >
-          Next
+          <span *ngIf="!isServiceData">Next</span>
+          <span *ngIf="isServiceData">Submit</span>
         </button>
 
         <button

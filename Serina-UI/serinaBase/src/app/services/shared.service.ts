@@ -554,6 +554,13 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/MultiPo/getdata?filename=${filename}`)
   }
 
+  readVenInvoices(po_num){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getVendorInvoices/{U_id}?u_id=${this.userId}&po_num=${po_num}`)
+  }
+  readInvLines(inv){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/get_invoice_lines/${this.userId}?inv_num=${inv}`)
+  }
+
   // LCM
   getLCMPOnum(ent_id) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readLCMPolist/${this.userId}?inv_id=${this.invoiceID}&entity_id=${ent_id}`)

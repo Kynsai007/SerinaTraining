@@ -164,7 +164,6 @@ export class UploadSectionComponent implements OnInit {
     { header: "Approvers", field: 'approvers' },
   ]
   @ViewChild('quickUploadForm') quickUploadForm: NgForm;
-  POnumberBoolean: boolean;
   preAproveBool: boolean;
   approversSendData: getApproverData[] = [];
   approverList: any;
@@ -238,6 +237,17 @@ export class UploadSectionComponent implements OnInit {
   reason: any;
   serviceInvoiceAccess: boolean;
   vendorAccess: boolean;
+  selectedCategory:string;
+  invNumbersList = [];
+  filteredInv: any[];
+  returnInvArr = [];
+  invTypeArr = [
+    { name:'LCM', value:'LCM'},
+    { name:'Non-PO', value:'nonPO'},
+    { name:'Single PO', value:'singlePO'},
+    { name:'Multiple PO', value:'multiPO'}
+  ];
+  categoryArr = [];
 
   constructor(
     private http: HttpClient,
@@ -406,17 +416,18 @@ export class UploadSectionComponent implements OnInit {
   //   this.displaySelectPdfBoolean = false;
 
   // }
-  onSelectLCM(val) {
-    if (val == true) {
-      this.poTypeBoolean = true;
-      this.LCMBoolean = 'Yes';
-    } else {
-      this.poTypeBoolean = false;
-      this.LCMBoolean = 'No';
-    }
-  }
+  // onSelectLCM(val) {
+  //   if (val == true) {
+  //     this.poTypeBoolean = true;
+  //     this.LCMBoolean = 'Yes';
+  //   } else {
+  //     this.poTypeBoolean = false;
+  //     this.LCMBoolean = 'No';
+  //   }
+  // }
 
   onSelectPOType(val, type) {
+    this.selectedInvoiceType = val ;
     if (type == 'ideal') {
       this.LCMBoolean = 'No';
       if (val == 'singlePO' || val == "nonPO") {
@@ -435,20 +446,26 @@ export class UploadSectionComponent implements OnInit {
       }
     } else {
       this.LCMBoolean = 'No';
-      if (val == 'singlePO') {
-        this.POnumberBoolean = true;
-      } else if (val == 'multiPO') {
+      if (val == 'multiPO') {
         this.poTypeBoolean = false;
         this.readPONumbers(this.s_date, this.e_date);
         this.mutliPODailog = true;
         this.multiBtn = 'Submit';
-        this.POnumberBoolean = false;
       } else if (val == 'LCM') {
         this.LCMBoolean = 'Yes';
-        this.POnumberBoolean = false;
         this.getCurrency(this.vendorAccountId);
-      } else {
-        this.POnumberBoolean = false;
+      } else if(val == 'singlePO') {
+        this.categoryArr = [
+          { name:'Credit', value:'credit'},
+          { name:'Returns', value:'returns'},
+          { name:'Advance', value:'advance'}
+        ]
+      } else if(val == 'nonPO') {
+        this.categoryArr = [
+          { name:'Credit', value:'credit'},
+          { name:'Debit', value:'debit'},
+          { name:'Advance', value:'advance'}
+        ]
       }
     }
   }
@@ -651,10 +668,41 @@ export class UploadSectionComponent implements OnInit {
     // }
   }
 
+  getVendorInvoices(po_num){
+    this.sharedService.readVenInvoices(po_num).subscribe((data:any)=>{
+      console.log(data);
+      this.invNumbersList = data;
+    })
+  }
+
+  filterInvnumber(event){
+    let filtered: any[] = [];
+    let query = event.query;
+
+    if (this.invNumbersList?.length > 0) {
+      for (let i = 0; i < this.invNumbersList?.length; i++) {
+        let inv: any = this.invNumbersList[i];
+        if (inv.docheaderID.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(inv);
+        }
+      }
+    }
+    this.filteredInv = filtered;
+  }
+
+  selectedInv(event){
+    this.sharedService.readInvLines(event.docheaderID).subscribe(data=>{
+      console.log(data);
+      this.popupFun('flip returns',data,'');
+    })
+  }
+
   selectedPO(event) {
-    // if (this.mutliPODailog) {
+    if (this.selectedCategory == 'credit') {
     this.readPOLines(event.PODocumentID);
-    // }
+    } else {
+      this.getVendorInvoices(event.PODocumentID);
+    }
     this.selectedPONumber = event.PODocumentID;
     this.multiPO.controls['Name'].reset();
     this.multiPO.controls['POLineAmount'].reset();
@@ -1412,9 +1460,10 @@ export class UploadSectionComponent implements OnInit {
     this.multiPO_filepath = '';
     this.approversSendData = [];
     this.mutliplePOTableData = [];
-    this.POnumberBoolean = false;
+    this.selectedInvoiceType = '';
     this.selectedCurrency = '';
     this.flipPOData = [];
+    this.selectedCategory = '';
   }
   deleteQueue(index, data) {
     if (confirm('Are you sure you want to delete?')) {
@@ -1477,21 +1526,28 @@ export class UploadSectionComponent implements OnInit {
   getPO_lines(str) {
     let query = `?po_number=${this.selectedPONumber}`;
     this.exceptionService.getPOLines(query).subscribe((data: any) => {
-      let poLineData = data.Po_line_details;
-      const dailogRef: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
-        width: '60%',
-        height: '70vh',
-        hasBackdrop: false,
-        data: { type: str, comp: 'upload', resp: poLineData, grnLine: this.PO_GRN_Number_line }
-      });
-      dailogRef.afterClosed().subscribe(result => {
-        this.flipPOData = result;
-      })
+      this.popupFun(str,data.Po_line_details,this.PO_GRN_Number_line);
       this.spinnerService.hide();
     }, err => {
       this.alertService.errorObject.detail = "Server error";
       this.messageService.add(this.alertService.errorObject);
       this.spinnerService.hide();
+    })
+  }
+
+  popupFun(str,poLineData,grn_line){
+    const dailogRef: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
+      width: '60%',
+      height: '70vh',
+      hasBackdrop: false,
+      data: { type: str, comp: 'upload', resp: poLineData, grnLine:  grn_line}
+    });
+    dailogRef.afterClosed().subscribe(result => {
+      if(str != 'flip returns'){
+        this.flipPOData = result;
+      } else {
+        this.returnInvArr = result;
+      }
     })
   }
 

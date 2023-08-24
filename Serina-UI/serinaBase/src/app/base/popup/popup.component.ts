@@ -56,7 +56,7 @@ export class PopupComponent implements OnInit {
         this.GRNData.push(obj);
       })
     }
-    if (this.type == 'flip') {
+    if (this.type == 'flip' || this.type == 'flip returns') {
       this.component = 'normal';
       this.flipPOFun();
     } else if (this.type == 'flip line') {
@@ -122,26 +122,26 @@ export class PopupComponent implements OnInit {
       this.spin.hide();
     })
   }
-  onSelect(bool, data) {
-    let id = data.LineNumber;
+  onSelect(bool, data,field) {
+    let id = data[field];
     data.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
     if (bool) {
-      let boolean = this.selectedPOLines?.findIndex(el => el.LineNumber == data.LineNumber);
+      let boolean = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (boolean) {
         this.selectedPOLines.push(data);
       }
     } else {
-      const ind = this.selectedPOLines?.findIndex(el => el.LineNumber == data.LineNumber);
+      const ind = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
       }
     }
   }
-  onSelectAll(bool) {
+  onSelectAll(bool,field) {
     if (bool) {
       this.POLineData.forEach(val => {
         val.isSelected = true;
-        let id = val.LineNumber;
+        let id = val[field];
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
       })
       this.selectedPOLines = this.POLineData
@@ -152,10 +152,14 @@ export class PopupComponent implements OnInit {
       })
     }
   }
-  changeQty(qty, lineid) {
+  changeQty(qty, lineid,field) {
+    let el_flied = 'Quantity';
+    if(this.type == 'flip returns'){
+      el_flied = 'rtn_qty'
+    }
     this.selectedPOLines.forEach(el => {
-      if (el.LineNumber == lineid) {
-        el.Quantity = qty;
+      if (el[field] == lineid) {
+        el[el_flied] = qty;
       }
     })
   }
@@ -165,26 +169,55 @@ export class PopupComponent implements OnInit {
 
   validateFlip() {
     this.spin.show();
-    let obj = {
-      Podata: this.selectedPOLines,
-      GRNdata: this.GRNData
-    }
-    this.ES.validateFlipPO(JSON.stringify(obj),this.po_num).subscribe((data:string) => {
-      if (data == 'success') {
-        this.ES.popupmsg.next(this.component);
-        this.alert.addObject.detail = "PO flip is successful";
-        this.message.add(this.alert.addObject);
-        this.dialogRef.close(this.selectedPOLines);
-      } else {
-        this.alert.errorObject.detail = data;
-        this.message.add(this.alert.errorObject);
+    if( this.type != 'flip returns'){
+      let obj = {
+        Podata: this.selectedPOLines,
+        GRNdata: this.GRNData
       }
-      this.spin.hide();
-    }, err => {
-      this.alert.errorObject.detail = "Server error"
-      this.message.add(this.alert.errorObject)
-      this.spin.hide();
-    });
+      this.ES.validateFlipPO(JSON.stringify(obj),this.po_num).subscribe((data:string) => {
+        if (data == 'success') {
+          this.ES.popupmsg.next(this.component);
+          this.alert.addObject.detail = "PO flip is successful";
+          this.message.add(this.alert.addObject);
+          this.dialogRef.close(this.selectedPOLines);
+        } else {
+          this.alert.errorObject.detail = data;
+          this.message.add(this.alert.errorObject);
+        }
+        this.spin.hide();
+      }, err => {
+        this.alert.errorObject.detail = "Server error"
+        this.message.add(this.alert.errorObject)
+        this.spin.hide();
+      });
+    } else {
+      let APIdata = [];
+      this.selectedPOLines.forEach(el=>{
+        APIdata.push({
+            "description": el.Description,
+            "rtn_qty": el.rtn_qty|| el.Quantity,
+            "item_code": el.itemCode,
+            "po_line_number":el.itemCode,
+            "inv_qty": el.Quantity
+        })
+      })
+      console.log(APIdata);
+      this.ES.validateReturns(JSON.stringify(APIdata)).subscribe((data:any)=>{
+        if(data.result == 'Success') {
+          this.alert.addObject.detail = "Successful";
+          this.message.add(this.alert.addObject);
+          this.dialogRef.close(APIdata);
+        } else {
+          this.alert.errorObject.detail = data.result;
+          this.message.add(this.alert.errorObject);
+        }
+        this.spin.hide();
+      }, err => {
+        this.alert.errorObject.detail = "Server error"
+        this.message.add(this.alert.errorObject)
+        this.spin.hide();
+      });
+    }
 
   }
 

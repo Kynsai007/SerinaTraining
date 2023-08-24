@@ -1,7 +1,7 @@
 <section>
   <div class="d-flex justify-content-between">
     <h6 class="f-14">
-      <span *ngIf="type == 'flip' || type == 'flip line'"
+      <span *ngIf="type.includes('flip')"
         >Please select the lines</span
       >
       <span *ngIf="type == 'Amend'">Please change the template body</span>
@@ -19,7 +19,6 @@
 
   <div *ngIf="type.includes('flip')">
     <form
-      *ngIf="type == 'flip' || type == 'flip line'"
       #polines="ngForm"
       (ngSubmit)="onSubmit(polines.value)"
     >
@@ -27,7 +26,7 @@
         <table
           style="border-collapse: collapse"
           class="table table-bordered f-11"
-          *ngIf="POLineData.length > 0"
+          *ngIf="POLineData.length > 0 && type != 'flip returns'"
         >
           <tr class="f-12 tb_head">
             <th>
@@ -35,7 +34,7 @@
                 class="mt-1"
                 type="checkbox"
                 name="selectAll"
-                (change)="onSelectAll($event.target.checked)"
+                (change)="onSelectAll($event.target.checked,'LineNumber')"
               />
             </th>
             <th>Description</th>
@@ -52,7 +51,7 @@
                 type="checkbox"
                 [name]="line.Name"
                 [checked]="line.isSelected"
-                (change)="onSelect($event.target.checked, line)"
+                (change)="onSelect($event.target.checked, line,'LineNumber')"
               />
             </td>
             <td>{{ line.Name }}</td>
@@ -66,7 +65,7 @@
                 value="{{ line.PurchQty }}"
                 class="form-control f-11"
                 style="width: 70px"
-                (change)="changeQty(qty.value, line.LineNumber)"
+                (change)="changeQty(qty.value, line.LineNumber,'LineNumber')"
               />
             </td>
             <td>{{ line.UnitPrice }}</td>
@@ -74,8 +73,50 @@
             <td>{{ line.DiscPercent }}</td>
           </tr>
         </table>
+        <table
+        style="border-collapse: collapse"
+        class="table table-bordered f-11"
+        *ngIf="POLineData.length > 0 && type == 'flip returns'"
+      >
+        <tr class="f-12 tb_head">
+          <th>
+            <input
+              class="mt-1"
+              type="checkbox"
+              name="selectAll"
+              (change)="onSelectAll($event.target.checked,'itemCode')"
+            />
+          </th>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Return Quantity</th>
+        </tr>
+        <tr *ngFor="let line of POLineData">
+          <td>
+            <input
+              type="checkbox"
+              [name]="line.Description"
+              [checked]="line.isSelected"
+              (change)="onSelect($event.target.checked, line,'itemCode')"
+            />
+          </td>
+          <td>{{ line.Description }}</td>
+          <td>{{ line.Quantity }}</td>
+          <td>
+            <input
+              [id]="line.itemCode"
+              #qty
+              type="text"
+              value="{{ line.Quantity }}"
+              class="form-control f-11"
+              style="width: 70px"
+              (change)="changeQty(qty.value, line.itemCode,'itemCode')"
+            />
+          </td>
+        </tr>
+      </table>
       </div>
-      <div class="text-center f-13" *ngIf="!POLineData[0]?.Name">
+      <div class="text-center f-13" *ngIf="!POLineData[0]?.Name && type != 'flip returns'">
         PO lines are not availabe to flip
       </div>
       <div
@@ -107,59 +148,84 @@
           Cancel
         </button>
       </div>
-    </form>
 
-    <form
-      *ngIf="type == 'Amend'"
-      #poAmend="ngForm"
-      (ngSubmit)="onSubmitRequest(poAmend.value)"
+      <div
+      class="mt-4 d-flex justify-content-center mb-3"
+      *ngIf="POLineData[0]?.Description"
     >
-      <!-- <label for="email" class="f-13">Recipient email ID</label>
-    <input
-      type="email"
-      name="recipient"
-      class="form-control f-12"
-      ngModel
-      required
-      placeholder="abc@example.com"
-    /> -->
 
-      <!-- <label for="sub" class="f-13">Please Add Subject</label>
-    <input
-      type="text"
-      name="subject"
-      id="sub"
-      class="form-control f-12"
-      ngModel
-      required
-      placeholder="Regarding PO..."
-    /> -->
-
-      <label for="body" class="f-12"
-        >Please Add your inputs for the rejection comments</label
+      <button
+        *ngIf="uploadBool"
+        class="btn btnVender bg-btn-success mr-3"
+        type="button"
+        [disabled]="selectedPOLines.length == 0"
+        (click)="validateFlip()"
       >
-      <textarea
-        name="body"
-        id="body"
-        class="form-control f-12"
-        [(ngModel)]="rejectionComments"
-        required
-        placeholder="body"
+        Validate
+      </button>
+      <button
+        class="btn btnVender bg-btn-cancel"
+        type="button"
+        mat-dialog-close
       >
-      </textarea>
-      <div class="mt-4 d-flex justify-content-center mb-3">
-        <button class="btn btnVender bg-btn-success mr-3" type="submit">
-          Reject & Send
-        </button>
-        <button
-          class="btn btnVender bg-btn-cancel"
-          type="button"
-          mat-dialog-close
-        >
-          Cancel
-        </button>
-      </div>
+        Cancel
+      </button>
+    </div>
     </form>
+  </div>
+
+  <div *ngIf="type == 'Amend'">
+    <form
+    
+    #poAmend="ngForm"
+    (ngSubmit)="onSubmitRequest(poAmend.value)"
+  >
+    <!-- <label for="email" class="f-13">Recipient email ID</label>
+  <input
+    type="email"
+    name="recipient"
+    class="form-control f-12"
+    ngModel
+    required
+    placeholder="abc@example.com"
+  /> -->
+
+    <!-- <label for="sub" class="f-13">Please Add Subject</label>
+  <input
+    type="text"
+    name="subject"
+    id="sub"
+    class="form-control f-12"
+    ngModel
+    required
+    placeholder="Regarding PO..."
+  /> -->
+
+    <label for="body" class="f-12"
+      >Please Add your inputs for the rejection comments</label
+    >
+    <textarea
+      name="body"
+      id="body"
+      class="form-control f-12"
+      [(ngModel)]="rejectionComments"
+      required
+      placeholder="body"
+    >
+    </textarea>
+    <div class="mt-4 d-flex justify-content-center mb-3">
+      <button class="btn btnVender bg-btn-success mr-3" type="submit">
+        Reject & Send
+      </button>
+      <button
+        class="btn btnVender bg-btn-cancel"
+        type="button"
+        mat-dialog-close
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
   </div>
 
   <div *ngIf="type == 'editApprover'">
