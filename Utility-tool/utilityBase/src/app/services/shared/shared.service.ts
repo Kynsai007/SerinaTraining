@@ -154,7 +154,12 @@ export class SharedService {
       take(1)
     );
   }
-
+  addMailListeners(data,userID) : Observable<any>{
+    return this.http.post(`${this.url}/${this.apiVersion}/emailconfig/addMailListeners/${userID}`, data);
+  }
+  getAllMailListeners(): Observable<any>{
+    return this.http.get(`${this.url}/${this.apiVersion}/emailconfig/getAllMailListeners`);
+  }
   getMetaData(documentId): Observable<any> {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/getfrmetadata/${documentId}`);
   }

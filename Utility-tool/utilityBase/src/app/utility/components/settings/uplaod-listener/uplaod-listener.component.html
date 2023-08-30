@@ -1,10 +1,10 @@
 <h6 class="font_weight mt-2"> 
-    <span class="ml-3"> Mail Listener Settings</span>
+    <span class="ml-3"> Mail Listener Settings (All Entities)</span>
 </h6>
 <div class="bg-design-all m-3">
 <div class="row">
     <div class="col-md-7">
-        <form [formGroup]="configData" (ngSubmit)="saveConfigData()" class="formDiv" autocomplete="off" >
+        <form [formGroup]="configData"  class="formDiv" autocomplete="off" >
 
             <table style="width: 100%;">
                 <tr class="trHeight">
@@ -82,6 +82,105 @@
         </form>
     </div>
 </div>
+</div>
+<h6 class="font_weight mt-2"> 
+    <span class="ml-3"> Mail Listener Settings (Entity Specific) <button class="bnt btnbg-s f-13 mr-3" type="button" (click)="addListener()">+</button></span>
+</h6>
+<div class="bg-design-all m-3" *ngFor="let listener of EmailListeners;let i = index">
+    <button class="btn btncancel f-13 mr-3" style="margin-top: 1%;" type="button" (click)="removeListener(i)">Remove</button>
+    <div class="row">
+        <div class="col-md-7">
+            <table style="width: 100%;">
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">Document Type <span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <select class="form-control f-13" [(ngModel)]="EmailListeners[i].doctype" (change)="SelectDoctype(i,$event.target.value)">
+                            <option *ngFor="let doctype of docTypes" value="{{doctype}}">{{doctype}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">Entity <span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <select class="form-control f-13" [(ngModel)]="EmailListeners[i].entity" (change)="SelectEntity(i,$event.target.value)">
+                            <option *ngFor="let entity of entityList" value="{{entity.idEntity}}">{{entity.EntityName}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">Email Host <span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <select class="form-control f-13" [(ngModel)]="EmailListeners[i].host" (change)="SelectHost(i,$event.target.value)">
+                            <option value="imap-mail.outlook.com">Outlook.com</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">Email Id <span style="color: red;">*</span><span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <input type="email" autocomplete="off" [(ngModel)]="EmailListeners[i].email" (input)="ChangeInput(i,$event.target.value,'email')" class="form-control f-13"/>
+                    </td>
+                </tr>
+
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">AD Tenant Id <span style="color: red;">*</span><span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <input type="text" autocomplete="off" [(ngModel)]="EmailListeners[i].tenantId" (input)="ChangeInput(i,$event.target.value,'tenant')" class="form-control f-13"/>
+                    </td>
+                </tr>
+
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">AD Client Id <span style="color: red;">*</span><span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <input type="text" autocomplete="off" [(ngModel)]="EmailListeners[i].clientId" (input)="ChangeInput(i,$event.target.value,'clientId')" class="form-control f-13"/>
+                    </td>
+                </tr>
+
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">AD Client Secret <span style="color: red;">*</span><span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <input type="password" class="form-control f-13" [(ngModel)]="EmailListeners[i].secret" (input)="ChangeInput(i,$event.target.value,'clientSecret')" autocomplete="disabled"/>
+                    </td>
+                </tr>
+
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">Folder Name <span class="colon">:</span></td>
+                    <td class="tdRight">
+                        <input type="text" (input)="ChangeInput(i,$event.target.value,'folder')" [(ngModel)]="EmailListeners[i].folder" class="form-control f-13"/>
+                    </td>
+                </tr>
+                <h6 class="font_weight mt-2"> 
+                    <span class="ml-3"> Access control</span>
+                </h6>
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">Accepted Domain <span class="colon">:</span></td>
+                    <td class="tdRight f-13">
+                        <p-chips separator="," placeholder="Eg. @abc.com" [(ngModel)]="EmailListeners[i].domains" (keydown)="ChangeChip($event,i,'domain')"></p-chips>
+                    </td>
+                </tr>
+                <tr class="trHeight">
+                    <td class="tdLeft f-13">Accepted Emails <span class="colon">:</span></td>
+                    <td class="tdRight f-13">
+                        <p-chips separator="," placeholder="Eg. abc@gmail.com" [(ngModel)]="EmailListeners[i].emails" (keydown)="ChangeChip($event,i,'emails')"></p-chips>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div>
+    <button class="btn btnbg-s f-13 ml-3" type="button" (click)="saveConfigData()"><div *ngIf="savingconfig" class="spinner-border spinner-border-sm" role="status"></div>{{buttonmsg}} </button>
+    <div *ngIf="msg1 == 'success' && EmailListeners.length == 0" class="alert alert-success" role="alert">
+        Mail Listeners removal completed!
+    </div>
+    <div *ngIf="msg1 == 'success' && EmailListeners.length > 0" class="alert alert-success" role="alert">
+        Mail Listeners configuration has started. You will receive a confirmation on your mail, once setup is completed!
+    </div>
+    <div *ngIf="msg1 == 'failure'" class="alert alert-danger" role="alert">
+        Mail Listener Setup Failed! Please try after sometime!
+    </div>
+    
 </div>
 <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">
