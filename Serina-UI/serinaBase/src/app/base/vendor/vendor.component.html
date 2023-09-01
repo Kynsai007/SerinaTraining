@@ -19,7 +19,7 @@
 
     <div *ngIf="initialViewVendor" class="mat-elevation-z8 ">
       <div class="unisearch_in">
-        <div class="input-group" style="left: -45px;">
+        <div class="input-group">
           <input #serachStr type="text" class="searchInput searchInput_go b-r-right-0" placeholder="Search">
           <button class="btnUpload b-r-left-0 mr-2" (click)="filterString(serachStr.value)">
             <i class="fa fa-search" aria-hidden="true"></i>
@@ -35,8 +35,14 @@
           </span>
         </div> -->
 
-        <div class="bg-design-all tableDataDiv ml-2 mr-2">
-          <p-table #vdRead [value]="vendorreaddata" [paginator]="showPaginator" [first]="first" [rows]="rows" selectionMode="single" [showCurrentPageReport]="true"
+        <div class="bg-design-all tableDataDiv ml-2 mr-2"
+        >
+          <div class="scroller"
+          infiniteScroll
+          [infiniteScrollDistance]="2"
+          [scrollWindow]="false"
+          (scrolled)="onScroll()">
+            <p-table #vdRead [value]="vendorreaddata" [paginator]="showPaginator" [first]="first" [rows]="rows" selectionMode="single" [showCurrentPageReport]="true"
           (onPage)="paginate($event)" [globalFilterFields]="['VendorName','TRNNumber','VendorCode','Contact','EntityName']"
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
           [rowsPerPageOptions]="[10,25,50]" styleClass="p-datatable-striped">
@@ -45,10 +51,11 @@
             <tr>
               <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="VendorName">Name</th>
               <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="EntityName">Entity Name</th>
-              <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="TRNNumber">TRN Number</th>
-              <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="VendorCode" class="text-type">{{partyType}} Code</th>
+              <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="TRNNumber">TRN Number</th>
+              <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="VendorCode" class="text-type">{{partyType}} Code</th>
               <!-- <th pSortableColumn="Contact">Contact</th> -->
-              <th class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">View</th>
+              <th *ngIf="isDesktop" class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">View</th>
+              <th *ngIf="!isDesktop" class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" style="width: 50px;">View</th>
               <!-- <th>Action</th> -->
             </tr>
             <tr class="sticky_top">
@@ -71,13 +78,13 @@
                   styleClass="w-100 f-11"
                 ></p-dropdown>
               </td>
-              <td>
+              <td *ngIf="isDesktop">
                 <input style="text-align: left;" pInputText type="text"
                   (input)="vdRead.filter($event.target.value, 'TRNNumber', 'contains')"
                   [value]="vdRead.filters['TRNNumber']?.value" placeholder="Search"
                   class="p-column-filter tableSearchInput">
               </td>
-              <td>
+              <td *ngIf="isDesktop">
                 <input style="text-align: left;" pInputText type="text"
                   (input)="vdRead.filter($event.target.value, 'VendorCode', 'contains')"
                   [value]="vdRead.filters['VendorCode']?.value" placeholder="Search"
@@ -102,8 +109,8 @@
             <tr>
               <td>{{users.VendorName}}</td>
               <td>{{users.EntityName}}</td>
-              <td>{{users.TRNNumber}}</td>
-              <td>{{users.VendorCode}}</td>
+              <td *ngIf="isDesktop">{{users.TRNNumber}}</td>
+              <td *ngIf="isDesktop">{{users.VendorCode}}</td>
               <!-- <td>{{users.Contact}}</td> -->
               <td><i class="pi pi-eye f-16 showEye" (click)="viewFullDetails(users)"></i></td>
               <!-- <td><i class="fa fa-ellipsis-h" aria-hidden="true"></i></td> -->
@@ -122,6 +129,7 @@
           </ng-template>
 
         </p-table>
+          </div>
         </div>
         <ngx-spinner bdColor="rgba(251, 251, 251, 0.8)" size="medium" color = "#070900" [fullScreen]="true" type="ball-spin-clockwise">
           <p style="color: rgb(0, 0, 0)"> </p>

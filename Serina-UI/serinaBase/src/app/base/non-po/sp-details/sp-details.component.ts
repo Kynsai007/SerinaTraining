@@ -194,6 +194,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   acc_num: any;
   ap_boolean: any;
   readOnlyForm = false;
+  isDesktop: boolean;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -202,6 +203,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   historyPopBool: boolean;
   allocationFileds = {};
   ERP: string = 'Dynamics';
+  
 
   constructor(
     private fb: FormBuilder,
@@ -212,7 +214,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     private messageService: MessageService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
-    private storageService: DataService,
+    private dataService: DataService,
     private datePipe: DatePipe,
     private primengConfig: PrimeNGConfig
   ) {
@@ -229,14 +231,14 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.ERP = this.storageService.configData.erpname;
-    this.ap_boolean = this.storageService.ap_boolean;
-    console.log(this.ERP)
+    this.ERP = this.dataService.configData.erpname;
+    this.ap_boolean = this.dataService.ap_boolean;
+    this.isDesktop = this.dataService.isDesktop;
     this.toGetEntity();
     this.getOPunits();
     this.getApprover();
     this.ERPCostAllocation();
-    this.bgColorCode = this.storageService.bgColorCode;
+    this.bgColorCode = this.dataService.bgColorCode;
     this.initialViewVendor = this.sharedService.initialViewSpBoolean;
     this.vendorList = this.sharedService.spListBoolean;
     this.spDetails = this.sharedService.spDetailsArray;

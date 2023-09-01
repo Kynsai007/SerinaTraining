@@ -62,6 +62,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
   cust_type: string;
   isDesktop:boolean;
   sidebarMode = 'side';
+  isnotTablet = true;
 
   constructor(
     public router: Router,
@@ -105,14 +106,20 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     // this.readVendorNames();
   }
   appendScript (){
-    if(window.screen.width >= 576){
-      this.sidebarMode = 'side';
+    if(window.screen.width <= 767){
+      this.sidebarMode = 'over';
+      this.isDesktop = false;
+      this.isnotTablet = false;
+      this.dataStoreService.isDesktop = false;
+    } else if(window.screen.width >= 768 && window.screen.width < 1024) {
+      this.sidebarMode = 'over';
+      this.isnotTablet = false;
       this.isDesktop = true;
       this.dataStoreService.isDesktop = true;
     } else {
-      this.sidebarMode = 'over';
-      this.isDesktop = false;
-      this.dataStoreService.isDesktop = false;
+      this.sidebarMode = 'side';
+      this.isDesktop = true;
+      this.dataStoreService.isDesktop = true;
     }
     const script = this.renderer.createElement('script');
     script.type = 'text/javascript';

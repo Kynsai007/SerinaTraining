@@ -271,7 +271,7 @@ export class Comparision3WayComponent
   updateSessionTime() {
     let sessionData = {
       session_status: true,
-      "client_address": JSON.parse(localStorage.getItem('userIp'))
+      "client_address": JSON.parse(sessionStorage.getItem('userIp'))
     };
     this.exceptionService
       .updateDocumentLockInfo(JSON.stringify(sessionData))
@@ -429,7 +429,7 @@ export class Comparision3WayComponent
         } else if (tag.TagName == 'PO Balance Qty') {
           tag.linedata.push({ Value: ele.RemainInventPhysical, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PO Balance Qty' })
         } else if (tag.TagName == 'GRN - Quantity') {
-          tag.linedata.push({ Value: '', ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Quantity' })
+          tag.linedata.push({ Value: 0, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Quantity' })
         } else if (tag.TagName == 'UnitPrice') {
           tag.linedata.push({ Value: ele.UnitPrice, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: 'Price', tagName: 'UnitPrice' })
         }
@@ -1040,7 +1040,7 @@ export class Comparision3WayComponent
         this.updateAlert('Suggestion', 'Please check the values in the document.');
       } else if (sub_status == 34) {
         this.updateAlert('Suggestion', 'Please compare the PO lines with invoices and we recommend PO flip method to solve this issues.')
-      } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {
+      } else if (sub_status == 7 || sub_status == 23 || sub_status == 10 || sub_status == 35) {
         this.router.navigate([`${this.portalName}/ExceptionManagement`])
       } else if (sub_status == 70) {
         this.tagService.approval_selection_boolean = true;
@@ -1410,7 +1410,7 @@ export class Comparision3WayComponent
           for (let key in data?.result) {
             let valuee = data.result[key];
             this.GRNObjectDuplicate.forEach((ele) => {
-              if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && valuee < ele.Value) {
+              if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && (+valuee < +ele.Value)) {
                 negKey[key] = valuee;
                 negativeData.push(valuee);
               }
@@ -1721,7 +1721,7 @@ export class Comparision3WayComponent
   ngOnDestroy() {
     let sessionData = {
       session_status: false,
-      "client_address": JSON.parse(localStorage.getItem('userIp'))
+      "client_address": JSON.parse(sessionStorage.getItem('userIp'))
     };
     this.exceptionService
       .updateDocumentLockInfo(sessionData)

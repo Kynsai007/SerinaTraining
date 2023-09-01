@@ -202,3 +202,9 @@
     position: relative !important;
   }
 }
+
+@media screen and(max-width:800px) and (min-width:577px) {
+  .chart_title {
+    position: absolute !important;
+  }
+}

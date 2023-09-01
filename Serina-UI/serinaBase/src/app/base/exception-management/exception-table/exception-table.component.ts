@@ -278,7 +278,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.SpinnerService.show();
       let session = {
         "session_status": false,
-        "client_address": JSON.parse(localStorage.getItem('userIp'))
+        "client_address": JSON.parse(sessionStorage.getItem('userIp'))
       }
       this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
         this.SpinnerService.hide();

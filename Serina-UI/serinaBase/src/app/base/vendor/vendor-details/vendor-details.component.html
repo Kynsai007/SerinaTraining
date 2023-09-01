@@ -31,7 +31,7 @@
     <div *ngIf="vendorList" class="row m-0">
     
     
-      <div class="col-sm-3 table_col_height">
+      <div *ngIf="isDesktop" class="col-sm-3 table_col_height">
     
         <div class="bg-design-all tableDataDiv">
           <p-table #vdR [value]="vendorreaddata" [paginator]="showPaginator" selectionMode="single" [rows]="rows"

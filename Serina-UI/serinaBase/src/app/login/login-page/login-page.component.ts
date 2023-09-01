@@ -389,7 +389,7 @@ export class LoginPageComponent implements OnInit {
   async getIPAddress() {
     const response = await fetch('https://ip.seeip.org/jsonip?');
     const data = await response.json();
-    localStorage.setItem('userIp',JSON.stringify(data.ip));
+    sessionStorage.setItem('userIp',JSON.stringify(data.ip));
 }
   
 }

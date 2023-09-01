@@ -245,6 +245,7 @@ export class BatchProcessComponent implements OnInit {
             ...element.DocumentSubStatus,
             ...element.Entity,
             ...element.Vendor,
+            ...element.DocumentHistoryLogs,
           };
           batchData.push(mergeData);
         });

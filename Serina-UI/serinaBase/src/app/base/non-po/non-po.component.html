@@ -9,11 +9,11 @@
     </div> -->
 
 
-    <div *ngIf="initialViewVendor" class="mb-3" style="display: flex;">
+    <div *ngIf="initialViewVendor" [ngClass]="isDesktop ? 'mb-3':'mb-2'" style="display: flex;">
 
 
-      <div class="positionCreateUpload" style="top:44px;right: 130px;">
-        <div class="input-group  uni_dwn_btn" style="left: -45px;">
+      <div class="accountInp">
+        <div class="input-group  uni_dwn_btn">
           <input #serachStr type="text" class="searchInput b-r-right-0" placeholder="Search Account">
           <button class="btnUpload b-r-left-0 mr-2 relate" (click)="accntSearch(serachStr.value)">
             <i class="fa fa-search" aria-hidden="true"></i>

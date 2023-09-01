@@ -20,7 +20,12 @@
       />
       <span class="material-icons searchIcon"> search </span>
     </div>
-    <p-table
+    <div class="scroller"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [scrollWindow]="false"
+    (scrolled)="onScroll()">
+      <p-table
       #allInvoice
       [value]="tableData"
       [rows]="rows"
@@ -331,7 +336,8 @@
         </tr>
       </ng-template>
 
-      <ng-template *ngIf="!isDesktop" pTemplate="body" let-invoiceData let-columns="columns">
+      <ng-template *ngIf="!isDesktop" pTemplate="body" let-invoiceData let-columns="columns"     
+      >
         <tr class="mob_tr"
           [ngStyle]="{
             'background-color':
@@ -495,6 +501,7 @@
       <ng-template pTemplate="paginatorleft"> </ng-template>
       <ng-template pTemplate="paginatorright"> </ng-template>
     </p-table>
+    </div>
     <ngx-spinner
       bdColor="rgba(251, 251, 251, 0)"
       size="medium"

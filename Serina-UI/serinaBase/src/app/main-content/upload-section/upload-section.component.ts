@@ -237,7 +237,7 @@ export class UploadSectionComponent implements OnInit {
   reason: any;
   serviceInvoiceAccess: boolean;
   vendorAccess: boolean;
-  selectedCategory:string;
+  selectedCategory = 'credit';
   invNumbersList = [];
   filteredInv: any[];
   returnInvArr = [];
@@ -694,6 +694,9 @@ export class UploadSectionComponent implements OnInit {
     this.sharedService.readInvLines(event.docheaderID).subscribe(data=>{
       console.log(data);
       this.popupFun('flip returns',data,'');
+    }, err=>{
+      this.alertService.errorObject.detail = "Server error";
+      this.messageService.add(this.alertService.errorObject);
     })
   }
 
@@ -1079,8 +1082,12 @@ export class UploadSectionComponent implements OnInit {
     this.uploader.queue.length = 0;
     this.OcrProgress = 0;
     this.progress = null;
-    this.returnmessage = false;
-    this.evtSource.close();
+    if(this.selectedOption == 'Service'){
+      this.returnmessage = false;
+      this.webSocketService.close();
+    } else {
+      this.evtSource.close();
+    }
   }
 
   // getPONumbers(id) {
@@ -1433,6 +1440,7 @@ export class UploadSectionComponent implements OnInit {
     let APIObj = {
       "ven_acc_id": this.vendorAccountId,
       "invoice_type": val.invoiceType,
+      "invoice_catetgory":val?.category,
       "is_pre_approved": pre_approved,
       "EntityID": val.EntityName?.idEntity,
       "DepartmentID": this.selectedDepartmentID,
@@ -1444,6 +1452,7 @@ export class UploadSectionComponent implements OnInit {
       "po_grn_data": this.PO_GRN_Number_line,
       "Currency": this.selectedCurrency,
       "flippo_data": this.flipPOData,
+      "return_lines": this.returnInvArr,
       "up_lt": val.pageLimit
     }
     this.uploadInvoicesListData.push(obj);
@@ -1463,7 +1472,7 @@ export class UploadSectionComponent implements OnInit {
     this.selectedInvoiceType = '';
     this.selectedCurrency = '';
     this.flipPOData = [];
-    this.selectedCategory = '';
+    this.selectedCategory = 'credit';
   }
   deleteQueue(index, data) {
     if (confirm('Are you sure you want to delete?')) {

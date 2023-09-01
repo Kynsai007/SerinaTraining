@@ -107,6 +107,7 @@ export class NonPoComponent implements OnInit {
   }
   showPaginator: boolean;
   ap_boolean: any;
+  isDesktop: boolean;
 
 
   constructor(
@@ -123,6 +124,7 @@ export class NonPoComponent implements OnInit {
   ngOnInit(): void {
     if (this.permissionService.vendor_SP_PageAccess == true) {
       this.ap_boolean = this.DS.ap_boolean;
+      this.isDesktop = this.DS.isDesktop;
       this.initialViewVendor = this.sharedService.initialViewSpBoolean;
       this.vendorList = this.sharedService.spListBoolean;
       this.venderdetails = this.sharedService.spDetailsArray;
@@ -185,7 +187,7 @@ export class NonPoComponent implements OnInit {
       for (var x in this.serviceproviderreaddata) {
         this.serviceproviderreaddata.hasOwnProperty(x) && res.push(this.serviceproviderreaddata[x])
       }
-      if (res.length > 10) {
+      if (res.length > 10 && this.isDesktop) {
         this.showPaginator = true;
       }
     }, err => {

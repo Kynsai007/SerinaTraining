@@ -81,6 +81,8 @@ export class VendorComponent implements OnInit, AfterViewInit {
   vendorNameForSearch: any;
   partyType:string;
   ap_boolean: any;
+  isDesktop: boolean;
+  fst: number = 0;
 
   constructor(private fb: FormBuilder,
     private route: Router,
@@ -97,6 +99,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
     if(this.permissionService.vendor_SP_PageAccess == true){
       this.initialViewVendor = this.sharedService.initialViewVendorBoolean;
       this.ap_boolean = this.dataService.ap_boolean;
+      this.isDesktop = this.dataService.isDesktop;
       if(this.dataService.ap_boolean){
         this.partyType = 'vendor';
       } else {
@@ -108,7 +111,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
         this.APIParams = `?partyType=${this.partyType}&offset=1&limit=50`;
         this.DisplayVendorDetails(this.APIParams);
       }
-      if(this.vendorreaddata.length > 10){
+      if(this.vendorreaddata.length > 10 && this.isDesktop){
         this.showPaginator = true;
       } else {
         this.showPaginator = false;
@@ -192,7 +195,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
       this.dataService.vendorsListData = this.vendorreaddata;
       this.entityFilterData = this.vendorreaddata; 
       // this.totalRecords = this.vendorreaddata.length;
-      if (this.vendorreaddata.length > 10) {
+      if (this.vendorreaddata.length > 10 && this.isDesktop) {
         this.showPaginator = true;
       }
       this.SpinnerService.hide();
@@ -241,6 +244,19 @@ export class VendorComponent implements OnInit, AfterViewInit {
     } else {
       this.APIParams = `?partyType=${this.partyType}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
+    }
+  }
+  onScroll(){
+    this.fst+10;
+    let evnt = {
+      first: this.fst,
+      rows : 50
+    }
+    if(!this.isDesktop){
+       this.paginate(evnt);
+       console.log('scrolled, Mobile mode');
+    } else {
+      console.log('Desktop mode');
     }
   }
 }

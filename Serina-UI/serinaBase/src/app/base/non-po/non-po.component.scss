@@ -497,6 +497,11 @@ label {
     position: relative;
     top: 10px;
 }
+.accountInp {
+    position: absolute;
+    top:41px;
+    right: 130px;
+}
 
 @media screen and (max-width: 699px) {
     .searchBar {
@@ -526,11 +531,11 @@ label {
     }
     .searchBarInvoiceService {
         top: 96px;
-        left: 71%;
+        right: 80px;
     }
     .searchBarServiceAc {
         top: 96px;
-        left: 55%;
+        right: -40px;
     }
     
     .serachInAccount {
@@ -542,8 +547,8 @@ label {
     .pos-AddAcnt {
         width: 122px;
         overflow: hidden;
-        top: -44px;
-        right: 163px;
+        top: 0px;
+        right: 160px;
     }
     .searchIconAccount {
         // left: 80px;
@@ -553,6 +558,13 @@ label {
         top: -46px;
         left: 115px;
         display: none;
+    }
+    .accountInp {
+        top: 53px;
+    }
+    .exportIcon {
+        right: 27px;
+        top: 42px;
     }
 }
 @media screen and (max-width: 1100px) and (min-width: 700px) {

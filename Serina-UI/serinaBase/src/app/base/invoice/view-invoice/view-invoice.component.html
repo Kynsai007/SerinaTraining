@@ -55,7 +55,7 @@
   PO Amend request
 </button> -->
     <button
-      *ngIf="portalName == 'customer' && flipEnabled && subStatusId == 34"
+      *ngIf="!isServiceData && portalName == 'customer' && flipEnabled && subStatusId == 34"
       class="btnUpload btn_extra_bg mr-2"
       (click)="open_dialog_comp('flip')"
     >
@@ -1318,11 +1318,7 @@
           Cancel
         </button>
         <button
-          *ngIf="
-            (editPermissionBoolean ||
-              changeApproveBoolean ||
-              financeApproveBoolean) &&
-            (submitBtn_boolean || vendorUplaodBoolean)
+          *ngIf="(editable || vendorUplaodBoolean) && (portalName == 'customer' || subStatusId != 40)
           "
           class="btn btnVender bg-btn-cancel mr-3"
           (click)="captureComments('reject', null)"
@@ -1335,7 +1331,7 @@
               changeApproveBoolean ||
               financeApproveBoolean) &&
             (submitBtn_boolean || vendorUplaodBoolean) &&
-            subStatusId != 77
+            subStatusId != 77 && subStatusId != 40
           "
           class="btn btnVender bg-btn-success"
           (click)="submitChanges()"

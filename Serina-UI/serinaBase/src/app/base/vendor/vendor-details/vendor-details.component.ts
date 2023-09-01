@@ -90,13 +90,14 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   partyType: string;
   document: string;
   ap_boolean: any;
+  isDesktop: boolean;
   close(reason: string) {
     this.sidenav.close();
   }
 
   constructor(private fb: FormBuilder,
     private route: Router,
-    private storageService: DataService,
+    private dataService: DataService,
     private tagService: TaggingService,
     private sharedService: SharedService,
     private messageService: MessageService,
@@ -107,29 +108,38 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.ap_boolean = this.storageService.ap_boolean;
-    if(this.storageService.ap_boolean){
+    this.ap_boolean = this.dataService.ap_boolean;
+    this.isDesktop = this.dataService.isDesktop;
+    if(this.dataService.ap_boolean){
       this.partyType = 'vendor';
       this.document = 'Invoices'
     } else {
       this.partyType = 'customer';
       this.document = "PO"
     }
-    this.first = this.storageService.vendorPaginationFirst;
-    this.rows = this.storageService.vendorPaginationRowLength;
-    this.bgColorCode = this.storageService.bgColorCode;
-    this.columnVenderSite = [
-      { field: 'Account', header: `${this.partyType} site ID` },
-      { field: 'EntityName', header: 'Entity' },
-      { field: 'LocationCode', header: 'Location' },
-      { field: 'City', header: 'Address' },
-      { field: 'Contact', header: 'Contact' },
-      { field: 'noOfInvoices', header: 'No of invoices' },
-      { field: 'noOfPo', header: 'No of PO' }
-    ];
+    this.first = this.dataService.vendorPaginationFirst;
+    this.rows = this.dataService.vendorPaginationRowLength;
+    this.bgColorCode = this.dataService.bgColorCode;
+    if(this.isDesktop) {
+      this.columnVenderSite = [
+        { field: 'Account', header: `${this.partyType} site ID` },
+        { field: 'EntityName', header: 'Entity' },
+        { field: 'LocationCode', header: 'Location' },
+        { field: 'City', header: 'Address' },
+        { field: 'Contact', header: 'Contact' },
+        { field: 'noOfInvoices', header: 'No of invoices' },
+        { field: 'noOfPo', header: 'No of PO' }
+      ];
+    } else {
+      this.columnVenderSite = [
+        { field: 'Account', header: `${this.partyType} site ID` },
+        { field: 'EntityName', header: 'Entity' },
+      ];
+    }
+
     this.initialViewVendor = this.sharedService.initialViewVendorBoolean;
     this.venderdetails = this.sharedService.vendorFullDetails;
-    this.vendorreaddata = this.storageService.vendorsListData;
+    this.vendorreaddata = this.dataService.vendorsListData;
     this.primengConfig.ripple = true;
     // this.DisplayVendorDetails();
     this.DisplayVendorAccountDetails();
@@ -230,8 +240,8 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
           pushArray.push(mergedData);
         })
         
-        this.vendorreaddata = this.storageService.vendorsListData.concat(pushArray);
-        this.storageService.vendorsListData = this.vendorreaddata;
+        this.vendorreaddata = this.dataService.vendorsListData.concat(pushArray);
+        this.dataService.vendorsListData = this.vendorreaddata;
         if (this.vendorreaddata.length > 10) {
           this.showPaginator = true;
         }
@@ -384,7 +394,7 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
         pushedInvoiceColumnsArray.push(arrayColumn)
       });
       this.VendorinvoiceColumns = pushedInvoiceColumnsArray.filter(ele => {
-        if(!this.storageService.ap_boolean && ele.columnName == 'Invoice Number'){
+        if(!this.dataService.ap_boolean && ele.columnName == 'Invoice Number'){
           ele.columnName = 'Document Number'
         }
         return ele.isActive == 1
@@ -444,12 +454,12 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   }
   paginate(event) {
     this.first = event.first;
-    this.storageService.vendorPaginationFirst = this.first;
-    this.storageService.vendorPaginationRowLength = event.rows;
-    if(this.first >= this.storageService.pageCountVariable){
-      this.storageService.pageCountVariable = event.first;
-      this.storageService.offsetCount++
-      this.DisplayVendorDetails(this.storageService.offsetCount,50)
+    this.dataService.vendorPaginationFirst = this.first;
+    this.dataService.vendorPaginationRowLength = event.rows;
+    if(this.first >= this.dataService.pageCountVariable){
+      this.dataService.pageCountVariable = event.first;
+      this.dataService.offsetCount++
+      this.DisplayVendorDetails(this.dataService.offsetCount,50)
     }
     
   }

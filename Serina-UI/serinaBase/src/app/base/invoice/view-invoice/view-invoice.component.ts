@@ -477,7 +477,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   updateSessionTime() {
     let sessionData = {
       session_status: true,
-      "client_address": JSON.parse(localStorage.getItem('userIp'))
+      "client_address": JSON.parse(sessionStorage.getItem('userIp'))
     };
     this.exceptionService
       .updateDocumentLockInfo(JSON.stringify(sessionData))
@@ -1144,7 +1144,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         // }
         this.routeOptions();
         this.messageService.add(this.AlertService.updateObject)
-      } else if (sub_status == 7 || sub_status == 23 || sub_status == 10) {
+      } else if (sub_status == 7 || sub_status == 23 || sub_status == 10 || sub_status == 35) {
         this.router.navigate([`${this.portalName}/ExceptionManagement`]);
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
@@ -2040,7 +2040,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     let sessionData = {
       session_status: false,
-      "client_address": JSON.parse(localStorage.getItem('userIp'))
+      "client_address": JSON.parse(sessionStorage.getItem('userIp'))
     };
     this.exceptionService
       .updateDocumentLockInfo(sessionData)

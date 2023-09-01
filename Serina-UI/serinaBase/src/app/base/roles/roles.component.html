@@ -88,15 +88,28 @@
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="firstName">Name</th>
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="NameOfRole">Role</th>
 
-                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="entity_site_count">
+                  <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="entity_site_count">
                     No of Entity sites
                   </th>
-                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="isActive">Status</th>
+                  <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="isActive">Status</th>
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" class="w-30" style="text-align: center">Actions</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-users>
-                <tr>
+                <tr class="mb_tr" [ngStyle]="{
+                  'background-color':
+                      users.isActive == 1 && isDesktop
+                      ? '#FEFFD6'
+                      : users.isActive == 0 && isDesktop
+                      ? '#FEF9EC'
+                      :'',
+                  'border-color':
+                      users.isActive == 1 && isDesktop
+                      ? '#DBD51C'
+                      : users.isActive == 0 && isDesktop
+                      ? '#F3BC45'
+                      : ''
+                }">
                   <td>{{ users.LogName }}</td>
                   <td>{{ users.firstName }} {{ users.lastName }}</td>
                   <td>{{ users.NameOfRole }}</td>
@@ -109,15 +122,15 @@
                     </select>
                   </td> -->
 
-                  <td>
+                  <td *ngIf="isDesktop">
                     <span style="margin-left: 16px">{{
                       users.entity_site_count
                     }}</span>
                   </td>
-                  <td *ngIf="users.isActive == 1">
+                  <td *ngIf="users.isActive == 1 && isDesktop">
                     <span style="color: #000000">Activated</span>
                   </td>
-                  <td *ngIf="users.isActive == 0">
+                  <td *ngIf="users.isActive == 0 && isDesktop">
                     <span style="color: #ff3900">Inactive</span>
                   </td>
                   <td>
@@ -147,7 +160,7 @@
               </ng-template>
               <ng-template pTemplate="emptymessage">
                 <tr>
-                  <td colspan="6" class="p-t-30 text-center">
+                  <td [attr.colspan]="thCount" class="p-t-30 text-center">
                     <img
                       src="assets/Group 2691.png"
                       width="260"

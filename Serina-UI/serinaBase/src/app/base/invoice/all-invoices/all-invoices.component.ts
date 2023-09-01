@@ -80,6 +80,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   drillBool: boolean;
   docId;
   ap_boolean :boolean;
+  fst: number = 0;
   // mob_bg_tr = [
   //   { id:4, name:'Need To Review', borderClr:'#DBD51C', bgClr: '#FEFFD6'},
   //   { id:2, name: 'Processing Document', borderClr:'#7C83CF', bgClr: '#F3F4FF'},
@@ -279,6 +280,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   }
 
   paginate(event) {
+    console.log(event)
     this.paginationEvent.emit(event);
   }
 
@@ -460,5 +462,18 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       ]
     }
     
+  }
+  onScroll(){
+    this.fst+10;
+    let evnt = {
+      first: this.fst,
+      rows : 50
+    }
+    if(!this.isDesktop){
+       this.paginate(evnt);
+       console.log('scrolled, Mobile mode');
+    } else {
+      console.log('Desktop mode');
+    }
   }
 }

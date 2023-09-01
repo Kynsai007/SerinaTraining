@@ -27,6 +27,7 @@ import {ChipsModule} from 'primeng/chips';
 import { NgxSpinnerModule } from "ngx-spinner"; 
 
 import { TextMaskModule } from 'angular2-text-mask';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 
 
@@ -55,7 +56,7 @@ import { TextMaskModule } from 'angular2-text-mask';
         ToastModule,
         CalendarModule,
         TextMaskModule,
-        
+        InfiniteScrollModule
       ],
       exports:[
         CommonModule,
@@ -77,7 +78,8 @@ import { TextMaskModule } from 'angular2-text-mask';
         PaginatorModule,
         ToastModule,
         CalendarModule,
-        TextMaskModule
+        TextMaskModule,
+        InfiniteScrollModule
       ],
       providers:[DatePipe, MessageService ]
 })

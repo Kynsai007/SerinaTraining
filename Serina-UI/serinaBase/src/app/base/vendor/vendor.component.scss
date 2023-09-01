@@ -424,7 +424,7 @@ tr.mat-footer-row {
     }
     .searchBarInvoice {
         top: 96px;
-        left: 71%;
+        right: 117px;;
     }
     .ulTab {
         max-width: 67% !important;
@@ -442,6 +442,7 @@ tr.mat-footer-row {
         top: -46px;
         left: 115px;
     }
+    
 
     // .positionCreateUpload {
     //     position: absolute;
@@ -508,4 +509,13 @@ tr.mat-footer-row {
     .statusType {
         margin: 4px;
     }
+}
+@media screen and (max-width:520px) {
+    .exportIcon {
+        top: 35px;
+    }
+    .scroller {
+        height: 72vh;
+        overflow-y:scroll;
+      }
 }

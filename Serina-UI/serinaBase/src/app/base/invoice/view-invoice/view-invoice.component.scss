@@ -51,7 +51,7 @@
   padding: 8px;
   padding-left: 0;
   height: 90vh;
-  overflow: hidden;
+  overflow: auto;
   margin-top: 0;
 }
 .vendor-body {
@@ -667,4 +667,15 @@ a {
   // .inputHeight {
   //   width: 120px;
   // }
+  .invert {
+    display: block;
+  }
+  .invert_tr {
+    background-color: inherit;
+    border-bottom: 0;
+  }
+  .lineName {
+    padding: 0;
+    background-color: inherit;
+  }
 }

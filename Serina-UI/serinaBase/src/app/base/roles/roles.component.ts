@@ -243,6 +243,8 @@ export class RolesComponent implements OnInit {
   party_type: string;
   is_fp: boolean;
   is_fpa: boolean;
+  isDesktop: boolean;
+  thCount: number;
   constructor(
     private dataService: DataService,
     private messageService: MessageService,
@@ -262,6 +264,12 @@ export class RolesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isDesktop = this.dataService.isDesktop;
+    if(this.isDesktop){
+      this.thCount = 6;
+    } else {
+      this.thCount = 4;
+    }
     this.ap_boolean = this.dataService.ap_boolean;
     if(this.ap_boolean){
       this.party_type = 'Vendor';
@@ -269,6 +277,7 @@ export class RolesComponent implements OnInit {
       this.party_type = 'Customer';
     }
     this.inIt();
+
   }
 
   inIt() {

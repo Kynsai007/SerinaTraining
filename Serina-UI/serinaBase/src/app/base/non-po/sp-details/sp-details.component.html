@@ -93,11 +93,11 @@
   </mat-sidenav>
   <mat-sidenav-content class="max_h">
     <div *ngIf="vendorList">
-      <h6 *ngIf="spDetails" class="headh6">
+      <h6 *ngIf="spDetails" class="headh6 ml-0">
         Service provider Details - {{ spDetails.ServiceProviderName }}
       </h6>
-      <h6 *ngIf="!spDetails" class="headh6">Service provider Details</h6>
-      <div class="mb-3" style="display: flex">
+      <h6 *ngIf="!spDetails" class="headh6 ml-0">Service provider Details</h6>
+      <div [ngClass]="isDesktop ? 'mb-3':'mb-2'" style="display: flex">
         <!-- <div class="positionCreateUpload">
           <button class="btnUpload mr-2" (click)="showAddSpDialog()">
             <span class="pos-center">
@@ -108,7 +108,7 @@
         </div> -->
       </div>
       <div class="row m-0 max_h">
-        <div class="col-sm-3 table_col_height">
+        <div *ngIf="isDesktop" class="col-sm-3 table_col_height">
           <div class="bg-design-all tableDataDiv">
             <p-table
               #spRead1
@@ -732,13 +732,13 @@
     
     <!-- ADD SP Account -->
     <div *ngIf="createspAccount" class="Cbody">
-      <div class="headh6"  *ngIf="addSpAccountBoolean">
+      <div class="headh6 ml-0"  *ngIf="addSpAccountBoolean">
         <span class="goBackIn ml-2" (click)="onCancelAccount()">
           <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
         </span>
         <span class="ml-35">Add Service Provider Account</span>
       </div>
-      <div class="headh6" *ngIf="EditSpAccountBoolean">
+      <div class="headh6 ml-0" *ngIf="EditSpAccountBoolean">
         <span class="goBackIn ml-2" (click)="onCancelAccount()">
           <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
         </span>
