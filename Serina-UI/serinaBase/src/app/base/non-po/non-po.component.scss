@@ -49,45 +49,7 @@ th {
     max-height: 100vh !important;
     padding: 0px 0px 0px 10px;
 }
-:host ::ng-deep .mat-sort-header-content {
-    text-align: center;
-    display: flex;
-    align-items: center;
-    font-weight: 700;
-    font-size: 13px;
-    background-color: white;
-    position: sticky;
-    top: 0;
-    color: #000000;
-}
-:host ::ng-deep mat-row,
-mat-header-row,
-mat-footer-row,
-th.mat-header-cell,
-td.mat-cell,
-td.mat-footer-cell {
-    border-bottom-color: #f5f5f5;
-}
-.mat-paginator {
-    display: block;
-    position: fixed;
-    bottom: 10px;
-    right: 25px;
-}
 
-// .filter{
-//     border: 1px solid #f2be42;
-//     padding: 1px 8px 3px;
-//     background: #f2be42;
-//     border-radius: 6px;
-//     cursor: pointer;
-//     color: #0D0B3C;
-//     font-size: 18px;
-//     margin-left: 0;
-//     position: relative;
-//     top: 2px;
-//     z-index: 1000000000000000;
-// }
 .btnInvoiceType {
     border: 1.95px solid black;
     font-weight: 500;
@@ -120,14 +82,7 @@ tbody {
     overflow: auto;
     max-height: 80vh;
 }
-:host ::ng-deep .dataTables_wrapper .dataTables_filter {
-    position: absolute;
-    top: -110px;
-}
-:host ::ng-deep tr.mat-row,
-tr.mat-footer-row {
-    height: 38px;
-}
+
 :host ::ng-deep .table th,
 .table td {
     padding: 0 10px !important;
@@ -145,10 +100,6 @@ tr.mat-footer-row {
 }
 
 .closeIcon {
-    // font-size: 18px;
-    // border: 1px solid lightgray;
-    // padding: 4px 6px;
-    // border-radius: 21px;
     float: right;
     cursor: pointer;
     margin-right: 3px;
@@ -227,18 +178,7 @@ tr.mat-footer-row {
     height: 30px;
 }
 
-// serach
-// .searchInput {
-//     background: #ffffff;
-//     padding: 8px 14px;
-//     width: 70%;
-//     height: 30px;
-//     border-radius: 5px;
-//     margin-bottom: 20px;
-//     font-size: 13px;
-//     margin-top: 10px;
-//     border: 1px solid #f2be42;
-// }
+
 .searchInput:focus {
     outline: 0;
 }
@@ -517,15 +457,7 @@ label {
         margin: 0;
         padding: 2px 8px !important;
     }
-    // :host ::ng-deep .nav-pills .nav-link {
-    //     font-size: 9px !important;
-    // }
-    // :host ::ng-deep.p-datatable .p-datatable-thead > tr > th {
-    //     font-size: 8px !important;
-    // }
-    // :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-    //     font-size: 8px !important;
-    // }
+
     .searchInput {
         width: 60%;
     }
@@ -568,10 +500,6 @@ label {
     }
 }
 @media screen and (max-width: 1100px) and (min-width: 700px) {
-    // .searchBar {
-    //     top: 53px;
-    //     // left: 61%;
-    // }
     .statusType {
         margin: 4px;
     }

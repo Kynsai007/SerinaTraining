@@ -285,27 +285,40 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="LogName" style="width: 12%">User Name</th>
-                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="firstName">Name</th>
+                  <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="LogName" style="width: 12%">User Name</th>
+                  <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="firstName">Name</th>
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="email">Email</th>
 
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="vendor_data.VendorName">Vendor Name</th>
-                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="isActive" style="width: 114px">Status</th>
+                  <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="isActive" style="width: 114px">Status</th>
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" class="w-30" style="text-align: center">Actions</th>
                   <!-- <th pSortableColumn="rnk">Financial Approval Level</th> -->
                   <!-- <th>Action</th> -->
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-users>
-                <tr>
-                  <td [title]="users.LogName">{{ users.LogName }}</td>
-                  <td>{{ users.firstName }} {{ users.lastName }}</td>
+                <tr class="mb_tr" [ngStyle]="{
+                  'background-color':
+                      users.isActive == 1 && isDesktop
+                      ? '#FEFFD6'
+                      : users.isActive == 0 && isDesktop
+                      ? '#FEF9EC'
+                      :'',
+                  'border-color':
+                      users.isActive == 1 && isDesktop
+                      ? '#DBD51C'
+                      : users.isActive == 0 && isDesktop
+                      ? '#F3BC45'
+                      : ''
+                }">
+                  <td *ngIf="isDesktop" [title]="users.LogName">{{ users.LogName }}</td>
+                  <td *ngIf="isDesktop">{{ users.firstName }} {{ users.lastName }}</td>
                   <td [title]="users.email">{{ users.email }}</td>
 
                   <td [title]="users.vendor_data.VendorName">
                     {{ users.vendor_data.VendorName }}
                   </td>
-                  <td>
+                  <td *ngIf="isDesktop">
                     <span *ngIf="users.isActive == 1" style="color: #000000"
                       >Activated</span
                     >
@@ -326,6 +339,7 @@
                       }"  aria-hidden="true"></i>
                     </button>
                     <button
+                      *ngIf="isDesktop"
                       class="btnUpload ml-2"
                       [disabled]="users.isActive == 0"
                       [ngStyle]="{
@@ -422,25 +436,25 @@
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="LogName" style="width: 12%">User Name</th>
-                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="firstName">Name</th>
+                  <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="LogName" style="width: 12%">User Name</th>
+                  <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="firstName">Name</th>
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="email">Email</th>
 
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="vendor_data.VendorName">Vendor Name</th>
-                  <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="isActive" style="width: 114px">Status</th>
+                  <th *ngIf="isDesktop" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" pSortableColumn="isActive" style="width: 114px">Status</th>
                   <th [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'" class="w-30" style="text-align: center">Actions</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-users>
                 <tr>
-                  <td [title]="users.LogName">{{ users.LogName }}</td>
-                  <td>{{ users.firstName }} {{ users.lastName }}</td>
+                  <td *ngIf="isDesktop" [title]="users.LogName">{{ users.LogName }}</td>
+                  <td *ngIf="isDesktop">{{ users.firstName }} {{ users.lastName }}</td>
                   <td [title]="users.email">{{ users.email }}</td>
 
                   <td [title]="users.vendor_data.VendorName">
                     {{ users.vendor_data.VendorName }}
                   </td>
-                  <td class="text-center">
+                  <td *ngIf="isDesktop" class="text-center">
                     <span *ngIf="users.isActive == 0" style="color: #ff3900"
                       > <span *ngIf="users.vendor_data?.VendorCode == ''">Approval Pending</span></span
                     >

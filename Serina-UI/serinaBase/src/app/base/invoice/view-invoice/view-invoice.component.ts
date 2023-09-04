@@ -259,6 +259,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   documentViewBool: boolean;
   linedata_mobile = [];
   @ViewChild(MatAccordion) accordion: MatAccordion;
+  isEmpty: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -812,6 +813,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       } else {
         this.isAmtStr = false;
       }
+    } else if(key == 'Description') {
+      if(value == ''){
+        this.isEmpty = true;
+      } else {
+        this.isEmpty = false;
+      }
     }
     let updateValue = {
       documentLineItemID: data.idDocumentLineItems,
@@ -821,7 +828,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.updateInvoiceData.push(updateValue);
   }
   saveChanges() {
-    if (!this.isAmtStr) {
+    if (!this.isAmtStr && !this.isEmpty) {
       if (this.updateInvoiceData.length != 0) {
         this.SharedService.updateInvoiceDetails(
           JSON.stringify(this.updateInvoiceData)
@@ -839,7 +846,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       }
     } else {
       this.updateInvoiceData = [];
-      this.errorTriger('Strings are not allowed in the amount and quantity fields.');
+      
+      if(this.isAmtStr){
+        this.errorTriger('Strings are not allowed in the amount and quantity fields.');;
+      } else if(this.isEmpty){
+        this.errorTriger('Please check, Description field should not be empty.');
+      }
     }
   }
 

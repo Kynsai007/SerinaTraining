@@ -59,11 +59,12 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
   partyType: string;
 
   cardObj = [
-    { cls: 'bg-1', icon: 'vendor_up', heading: 'Total Exception Invoices', count: 0, tab : 'Total'},
+    { cls: 'bg-1', icon: 'vendor_up', heading: 'Total Exceptions', count: 0, tab : 'Total'},
     { cls: 'bg-2', icon: 'vendor_pr', heading: 'OCR Queue', count: 0, tab : 'OCR'},
     { cls: 'bg-3', icon: 'vendor_rm', heading: 'Batch Queue', count: 0, tab : 'Batch'},
     { cls: 'bg-4', icon: 'vendor_rej', heading: 'ERP Queue', count: 0, tab : 'ERP'}
   ]
+  isDesktop: boolean;
   constructor(
     private dataService: DataService,
     private chartsService: ChartsService,
@@ -84,6 +85,7 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
     // this.tagService.aprrovalPageTab = 'vendorInvoice';
     // this.tagService.batchProcessTab = 'normal';
     this.tabName = this.chartsService.exceptionVendorTab;
+    this.isDesktop = this.dataService.isDesktop;
     if(this.dataService.ap_boolean){
       this.partyType = 'Vendor';
     } else {
@@ -110,46 +112,78 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
   }
 
   prepareColumns() {
-    this.columnsForTotal = [
-      { field: 'VendorName', header: `${this.partyType} Name`},
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'PODocumentID', header: 'PO Number' },
-      { field: 'EntityName', header: 'Entity' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      { field: 'totalAmount', header: 'Amount' },
-      { field: 'sourcetype', header: 'source' },
-    ];
+    if(this.isDesktop){
+      this.columnsForTotal = [
+        { field: 'VendorName', header: `${this.partyType} Name`},
+        { field: 'docheaderID', header: 'Invoice Number' },
+        { field: 'PODocumentID', header: 'PO Number' },
+        { field: 'EntityName', header: 'Entity' },
+        { field: 'documentDate', header: 'Invoice Date' },
+        { field: 'totalAmount', header: 'Amount' },
+        { field: 'sourcetype', header: 'source' },
+      ];
+  
+      this.columnsForOCR = [
+        { field: 'VendorName', header: `${this.partyType} Name` },
+        { field: 'docheaderID', header: 'Invoice Number' },
+        { field: 'Account', header: `${this.partyType} Account` },
+        { field: 'documentdescription', header: 'Description' },
+        { field: 'documentDate', header: 'Invoice Date' },
+        // { field: 'UpdatedOn', header: 'Last Modified' },
+        { field: 'totalAmount', header: 'Amount' },
+      ];
+  
+      this.columnsForbatch = [
+        { field: 'VendorName', header: `${this.partyType} Name` },
+        { field: 'docheaderID', header: 'Invoice Number' },
+        { field: 'PODocumentID', header: 'PO Number' },
+        // { field: 'Name', header: 'Rule' },
+        { field: 'status', header: 'Status' },
+        { field: 'documentDate', header: 'Invoice Date' },
+        { field: 'totalAmount', header: 'Amount' },
+        // { field: 'Account', header: 'Actions' },
+      ];
+  
+      this.columnsForERP = [
+        { field: 'VendorName', header: `${this.partyType} Name` },
+        { field: 'docheaderID', header: 'Invoice Number' },
+        { field: 'Account', header: `${this.partyType} Account` },
+        // { field: 'Account', header: 'Approval Type' },
+        { field: 'documentDate', header: 'Invoice Date' },
+        // { field: 'UpdatedOn', header: 'Last Modified' },
+        { field: 'totalAmount', header: 'Amount' },
+      ];
+    } else {
+      this.columnsForTotal = [
+        { field: 'VendorName', header: `${this.partyType} Name`},
+        { field: 'docheaderID', header: 'Invoice Number' },
+        { field: 'PODocumentID', header: 'PO Number' },
+        { field: 'EntityName', header: 'Entity' },
+      ];
+  
+      this.columnsForOCR = [
+        { field: 'VendorName', header: `${this.partyType} Name` },
+        { field: 'docheaderID', header: 'Invoice Number' },
+        { field: 'Account', header: `${this.partyType} Account` },
+        { field: 'documentdescription', header: 'Description' },
+      ];
+  
+      this.columnsForbatch = [
+        { field: 'VendorName', header: `${this.partyType} Name` },
+        { field: 'docheaderID', header: 'Invoice Number' },
+        { field: 'PODocumentID', header: 'PO Number' },
+        // { field: 'Name', header: 'Rule' },
+        { field: 'status', header: 'Status' },
+        // { field: 'Account', header: 'Actions' },
+      ];
+  
+      this.columnsForERP = [
+        { field: 'VendorName', header: `${this.partyType} Name` },
+        { field: 'docheaderID', header: 'Invoice Number' },
+        { field: 'Account', header: `${this.partyType} Account` },
+      ];
+    }
 
-    this.columnsForOCR = [
-      { field: 'VendorName', header: `${this.partyType} Name` },
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'Account', header: `${this.partyType} Account` },
-      { field: 'documentdescription', header: 'Description' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      // { field: 'UpdatedOn', header: 'Last Modified' },
-      { field: 'totalAmount', header: 'Amount' },
-    ];
-
-    this.columnsForbatch = [
-      { field: 'VendorName', header: `${this.partyType} Name` },
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'PODocumentID', header: 'PO Number' },
-      // { field: 'Name', header: 'Rule' },
-      { field: 'status', header: 'Status' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      { field: 'totalAmount', header: 'Amount' },
-      // { field: 'Account', header: 'Actions' },
-    ];
-
-    this.columnsForERP = [
-      { field: 'VendorName', header: `${this.partyType} Name` },
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'Account', header: `${this.partyType} Account` },
-      // { field: 'Account', header: 'Approval Type' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      // { field: 'UpdatedOn', header: 'Last Modified' },
-      { field: 'totalAmount', header: 'Amount' },
-    ];
 
     this.columnsForTotal.forEach((e) => {
       this.totalColumnHeader.push(e.header);

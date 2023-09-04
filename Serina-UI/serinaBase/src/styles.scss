@@ -1148,10 +1148,10 @@ option:hover {
   }
   @media screen and(max-width:800px) {
     .img-wrapper {
-      width: 30px;
-      height: 30px;
-      margin: 0 15px 0 0;
-      padding: 3px 4px;
+      width: 30px !important;
+      height: 30px !important;
+      margin: 0 !important;
+      padding: 3px 4px !important;
     }
     .d_flx_row {
       flex-direction: column;
