@@ -13,6 +13,20 @@ max-height: 100vh;
     color: #eb2f06;
     font-size: xx-small;
 }
+/* In your component's CSS file */
+.microsoft-login-button {
+    color: #ffffff; /* Text color */
+    border: none;
+    padding: 8px;
+    border-radius: 50%; /* Make the button rounded */
+    cursor: pointer;
+  }
+  
+  .microsoft-login-button img {
+    width: 25px; /* Adjust the size of the Microsoft logo */
+  }
+  
+  
 .opaque{
     opacity: 0.5;
 }

@@ -9,6 +9,8 @@ import { first } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { environment, environment1 } from 'src/environments/environment.prod';
+import { MsalService } from '@azure/msal-angular';
+import { AuthenticationResult } from '@azure/msal-browser';
 
 @Component({
   selector: 'app-login-page',
@@ -87,7 +89,7 @@ export class LoginPageComponent implements OnInit {
     private route: ActivatedRoute,
     private settingService: SettingsService,
     private dataStoreService: DataService,
-    private authenticationService: AuthenticationService) {
+    private authenticationService: AuthenticationService,private msalService: MsalService) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
       this.User_type = this.authenticationService.currentUserValue.user_type;
@@ -204,10 +206,23 @@ export class LoginPageComponent implements OnInit {
       this.vendorInvoiceAccess = this.instanceInfo?.vendorInvoices;
     })
   }
-  login() {
+  loginMS(){
+    this.msalService.loginPopup().subscribe((response: AuthenticationResult) => {
+      this.msalService.instance.setActiveAccount(response.account);
+      this.login('ms');
+    });
+  }
+  isLoggedInMs(): boolean {
+    return this.msalService.instance.getActiveAccount() != null;
+  }
+  login(type) {
     this.submitted = true;
     this.loginsuccess = false;
     // stop here if form is invalid
+    if(type == "ms"){
+      this.f.username.setValue(this.msalService.instance.getActiveAccount().username);
+      this.f.password.setValue("random");
+    }
     if (this.loginForm.invalid) {
       return;
     }
@@ -215,8 +230,10 @@ export class LoginPageComponent implements OnInit {
     this.loading = true;
     let data1 = {
       "username": this.f.username.value,
-      "password": this.f.password.value
+      "password": this.f.password.value,
+      "type":type
     }
+    
     sessionStorage.setItem('username',JSON.stringify(data1.username));
     this.authenticationService.login(JSON.stringify(data1))
       .subscribe(
@@ -261,8 +278,12 @@ export class LoginPageComponent implements OnInit {
         error => {
           this.loginsuccess = false;
           this.loading = false;
-          if (error.status === 401) {
-          this.error = "Username or/and password are incorrect.";
+          if (error.status === 401 || error.status === 404) {
+          if(error.status === 401){
+            this.error = "Username or/and password are incorrect.";
+          }else{
+            this.error = "User is not Registered!";
+          }
             this.alertDivBoolean = true
           } else {
           this.error = error.statusText;
