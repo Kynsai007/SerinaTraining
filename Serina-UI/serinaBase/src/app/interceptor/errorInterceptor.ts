@@ -19,13 +19,12 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
         return next.handle(request).pipe( catchError((err:HttpErrorResponse) => {
-          if(err.status === 401 && !(request.url.includes('login'))){
-            this.count = 0;
-            if(!this.router.url.includes("/login")){
-              this.authService.logout('');
-              this.count++
-              if(this.count <= 1){
-                alert("Session Expired! Please re-login!");
+          if(err.status === 401){
+            if(err.error["detail"].toLowerCase() == "invalid token" || err.error["detail"].toLowerCase() == "signature has expired"){
+              this.count = this.count + 1;
+              if(this.count == 1){
+                alert("Session has expired! Please re-login!");
+                this.authService.logout();
               }
             }
           }else if(err.status == 502 || 0){

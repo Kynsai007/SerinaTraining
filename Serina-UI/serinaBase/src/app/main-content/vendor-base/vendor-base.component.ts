@@ -193,6 +193,6 @@ export class VendorBaseComponent implements OnInit {
     this.timezone = date.toLocaleTimeString('en', { timeZoneName: 'short' }).split(' ')[2];
   }
   logout(){
-    this.authService.logout('');
+    this.authService.logout();
   }
 }

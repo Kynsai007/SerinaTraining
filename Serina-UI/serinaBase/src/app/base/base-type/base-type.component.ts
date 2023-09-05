@@ -354,7 +354,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
 
   // logout
   logout() {
-    this.authService.logout('');
+    this.authService.logout();
     this.dataStoreService.invoiceLoadedData = [];
     this.dataStoreService.poLoadedData = [];
     this.dataStoreService.GRNLoadedData = [];

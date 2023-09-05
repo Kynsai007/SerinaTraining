@@ -33,7 +33,7 @@ export class ChangePasswordComponent implements OnInit {
       })
     this.dialogRef.close();
     setTimeout(()=>{
-      this.authService.logout('');
+      this.authService.logout();
     },1000)
     },err=>{
       let errorObj = {
