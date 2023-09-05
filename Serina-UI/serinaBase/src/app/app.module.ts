@@ -56,7 +56,7 @@ export function MSALInstanceFactory(): IPublicClientApplication{
     ReactiveFormsModule,
     MatIconModule,
     HttpClientModule,
-    //MsalModule
+    MsalModule
   ],
   providers: [,
     {provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory},
