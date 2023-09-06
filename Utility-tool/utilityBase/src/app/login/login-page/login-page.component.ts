@@ -212,7 +212,8 @@ export class LoginPageComponent implements OnInit {
     this.loading = true;
     let data1 = {
       "username": this.f.username.value,
-      "password": this.f.password.value
+      "password": this.f.password.value,
+      "type":"normal"
     }
     this.authenticationService.login(JSON.stringify(data1))
       .subscribe(
