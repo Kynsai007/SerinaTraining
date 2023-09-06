@@ -40,7 +40,7 @@
     </li>
   </ul>
   <div class="d-flex justify-content-end mt-1">
-    <div *ngIf=" viewType == 'onboarded'" class="mr-2"> <button class="btnUpload" (click)="downloadReport()">Download Report</button></div>
+    <div *ngIf=" viewType == 'onboarded'" class="mr-2"> <button class="btnUpload" (click)="downloadReport()"><span *ngIf="isDesktop">Download Report</span> <i *ngIf="!isDesktop" class="fa fa-download"></i></button></div>
     <div *ngIf="viewType == 'emailException'">
       <p-calendar
         [(ngModel)]="rangeDates"
@@ -68,7 +68,7 @@
   </div>
   
 
-  <div  [ngSwitch]="viewType" class="dash_div" style="padding-top: 12px">
+  <div  [ngSwitch]="viewType" class="dash_div pt-12" >
     <!-- Process invoices Tab -->
     <div *ngSwitchCase="'Process'">
       <app-process-reports></app-process-reports>

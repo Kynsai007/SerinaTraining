@@ -187,7 +187,7 @@
                 <span *ngIf="invoiceData[col?.field]"  [ngClass]="invoiceData[col?.field] < exceptionAlertdate ? 'blinking-element': ''">{{ invoiceData[col?.field] + "Z" | date:'yyyy-MM-dd, h:mm a' }}</span>  
               </span>
               <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate'">
-                <span *ngIf="col.field == 'status' && invoiceData.documentsubstatusID == 40" [pTooltip] = "invoiceData.documentdescription"> <i class="fa fa-info-circle"></i> </span> {{ invoiceData[col.field] }}
+                <span *ngIf="col.field == 'status' && (invoiceData.documentsubstatusID == 40 || invoiceData.documentsubstatusID == 32)" [pTooltip] = "invoiceData.documentdescription"> <i class="fa fa-info-circle"></i> </span> {{ invoiceData[col.field] }}
               </span>
                 <span
                   *ngIf="invoiceData?.oldrule && col.header == 'Rule'"

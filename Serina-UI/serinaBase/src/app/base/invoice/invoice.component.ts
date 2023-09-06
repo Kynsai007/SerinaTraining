@@ -184,6 +184,8 @@ export class InvoiceComponent implements OnInit {
       if (!this.vendorInvoiceAccess) {
         if(this.dataService.doc_status_tab == undefined){
           this.route.navigate([`/${this.portal_name}/invoice/ServiceInvoices`])
+        } else {
+          this.route.navigate([`${this.dataService.doc_status_tab}`]);
         }
       }
     } else if (this.userDetails.user_type == 'vendor_portal') {

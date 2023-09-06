@@ -30,7 +30,7 @@
     </li>
   </ul>
 
-  <div class="tableDataDiv" [ngSwitch]="viewType" style="padding-top: 12px">
+  <div class="tableDataDiv pt-12" [ngSwitch]="viewType">
     <!-- Process invoices Tab -->
     <div *ngSwitchCase="'Process'">
       <app-process-reportservice></app-process-reportservice>

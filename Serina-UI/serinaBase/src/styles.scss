@@ -1101,6 +1101,9 @@ option:hover {
     left: -2px;
     gap: 5px 14px;
   }
+  .pt-12 {
+    padding-top: 12px;
+  }
   @media screen and (max-width: 576px){ 
     .d_mobile {
         display: block;
@@ -1156,6 +1159,20 @@ option:hover {
     .d_flx_row {
       flex-direction: column;
     }
+    .card-div{
+        width: 92px !important;
+        text-align: center;
+        max-width: fit-content;
+        display: flex !important;
+        align-items: center !important;
+        flex-direction: column !important;
+        padding: 4px 10px !important;
+        max-width: 100px !important;
+        justify-content: center !important;
+      }
+      .pt-12 {
+        padding-top: 0px;
+      }
   }
   @media screen and (max-width:1300px) {
     .filter_inputDash {

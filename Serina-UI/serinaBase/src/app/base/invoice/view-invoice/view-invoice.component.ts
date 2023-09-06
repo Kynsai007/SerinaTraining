@@ -651,7 +651,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
               // Add the transformedData array for the current index to the main array
               this.linedata_mobile.push(transformedData);
             }
-            console.log(this.linedata_mobile);
           }
           if (this.editable) {
             this.lineDisplayData.push({
@@ -1104,6 +1103,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
         sub_status = el.sub_status;
       }
     };
+    if(!sub_status){
+      sub_status = this.batchData[this.batchData.length-1].sub_status;
+    }
     if (this.portalName == 'vendorPortal') {
       if (sub_status == 8 ||
         sub_status == 16 ||

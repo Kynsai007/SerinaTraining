@@ -43,12 +43,13 @@ export class VendorBasedChartsComponent implements OnInit {
   displayYear;
   lastYear: number;
   partyType: string;
+  isDesktop: boolean;
 
   constructor(
     private chartsService: ChartsService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
-    private dataStoreService : DataService,
+    private dataService : DataService,
     private ImportExcelService: ImportExcelService,
     private router : Router,
     private datePipe : DatePipe,
@@ -56,9 +57,10 @@ export class VendorBasedChartsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if(this.dataStoreService.configData?.vendorInvoices){
+    if(this.dataService.configData?.vendorInvoices){
       this.viewType = this.chartsService.vendorTabs;
-      if(this.dataStoreService.ap_boolean){
+      this.isDesktop = this.dataService.isDesktop;
+      if(this.dataService.ap_boolean){
         this.partyType = 'Vendor';
       } else {
         this.partyType = 'Customer';

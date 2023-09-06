@@ -175,12 +175,15 @@
     flex-direction: column;
   }
   .card-div{
-    min-width: 100px !important;
+    width: 92px !important;
     text-align: center;
     max-width: fit-content;
     display: flex !important;
     align-items: center;
     flex-direction: column;
+    padding: 4px 10px;
+    max-width: 100px;
+    justify-content: center;
   }
   .f-wrap {
     flex-wrap: wrap;
@@ -200,6 +203,9 @@
   }
   .chart_title {
     position: relative !important;
+  }
+  .charts_height {
+    max-height: fit-content;
   }
 }
 

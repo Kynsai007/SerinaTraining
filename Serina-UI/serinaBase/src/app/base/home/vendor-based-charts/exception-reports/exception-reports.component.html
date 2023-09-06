@@ -1,6 +1,6 @@
 <div class="tableDatDiv">
   <div class="d-flex justify-content-end">
-    <div class="mr-2"> <button class="btnUpload" (click)="downloadReport()">Download Report</button></div>
+    <div class="mr-2"> <button class="btnUpload" (click)="downloadReport()"> <span *ngIf="isDesktop">Download Report</span> <i *ngIf="!isDesktop" class="fa fa-download"></i> </button></div>
     <div class="">
       <p-calendar
         [(ngModel)]="rangeDates"

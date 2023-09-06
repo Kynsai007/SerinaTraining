@@ -17,6 +17,7 @@
 .tableDataDiv {
   max-height: 86vh;
 }
+
 @media screen and (max-width:1300px) {
   // .tableDataDiv {
   //   margin-top: 30px;
@@ -24,7 +25,8 @@
 }
 @media screen and (max-width:800px) {
   .dash_div {
-    max-height: 86vh;
+    max-height: 82vh;
     overflow: auto;
   }
+
 }

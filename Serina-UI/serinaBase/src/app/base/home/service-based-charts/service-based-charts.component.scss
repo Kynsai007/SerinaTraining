@@ -18,3 +18,9 @@
   max-height: 90vh;
   overflow: auto;
 }
+@media screen and(max-width: 576px) {
+  .tableDataDiv {
+    max-height: 87vh;
+    overflow: auto;
+  }
+}

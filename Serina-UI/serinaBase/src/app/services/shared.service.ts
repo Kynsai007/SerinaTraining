@@ -442,7 +442,7 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorPO/${this.userId}?re_upload=${query}&po_id=${this.invoiceID}&uploadtime=${uploadtime}`)
   }
   syncBatchTrigger(query){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/synctriggerbatch/${this.invoiceID}${query}`,'')
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/fr/synctriggerbatch/${this.invoiceID}${query}&u_id=${this.userId}`,'')
   }
   getGRNTabData(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGrnDataForInvoice/${this.userId}?inv_id=${this.invoiceID}`)

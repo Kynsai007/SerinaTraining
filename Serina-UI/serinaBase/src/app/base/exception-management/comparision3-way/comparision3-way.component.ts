@@ -1019,6 +1019,9 @@ export class Comparision3WayComponent
         sub_status = el.sub_status;
       }
     };
+    if(!sub_status){
+      sub_status = this.batchData[this.batchData.length-1].sub_status;
+    }
     if (this.portalName == 'vendorPortal') {
       if (sub_status == 8 ||
         sub_status == 16 ||

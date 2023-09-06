@@ -75,6 +75,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   isAdmin: boolean;
   ERP: string;
   invoceDoctype = false;
+  docType:any;
   isDesktop: boolean;
   drilldownarray = [];
   drillBool: boolean;
@@ -137,6 +138,9 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     }
     if(this.ap_boolean){
       this.invoceDoctype = true;
+      this.docType = 3;
+    }else{
+      this.docType = 1;
     }
     this.bgColorCode = this.ds.bgColorCode;
     this.visibleSidebar2 = this.sharedService.sidebarBoolean;
@@ -367,7 +371,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       drf.afterClosed().subscribe((bool)=>{
         if(bool){
           this.triggerBoolean = true;
-          let query = `?re_upload=false`;
+          let query = `?re_upload=false&doctype=${this.docType}`;
           this.invoiceID = id;
           this.sharedService.invoiceID = id;
           this.sharedService.syncBatchTrigger(query).subscribe((data:any)=>{

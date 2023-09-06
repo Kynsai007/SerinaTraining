@@ -97,16 +97,10 @@
               </ng-template>
               <ng-template pTemplate="body" let-users>
                 <tr class="mb_tr" [ngStyle]="{
-                  'background-color':
-                      users.isActive == 1 && isDesktop
-                      ? '#FEFFD6'
-                      : users.isActive == 0 && isDesktop
-                      ? '#FEF9EC'
-                      :'',
                   'border-color':
-                      users.isActive == 1 && isDesktop
-                      ? '#DBD51C'
-                      : users.isActive == 0 && isDesktop
+                      users.isActive == 1 && !isDesktop
+                      ? '#89d390'
+                      : users.isActive == 0 && !isDesktop
                       ? '#F3BC45'
                       : ''
                 }">
@@ -298,16 +292,10 @@
               </ng-template>
               <ng-template pTemplate="body" let-users>
                 <tr class="mb_tr" [ngStyle]="{
-                  'background-color':
-                      users.isActive == 1 && isDesktop
-                      ? '#FEFFD6'
-                      : users.isActive == 0 && isDesktop
-                      ? '#FEF9EC'
-                      :'',
                   'border-color':
-                      users.isActive == 1 && isDesktop
-                      ? '#DBD51C'
-                      : users.isActive == 0 && isDesktop
+                      users.isActive == 1 && !isDesktop
+                      ? '#89d390'
+                      : users.isActive == 0 && !isDesktop
                       ? '#F3BC45'
                       : ''
                 }">
