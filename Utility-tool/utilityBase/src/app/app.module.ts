@@ -14,7 +14,7 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtInterceptor } from './services/Interceptors/Jwt.interceptor';
 import { ErrorInterceptor } from './services/Interceptors/errorInterceptor';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { PathLocationStrategy, LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
       provide: LocationStrategy,
-      useClass: HashLocationStrategy
+      useClass: PathLocationStrategy
     }
   ],
   bootstrap: [AppComponent]
