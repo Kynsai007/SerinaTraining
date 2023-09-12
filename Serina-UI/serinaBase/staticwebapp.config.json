@@ -2,7 +2,7 @@
   "globalHeaders": {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Credentials":false,
-    "content-security-policy": "frame-ancestors 'self'; script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net https://ajax.googleapis.com https://cdnjs.cloudflare.com https://maxcdn.bootstrapcdn.com https://www.gstatic.com; worker-src blob:; object-src 'none'; upgrade-insecure-requests",
+    "content-security-policy": "frame-ancestors 'self'; script-src 'self' 'unsafe-eval' https://apis.google.com https://accounts.google.com https://cdn.jsdelivr.net https://ajax.googleapis.com https://cdnjs.cloudflare.com https://maxcdn.bootstrapcdn.com https://www.gstatic.com; worker-src blob:; object-src 'none'; upgrade-insecure-requests",
     "X-Frame-Options": "SAMEORIGIN",
     "X-Permitted-Cross-Domain-Policies": "none",
     "Referrer-Policy":"no-referrer",
