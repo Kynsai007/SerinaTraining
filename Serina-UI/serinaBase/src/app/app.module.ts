@@ -34,7 +34,10 @@ import {
 //   username:environment.userName,
 //   password:environment.userData?.token
 // }
-
+const googleLoginOptions = {
+  scope: 'profile email',
+  plugin_name:'Serina' 
+};
 export function MSALInstanceFactory(): IPublicClientApplication{
   return new PublicClientApplication({
     auth: {
