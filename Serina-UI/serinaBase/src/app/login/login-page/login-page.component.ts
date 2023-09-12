@@ -229,6 +229,10 @@ export class LoginPageComponent implements OnInit {
       this.f.username.setValue(this.msalService.instance.getActiveAccount().username);
       this.f.password.setValue("random");
     }
+    if(type == "ga"){
+      this.f.username.setValue(localStorage.getItem("ga.account.keys"));
+      this.f.password.setValue("random");
+    }
     if (this.loginForm.invalid) {
       return;
     }
