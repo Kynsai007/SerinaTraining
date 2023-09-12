@@ -18,6 +18,10 @@ import { JwtInterceptor } from './interceptor/Jwt.interceptor';
 import { PathLocationStrategy, LocationStrategy } from '@angular/common';
 import {MSAL_INSTANCE, MsalModule, MsalService} from '@azure/msal-angular';
 import { IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
+import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
+import {
+  GoogleLoginProvider
+} from 'angularx-social-login';
 // import { IMqttServiceOptions, MqttModule } from 'ngx-mqtt';
 // export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = environment1;
 
@@ -56,10 +60,27 @@ export function MSALInstanceFactory(): IPublicClientApplication{
     ReactiveFormsModule,
     MatIconModule,
     HttpClientModule,
-    MsalModule
+    MsalModule,
+    SocialLoginModule
   ],
-  providers: [,
-    {provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory},
+  providers: [{
+    provide: 'SocialAuthServiceConfig',
+    useValue: {
+      autoLogin: false,
+      providers: [
+        {
+          id: GoogleLoginProvider.PROVIDER_ID,
+          provider: new GoogleLoginProvider(
+            '110236687625-r0s37gq55ktuuenirkrs5irra0ceds17.apps.googleusercontent.com',
+            googleLoginOptions
+          )
+        }
+      ],
+      onError: (err) => {
+        console.error(err);
+      }
+    } as SocialAuthServiceConfig,
+  },{provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory},
     MsalService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
