@@ -188,6 +188,7 @@ export class Comparision3WayComponent
   documentViewBool: boolean;
   isDesktop: boolean;
   so_id: any;
+  isEmpty: boolean;
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -841,6 +842,12 @@ export class Comparision3WayComponent
       } else {
         this.isAmtStr = false;
       }
+    }else if(key == 'Description') {
+      if(value == ''){
+        this.isEmpty = true;
+      } else {
+        this.isEmpty = false;
+      }
     }
     let updateValue = {
       documentLineItemID: data.idDocumentLineItems,
@@ -851,7 +858,7 @@ export class Comparision3WayComponent
   }
 
   saveChanges() {
-    if (!this.isAmtStr) {
+    if (!this.isAmtStr && !this.isEmpty) {
       if (this.updateInvoiceData.length != 0) {
         this.SharedService.updateInvoiceDetails(
           JSON.stringify(this.updateInvoiceData)
@@ -873,7 +880,12 @@ export class Comparision3WayComponent
       }
     } else {
       this.updateInvoiceData = [];
-      this.alertFun('Strings are not allowed in the amount and quantity fields.')
+      if(this.isAmtStr){
+        this.alertFun('Strings are not allowed in the amount and quantity fields.')
+      } else if(this.isEmpty){
+        this.alertFun('Please check, Description field should not be empty.')
+      }
+     
     }
   }
 

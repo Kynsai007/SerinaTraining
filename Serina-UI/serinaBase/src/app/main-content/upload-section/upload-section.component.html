@@ -546,7 +546,7 @@
         </div>
 
         <!-- select GRN Number -->
-        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory != 'returns'">
+        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory == 'credit'" >
           <label class="f-13 mb-0">Select GRN</label><br />
           <p-multiSelect
             [options]="po_grn_list"
@@ -565,7 +565,7 @@
         </div>
 
         <!-- select GRN Line -->
-        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory != 'returns'">
+        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory == 'credit'">
           <label class="f-13 mb-0">Select GRN Line</label><br />
           <p-multiSelect
             [options]="po_grn_line_list"

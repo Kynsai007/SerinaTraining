@@ -94,7 +94,7 @@
   <mat-sidenav-content class="max_h">
     <div *ngIf="vendorList">
       <h6 *ngIf="spDetails" class="headh6 ml-0">
-        Service provider Details - {{ spDetails.ServiceProviderName }}
+        Service provider Details <span *ngIf="isDesktop">- {{ spDetails.ServiceProviderName }}</span>
       </h6>
       <h6 *ngIf="!spDetails" class="headh6 ml-0">Service provider Details</h6>
       <div [ngClass]="isDesktop ? 'mb-3':'mb-2'" style="display: flex">

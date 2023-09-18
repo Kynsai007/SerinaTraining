@@ -1111,7 +1111,7 @@ export class RolesComponent implements OnInit {
         usersList.push(mergedData);
       });
       this.CustomerUserReadData = usersList;
-      if (this.CustomerUserReadData.length > 10) {
+      if (this.CustomerUserReadData.length > 10 && this.isDesktop ) {
         this.showPaginator = true;
       }
     });
@@ -1560,10 +1560,10 @@ export class RolesComponent implements OnInit {
       });
       this.vendorAdminReadData = vendorUsersList;
       this.vendorAdminReadDataAP = vendorUsersListAp;
-      if (this.vendorAdminReadData.length > 10) {
+      if (this.vendorAdminReadData.length > 10 && this.isDesktop) {
         this.showPaginatorSp = true;
       }
-      if(this.vendorAdminReadDataAP.length >10) {
+      if(this.vendorAdminReadDataAP.length >10 && this.isDesktop) {
         this.showPaginatorAp = true;
       }
     });

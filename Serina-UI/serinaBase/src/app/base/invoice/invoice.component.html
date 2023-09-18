@@ -167,6 +167,14 @@
             <i class="fa fa-filter" aria-hidden="true"></i>
             </button>
           </div>
+          <div class="mr-2"
+           *ngIf="route.url == archivedTab">
+              <select class="form-control selectFilter f-12" (change)="selectinvType($event.target.value)">
+                <option value=" ">Both</option>
+                <option value="ven">Vendor</option>
+                <option value="ser">Service</option>
+              </select>
+          </div>
 
             <div class="input-group  uni_dwn_btn1 left1_ser" *ngIf="!route.url.includes('allInvoices') && !route.url.includes('GRNExceptions') && !route.url.includes('ServiceInvoices')">
               <input #serachStr type="text" class="searchInput b-r-right-0" placeholder="Search" (keyup)="keySearch(serachStr.value)" [(ngModel)]="searchStr">
@@ -178,6 +186,8 @@
               <i class="fa fa-download" aria-hidden="true"></i>
             </button>
           </div>
+
+          
           <!-- <ul class="nav nav-tabs d-inline-block service_navs" *ngIf="usertypeBoolean && serviceInvoiceAccess "
               [ngClass]="!vendorInvoiceAccess ? 'mr-2':'ml-2'">
             <li class="nav-item service">
@@ -209,6 +219,7 @@
                   (sideBarBoolean)="showSidebar($event)"
                   (paginationEvent) = "paginate($event)"
                   [columnLength]="allInColumnLength"
+                  (filterDataEmit) = "filterEmit($event)"
                   *ngIf="route.url == invoiceTab"
                 >
                 </app-all-invoices>
@@ -220,6 +231,7 @@
                   [showPaginatorAllInvoice]="showPaginatorPOTable"
                   (sideBarBoolean)="showSidebar($event)"
                   (paginationEvent) = "paginate($event)"
+                  (filterDataEmit) = "filterEmit($event)"
                   [columnLength]="allPOColumnLength"
                   (searchInvoiceData)="searchInvoiceDataV($event)"
                   *ngIf="route.url == POTab"
@@ -232,6 +244,7 @@
                   [showPaginatorAllInvoice]="showPaginatorSOTable"
                   (sideBarBoolean)="showSidebar($event)"
                   (paginationEvent) = "paginate($event)"
+                  (filterDataEmit) = "filterEmit($event)"
                   [columnLength]="allPOColumnLength"
                   (searchInvoiceData)="searchInvoiceDataV($event)"
                   *ngIf="route.url == SOTab"
@@ -244,6 +257,7 @@
                   [showPaginatorAllInvoice]="showPaginatorGRNTable"
                   (sideBarBoolean)="showSidebar($event)"
                   (paginationEvent) = "paginate($event)"
+                  (filterDataEmit) = "filterEmit($event)"
                   [columnLength]="GRNColumnLength"
                   (searchInvoiceData)="searchInvoiceDataV($event)"
                   *ngIf="route.url == GRNTab"
@@ -258,6 +272,7 @@
                   (searchInvoiceData)="searchInvoiceDataV($event)"
                   (sideBarBoolean)="showSidebar($event)"
                   (paginationEvent) = "paginate($event)"
+                  (filterDataEmit) = "filterEmit($event)"
                   [columnLength]="allARCColumnLength"
                   *ngIf="route.url == archivedTab"
                 ></app-all-invoices>
@@ -270,6 +285,7 @@
                   (searchInvoiceData)="searchInvoiceDataV($event)"
                   (sideBarBoolean)="showSidebar($event)"
                   (paginationEvent) = "paginate($event)"
+                  (filterDataEmit) = "filterEmit($event)"
                   [columnLength]="rejectedColumnLength"
                   *ngIf="route.url == rejectedTab"
                 ></app-all-invoices>
@@ -282,6 +298,7 @@
                   (searchInvoiceData)="searchInvoiceDataV($event)"
                   (sideBarBoolean)="showSidebar($event)"
                   (paginationEvent) = "paginate($event)"
+                  (filterDataEmit) = "filterEmit($event)"
                   [columnLength]="GRNExcpColumnLength"
                   *ngIf="route.url == GRNExceptionTab"
                 >
@@ -295,6 +312,7 @@
                   (searchInvoiceData)="searchInvoiceDataV($event)"
                   (sideBarBoolean)="showSidebar($event)"
                   (paginationEvent) = "paginate($event)"
+                  (filterDataEmit) = "filterEmit($event)"
                   [columnLength]="allSRVColumnLength"
                   *ngIf="route.url == serviceInvoiceTab"
                 ></app-all-invoices>

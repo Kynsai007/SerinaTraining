@@ -61,6 +61,15 @@
 .reversed {
   flex-direction: row-reverse;
 }
+.selectFilter {
+  width: 120px;
+  height: 30px;
+}
+.filter_input {
+  position: absolute;
+  top: 56px;
+  right: 215px;
+}
 
 @media screen and (max-width: 800px) and (min-width:577px) {
   .uni_dwn_btn {

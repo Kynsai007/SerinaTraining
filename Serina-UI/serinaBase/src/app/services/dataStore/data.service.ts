@@ -161,6 +161,7 @@ export class DataService {
   arenaMasterData: any;
   isDesktop: boolean;
   vendorId: any;
+  posted_inv_type = '';
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

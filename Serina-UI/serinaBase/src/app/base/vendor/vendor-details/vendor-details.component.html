@@ -27,7 +27,7 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <h6 *ngIf="!venderdetails" class="headh6 text-type">{{partyType}} Details</h6>
-    <h6 *ngIf="venderdetails" class="headh6 text-type">{{partyType}} Details - {{venderdetails.VendorName}}</h6>
+    <h6 *ngIf="venderdetails" class="headh6 text-type">{{partyType}} Details <span *ngIf="isDesktop">- {{ venderdetails.VendorName }}</span></h6>
     <div *ngIf="vendorList" class="row m-0">
     
     

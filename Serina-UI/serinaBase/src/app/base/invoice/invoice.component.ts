@@ -131,6 +131,7 @@ export class InvoiceComponent implements OnInit {
   invoceDoctype = false;
   partyType: string;
   isDesktop: boolean;
+  tableImportData: any;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -575,8 +576,6 @@ export class InvoiceComponent implements OnInit {
       this.archivedDisplayData =
         this.dataService.archivedDisplayData.concat(invoicePushedArray);
       this.dataService.archivedDisplayData = this.archivedDisplayData;
-      this.dataService.ARCTableLength = data?.result?.ven?.ok?.total_arc;
-      this.archivedLength = data?.result?.ven?.ok?.total_arc;
       this.archivedDisplayData.forEach((ele1) => {
         for (let name in ele1) {
           if (name == 'ServiceProviderName') {
@@ -584,6 +583,13 @@ export class InvoiceComponent implements OnInit {
           }
         }
       });
+      if(this.dataService.posted_inv_type != 'ser'){
+        this.dataService.ARCTableLength = data?.result?.ven?.ok?.total_arc;
+        this.archivedLength = data?.result?.ven?.ok?.total_arc;
+      } else {
+        this.dataService.ARCTableLength = data?.result?.ser?.ok?.total_arc;
+        this.archivedLength = data?.result?.ser?.ok?.total_arc;
+      }
       if (this.archivedLength > 10 && this.isDesktop) {
         this.showPaginatorArchived = true;
       }
@@ -1038,6 +1044,7 @@ export class InvoiceComponent implements OnInit {
 
   exportExcel() {
     let exportData = [];
+    if(!this.tableImportData){
     if (this.route.url == this.invoiceTab) {
       exportData = this.invoiceDispalyData;
     } else if (this.route.url == this.POTab) {
@@ -1053,6 +1060,9 @@ export class InvoiceComponent implements OnInit {
     } else if (this.route.url == this.serviceInvoiceTab) {
       exportData = this.serviceinvoiceDispalyData;
     }
+  } else {
+    exportData = this.tableImportData;
+  }
     if (this.allSearchInvoiceString && this.allSearchInvoiceString.length > 0) {
       this.ImportExcelService.exportExcel(this.allSearchInvoiceString);
     } else if (exportData && exportData.length > 0) {
@@ -1229,11 +1239,19 @@ export class InvoiceComponent implements OnInit {
       this.dataService.archivedPaginationRowLength = event.rows;
       if (this.first >= this.dataService.pageCountVariableArc) {
         this.dataService.pageCountVariableArc = event.first;
-        if (this.dataService.searchArcStr == '') {
+        if (this.dataService.searchArcStr == '' && this.dataService.posted_inv_type == '') {
           this.dataService.offsetCountArc++;
           this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50`;
           this.getDisplayARCData(this.APIParams);
-        } else {
+        } else if (this.dataService.searchArcStr == '' && this.dataService.posted_inv_type != '') {
+          this.dataService.offsetCountArc++;
+          this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&inv_type=${this.dataService.posted_inv_type}`;
+          this.getDisplayARCData(this.APIParams);
+        } else if (this.dataService.searchArcStr != '' && this.dataService.posted_inv_type != '') {
+          this.dataService.offsetCountArc++;
+          this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}&inv_type=${this.dataService.posted_inv_type}`;
+          this.getDisplayARCData(this.APIParams);
+        }else {
           this.dataService.offsetCountArc++;
           this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}`;
           this.getDisplayARCData(this.APIParams);
@@ -1332,8 +1350,14 @@ export class InvoiceComponent implements OnInit {
       this.dataService.offsetCountArc = 1;
       this.dataService.archivedDisplayData = [];
       this.dataService.searchArcStr = event;
-      if (this.dataService.searchArcStr == '') {
+      if (this.dataService.searchArcStr == '' && this.dataService.posted_inv_type == '') {
         this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50`;
+        this.getDisplayARCData(this.APIParams);
+      } else if (this.dataService.searchArcStr == '' && this.dataService.posted_inv_type != '') {
+        this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&inv_type=${this.dataService.posted_inv_type}`;
+        this.getDisplayARCData(this.APIParams);
+      } else if (this.dataService.searchArcStr != '' && this.dataService.posted_inv_type != '') {
+        this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}&inv_type=${this.dataService.posted_inv_type}`;
         this.getDisplayARCData(this.APIParams);
       } else {
         this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}`;
@@ -1366,6 +1390,15 @@ export class InvoiceComponent implements OnInit {
       this.dataService.rejectedPaginationFisrt = 1;
     }else if (this.route.url == this.serviceInvoiceTab) {
     }
+  }
+  selectinvType(val){
+    this.dataService.archivedDisplayData = [];
+    this.dataService.posted_inv_type = val;
+    this.getDisplayARCData(`?offset=${this.dataService.offsetCountArc}&limit=50&inv_type=${val}`);
+  }
+
+  filterEmit(event){
+    this.tableImportData = event;
   }
 
   mob_columns(){

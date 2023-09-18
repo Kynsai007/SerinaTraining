@@ -38,6 +38,8 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
   @Input() columnLength;
   @Output() public searchInvoiceData: EventEmitter<any> =
     new EventEmitter<any>();
+  @Output() public filterDataEmit: EventEmitter<any> =
+    new EventEmitter<any>();
   @Output() public sideBarBoolean: EventEmitter<boolean> =
     new EventEmitter<boolean>();
     @Output() public paginationEvent: EventEmitter<any> =
@@ -271,7 +273,11 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
         (val) => value == val.docstatus
       );
       this.first = 0
+      this.filterDataEmit.emit(this.tableData);
     }
+  }
+  filteredData(evnt){
+    this.filterDataEmit.emit(this.allInvoice?.filteredValue);
   }
   viewStatusPage(e) {
     this.sharedService.invoiceID = e.idDocument;
