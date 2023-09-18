@@ -292,7 +292,7 @@ export class LoginPageComponent implements OnInit {
           }
             this.alertDivBoolean = true
           } else {
-          this.error = error.statusText;
+          this.error = "Username or/and password are incorrect.";
           }
 
         });
