@@ -81,14 +81,14 @@ export class CreateGRNComponent implements OnInit {
     if(this.permissionService.GRNPageAccess == true){
       this.viewType = this.tagService.GRNTab;
       this.isDesktop = this.ds.isDesktop;
-      if(!this.isDesktop){
-        this.mob_columns()
-      }
-      this.prepareColumnsArray();
-      this.readTableData('');
-      if(this.sharedService.po_num){
-        this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`)
-      }
+      // if(!this.isDesktop){
+      //   this.mob_columns()
+      // }
+      // this.prepareColumnsArray();
+      // this.readTableData('');
+      // if(this.sharedService.po_num){
+      //   this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`)
+      // }
       this.readEntity();
     } else{
       alert("Sorry!, you do not have access");
@@ -269,13 +269,13 @@ export class CreateGRNComponent implements OnInit {
   selectedPO(id){
     this.sharedService.po_doc_id = id.idDocument;
     this.sharedService.po_num = id.PODocumentID
-    this.checkGRNPO(id.PODocumentID)
+    this.checkGRNPO(id.PODocumentID);
   }
   readPOLines(po_num) {
     this.sharedService.getPO_Lines(po_num).subscribe((data: any) => {
       this.poLineData = data.result;
       this.PO_GRN_Number_line = this.poLineData;
-      this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`);
+      // this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`);
 
     }, err => {
       this.alertService.errorObject.detail = "Server error";
@@ -292,9 +292,9 @@ export class CreateGRNComponent implements OnInit {
         // this.MessageService.add(this.alertService.updateObject);
         const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
           width : '30%',
-          height: '35vh',
+          height: '45vh',
           hasBackdrop: false,
-          data : { body: 'Still you want to create GRN from PO for remaining balance?'}})
+          data : { body: 'The invoice alreday exist for this PO, Still you want to create GRN from PO for remaining balance?'}})
 
           drf.afterClosed().subscribe((bool)=>{
             if(bool){
@@ -333,7 +333,6 @@ export class CreateGRNComponent implements OnInit {
         this.readPOLines(val);
       }
     })
-    
   }
   routeToGRN(val){
     this.ds.GRN_PO_Data = [];

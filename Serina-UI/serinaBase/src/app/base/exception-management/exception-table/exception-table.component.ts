@@ -254,15 +254,6 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   // edit invoice details if something wrong
   editInvoice(e) {
-    console.log(e)
-    // this.tagService.financeApprovePermission = false;
-    // this.tagService.approveBtnBoolean = false;
-    // this.tagService.submitBtnBoolean = false;
-    // this.tagService.approval_selection_boolean = false;
-    // this.tagService.LCM_boolean = false;
-    // this.dataService.entityID = undefined;
-    // this.SharedService.selectedEntityId = undefined;
-
     this.ds.editableInvoiceData = e;
     this.ExceptionsService.invoiceID = e.idDocument;
     this.tagService.editable = true;
@@ -283,6 +274,8 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.ExceptionsService.getDocumentLockInfo(session).subscribe((data: any) => {
         this.SpinnerService.hide();
         if (data.result?.lock_info?.lock_status == 0) {
+          this.ExceptionsService.checkInvStatus().subscribe((resp:any)=>{
+            if(resp.result.status == e.documentStatusID && resp.result.substatus == e.documentsubstatusID ) {
           if (this.tagService.batchProcessTab == 'normal' || this.tagService.batchProcessTab == 'PODoc') {
             if (this.permissionService.editBoolean == true) {
               if (e.documentsubstatusID == 8 ||
@@ -363,6 +356,11 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
               'customer/ExceptionManagement/InvoiceDetails/' + e.idDocument,
             ]);
           }
+        } else {
+          this.alertService.errorObject.detail = "Hey someone already made changes on this document, can you refresh and try again?"
+          this.MessageService.add(this.alertService.errorObject);
+        }
+      })
         } else {
           this.displayResponsivepopup = true;
           this.confirmText = `Sorry, "${data.result.User?.firstName} ${data.result.User?.lastName}" is doing changes for this invoice.`;

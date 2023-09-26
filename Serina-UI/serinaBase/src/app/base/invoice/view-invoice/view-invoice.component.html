@@ -373,6 +373,15 @@
                       aria-hidden="true"
                     ></i
                   ></span>
+                  <span
+                  *ngIf="value.TagLabel == 'PurchaseOrder' && editable">
+                    <i
+                        class="fa fa-search info_icon pointer po_s_icon"
+                        aria-hidden="true"
+                        (click)="poDailog(value)"
+                      ></i
+                    >
+                  </span>
                 </label>
                 <input
                   #inputv
@@ -1422,15 +1431,15 @@
 </div>
 <!-- Add label-->
 <p-dialog
-  header="Batch Progress"
+[header]="p_dailog_head"
   [(visible)]="progressDailogBool"
   [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '31vw' }"
+  [style]="{width: p_width}"
   [baseZIndex]="10000"
   [draggable]="false"
   [resizable]="false"
 >
-  <div>
+  <div *ngIf="p_dailog_head == 'Batch Progress'">
     <div class="f-12" *ngIf="!(batchData?.length > 0)">
       Hey, Please hold on the batch is running...
     </div>
@@ -1441,6 +1450,49 @@
         }}</span>
       </li>
     </ul>
+  </div>
+  <div class="row" *ngIf="p_dailog_head == 'Confirm PO number'" style="min-height: 40vh;">
+    <div class="col-lg-3 col-md-4">
+      <!-- <label class="f-13 mb-0">Select PO Number</label><br />
+      <p-autoComplete
+        placeholder="Select PO Number"
+        (onSelect)="selectedPO($event)"
+        [group]="false"
+        [forceSelection]="true"
+        [suggestions]="filteredPO"
+        (completeMethod)="filterPOnumber($event)"
+        field="PODocumentID"
+        [dropdown]="true"
+        name="PONumber"
+        ngModel
+        required
+      >
+        <ng-template let-group pTemplate="group">
+          <div class="flex align-items-center">
+            <span class="f-12">{{ group.PODocumentID }}</span>
+          </div>
+        </ng-template>
+      </p-autoComplete> -->
+      <input type="text" class="form-control f-12" (keyup)="POsearch($event.target.value)" placeholder="PO number search">
+      <ul class="ulPOlist f-12 mt-1">
+        <li *ngFor="let poitem of poNumbersList;let i = index;" [id]="i" (click)="selectedPO_not(i)"
+         [ngClass]="activePOId == poitem.PODocumentID ? 'activePO':''">{{poitem.PODocumentID}}</li>
+      </ul>
+    </div>
+    <div class="col-lg-9 col-md-8">
+      <h6 class="f-14 mt-2" *ngIf="PO_GRN_Number_line.length>0">Please verify the po lines</h6>
+      <table class="table f-12 " *ngIf="PO_GRN_Number_line.length>0">
+        <tr>
+          <th style="width: 60px;">S.No</th> <th>Description</th> <th>Quantity</th> <th>UnitPrice</th>
+        </tr>
+        <tr *ngFor="let item of PO_GRN_Number_line; let i = index;">
+          <td>{{ i+1 }}</td>
+          <td>{{ item.Name }}</td>
+          <td> {{ item.PurchQty }} </td>
+          <td>{{ item.UnitPrice }}</td>
+        </tr>
+      </table>
+    </div>
   </div>
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-center">

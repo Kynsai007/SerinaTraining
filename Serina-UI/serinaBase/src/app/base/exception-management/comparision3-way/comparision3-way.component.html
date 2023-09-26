@@ -1275,7 +1275,7 @@
   [draggable]="false"
   [resizable]="false"
 >
-  <div *ngIf="!GRNDialogBool">
+  <div *ngIf="headerpop == 'Batch Progress'">
     <div class="f-12" *ngIf="!(batchData?.length > 0)">
       Hey, Please hold on the batch is running...
     </div>
@@ -1287,7 +1287,7 @@
       </li>
     </ul>
   </div>
-  <div *ngIf="GRNDialogBool" class="text-center" style="min-height: 150px">
+  <div *ngIf="headerpop == 'Select GRN'" class="text-center" style="min-height: 150px">
     <!-- select GRN Number -->
     <p-multiSelect
       [options]="grnList"
@@ -1303,10 +1303,18 @@
     >
     </p-multiSelect>
   </div>
+
+  <div
+    *ngIf="headerpop == 'GRN Creation Status'"
+    class="f-13 text-center"
+    style="color: #f38a6b"
+  >
+    {{ APIResponse }}
+  </div>
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-center">
       <button
-        *ngIf="!GRNDialogBool"
+        *ngIf="headerpop == 'Batch Progress'"
         type="button"
         class="btn btnVender bg-btn-success mt-2"
         (click)="routeToMapping()"
@@ -1314,7 +1322,7 @@
         Next
       </button>
       <button
-        *ngIf="GRNDialogBool"
+        *ngIf="headerpop == 'Select GRN'"
         type="button"
         class="btn btnVender bg-btn-cancel mt-2 mr-2"
         (click)="progressDailogBool = false"
@@ -1322,13 +1330,21 @@
         Cancel
       </button>
       <button
-        *ngIf="GRNDialogBool"
+        *ngIf="headerpop == 'Select GRN'"
         type="button"
         class="btn btnVender bg-btn-success mt-2"
         [disabled]="!(selectedGRNList?.length > 0)"
         (click)="ChangeGRNDataR()"
       >
         Change
+      </button>
+      <button
+        *ngIf="headerpop == 'GRN Creation Status'"
+        type="button"
+        class="btn btnVender bg-btn-cancel mt-2 mr-2"
+        (click)="backToInvoice()"
+      >
+        Go Back
       </button>
     </div>
   </ng-template>

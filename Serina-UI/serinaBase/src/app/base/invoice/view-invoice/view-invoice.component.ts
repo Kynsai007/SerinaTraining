@@ -260,6 +260,13 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   linedata_mobile = [];
   @ViewChild(MatAccordion) accordion: MatAccordion;
   isEmpty: boolean;
+  p_dailog_head: string;
+  p_width: string;
+  poNumbersList: any;
+  // filteredPO: any[];
+  PO_GRN_Number_line = [];
+  vendorId: any;
+  activePOId: string;
 
   constructor(
     private tagService: TaggingService,
@@ -564,6 +571,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
             ...data.ok.vendordata[0].VendorUser,
           };
           this.vendorName = this.vendorData['VendorName'];
+          this.vendorId = this.vendorData['idVendor'];
         }
         if (data.ok.servicedata) {
           this.isServiceData = true;
@@ -827,8 +835,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.updateInvoiceData.push(updateValue);
   }
   saveChanges() {
-    if (!this.isAmtStr && !this.isEmpty) {
-      if (this.updateInvoiceData.length != 0) {
+    if(!this.isAmtStr && !this.isEmpty){
+      if (this.updateInvoiceData.length != 0 && this.updateInvoiceData[0].NewValue != this.updateInvoiceData[0].OldValue) {
         this.SharedService.updateInvoiceDetails(
           JSON.stringify(this.updateInvoiceData)
         ).subscribe(
@@ -2049,8 +2057,76 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     }
   }
 
+  getPO_numbers(idVen){
+    this.SpinnerService.show();
+    this.SharedService.getPo_numbers(idVen).subscribe((data:any)=>{
+      this.poNumbersList = data.result;
+      this.filteredPO = data.result;
+      this.SpinnerService.hide();
+    })
+  }
 
+  poDailog(data){
+    this.progressDailogBool = true;
+    this.p_dailog_head = "Confirm PO number";
+    this.p_width = '70vw';
+    this.getPO_numbers(this.vendorId);
+    let updateValue = {
+      documentDataID: data.idDocumentData,
+      OldValue: data.Value || '',
+      NewValue: this.po_num,
+    };
+    this.updateInvoiceData.push(updateValue);
+  }
+  // filterPOnumber_not(event){
+  //   let filtered: any[] = [];
+  //   let query = event.query;
+  //     if (this.poNumbersList?.length > 0) {
+  //       for (let i = 0; i < this.poNumbersList?.length; i++) {
+  //         let PO: any = this.poNumbersList[i];
+  //         if (PO.PODocumentID.toLowerCase().includes(query.toLowerCase())) {
+  //           filtered.push(PO);
+  //         }
+  //         this.filteredPO = filtered;
+  //       }
+  //     }
+  // }
+  POsearch(val){
+       this.poNumbersList = this.filteredPO;
+      if (this.poNumbersList?.length > 0) {
+        this.poNumbersList = this.poNumbersList.filter(el=>{
+          return el.PODocumentID.toLowerCase().includes(val.toLowerCase())
+        });
+      }
+  }
+  selectedPO_not(id){
+    let po_num = document.getElementById(id).innerHTML;
+    this.activePOId = po_num;
+    this.SharedService.po_doc_id = po_num;
+    this.SharedService.po_num = po_num;
+    this.readPOLines(po_num)
+  }
 
+  readPOLines(po_num) {
+    this.SpinnerService.show();
+    this.SharedService.getPO_Lines(po_num).subscribe((data: any) => {
+      this.PO_GRN_Number_line = data.result;
+      this.SpinnerService.hide();
+    }, err => {
+      this.AlertService.errorObject.detail = "Server error";
+      this.messageService.add(this.AlertService.errorObject);
+      this.SpinnerService.hide();
+    })
+  }
+
+  confirmPO(){
+    this.updateInvoiceData[0].NewValue = this.SharedService.po_num;
+    this.saveChanges();
+    this.progressDailogBool = false;
+    setTimeout(() => {
+      this.getInvoiceFulldata();
+    }, 1000);
+  }
   ngOnDestroy() {
     let sessionData = {
       session_status: false,

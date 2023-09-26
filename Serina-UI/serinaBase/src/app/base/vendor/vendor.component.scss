@@ -418,12 +418,12 @@ tr.mat-footer-row {
         // left: 55%;
     }
     .searchBarV {
-        top: 95px;
+        top: 85px;
         right: 68px;
         z-index: 0;
     }
     .searchBarInvoice {
-        top: 96px;
+        top: 87px;
         right: 117px;;
     }
     .ulTab {
@@ -442,7 +442,6 @@ tr.mat-footer-row {
         top: -46px;
         left: 115px;
     }
-    
 
     // .positionCreateUpload {
     //     position: absolute;
@@ -512,7 +511,7 @@ tr.mat-footer-row {
 }
 @media screen and (max-width:520px) {
     .exportIcon {
-        top: 35px;
+        top: 44px;
     }
     .scroller {
         height: 72vh;

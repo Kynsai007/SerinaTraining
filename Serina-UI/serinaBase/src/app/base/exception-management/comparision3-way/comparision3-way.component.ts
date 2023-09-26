@@ -187,6 +187,7 @@ export class Comparision3WayComponent
   ];
   documentViewBool: boolean;
   isDesktop: boolean;
+  APIResponse: any;
   so_id: any;
   isEmpty: boolean;
   constructor(
@@ -1393,11 +1394,19 @@ export class Comparision3WayComponent
   }
 
   createGRNWithPO() {
+    this.SpinnerService.show();
     this.SharedService.createGRNWithPO(JSON.stringify(this.GRNObjectDuplicate)).subscribe((data: any) => {
+      this.SpinnerService.hide();
+      if(data.status == 'Posted'){
       this.successAlert("GRN Created Successfully");
       setTimeout(() => {
         this.router.navigate(['/customer/Create_GRN_inv_list']);
       }, 2000);
+    } else {
+      this.progressDailogBool = true;
+      this.headerpop = 'GRN Creation Status';
+      this.APIResponse = data.message;
+    }
     }, err => {
       this.alertFun('Server error');
     })
@@ -1425,6 +1434,7 @@ export class Comparision3WayComponent
           for (let key in data?.result) {
             let valuee = data.result[key];
             this.GRNObjectDuplicate.forEach((ele) => {
+              
               if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && (+valuee < +ele.Value)) {
                 negKey[key] = valuee;
                 negativeData.push(valuee);

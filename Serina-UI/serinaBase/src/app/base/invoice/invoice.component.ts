@@ -1322,7 +1322,9 @@ export class InvoiceComponent implements OnInit {
 
   filterString(event) {
     if (this.route.url == this.invoiceTab) {
+      // this.dataService.allPaginationFirst = 0;
     } else if (this.route.url == this.POTab) {
+      this.dataService.poPaginationFisrt = 0;
       this.dataService.offsetCountPO = 1;
       this.dataService.poLoadedData = [];
       this.dataService.searchPOStr = event;
@@ -1335,6 +1337,7 @@ export class InvoiceComponent implements OnInit {
       }
       this.dataService.poPaginationFisrt = 1;
     } else if (this.route.url == this.GRNTab) {
+      this.dataService.GRNPaginationFisrt = 0;
       this.dataService.offsetCountGRN = 1;
       this.dataService.GRNLoadedData = [];
       this.dataService.searchGRNStr = event;
@@ -1347,6 +1350,7 @@ export class InvoiceComponent implements OnInit {
       }
       this.dataService.GRNPaginationFisrt = 1;
     } else if (this.route.url == this.archivedTab) {
+      this.dataService.archivedPaginationFisrt = 0;
       this.dataService.offsetCountArc = 1;
       this.dataService.archivedDisplayData = [];
       this.dataService.searchArcStr = event;
@@ -1365,6 +1369,7 @@ export class InvoiceComponent implements OnInit {
       }
       this.dataService.archivedPaginationFisrt = 1;
     } else if (this.route.url == this.rejectedTab) {
+      this.dataService.rejectedPaginationFisrt = 0;
       this.dataService.offsetCountRej = 1;
       this.dataService.rejectedDisplayData = [];
       this.dataService.searchRejStr = event;
@@ -1377,6 +1382,7 @@ export class InvoiceComponent implements OnInit {
       }
       this.dataService.rejectedPaginationFisrt = 1;
     } else if (this.route.url == this.SOTab) {
+      this.dataService.SOPaginationFisrt = 0;
       this.dataService.offsetCountSO= 1;
       this.dataService.SODisplayData = [];
       this.dataService.searchSOStr = event;

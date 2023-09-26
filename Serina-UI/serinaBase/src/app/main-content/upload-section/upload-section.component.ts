@@ -1440,7 +1440,7 @@ export class UploadSectionComponent implements OnInit {
     let APIObj = {
       "ven_acc_id": this.vendorAccountId,
       "invoice_type": val.invoiceType,
-      "invoice_category":val?.category,
+      "invoice_catetgory":val?.category,
       "is_pre_approved": pre_approved,
       "EntityID": val.EntityName?.idEntity,
       "DepartmentID": this.selectedDepartmentID,
