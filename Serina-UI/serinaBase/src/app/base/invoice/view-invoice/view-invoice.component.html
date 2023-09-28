@@ -1476,11 +1476,23 @@
       <input type="text" class="form-control f-12" (keyup)="POsearch($event.target.value)" placeholder="PO number search">
       <ul class="ulPOlist f-12 mt-1">
         <li *ngFor="let poitem of poNumbersList;let i = index;" [id]="i" (click)="selectedPO_not(i)"
-         [ngClass]="activePOId == poitem.PODocumentID ? 'activePO':''">{{poitem.PODocumentID}}</li>
+         [ngClass]="activePOId == poitem.Document.PODocumentID ? 'activePO':''">{{poitem.Document.PODocumentID}}</li>
       </ul>
+      <div class="f-12" *ngIf="!(poNumbersList?.length>0)">
+        Sorry! NO PO records found.
+      </div>
     </div>
     <div class="col-lg-9 col-md-8">
-      <h6 class="f-14 mt-2" *ngIf="PO_GRN_Number_line.length>0">Please verify the po lines</h6>
+      <div class="d-flex justify-content-end">
+        <p-calendar [(ngModel)]="selectDate" view="month" dateFormat="mm/yy" [showIcon]="true" [yearNavigator]="true" [minDate]="minDate" 
+        [maxDate]="maxDate" [yearRange]='displayYear' placeholder="Select dates to filter.." [readonlyInput]="false"
+        inputId="monthpicker"></p-calendar>
+      <button class="btnUpload filter_btn_m " (click)="applyDatefilter(selectDate)"> Filter</button>
+    </div>
+      <h6 class="f-14 mt-2 d-flex justify-content-between" *ngIf="PO_GRN_Number_line.length>0">
+        <div>PO Lines</div>
+        <div class="f-13 po_date">PO Date: {{ poDate[0]?.DocumentData?.Value | date:'medium'}}</div>
+      </h6>
       <table class="table f-12 " *ngIf="PO_GRN_Number_line.length>0">
         <tr>
           <th style="width: 60px;">S.No</th> <th>Description</th> <th>Quantity</th> <th>UnitPrice</th>
@@ -1496,14 +1508,14 @@
   </div>
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-center">
-      <button
-        type="button"
-        class="btn btnVender bg-btn-success mt-2"
-        (click)="routeToMapping()"
-      >
-        Next
-      </button>
+      <button *ngIf="p_dailog_head == 'Batch Progress'" type="button" class="btn btnVender bg-btn-success mt-2" (click)="routeToMapping()">Next</button>
+      <button *ngIf="p_dailog_head != 'Batch Progress'" type="button" class="btn btnVender bg-btn-success mt-2" [disabled]="!activePOId" (click)="confirmPO()">Confirm</button>
+      <!-- <button type="button" class="btn btnVender"
+        [disabled]="addLabel.invalid "
+        [ngStyle]="{'cursor':(addLabel.invalid)? 'not-allowed':'pointer'}"
+        (click)="addLabelData()">Add</button> -->
     </div>
+
   </ng-template>
 </p-dialog>
 

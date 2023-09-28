@@ -145,7 +145,7 @@ export class Comparision3WayComponent
   ColumnLengthVendor: number;
   validatePOInvUnit = [];
   validateUnitpriceBool: boolean;
-  grnList: any;
+  grnList = [];
   selectedGRNList = [];
   currentlyOpenedItemIndex = -1;
   // GRNTabData: any;
@@ -483,6 +483,11 @@ export class Comparision3WayComponent
           return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
         });
         this.invoiceNumber = inv_num_data[0]?.Value;
+        let po_num_data = this.inputData.filter((val) => {
+          return (val.TagLabel == 'PurchaseOrder' || val.TagLabel ==  'PurchId');
+        });
+        this.po_num = po_num_data[0]?.Value;
+        this.getPODocId(this.po_num);
         if (data.ok.vendordata) {
           this.vendorData = {
             ...data.ok.vendordata[0].Vendor,
@@ -528,7 +533,7 @@ export class Comparision3WayComponent
           return (val.TagLabel == 'PurchaseOrder');
         });
         this.po_num = po_num_data[0]?.Value;
-        // this.getPODocId(this.po_num);
+        this.getPODocId(this.po_num);
         if (this.docType == 3) {
           this.getGRNnumbers(this.po_num);
         }
@@ -574,7 +579,7 @@ export class Comparision3WayComponent
             });
           } else if (ele.TagName == 'UnitPrice') {
             ele.TagName = 'Inv - UnitPrice';
-          } else if (ele.TagName == 'Description') {
+          } else if (ele.TagName == 'Description' || ele.TagName == 'Name') {
             if (ele.linedata?.length > 0) {
               this.descrptonBool = true;
             }
@@ -709,6 +714,11 @@ export class Comparision3WayComponent
           return val.TagLabel == 'InvoiceId';
         })
         this.invoiceNumber = inv_num_data[0].Value;
+        let po_num_data = this.inputData.filter((val) => {
+          return (val.TagLabel == 'PurchaseOrder');
+        });
+        this.po_num = po_num_data[0]?.Value;
+        this.getPODocId(this.po_num);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -1652,7 +1662,9 @@ export class Comparision3WayComponent
   }
   getGRNnumbers(po_num) {
     this.SharedService.checkGRN_PO_duplicates(po_num).subscribe((data: any) => {
-      this.grnList = data.result;
+      data?.result?.forEach((val)=>{
+        this.grnList.push({docheaderID : val})
+      })
     })
   }
   // ChangeGRNData(){
@@ -1693,11 +1705,12 @@ export class Comparision3WayComponent
     this.headerpop = 'Select GRN'
   }
 
-  // getPODocId(po_num) {
-  //   this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
-  //     this.poDocId = data.result;
-  //   })
-  // }
+  getPODocId(po_num) {
+    this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
+      this.poDocId = data.result;
+      this.SharedService.po_doc_id = data.result;
+    })
+  }
 
   // readPOLines() {
   //   this.exceptionService.getPOLines('').subscribe((data: any) => {

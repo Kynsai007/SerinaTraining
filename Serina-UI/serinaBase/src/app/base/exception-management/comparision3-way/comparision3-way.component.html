@@ -22,7 +22,7 @@
       this.currentTab == 'line' &&
       ap_boolean &&
       !showPdf &&
-      isDesktop
+      isDesktop&& !GRN_PO_Bool
     "
   >
     <!-- <button
@@ -79,7 +79,7 @@
   </div>
 
   <div
-    *ngIf="submitBtn_boolean && ap_boolean && !showPdf && isDesktop && currentTab == 'line'" 
+    *ngIf="submitBtn_boolean && ap_boolean && !showPdf && isDesktop && currentTab == 'line' && !GRN_PO_Bool" 
     class="changePOInput"
   >
     <p-autoComplete

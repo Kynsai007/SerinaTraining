@@ -401,9 +401,10 @@ a {
   padding: 30px;
   text-align: center;
 }
-// .table th, .table td {
-//   border:1px solid #dee2e6;
-// }
+.table th, .table td {
+  border:1px solid #dee2e6;
+  padding: 5px;
+}
 .viewPdf {
   position: absolute;
   right: 15px;
@@ -595,6 +596,44 @@ a {
     padding: 4px 10px;
     border-radius: 5px;
     margin-top:4px;
+}
+.ulPOlist {
+  list-style-type: none;
+  padding: 0;
+  max-height: 60vh;
+  overflow: auto;
+}
+.ulPOlist li {
+  padding: 6px 10px;
+  border:1px solid lightgray;
+  cursor: pointer;
+}
+.ulPOlist li:hover {
+  background-color: #0e4574;
+  color: white;
+}
+.activePO {
+  background-color: #27ae60;
+}
+.po_s_icon {
+  position: absolute;
+    top: 23px;
+    right: 12px;
+}
+.po_date {
+  background: #e9ecef;
+    padding: 4px 6px;
+}
+:host ::ng-deep  {
+  .p-datepicker .p-monthpicker .p-monthpicker-month {
+  font-size: 11px;
+  font-weight: 600;
+}
+.p-datepicker .p-datepicker-header .p-datepicker-title {
+  line-height: 2rem;
+  font-size: 13px;
+  font-weight: 600;
+}
 }
 @media screen and (max-width:1200px) {
   .zoom_pos_pdf {

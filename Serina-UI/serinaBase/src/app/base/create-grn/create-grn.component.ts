@@ -259,8 +259,8 @@ export class CreateGRNComponent implements OnInit {
       if (this.poNumbersList?.length > 0) {
         for (let i = 0; i < this.poNumbersList?.length; i++) {
           let PO: any = this.poNumbersList[i];
-          if (PO.PODocumentID.toLowerCase().includes(query.toLowerCase())) {
-            filtered.push(PO);
+          if (PO.Document.PODocumentID.toLowerCase().includes(query.toLowerCase())) {
+            filtered.push(PO.Document);
           }
           this.filteredPO = filtered;
         }
@@ -318,7 +318,7 @@ export class CreateGRNComponent implements OnInit {
           width : '30%',
           height: '35vh',
           hasBackdrop: false,
-          data : { body: `GRN is already availablle for ${val}, still you want to create one more?`}})
+          data : { body: `GRN is already available for ${val}, are you sure to create one more record?`}})
 
           drf.afterClosed().subscribe(bool=>{
             if(bool){

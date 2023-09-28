@@ -20,7 +20,7 @@ import {
   ViewChild,
 } from '@angular/core';
 // import { fabric } from 'fabric';
-import { Location } from '@angular/common';
+import {DatePipe, Location } from '@angular/common';
 import { FormGroup, NgForm } from '@angular/forms';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -267,6 +267,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   PO_GRN_Number_line = [];
   vendorId: any;
   activePOId: string;
+  poDate: any;
+  displayYear;
+  minDate: Date;
+  maxDate: Date;
+  lastYear: number;
+  months: string[];
+  selectedMonth: string;
+  selectDate: Date;
+  filterDataPO: any;
 
   constructor(
     private tagService: TaggingService,
@@ -285,6 +294,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private settingsService: SettingsService,
     private route: ActivatedRoute,
     private mat_dlg: MatDialog,
+    private datePipe:DatePipe
 
   ) {
     this.exceptionService.getMsg().pipe(take(2)).subscribe((msg) => {
@@ -798,6 +808,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
 
   onChangeValue(key, value, data) {
+    this.updateInvoiceData = [];
     // this.inputData[0][key]=value;
     if (key == 'InvoiceTotal' || key == 'SubTotal') {
       if (value == '' || isNaN(+value)) {
@@ -813,8 +824,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     };
     this.updateInvoiceData.push(updateValue);
   }
-  onChangeLineValue(key, value, data) {
-    if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') {
+  onChangeLineValue(key,value, data) {
+    this.updateInvoiceData = [];
+    if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') { 
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
       } else {
@@ -2077,6 +2089,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       NewValue: this.po_num,
     };
     this.updateInvoiceData.push(updateValue);
+    this.getDate();
   }
   // filterPOnumber_not(event){
   //   let filtered: any[] = [];
@@ -2095,12 +2108,15 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
        this.poNumbersList = this.filteredPO;
       if (this.poNumbersList?.length > 0) {
         this.poNumbersList = this.poNumbersList.filter(el=>{
-          return el.PODocumentID.toLowerCase().includes(val.toLowerCase())
+          return el.Document.PODocumentID.toLowerCase().includes(val.toLowerCase())
         });
       }
   }
   selectedPO_not(id){
     let po_num = document.getElementById(id).innerHTML;
+    this.poDate = this.poNumbersList.filter((val)=>{
+      return val.Document.PODocumentID == po_num
+    });
     this.activePOId = po_num;
     this.SharedService.po_doc_id = po_num;
     this.SharedService.po_num = po_num;
@@ -2126,6 +2142,39 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.getInvoiceFulldata();
     }, 1000);
+  }
+  getDate() {
+    this.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let today = new Date();
+    let month = today.getMonth();
+    this.selectedMonth = this.months[month];
+    let year = today.getFullYear();
+    this.lastYear = year - 2;
+    this.displayYear = `${this.lastYear}:${year}`;
+    let prevYear = year - 2;
+
+    this.minDate = new Date();
+    this.minDate.setMonth(month);
+    this.minDate.setFullYear(prevYear);
+
+    this.maxDate = new Date();
+    this.maxDate.setMonth(month);
+    this.maxDate.setFullYear(year);
+  }
+
+  applyDatefilter(date){
+    this.PO_GRN_Number_line = [];
+    delete this.activePOId;
+    const month = this.datePipe.transform(date, 'yyyy-MM');
+    // const frmDate = `${year}-01`;
+    // const toDate = this.datePipe.transform(date, 'yyyy-MM');
+    
+    this.poNumbersList = this.filteredPO;
+    this.poNumbersList = this.poNumbersList.filter((element) => {
+      
+      const dateF = this.datePipe.transform(element.DocumentData.Value, 'yyyy-MM')
+      return dateF == month;
+    });
   }
   ngOnDestroy() {
     let sessionData = {
