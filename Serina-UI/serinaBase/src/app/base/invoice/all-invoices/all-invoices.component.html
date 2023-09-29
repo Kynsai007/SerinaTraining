@@ -198,10 +198,13 @@
                   ><a>{{ invoiceData[col.dbColumnname] }}</a></span
                 >
                 <span *ngIf=" col.dbColumnname == 'CreatedOn' || col.dbColumnname == 'documentDate'">
-                  <span *ngIf="invoiceData[col?.dbColumnname] && col.dbColumnname == 'CreatedOn'">{{ invoiceData[col?.dbColumnname] + "Z" | date:'dd-MM-yy, h:mm a' }}</span>  
-                  <span *ngIf="invoiceData[col?.dbColumnname] && col.dbColumnname == 'documentDate'">{{ invoiceData[col?.dbColumnname] + "Z" | date:'dd-MM-yyyy' }}</span>  
+                  <span *ngIf="invoiceData[col?.dbColumnname] && col.dbColumnname == 'CreatedOn'">{{ invoiceData[col?.dbColumnname] + "Z" | date:'yyyy-MM-dd, h:mm a' }}</span>  
+                  <span *ngIf="invoiceData[col?.dbColumnname] && col.dbColumnname == 'documentDate'">{{ invoiceData[col?.dbColumnname] + "Z" | date:'yyyy-MM-dd' }}</span>  
                 </span>
-                <span *ngIf="col.dbColumnname != 'PODocumentID' && col.dbColumnname != 'CreatedOn' && col.dbColumnname != 'documentDate'">{{
+                <span
+                 *ngIf="col.dbColumnname != 'PODocumentID' && col.dbColumnname != 'CreatedOn' && col.dbColumnname != 'documentDate'"
+                 [ngClass]="(col.dbColumnname == 'InvoiceNumber' && invoiceData['InvoiceNumber'] == 'Invoice Pending')?'highlt':''"
+                 >{{
                   invoiceData[col.dbColumnname]
                 }}</span>
               </div>

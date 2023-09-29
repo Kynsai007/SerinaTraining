@@ -242,6 +242,7 @@ export class Comparision3WayComponent
       this.portalName = 'customer'
     }
     this.initialData();
+    this.boolFunc();
     // this.readFilePath();
 
     this.isAdmin = this.dataService.isAdmin;
@@ -255,6 +256,14 @@ export class Comparision3WayComponent
   doc_view() {
     this.showPdf = true;
     this.documentViewBool = !this.documentViewBool
+  }
+
+  boolFunc(){
+    if(this.router.url.includes('comparision-docs')|| this.router.url.includes('SO_generate')){
+      this.isPdfAvailable = false;
+    } else {
+      this.isPdfAvailable = true;
+    }
   }
 
   idleTimer(time, str) {
@@ -289,7 +298,7 @@ export class Comparision3WayComponent
     this.Itype = this.tagService.type;
 
     if (this.ap_boolean) {
-      if (this.router.url.includes('Create_GRN_inv_list')) {
+      if (this.router.url.includes('Create_GRN_inv_list')|| this.GRN_PO_Bool) {
         if (this.permissionService.GRNPageAccess == true) {
           this.grnCreateBoolean = true;
           if (this.GRN_PO_Bool) {

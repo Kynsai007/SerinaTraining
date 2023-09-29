@@ -111,6 +111,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
     let mergedStatus = ['All'];
     this.columnsData.forEach(ele => {
+      if(ele.documentsubstatusID == 40 || ele.documentsubstatusID == 32){
+        ele.status = ele.substatus;
+      }
       mergedStatus.push(ele.status)
     })
     this.statusData = new Set(mergedStatus);
@@ -284,15 +287,20 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
                 e.documentsubstatusID == 33 ||
                 e.documentsubstatusID == 21 ||
                 e.documentsubstatusID == 27 ||
+                e.documentsubstatusID == 35 ||
                 e.documentsubstatusID == 75) {
                   if(this.tagService.batchProcessTab == 'PODoc'){
                     this.router.navigate([
                       `${this.portalName}/ExceptionManagement/batchProcess/SO_generate/${e.idDocument}`,
                     ]);
                   } else {
-                    this.router.navigate([
-                      `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
-                    ]);
+                    if(e.documentsubstatusID == 35){
+                      this.getPOLines(e);
+                    } else {
+                      this.router.navigate([
+                        `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
+                      ]);
+                    }
                   }
                 
               } else {
@@ -371,6 +379,23 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         this.MessageService.add(this.alertService.errorObject);
       });
     }
+  }
+
+  getPOLines(e){
+    this.SpinnerService.show();
+    this.sharedService.getPO_Lines(e.PODocumentID).subscribe((data: any) => {
+      this.SpinnerService.hide();
+      this.ds.GRN_PO_Data = [];
+      this.ds.grnWithPOBoolean = true;
+      this.ds.GRN_PO_Data = data.result;
+      this.router.navigate([
+        `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
+      ]);
+    }, err => {
+      this.SpinnerService.hide();
+      this.alertService.errorObject.detail = "Server error";
+      this.MessageService.add(this.alertService.errorObject);
+    })
   }
 
   clickDrildown(data) {

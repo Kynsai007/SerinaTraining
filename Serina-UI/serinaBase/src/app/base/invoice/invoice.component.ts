@@ -347,6 +347,7 @@ export class InvoiceComponent implements OnInit {
       { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
       { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
       { dbColumnname: 'docheaderID', columnName: 'GRN Number' },
+      { dbColumnname: 'InvoiceNumber', columnName: 'Invoice Number' },
       { dbColumnname: 'CreatedOn', columnName: 'Received Date' },
       { dbColumnname: 'firstName', columnName: 'Created By' },
       { dbColumnname: 'grn_type', columnName: 'Source' }
@@ -525,6 +526,7 @@ export class InvoiceComponent implements OnInit {
         merg.VendorName = ele.VendorName;
         merg.grn_type = ele.grn_type;
         merg.firstName = ele.firstName;
+        merg.InvoiceNumber = ele.InvoiceNumber;
         grnD.push(merg)
       })
      

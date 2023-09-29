@@ -104,6 +104,10 @@ button:disabled {
 .t_search:focus {
   outline: 0;
 }
+.highlt {
+  background-color: #f8b8b4;
+  padding: 4px;
+}
 @media screen and (max-width:576px) {
   .mob_tr {
     border-left: 4px solid white;
