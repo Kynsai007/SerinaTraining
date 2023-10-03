@@ -635,6 +635,15 @@ a {
   font-weight: 600;
 }
 }
+.thtable {
+  border-collapse: collapse !important;
+  border-spacing: 0;
+  border: 1px solid #dee2e6;
+  padding: 5px;
+}
+.thtable th, .thtable td {
+  padding: 5px;
+}
 @media screen and (max-width:1200px) {
   .zoom_pos_pdf {
     left: -160px;

@@ -1493,7 +1493,7 @@
         <div>PO Lines</div>
         <div class="f-13 po_date">PO Date: {{ poDate[0]?.DocumentData?.Value | date:'medium'}}</div>
       </h6>
-      <table class="table f-12 " *ngIf="PO_GRN_Number_line.length>0">
+      <table class="table thtable f-12 " *ngIf="PO_GRN_Number_line.length>0">
         <tr>
           <th style="width: 60px;">S.No</th> <th>Description</th> <th>Quantity</th> <th>UnitPrice</th>
         </tr>

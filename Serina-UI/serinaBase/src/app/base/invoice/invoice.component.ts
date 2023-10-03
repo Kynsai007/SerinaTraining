@@ -1337,7 +1337,7 @@ export class InvoiceComponent implements OnInit {
         this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50&uni_search=${this.dataService.searchPOStr}`;
         this.getDisplayPOData(this.APIParams);
       }
-      this.dataService.poPaginationFisrt = 1;
+      // this.dataService.poPaginationFisrt = 1;
     } else if (this.route.url == this.GRNTab) {
       this.dataService.GRNPaginationFisrt = 0;
       this.dataService.offsetCountGRN = 1;
@@ -1350,7 +1350,7 @@ export class InvoiceComponent implements OnInit {
         this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50&uni_search=${this.dataService.searchGRNStr}`;
         this.getDisplayGRNdata(this.APIParams);
       }
-      this.dataService.GRNPaginationFisrt = 1;
+      // this.dataService.GRNPaginationFisrt = 1;
     } else if (this.route.url == this.archivedTab) {
       this.dataService.archivedPaginationFisrt = 0;
       this.dataService.offsetCountArc = 1;
@@ -1369,7 +1369,7 @@ export class InvoiceComponent implements OnInit {
         this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}`;
         this.getDisplayARCData(this.APIParams);
       }
-      this.dataService.archivedPaginationFisrt = 1;
+      // this.dataService.archivedPaginationFisrt = 1;
     } else if (this.route.url == this.rejectedTab) {
       this.dataService.rejectedPaginationFisrt = 0;
       this.dataService.offsetCountRej = 1;
@@ -1382,7 +1382,7 @@ export class InvoiceComponent implements OnInit {
         this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50&uni_search=${this.dataService.searchRejStr}`;
         this.getDisplayRejectedData(this.APIParams);
       }
-      this.dataService.rejectedPaginationFisrt = 1;
+      // this.dataService.rejectedPaginationFisrt = 1;
     } else if (this.route.url == this.SOTab) {
       this.dataService.SOPaginationFisrt = 0;
       this.dataService.offsetCountSO= 1;
@@ -1395,7 +1395,7 @@ export class InvoiceComponent implements OnInit {
         this.APIParams = `?offset=${this.dataService.offsetCountSO}&limit=50&uni_search=${this.dataService.searchSOStr}`;
         this.getDisplaySOData(this.APIParams);
       }
-      this.dataService.rejectedPaginationFisrt = 1;
+      // this.dataService.rejectedPaginationFisrt = 1;
     }else if (this.route.url == this.serviceInvoiceTab) {
     }
   }

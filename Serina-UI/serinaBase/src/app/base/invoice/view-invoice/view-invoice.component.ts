@@ -1091,7 +1091,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   batchProcess(query) {
     this.SharedService.syncBatchTrigger(query).subscribe((data: any) => {
-      this.progressDailogBool = true;
+          this.progressDailogBool = true;
+          this.p_dailog_head = "Batch Progress";
+          this.p_width = '31vw';
       if (this.docType == 3) {
         this.batchData = data[this.invoiceID]?.complete_status;
       } else if (this.docType == 1) {

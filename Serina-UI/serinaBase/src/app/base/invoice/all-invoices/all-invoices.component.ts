@@ -189,6 +189,24 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
         this.selectedStatus = stItem?.filters?.docstatus?.value;
       }
     }
+    else if (this.router.url.includes('GRN') && !this.router.url.includes('GRNExceptions')) {
+      this.first = this.ds.GRNPaginationFisrt;
+      this.rows = this.ds.GRNPaginationRowLength;
+      this.stateTable = 'GRN';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('GRN'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
+    }
+    else if (this.router.url.includes('GRN') && this.router.url.includes('GRNExceptions')) {
+      this.first = this.ds.GRNExceptionPaginationFisrt;
+      this.rows = this.ds.GRNExceptionPaginationRowLength;
+      this.stateTable = 'GRNE';
+      let stItem: any = JSON.parse(sessionStorage?.getItem('GRNE'));
+      if (stItem) {
+        this.globalSearch = stItem?.filters?.global?.value;
+      }
+    }
     else if (this.router.url.includes('archived')) {
       this.first = this.ds.archivedPaginationFisrt;
       this.rows = this.ds.archivedPaginationRowLength;
