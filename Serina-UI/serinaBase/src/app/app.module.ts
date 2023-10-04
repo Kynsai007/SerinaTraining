@@ -42,7 +42,7 @@ const googleLoginOptions = {
 export function MSALInstanceFactory(): IPublicClientApplication{
   return new PublicClientApplication({
     auth: {
-      clientId : "44e503fe-f768-46f8-99bf-803d4a2cf62d",
+      clientId : "2942db6f-2115-4b6a-a5a0-12e46d19c0f1",
       redirectUri: location.href
 
     }
