@@ -4,14 +4,14 @@
   <div>
     <div >
       <ul class="nav nav-tabs">
-        <!-- <li class="nav-item mr-1">
+        <li class="nav-item mr-1">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'normal'"
             (click)="chooseEditedpageTab('normal')"
-            >Invoices({{ dataLength }})</a
+            >Create GRN with Invoice({{ dataLength }})</a
           >
-        </li> -->
+        </li>
         <li class="nav-item ml-1">
           <a
             class="nav-link"
@@ -23,9 +23,9 @@
       </ul>
 
       <div class="positionCreateUpload">
-        <!-- <button class="btnUpload mr-2" (click)="exportExcel()">
+        <button *ngIf="viewType == 'normal'" class="btnUpload mr-2" (click)="exportExcel()">
           <i class="fa fa-download" aria-hidden="true"></i>
-        </button> -->
+        </button>
         <!-- <button class=" btnUpload mr-2" (click)="toCreateNew()"><span class="f-16">+</span> Create</button> -->
       </div>
       <!-- <div class="filter_input">

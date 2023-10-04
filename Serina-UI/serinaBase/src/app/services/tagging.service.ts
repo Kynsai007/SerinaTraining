@@ -25,7 +25,7 @@ export class TaggingService {
   InvokebatchProcessTab = "normal";
   isUploadScreen: boolean;
   approvalType: any;
-  GRNTab: any="editApproveGRN";
+  GRNTab: any="normal";
   approval_selection_boolean:boolean = false;
   LCM_boolean: boolean = false;
   documentType: any;

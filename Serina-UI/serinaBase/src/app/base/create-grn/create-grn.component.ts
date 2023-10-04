@@ -81,14 +81,14 @@ export class CreateGRNComponent implements OnInit {
     if(this.permissionService.GRNPageAccess == true){
       this.viewType = this.tagService.GRNTab;
       this.isDesktop = this.ds.isDesktop;
-      // if(!this.isDesktop){
-      //   this.mob_columns()
-      // }
-      // this.prepareColumnsArray();
-      // this.readTableData('');
-      // if(this.sharedService.po_num){
-      //   this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`)
-      // }
+      if(!this.isDesktop){
+        this.mob_columns()
+      }
+      this.prepareColumnsArray();
+      this.readTableData('');
+      if(this.sharedService.po_num){
+        this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`)
+      }
       this.readEntity();
     } else{
       alert("Sorry!, you do not have access");

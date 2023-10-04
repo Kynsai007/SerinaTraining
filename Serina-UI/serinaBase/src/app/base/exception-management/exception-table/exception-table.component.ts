@@ -110,16 +110,19 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     // if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
 
     let mergedStatus = ['All'];
-    this.columnsData.forEach(ele => {
-      if(ele.documentsubstatusID == 40 || ele.documentsubstatusID == 32){
-        ele.status = ele.substatus;
-      }
-      mergedStatus.push(ele.status)
-    })
-    this.statusData = new Set(mergedStatus);
-    if (this.router.url.includes('ExceptionManagement')) {
-      this.filter('All', 'status');
-    }
+    let columnsData = changes?.columnsData?.currentValue;
+    setTimeout(() => {
+      columnsData.forEach(ele => {
+        if(ele.documentsubstatusID == 40 || ele.documentsubstatusID == 32){
+          ele.status = ele.substatus;
+        }
+        mergedStatus.push(ele.status)
+      })
+      this.statusData = new Set(mergedStatus);
+    }, 500);
+    // if (this.router.url.includes('ExceptionManagement')) {
+    //   this.filter('All', 'status');
+    // }
     if(!this.isDesktop){
       this.showPaginatorAllInvoice = false;
     }

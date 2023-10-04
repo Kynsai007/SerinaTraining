@@ -247,6 +247,7 @@ export class BatchProcessComponent implements OnInit {
             ...element.Vendor,
             ...element.DocumentHistoryLogs,
           };
+          mergeData['substatus'] = element.substatus
           batchData.push(mergeData);
         });
         // this.columnsData = batchData.sort((a,b)=>{

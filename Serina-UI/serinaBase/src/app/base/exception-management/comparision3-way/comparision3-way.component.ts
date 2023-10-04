@@ -29,6 +29,7 @@ import * as fileSaver from 'file-saver';
 import { PopupComponent } from '../../popup/popup.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
+import { ConfirmationComponent } from '../../confirmation/confirmation.component';
 
 @Component({
   selector: 'app-comparision3-way',
@@ -440,7 +441,7 @@ export class Comparision3WayComponent
         } else if (tag.TagName == 'PO Balance Qty') {
           tag.linedata.push({ Value: ele.RemainInventPhysical, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PO Balance Qty' })
         } else if (tag.TagName == 'GRN - Quantity') {
-          tag.linedata.push({ Value: 0, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Quantity' })
+          tag.linedata.push({ Value: ele.PurchQty, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Quantity' })
         } else if (tag.TagName == 'UnitPrice') {
           tag.linedata.push({ Value: ele.UnitPrice, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: 'Price', tagName: 'UnitPrice' })
         }
@@ -1334,6 +1335,20 @@ export class Comparision3WayComponent
     }
   }
 
+  confirm_pop(grnQ, boolean, txt){
+    const drf:MatDialogRef<ConfirmationComponent> = this.mat_dlg.open(ConfirmationComponent,{ 
+      width : '30%',
+      height: '38vh',
+      hasBackdrop: false,
+      data : { body: 'Have you verified the GRN qty lines? Please confirm'}})
+
+      drf.afterClosed().subscribe((bool)=>{
+        if(bool){
+          this.onSave_submit(grnQ, boolean, txt);
+        } 
+      })
+  }
+
   onSave_submit(grnQ, boolean, txt) {
     if (this.descrptonBool) {
       this.GRNObjectDuplicate = this.GRNObject;
@@ -1385,8 +1400,7 @@ export class Comparision3WayComponent
       if (emptyBoolean == false && commentBoolean == false) {
 
         if (
-          boolean == true &&
-          confirm('Are you sure you want to create GRN, Please confirm')
+          boolean == true
         ) {
           if (this.GRN_PO_Bool) {
             this.grnDuplicateCheck()
@@ -1493,29 +1507,27 @@ export class Comparision3WayComponent
   }
 
   grnAPICall(boolean, txt) {
+    this.SpinnerService.show();
     this.SharedService.saveGRNData(
       boolean,
       JSON.stringify(this.GRNObject)
     ).subscribe(
       (data: any) => {
-        if (data?.result[1] == 0) {
-          this.AlertService.addObject.severity = 'info';
-          this.AlertService.addObject.detail = data?.result[0];
-        } else if (data?.result[1] == 1) {
-          this.AlertService.addObject.detail = data?.result[0];
-        } else if (data?.result[1] == 2) {
-          this.AlertService.addObject.severity = 'warn';
-          this.AlertService.addObject.detail = data?.result[0];
-        }
-        this.messageService.add(this.AlertService.addObject);
-
-        if (boolean == true) {
+        this.SpinnerService.hide();
+        if(data.status == 'Posted'){
+          this.AlertService.addObject.detail = data.message;
+          this.messageService.add(this.AlertService.addObject);
           setTimeout(() => {
             this.router.navigate(['/customer/Create_GRN_inv_list']);
-          }, 3000);
+          }, 2000);
+        } else {
+          this.progressDailogBool = true;
+          this.headerpop = 'GRN Creation Status';
+          this.APIResponse = data.message;
         }
       },
       (error) => {
+        this.SpinnerService.hide();
         if (error.status == 403) {
           this.alertFun('Invoice quantity beyond threshold');
         } else {
