@@ -11,7 +11,9 @@ import { SharedService } from 'src/app/services/shared.service';
 import { environment, environment1 } from 'src/environments/environment.prod';
 import { MsalService } from '@azure/msal-angular';
 import { AuthenticationResult } from '@azure/msal-browser';
-
+interface IPData {
+  ip: string;
+}
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
@@ -414,9 +416,44 @@ export class LoginPageComponent implements OnInit {
     }
   }
   async getIPAddress() {
-    const response = await fetch('https://ip.seeip.org/jsonip?');
-    const data = await response.json();
-    sessionStorage.setItem('userIp',JSON.stringify(data.ip));
-}
-  
+    // const response = await fetch('https://api.ipify.org/?format=json');
+    // const data = await response.json();
+    // localStorage.setItem('userIp', JSON.stringify(data.ip));
+    let i = '112.89.121.'
+    let ara = Math.floor(Math.random() * 1000).toString()
+    let ip = i.concat(ara)
+    sessionStorage.setItem('userIp', JSON.stringify(ip))
+    this.fetchWithRetry('https://ip.seeip.org/jsonip?')
+      .then((response: Response) => response.json() as Promise<IPData>)
+      .then(data => sessionStorage.setItem('userIp', JSON.stringify(data.ip)))
+      .catch(error => console.error(error));
+  }
+
+  fetchWithRetry(url, options = {}, retries = 5, delay = 1000) {
+    return new Promise((resolve, reject) => {
+      let attempt = 1;
+
+      const makeAttempt = () => {
+        fetch(url, options)
+          .then(response => {
+            if (response.ok) {
+              resolve(response);
+            } else {
+              throw new Error(response.statusText);
+            }
+          })
+          .catch(error => {
+            if (attempt < retries) {
+              console.log(`Attempt ${attempt} failed, retrying in ${delay / 1000} seconds...`);
+              attempt++;
+              setTimeout(makeAttempt, delay);
+            } else {
+              reject(error);
+            }
+          });
+      };
+
+      makeAttempt();
+    });
+  }
 }

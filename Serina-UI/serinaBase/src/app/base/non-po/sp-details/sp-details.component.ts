@@ -348,7 +348,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       Email: [''],
       UserName: ['', Validators.required],
       LogSecret: ['', Validators.required],
-      URL: ['', Validators.required],
+      URL: [this.spDetails.default_url, Validators.required],
       subKeyWords: [''],
       Account: ['', Validators.required],
       MeterNumber: ['NA'],
@@ -488,6 +488,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
       serviceProviderID: this.sharedService.spID,
       entityID: this.spDetails.idEntity,
       isActive: true,
+      URL: this.spDetails.default_url
     });
     this.selectedEntity(this.spDetails.idEntity);
   }
