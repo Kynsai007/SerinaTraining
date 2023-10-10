@@ -489,7 +489,7 @@
           <select
             class="form-control accountSelect f-12"
             [(ngModel)]="selectedCategory"
-            name="category"
+            name="invoice_category"
             ngModel
           >
             <option value="" disabled></option>
@@ -559,7 +559,6 @@
             (onChange)="addGrnLine($event)"
             name="PO_GRN_Number"
             ngModel
-            required
           >
           </p-multiSelect>
         </div>
@@ -577,7 +576,6 @@
             [selectedItemsLabel]="'{0} items selected'"
             name="PO_GRN_Number_line"
             ngModel
-            required
             [(ngModel)]="PO_GRN_Number_line"
           >
           </p-multiSelect>

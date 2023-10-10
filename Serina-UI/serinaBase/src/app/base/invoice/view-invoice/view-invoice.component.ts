@@ -276,6 +276,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   selectedMonth: string;
   selectDate: Date;
   filterDataPO: any;
+  searchPOArr: any;
 
   constructor(
     private tagService: TaggingService,
@@ -1128,6 +1129,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     if(!sub_status){
       sub_status = this.batchData[this.batchData.length-1].sub_status;
     }
+    this.subStatusId = sub_status;
     if (this.portalName == 'vendorPortal') {
       if (sub_status == 8 ||
         sub_status == 16 ||
@@ -2081,16 +2083,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   poDailog(data){
+    
     this.progressDailogBool = true;
     this.p_dailog_head = "Confirm PO number";
     this.p_width = '70vw';
     this.getPO_numbers(this.vendorId);
-    let updateValue = {
-      documentDataID: data.idDocumentData,
-      OldValue: data.Value || '',
-      NewValue: this.po_num,
-    };
-    this.updateInvoiceData.push(updateValue);
+    this.searchPOArr = data;
     this.getDate();
   }
   // filterPOnumber_not(event){
@@ -2115,6 +2113,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       }
   }
   selectedPO_not(id){
+    this.updateInvoiceData = [];
     let po_num = document.getElementById(id).innerHTML;
     this.poDate = this.poNumbersList.filter((val)=>{
       return val.Document.PODocumentID == po_num
@@ -2138,7 +2137,12 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   }
 
   confirmPO(){
-    this.updateInvoiceData[0].NewValue = this.SharedService.po_num;
+    let updateValue = {
+      documentDataID: this.searchPOArr.idDocumentData,
+      OldValue: this.searchPOArr.Value || '',
+      NewValue: this.SharedService.po_num,
+    };
+    this.updateInvoiceData.push(updateValue);
     this.saveChanges();
     this.progressDailogBool = false;
     setTimeout(() => {
