@@ -1608,7 +1608,7 @@ export class UploadSectionComponent implements OnInit {
               this.tagService.submitBtnBoolean = true;
               this.sharedService.invoiceID = doc_id;
               this.tagService.headerName = 'Review Invoice';
-
+              this.dataService.idDocumentType = 3;
             }
             this.webSocketService.close();
           }
