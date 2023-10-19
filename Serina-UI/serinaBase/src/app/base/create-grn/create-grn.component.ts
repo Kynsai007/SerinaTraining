@@ -162,9 +162,9 @@ export class CreateGRNComponent implements OnInit {
       this.columnsData = array;
 
       this.dataLength = this.columnsData.length;
-      if(this.dataLength >10){
-        this.showPaginatorAllInvoice = true;
-      }
+      // if(this.dataLength >10){
+      //   this.showPaginatorAllInvoice = true;
+      // }
       this.ngxSpinner.hide();
     },err=>{
       this.ngxSpinner.hide();
@@ -185,9 +185,9 @@ export class CreateGRNComponent implements OnInit {
           detail  : "Hey, Invoice is already available in Serina for the Selected PO, Please create the GRN using the invoice."
         })
       }
-      if(this.columnsDataPO.length >10){
-        this.showPaginator = true;
-      }
+      // if(this.columnsDataPO.length >10){
+      //   this.showPaginator = true;
+      // }
     })
   }
   readEntity(){

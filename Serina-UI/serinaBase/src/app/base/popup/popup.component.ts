@@ -82,12 +82,10 @@ export class PopupComponent implements OnInit {
   }
 
   flipPOFun(){
-    console.log(this.data.resp)
     this.POLineData = this.data.resp;
     this.POLineData.forEach(val => {
       val.isSelected = false;
     })
-    console.log(this.POLineData);
   }
   onSubmit(value) {
     this.spin.show();
@@ -201,7 +199,6 @@ export class PopupComponent implements OnInit {
             "inv_qty": el.Quantity
         })
       })
-      console.log(APIdata);
       this.ES.validateReturns(JSON.stringify(APIdata)).subscribe((data:any)=>{
         if(data.result == 'Success') {
           this.alert.addObject.detail = "Successful";
@@ -253,7 +250,6 @@ export class PopupComponent implements OnInit {
 
   getPOMasterData(v_id){
     this.ES.readMasterData(v_id).subscribe((data:any)=>{
-      console.log(data);
       this.ds.arenaMasterData = data;
       this.orderHistoryData = data;
       this.orderData = data.order_history;
@@ -295,7 +291,6 @@ export class PopupComponent implements OnInit {
   }
 
   updateMapping() {
-    console.log(this.so_id,this.v_a_id,this.updateSOObj);
     this.ES.updateSOmap(this.so_id,this.v_a_id,this.updateSOObj).subscribe((data)=>{
       this.alert.addObject.detail = "SO Line is mapped successfully";
       this.message.add(this.alert.addObject);

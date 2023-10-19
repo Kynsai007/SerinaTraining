@@ -47,7 +47,6 @@ export class PoLinesComponent implements OnInit {
    }
 
   getPODocId(po_num) {
-    console.log(po_num)
     this.SharedService.get_poDoc_id(po_num).subscribe((data: any) => {
       this.poDocId = data.result;
     })
@@ -68,7 +67,6 @@ export class PoLinesComponent implements OnInit {
     this.exceptionService.getPOLines('').subscribe((data: any) => {
       this.poLineData = data.Po_line_details;
       this.ds.poLineData = this.poLineData;
-      console.log(this.poLineData)
       if(this.poLineData){
         if (this.poLineData.length > 0) {
           this.POlineBool = true;

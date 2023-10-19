@@ -359,8 +359,8 @@ export class Comparision3WayComponent
     this.userDetails = this.authService.currentUserValue;
     this.financeapproveDisplayBoolean =
       this.settingService.finaceApproveBoolean;
-    this.subStatusId = this.dataService.editableInvoiceData?.idDocumentSubstatus;
-
+    this.subStatusId = this.dataService.subStatusId;
+    
     // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
   }
   AddPermission() {
@@ -1055,6 +1055,8 @@ export class Comparision3WayComponent
     if(!sub_status){
       sub_status = this.batchData[this.batchData.length-1].sub_status;
     }
+    this.subStatusId = sub_status;
+    this.dataService.subStatusId = sub_status;
     if (this.portalName == 'vendorPortal') {
       if (sub_status == 8 ||
         sub_status == 16 ||
@@ -1568,7 +1570,6 @@ export class Comparision3WayComponent
         itemCode: +line_num,
         so_id : this.so_id
       }
-      console.log(obj);
       response = obj;
     }
     this.SpinnerService.show();

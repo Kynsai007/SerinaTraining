@@ -71,7 +71,7 @@ export class BatchProcessComponent implements OnInit {
   rangeDates: Date[];
   dataLength: number;
   columnsDataAdmin: any[];
-  showPaginatorApproval: boolean;
+  showPaginatorApproval = false;
   dataLengthAdmin: number;
   batchProcessColumnLength: number;
   approvalPageColumnLength: number;
@@ -235,8 +235,14 @@ export class BatchProcessComponent implements OnInit {
   }
 
   getBatchInvoiceData() {
+    let param = ''
+    if(this.ds.ap_boolean){
+      param= `?doctype=3`;
+    } else {
+      param= `?doctype=1`;
+    }
     this.ngxSpinner.show();
-    this.exceptionService.readBatchInvoicesData().subscribe(
+    this.exceptionService.readBatchInvoicesData(param).subscribe(
       (data: any) => {
         const batchData = [];
         data.forEach((element) => {
@@ -250,28 +256,29 @@ export class BatchProcessComponent implements OnInit {
           mergeData['substatus'] = element.substatus
           batchData.push(mergeData);
         });
-        // this.columnsData = batchData.sort((a,b)=>{
-        //   let c = new Date(a.CreatedOn).getTime();
-        //   let d = new Date(b.CreatedOn).getTime();
-        //   return d-c });
-        batchData.forEach(ele=>{
-          if(ele.idDocumentType == 3){
-            this.columnsData.push(ele);
-            this.filterData = this.columnsData;
-          } else if (ele.idDocumentType == 1){
-            this.columnsDataPO.push(ele);
-            this.filterData = this.columnsDataPO;
-          }
-        })
+        this.columnsData = batchData.sort((a,b)=>{
+          let c = new Date(a.CreatedOn).getTime();
+          let d = new Date(b.CreatedOn).getTime();
+          return d-c });
+        this.filterData = this.columnsData;
+        // batchData.forEach(ele=>{
+        //   if(ele.idDocumentType == 3){
+        //     this.columnsData.push(ele);
+        //     this.filterData = this.columnsData;
+        //   } else if (ele.idDocumentType == 1){
+        //     this.columnsDataPO.push(ele);
+        //     this.filterData = this.columnsDataPO;
+        //   }
+        // })
         this.dataLength = this.columnsData.length;
-        if (this.dataLength > 10) {
-          this.showPaginatorAllInvoice = true;
-        }
+        // if (this.dataLength > 10) {
+        //   this.showPaginatorAllInvoice = true;
+        // }
 
         this.datalengthPO = this.columnsDataPO.length;
-        if (this.datalengthPO > 10) {
-          this.showPaginatorAllPO = true;
-        }
+        // if (this.datalengthPO > 10) {
+        //   this.showPaginatorAllPO = true;
+        // }
         this.ngxSpinner.hide();
       },
       (error) => {
@@ -298,9 +305,9 @@ export class BatchProcessComponent implements OnInit {
         });
         this.columnsDataAdmin = batchData;
         this.dataLengthAdmin = this.columnsDataAdmin.length;
-        if (this.dataLengthAdmin > 10) {
-          this.showPaginatorApproval = true;
-        }
+        // if (this.dataLengthAdmin > 10) {
+        //   this.showPaginatorApproval = true;
+        // }
         this.ngxSpinner.hide();
       },
       (error) => {
@@ -331,9 +338,9 @@ export class BatchProcessComponent implements OnInit {
           return d-c });
         this.filterData = this.columnsData;
         this.dataLength = this.columnsData.length;
-        if (this.dataLength > 10) {
-          this.showPaginatorAllInvoice = true;
-        }
+        // if (this.dataLength > 10) {
+        //   this.showPaginatorAllInvoice = true;
+        // }
         this.ngxSpinner.hide();
       },
       (error) => {

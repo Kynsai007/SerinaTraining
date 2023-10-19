@@ -482,7 +482,9 @@ export class UploadSectionComponent implements OnInit {
     if (this.isCustomerPortal == true) {
       this.quickUploadForm.controls['vendor'].reset();
       // this.getCustomerVendors();
-      this.readDepartment();
+      if(this.viewType == 'quick'){
+        this.readDepartment();
+      }
       // this.dropdown.show();
       if (this.selectedOption == 'Service') {
         // this.getEntitySummary();

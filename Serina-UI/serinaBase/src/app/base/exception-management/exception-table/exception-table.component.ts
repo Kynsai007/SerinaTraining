@@ -29,7 +29,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   @Input() columnsData;
   @Input() invoiceColumns;
   @Input() columnsToDisplay;
-  @Input() showPaginatorAllInvoice;
+  showPaginatorAllInvoice:boolean;
   @Input() ColumnLength;
   @Output() public searchInvoiceData: EventEmitter<any> =
     new EventEmitter<any>();
@@ -43,8 +43,6 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   @ViewChild('allInvoice', { static: true }) allInvoice: Table;
   hasSearch: boolean = false;
-  statusId: any;
-  displayStatus: any;
   previousAvailableColumns: any[];
   select: any;
   userType: string;
@@ -90,6 +88,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.ap_boolean = this.ds.ap_boolean;
     this.initialData();
     this.dateFunc();
+    if(this.columnsData.length>10){
+      this.showPaginatorAllInvoice = true;
+    }
   }
   dateFunc(){
     let currentDate = new Date();
@@ -107,26 +108,24 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
+    if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
 
-    let mergedStatus = ['All'];
-    let columnsData = changes?.columnsData?.currentValue;
-    setTimeout(() => {
-      columnsData.forEach(ele => {
+      let mergedStatus = [ 'All'];
+      this.columnsData.forEach(ele=>{
         if(ele.documentsubstatusID == 40 || ele.documentsubstatusID == 32){
           ele.status = ele.substatus;
         }
         mergedStatus.push(ele.status)
       })
       this.statusData = new Set(mergedStatus);
-    }, 500);
-    // if (this.router.url.includes('ExceptionManagement')) {
-    //   this.filter('All', 'status');
-    // }
-    if(!this.isDesktop){
-      this.showPaginatorAllInvoice = false;
+      if(this.columnsData.length>10){
+        this.showPaginatorAllInvoice = true;
+      }
+      console.log( this.showPaginatorAllInvoice)
+      if(!this.isDesktop){
+        this.showPaginatorAllInvoice = false;
+      }
     }
-    // }
   }
   initialData() {
     this.userType = this.authService.currentUserValue['user_type'];
@@ -144,16 +143,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     } else {
       this.dashboardViewBoolean = false;
     }
-    // this.getColumnData();
-    if (this.columnsData) {
-      // if(this.columnsData.length > 10){
-
-      //   this.showPaginator = true;
-      // }
-      if (this.statusId) {
-        this.displayStatus = this.status[this.statusId];
-      }
-    }
+   
     // if (this.tagService.batchProcessTab == 'normal') {
     //   this.batchBoolean = true;
     //   this.first = this.ds.exc_batch_edit_page_first;
@@ -261,6 +251,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   // edit invoice details if something wrong
   editInvoice(e) {
     this.ds.editableInvoiceData = e;
+    this.ds.subStatusId = e?.documentsubstatusID;
     this.ExceptionsService.invoiceID = e.idDocument;
     this.tagService.editable = true;
     this.sharedService.invoiceID = e.idDocument;

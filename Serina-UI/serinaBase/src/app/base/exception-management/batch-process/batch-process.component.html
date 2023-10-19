@@ -68,7 +68,6 @@
             <app-exception-table
               [invoiceColumns]="ColumnsForBatch"
               [columnsToDisplay]="columnsToDisplay"
-              [showPaginatorAllInvoice]="showPaginatorAllInvoice"
               [ColumnLength]="batchProcessColumnLength"
               (searchInvoiceData)="searchInvoiceDataV($event)"
               [columnsData]="columnsData"
@@ -86,7 +85,6 @@
             <app-exception-table
               [invoiceColumns]="ColumnsForBatchPO"
               [columnsToDisplay]="columnsToDisplayPO"
-              [showPaginatorAllInvoice]="showPaginatorAllPO"
               [ColumnLength]="batchProcessPOColumnLength"
               (searchInvoiceData)="searchInvoiceDataV($event)"
               [columnsData]="columnsDataPO"
@@ -106,7 +104,6 @@
               [columnsToDisplay]="columnsToDisplay"
               (searchInvoiceData)="searchInvoiceDataV($event)"
               [ColumnLength]="batchProcessColumnLength"
-              [showPaginatorAllInvoice]="showPaginatorApproval"
               [columnsData]="columnsDataAdmin"
             >
             </app-exception-table>

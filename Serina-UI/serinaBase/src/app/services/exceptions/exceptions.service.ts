@@ -19,8 +19,8 @@ export class ExceptionsService {
   popupmsg = new BehaviorSubject<string>("sample");
   constructor(private http : HttpClient) { }
 
-  readBatchInvoicesData():Observable<any> {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/batchprocesssummary/${this.userId}`).pipe(retry(3))
+  readBatchInvoicesData(param):Observable<any> {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/batchprocesssummary/${this.userId}${param}`).pipe(retry(3))
   }
 
   readApprovalPendingData():Observable<any> {

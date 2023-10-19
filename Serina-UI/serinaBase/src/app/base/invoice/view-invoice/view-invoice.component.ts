@@ -389,7 +389,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     this.submitBtn_boolean = this.tagService.submitBtnBoolean;
     this.approveBtn_boolean = this.tagService.approveBtnBoolean;
     this.headerName = this.tagService.headerName;
-    this.subStatusId = this.dataService.editableInvoiceData?.idDocumentSubstatus;
+    this.subStatusId = this.dataService.subStatusId;
     this.userDetails = this.authService.currentUserValue;
     this.approval_selection_boolean =
       this.tagService.approval_selection_boolean;
@@ -1130,6 +1130,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       sub_status = this.batchData[this.batchData.length-1].sub_status;
     }
     this.subStatusId = sub_status;
+    this.dataService.subStatusId = sub_status;
     if (this.portalName == 'vendorPortal') {
       if (sub_status == 8 ||
         sub_status == 16 ||
