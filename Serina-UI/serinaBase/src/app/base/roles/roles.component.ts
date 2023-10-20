@@ -241,8 +241,8 @@ export class RolesComponent implements OnInit {
   totalC_users: any;
   ap_boolean: any;
   party_type: string;
-  is_fp: boolean;
-  is_fpa: boolean;
+  is_fp= false;
+  is_fpa = false;
   isDesktop: boolean;
   thCount: number;
   constructor(
@@ -368,7 +368,7 @@ export class RolesComponent implements OnInit {
               this.CreateNewRole = false;
               this.editUserdata = false;
               delete this.AccessPermissionTypeId;
-            } 
+            }
           },
           (error) => {
             if (error.status == 400) {
@@ -724,14 +724,14 @@ export class RolesComponent implements OnInit {
     this.entityBodyList = [];
     this.sharedService.getDepartment().subscribe((data: any) => {
       this.entityBodyList = data.department;
-      
+
     });
   }
 
 
   readCategory(){
     this.sharedService.readCategory().subscribe((data:any)=>{
-      
+
       // this.entityDeptList = this.entityBodyList[0].department
     })
   }
@@ -822,10 +822,10 @@ export class RolesComponent implements OnInit {
     });
     delete this.subRole;
   }
-  
+
   onSelectPriority(e){
     this.checkStatus(e,'priority');
-   
+
   }
   checkStatus(e,type) {
       this.updateUsersEntityInfo.forEach((value) => {
@@ -993,7 +993,7 @@ export class RolesComponent implements OnInit {
             } else {
               preApproveBool = false;
             }
-            
+
             let roleName = this.subroleList?.filter(el=>{
               return el.idAccessPermissionDef == element.UserAccess?.subRole
             })
@@ -1046,7 +1046,7 @@ export class RolesComponent implements OnInit {
       if(this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.EntityID &&
         this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.subRole &&
         this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.userPriority &&
-        this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove) 
+        this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove)
         {
           this.updateAccessAPICall(editUser);
         } else {
@@ -1075,7 +1075,7 @@ export class RolesComponent implements OnInit {
               .editRole(JSON.stringify(selectrole))
               .subscribe((data: any) => {
                 delete this.AccessPermissionTypeId;
-                
+
               });
           }
           this.DisplayCustomerUserDetails();
@@ -1154,7 +1154,7 @@ export class RolesComponent implements OnInit {
       this.userName != '' &&
       this.userNotBoolean == false
     ) {
-      
+
       let createUserData = {
         n_cust: {
           email: this.userEmail,
@@ -1172,7 +1172,7 @@ export class RolesComponent implements OnInit {
         if(this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.EntityID &&
           this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.subRole &&
           this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.userPriority &&
-          this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove) 
+          this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove)
           {
             this.addUserAPICall(createUserData);
           } else {
@@ -1184,7 +1184,7 @@ export class RolesComponent implements OnInit {
             this.addUserAPICall(createUserData);
       }
 
-      
+
     } else {
       this.alertFun("Please fill all the given fields");
     }
@@ -1240,7 +1240,7 @@ export class RolesComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.result == 'success') {
           this.successAlert('Role Created Successfully');
-        } 
+        }
       });
   }
   getDisplayTotalRoles() {
@@ -1322,7 +1322,7 @@ export class RolesComponent implements OnInit {
       this.selectedEnt_venor.find(ele=>{
         arr.push(ele.idEntity)
       })
-      
+
         if(arr.includes(value.itemValue.idEntity)){
           let arr1 = this.selectedEnt_venor.filter(id=>value.itemValue.idEntity === id.idEntity);
           this.updateIdaccessArr.push(arr1[0].idVendorUserAccess);
@@ -1333,7 +1333,7 @@ export class RolesComponent implements OnInit {
           }
         }
         this.entLengthforup_vendr = value.value.length;
-        
+
     } else {
       value.value.forEach(ele=>{
         arr.push(ele.idEntity)
@@ -1349,7 +1349,7 @@ export class RolesComponent implements OnInit {
     this.sharedService
       .getVendorsCodesToCreateNewlogin(ven_code)
       .subscribe((data: any) => {
-        
+
         this.entityForVendorCreation = data.ent_details;
         if(!this.editVndrUserbool){
           this.entitySelection = this.entityForVendorCreation;
@@ -1372,7 +1372,7 @@ export class RolesComponent implements OnInit {
     this.emailIdInvite = null;
     this.createUserName = null;
     this.entitySelection = [];
-   
+
   }
   createVendorSuprUser() {
    if(this.vendorOnboarderStatus){
