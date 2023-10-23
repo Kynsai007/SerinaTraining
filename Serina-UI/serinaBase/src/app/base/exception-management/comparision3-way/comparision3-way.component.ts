@@ -127,7 +127,7 @@ export class Comparision3WayComponent
   GRN_PO_tags = [
     { TagName: 'Description', linedata: [] },
     { TagName: 'PO Qty', linedata: [] },
-    { TagName: 'PO Balance Qty', linedata: [] },
+    // { TagName: 'PO Balance Qty', linedata: [] },
     { TagName: 'GRN - Quantity', linedata: [] },
     { TagName: 'UnitPrice', linedata: [] },
     { TagName: 'Actions', linedata: [] }
@@ -636,10 +636,10 @@ export class Comparision3WayComponent
               });
               if (poQty.length > 0) {
                 array.splice(8, 0, { TagName: 'PO quantity', linedata: poQty });
-                array.splice(9, 0, {
-                  TagName: 'PO balance quantity',
-                  linedata: poBalQty,
-                });
+                // array.splice(9, 0, {
+                //   TagName: 'PO balance quantity',
+                //   linedata: poBalQty,
+                // });
               }
             } else if (
               ele.TagName == 'Inv - UnitPrice' &&

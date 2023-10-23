@@ -329,13 +329,14 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.portalName = 'customer'
     }
     this.init();
+    this.getEntity();
     this.ERPCostAllocation();
     this.AddPermission();
-    this.readVendors();
+    // this.readVendors();
     this.isAdmin = this.dataService.isAdmin;
     if (this.tagService.editable == true) {
       this.updateSessionTime();
-      this.getEntity();
+      
       this.approval_setting_boolean = this.settingsService.finaceApproveBoolean;
       this.idleTimer(180, 'Start');
       this.callSession = setTimeout(() => {
@@ -2201,6 +2202,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // this.dataService.entityID = undefined;
     // this.SharedService.selectedEntityId = undefined;
     delete this.SharedService.fileSrc;
-    this.vendorsSubscription.unsubscribe();
+    // this.vendorsSubscription.unsubscribe();
   }
 }

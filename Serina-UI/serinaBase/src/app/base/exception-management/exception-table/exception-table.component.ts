@@ -121,7 +121,6 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       if(this.columnsData.length>10){
         this.showPaginatorAllInvoice = true;
       }
-      console.log( this.showPaginatorAllInvoice)
       if(!this.isDesktop){
         this.showPaginatorAllInvoice = false;
       }
