@@ -15,14 +15,22 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
           submodules: true
+      - uses: Azure/login@v1
+        with:
+          creds: '{"clientId":"44e503fe-f768-46f8-99bf-803d4a2cf62d","clientSecret":"aDb8Q~gTHy6kyWZFUgCAGSZXV90QdAWKRuZSJa_H","subscriptionId":"ab1a7646-e1c2-42d7-a198-47e25afe5e5f","tenantId":"86fb359e-1360-4ab3-b90d-2a68e8c007b9"}'
+      - uses: Azure/get-keyvault-secrets@v1
+        with:
+          keyvault: "serinaplus-vault"
+          secrets: 'ehgdev-config-app'
+        id: githubsecret
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_MUD_0252CF100 }}
+          azure_static_web_apps_api_token: ${{ steps.githubsecret.outputs.ehgdev-config-app }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
