@@ -17,7 +17,7 @@
             class="nav-link"
             [class.active-tab]="viewType == 'PODoc'"
             (click)="chooseEditedpageTab('PODoc')"
-            >Exception PO's({{ datalengthPO }})</a
+            >Exception PO's({{ dataLength }})</a
           >
         </li>
         <li class="nav-item ml-1" *ngIf="isVendorBoolean && this.apprveBool && invoceDoctype && portalName == 'customer'">
@@ -83,11 +83,11 @@
         <div class="tableDiv">
           <div>
             <app-exception-table
-              [invoiceColumns]="ColumnsForBatchPO"
+              [invoiceColumns]="ColumnsForBatch"
               [columnsToDisplay]="columnsToDisplayPO"
               [ColumnLength]="batchProcessPOColumnLength"
               (searchInvoiceData)="searchInvoiceDataV($event)"
-              [columnsData]="columnsDataPO"
+              [columnsData]="columnsData"
             >
             </app-exception-table>
           </div>
