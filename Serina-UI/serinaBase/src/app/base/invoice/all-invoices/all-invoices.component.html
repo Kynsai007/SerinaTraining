@@ -180,8 +180,8 @@
                       <i class="fa fa-undo" aria-hidden="true"></i>
                     </button>
                     <i
-                      *ngIf="invoiceData.docstatus == 'Need To Review'"
-                      [pTooltip]="invoiceData?.status"
+                      *ngIf="invoiceData.docstatus == 'Need To Review' || (invoiceData.docstatus == 'Posted In ERP' && invoiceData.documentsubstatusID == 80)"
+                      [pTooltip]="invoiceData.documentsubstatusID == 80 ? 'Manually Posted':invoiceData?.status"
                       tooltipPosition="top"
                       class="f-13 ml-3"
                       style="color: red; font-weight: 800"
