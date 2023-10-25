@@ -431,6 +431,8 @@ export class InvoiceComponent implements OnInit {
             if (this.portal_name == 'vendorPortal') {
               if (invoiceData['docstatus'] == 'Need To Review') {
                 invoiceData['docstatus'] = 'Under Review';
+              } else if(invoiceData['docstatus'] == 'Set Approval'){
+                invoiceData['docstatus'] = 'Approval Pending';
               }
             }
             invoicePushedArray.push(invoiceData);

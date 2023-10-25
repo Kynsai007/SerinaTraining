@@ -1438,6 +1438,7 @@
   [baseZIndex]="10000"
   [draggable]="false"
   [resizable]="false"
+  [closeIcon]="false"
 >
   <div *ngIf="p_dailog_head == 'Batch Progress'">
     <div class="f-12" *ngIf="!(batchData?.length > 0)">
@@ -1508,8 +1509,16 @@
   </div>
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-center">
+      <button
+        type="button"
+        *ngIf="p_dailog_head == 'Confirm PO number'"
+        class="btn btnVender bg-btn-cancel mt-2"
+        (click)="progressDailogBool = false"
+      >
+        Cancel
+      </button>
       <button *ngIf="p_dailog_head == 'Batch Progress'" type="button" class="btn btnVender bg-btn-success mt-2" (click)="routeToMapping()">Next</button>
-      <button *ngIf="p_dailog_head != 'Batch Progress'" type="button" class="btn btnVender bg-btn-success mt-2" [disabled]="!activePOId" (click)="confirmPO()">Confirm</button>
+      <button *ngIf="p_dailog_head == 'Confirm PO number'" type="button" class="btn btnVender bg-btn-success mt-2" [disabled]="!activePOId" (click)="confirmPO()">Confirm</button>
       <!-- <button type="button" class="btn btnVender"
         [disabled]="addLabel.invalid "
         [ngStyle]="{'cursor':(addLabel.invalid)? 'not-allowed':'pointer'}"
@@ -1535,9 +1544,9 @@
     "
   >
     <label class="label-head mt-2 mb-0">Comments</label> <br />
-    <small *ngIf="preApproveBoolean" class="f-11 cmt_text"
+    <!-- <small *ngIf="preApproveBoolean" class="f-11 cmt_text"
       >Desc: Add the Names of the Signatory is mandatory</small
-    >
+    > -->
 
     <textarea
       required

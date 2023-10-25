@@ -5,7 +5,7 @@ import { SettingsService } from './../../services/settings/settings.service';
 import { PermissionService } from './../../services/permission.service';
 import { AuthenticationService } from './../../services/auth/auth-service.service';
 import { SharedService } from './../../services/shared.service';
-import { Component, OnInit, OnDestroy,Renderer2  } from '@angular/core';
+import { Component, OnInit, OnDestroy,Renderer2, AfterViewInit  } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 // import { IMqttMessage, MqttService } from 'ngx-mqtt';
@@ -20,7 +20,7 @@ import { ChangePasswordComponent } from '../change-password/change-password.comp
   templateUrl: './base-type.component.html',
   styleUrls: ['./base-type.component.scss'],
 })
-export class BaseTypeComponent implements OnInit, OnDestroy {
+export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   notifyArray: any[];
   userDetails: any;
 
@@ -104,6 +104,13 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.getEntitySummary();
     // this.readVendors();
     // this.readVendorNames();
+  }
+
+  ngAfterViewInit(): void {
+    window.onbeforeunload = () => {
+      // Clear the session storage item when the page is reloaded
+      sessionStorage.removeItem('editException');
+    };
   }
   appendScript (){
     if(window.screen.width <= 767){
@@ -433,7 +440,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     this.switchtext = "AP";
     this.dataStoreService.ap_boolean = !this.dataStoreService.ap_boolean;
     sessionStorage.setItem('ap_boolean',JSON.stringify(this.ap_boolean))
-    console.log(this.ap_boolean)
     setTimeout(() => {
       window.location.reload()
     }, 1000);
@@ -443,5 +449,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    this.dialog.closeAll();
+    
+    
   }
 }
