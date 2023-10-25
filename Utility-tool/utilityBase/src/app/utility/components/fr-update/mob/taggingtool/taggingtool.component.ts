@@ -346,10 +346,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = this.currenttext;
       this.currentSelection = [];
       this.currenttext = "";
-      let finaljson = this.labelsJson;
-      let labels = finaljson["labels"].filter(item => item.value.length > 0);
-      finaljson["labels"] = labels;
-      console.log(finaljson);
       let frobj = {
         'documentId':this.modelData.idDocumentModel,
         'container':this.frConfigData[0].ContainerName,
@@ -659,15 +655,13 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           this.labelsJson["labels"].splice(labelindex,1);
         }
       }
-      let finaljson = this.labelsJson;
-      console.log(finaljson);
       let frobj = {
         'documentId':this.modelData.idDocumentModel,
         'container':this.frConfigData[0].ContainerName,
         'connstr':this.frConfigData[0].ConnectionString,
         'filename':this.modelData.folderPath+"/"+this.currentfile,
         'saveJson':null,
-        'labelJson':finaljson
+        'labelJson':this.labelsJson
       }
       this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
       })
@@ -1129,10 +1123,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                 }
               }
             }
-            let finaljson = _this.labelsJson;
-            let labels = finaljson["labels"].filter(item => item.value.length > 0);
-            finaljson["labels"] = labels;
-            console.log(finaljson);
             let frobj = {
               'documentId':_this.modelData.idDocumentModel,
               'container':_this.frConfigData[0].ContainerName,
@@ -1448,10 +1438,6 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
         this.currenttext = "";
         this.currentSelection = [];
-        let finaljson = this.labelsJson;
-        let labels = finaljson["labels"].filter(item => item.value.length > 0);
-        finaljson["labels"] = labels;
-        console.log(finaljson);
         let frobj = {
           'documentId':this.modelData.idDocumentModel,
           'container':this.frConfigData[0].ContainerName,
