@@ -222,6 +222,7 @@ export class Comparision3WayComponent
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
     this.flipEnabled = true;
+    // this.flipEnabled = this.dataService.configData.flipBool;
     this.userDetails = this.authService.currentUserValue;
     this.isDesktop = this.dataService.isDesktop;
     this.documentViewBool = this.isDesktop;

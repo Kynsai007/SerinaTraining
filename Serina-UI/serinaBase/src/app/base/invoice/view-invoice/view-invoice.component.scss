@@ -644,6 +644,12 @@ a {
 .thtable th, .thtable td {
   padding: 5px;
 }
+.taglabel{
+  max-width: 80px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 @media screen and (max-width:1200px) {
   .zoom_pos_pdf {
     left: -160px;

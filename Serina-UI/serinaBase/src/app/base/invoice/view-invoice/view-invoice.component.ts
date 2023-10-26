@@ -315,7 +315,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     } else {
       this.docType = 1
     }
-    this.flipEnabled = this.dataService.configData.flipBool;
+    // this.flipEnabled = this.dataService.configData.flipBool;
+    this.flipEnabled = true;
     this.ERP = this.dataService.configData.erpname;
     this.route.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;
@@ -401,6 +402,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     // if (this.flipEnabled && this.subStatusId == 34){
     //   this.currentTab = "poline";
     // }
+    console.log(this.subStatusId,this.flipEnabled)
   }
 
   routeOptions() {

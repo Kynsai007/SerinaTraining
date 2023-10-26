@@ -394,7 +394,7 @@
                         tagName?.tagname == 'Description' ? '500px' : '200px'
                     }"
                   >
-                    <span class="f-13 p-2">{{ tagName.tagname }}</span>
+                    <span class="f-13 p-2 taglabel">{{ tagName.tagname }}</span>
                     <div *ngFor="let data of tagName.items">
                       <div *ngFor="let data2 of data.linedetails" class="mb-3">
                         <div
@@ -631,7 +631,7 @@
                         tagName?.tagname == 'Description' ? '500px' : '200px'
                     }"
                   >
-                    <span class="f-13 p-2">{{ tagName.tagname }}</span>
+                    <span class="f-13 p-2 taglabel">{{ tagName.tagname }}</span>
                     <div *ngFor="let data of tagName.items">
                       <div *ngFor="let data2 of data.linedetails" class="mb-3">
                         <div
