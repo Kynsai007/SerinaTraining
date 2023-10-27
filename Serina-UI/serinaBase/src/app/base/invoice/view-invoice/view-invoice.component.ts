@@ -1256,6 +1256,14 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   captureComments(reason, val) {
     this.displayrejectDialog = true;
+    console.log(reason)
+    // this.preApproveBoolean = false;
+    this.isRejectCommentBoolean = false;
+    this.isApproveCommentBoolean = false;
+    this.isLCMSubmitBoolean = false;
+    this.deletepopBoolean = false;
+    this.checkItemBoolean = false;
+    this.comment_header='';
     if (reason == 'reject') {
       this.comment_header = 'Add Rejection Comments';
       this.isRejectCommentBoolean = true;
@@ -1263,6 +1271,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.isLCMSubmitBoolean = false;
       this.deletepopBoolean = false;
       this.checkItemBoolean = false;
+      this.preApproveBoolean = false;
     } else if (reason == 'approve') {
       this.comment_header = 'Add Pre-approval Comments';
       if (this.preApproveBoolean == false) {
@@ -1281,16 +1290,16 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.checkItemBoolean = false;
       this.item_code = val.itemCode;
       this.isLCMSubmitBoolean = false;
-      this.isRejectCommentBoolean = false;
       this.isApproveCommentBoolean = false;
+      this.preApproveBoolean = false;
     } else if (reason == 'AddLine') {
       this.comment_header = "Check Item code availability";
       this.isRejectCommentBoolean = false;
       this.deletepopBoolean = false;
       this.checkItemBoolean = true;
       this.isLCMSubmitBoolean = false;
-      this.isRejectCommentBoolean = false;
       this.isApproveCommentBoolean = false;
+      this.preApproveBoolean = false;
     } else {
       this.comment_header = 'Please Confirm';
       this.BtnpopText = "Are you sure you want to submit? Once submit is done, you can not modify."
@@ -1299,6 +1308,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       this.isApproveCommentBoolean = false;
       this.deletepopBoolean = false;
       this.checkItemBoolean = false;
+      this.preApproveBoolean = false;
     }
 
   }
@@ -1679,7 +1689,6 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   onSelectPerApprove(bool) {
     if (bool == true) {
       this.captureComments('approve', null);
-
     }
   }
 
