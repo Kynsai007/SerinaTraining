@@ -93,7 +93,7 @@ export class InvoiceComponent implements OnInit {
   columnstodisplayService = [];
   serviceColumns: any;
   showPaginatorServiceInvoice: boolean;
-  serviceinvoiceDispalyData: any[];
+  serviceinvoiceDispalyData = [];
   serviceInvoiceLength: any;
   allInColumnLength: any;
   allPOColumnLength: any;
@@ -132,6 +132,7 @@ export class InvoiceComponent implements OnInit {
   partyType: string;
   isDesktop: boolean;
   tableImportData: any;
+  resfrshBool: boolean;
   close(reason: string) {
     this.sidenav.close();
   }
@@ -169,7 +170,7 @@ export class InvoiceComponent implements OnInit {
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
-    private location : Location,
+    private location: Location,
     private authService: AuthenticationService
   ) { }
 
@@ -183,10 +184,10 @@ export class InvoiceComponent implements OnInit {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
       if (!this.vendorInvoiceAccess) {
-        if(this.dataService.doc_status_tab == undefined){
+        if (this.dataService.doc_status_tab == undefined) {
           this.route.navigate([`/${this.portal_name}/invoice/ServiceInvoices`])
         } else {
-          this.route.navigate([`${this.dataService.doc_status_tab}`]);
+          // this.route.navigate([`${this.dataService.doc_status_tab}`]);
         }
       }
     } else if (this.userDetails.user_type == 'vendor_portal') {
@@ -198,35 +199,36 @@ export class InvoiceComponent implements OnInit {
       if (this.dataService.ap_boolean) {
         this.partyType = 'Vendor';
         this.invoceDoctype = true;
-        if(!this.dataService.doc_status_tab){
+        if (!this.dataService.doc_status_tab) {
           this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
         } else {
-          this.route.navigate([`${this.dataService.doc_status_tab}`]);
+          // this.route.navigate([`${this.dataService.doc_status_tab}`]);
         }
-        if(this.GRNCreateBool){
+        if (this.GRNCreateBool) {
           this.readGRNExceptionData();
         }
-        
+
       } else {
-        if(!this.dataService.doc_status_tab){
+        if (!this.dataService.doc_status_tab) {
           this.route.navigate([`/${this.portal_name}/invoice/PO`]);
         } else {
           this.route.navigate([`${this.dataService.doc_status_tab}`]);
         }
         this.partyType = 'Customer';
-        
+
       }
     }
-    if(this.serviceInvoiceAccess){
+    if (this.serviceInvoiceAccess) {
       // this.getServiceColumns();
       this.getDisplayServiceInvoicedata();
     }
     this.APIParams = `?offset=1&limit=50`;
-    this.deviceColumns();
+
     this.routeForTabs();
     this.dateRange();
     this.findActiveRoute();
     this.restoreData();
+    this.deviceColumns();
     // this.getInvoiceData();
     // this.getDisplayPOData();
     // this.getDisplayGRNdata();
@@ -235,14 +237,42 @@ export class InvoiceComponent implements OnInit {
   }
 
   deviceColumns() {
-    if(this.dataService.isDesktop) {
-      this.getPOColums();
-      this.getArchivedColumns();
-      this.prepareColumns();
-      this.getInvoiceColumns();
-      if(this.serviceInvoiceAccess){
-        this.getServiceColumns();
+    console.log(this.route.url)
+    if (this.dataService.isDesktop) {
+      if (this.route.url == this.invoiceTab) {
+        if (this.dataService.invTabColumns) {
+          this.invoiceColumns = this.dataService.invTabColumns;
+          this.allInColumnLength = this.invoiceColumns.length + 1;
+          this.columnstodisplayInvoice = this.pushColumnsField(this.invoiceColumns);
+        } else {
+          this.getInvoiceColumns();
+        }
+      } else if (this.route.url == this.POTab) {
+        if (this.dataService.poTabColumns) {
+          this.poColumns = this.dataService.poTabColumns;
+          this.allPOColumnLength = this.poColumns.length + 1;
+          this.columnstodisplayPO = this.pushColumnsField(this.poColumns);
+        } else {
+          this.getPOColums();
+        }
+      } else if (this.route.url == this.archivedTab) {
+        if (this.dataService.arcTabColumns) {
+          this.archivedColumns = this.dataService.arcTabColumns;
+          this.allARCColumnLength = this.archivedColumns.length + 1;
+          this.columnstodisplayArchived = this.pushColumnsField(this.archivedColumns);
+        } else {
+          this.getArchivedColumns();
+        }
+      } else if (this.route.url == this.serviceInvoiceTab) {
+        if (this.dataService.serTabColumns) {
+          this.serviceColumns = this.dataService.serTabColumns;
+          this.allSRVColumnLength = this.serviceColumns.length + 1;
+          this.columnstodisplayService = this.pushColumnsField(this.serviceColumns);
+        } else {
+          this.getServiceColumns();
+        }
       }
+      this.prepareColumns();
     } else {
       this.mob_columns();
       this.prepareColumnsArray_mobile();
@@ -251,11 +281,17 @@ export class InvoiceComponent implements OnInit {
 
   restoreData() {
     this.totalInvoicesData = this.dataService.invoiceLoadedData;
+    this.serviceinvoiceDispalyData = this.dataService.serviceinvoiceLoadedData;
+
     // this.filterData = this.invoiceDispalyData;
     // this.allInvoiceLength = this.dataService.invoiceLoadedData.length;
     // if (this.allInvoiceLength > 10) {
     //   this.showPaginatorAllInvoice = true;
     // }
+    this.serviceInvoiceLength = this.serviceinvoiceDispalyData.length;
+    if (this.serviceInvoiceLength > 10) {
+      this.showPaginatorServiceInvoice = true;
+    }
     this.filterForArchived();
     this.poDispalyData = this.dataService.poLoadedData;
     this.poArrayLength = this.dataService.POtableLength;
@@ -287,6 +323,9 @@ export class InvoiceComponent implements OnInit {
     this.visibleSidebar2 = this.sharedService.sidebarBoolean;
     if (this.dataService.invoiceLoadedData.length == 0 && this.invoceDoctype) {
       this.getInvoiceData();
+    }
+    if (this.dataService.serviceinvoiceLoadedData.length == 0) {
+      this.getDisplayServiceInvoicedata();
     }
     if (this.dataService.poLoadedData.length == 0) {
       this.getDisplayPOData(this.APIParams);
@@ -354,7 +393,7 @@ export class InvoiceComponent implements OnInit {
     ];
 
     if (this.portal_name == 'customer') {
-      if(!this.partyType) {
+      if (!this.partyType) {
         this.partyType = 'Service'
       }
       this.rejectedColumns.unshift({
@@ -367,7 +406,7 @@ export class InvoiceComponent implements OnInit {
     });
 
     this.rejectedColumns.forEach((e) => {
-      if(!this.dataService.ap_boolean && e.columnName == 'Invoice Number'){
+      if (!this.dataService.ap_boolean && e.columnName == 'Invoice Number') {
         e.columnName = 'Document Number'
       }
       this.columnstodisplayrejected.push(e.dbColumnname);
@@ -397,13 +436,13 @@ export class InvoiceComponent implements OnInit {
     } else if (this.route.url == this.SOTab) {
       this.routeName = 'SO';
       this.searchStr = this.dataService.searchSOStr;
-    }else if (this.route.url == this.archivedTab) {
+    } else if (this.route.url == this.archivedTab) {
       this.routeName = 'archived';
       this.searchStr = this.dataService.searchArcStr;
     } else if (this.route.url == this.rejectedTab) {
       this.routeName = 'rejected';
       this.searchStr = this.dataService.searchRejStr;
-    } else if( this.route.url == this.GRNTab){
+    } else if (this.route.url == this.GRNTab) {
       this.routeName = 'GRN';
       this.searchStr = this.dataService.searchGRNStr;
     }
@@ -414,6 +453,7 @@ export class InvoiceComponent implements OnInit {
       (data: any) => {
         const invoicePushedArray = [];
         if (data) {
+          this.resfrshBool = false;
           data.ok.Documentdata.forEach((element) => {
             let invoiceData = {
               ...element.Document,
@@ -448,7 +488,9 @@ export class InvoiceComponent implements OnInit {
         this.messageService.add(this.AlertService.errorObject);
         this.SpinnerService.hide();
       }
-    );
+    ), err => {
+      this.SpinnerService.hide();
+    };
   }
 
   filterForArchived() {
@@ -522,8 +564,8 @@ export class InvoiceComponent implements OnInit {
     this.SpinnerService.show();
     this.sharedService.getGRNdata(data).subscribe((data: any) => {
       let grnD = []
-      data.grndata?.forEach(ele=>{
-        let merg = {...ele.Document}
+      data.grndata?.forEach(ele => {
+        let merg = { ...ele.Document }
         merg.EntityName = ele.EntityName;
         merg.VendorName = ele.VendorName;
         merg.grn_type = ele.grn_type;
@@ -531,7 +573,7 @@ export class InvoiceComponent implements OnInit {
         merg.InvoiceNumber = ele.InvoiceNumber;
         grnD.push(merg)
       })
-     
+
       this.GRNDispalyData = this.dataService.GRNLoadedData.concat(grnD);
       this.dataService.GRNLoadedData = this.GRNDispalyData;
       this.dataService.GRNTableLength = data.grn_total;
@@ -556,7 +598,7 @@ export class InvoiceComponent implements OnInit {
           ...element.Vendor,
           ...element.PaymentsInfo
         };
-        
+
         // invoiceData.append('docStatus',element.docStatus)
 
         invoiceData['docstatus'] = element.docstatus;
@@ -575,7 +617,7 @@ export class InvoiceComponent implements OnInit {
         invoiceData['docstatus'] = element.docstatus;
         invoicePushedArray.push(invoiceData);
       });
-      
+
 
       this.archivedDisplayData =
         this.dataService.archivedDisplayData.concat(invoicePushedArray);
@@ -587,7 +629,7 @@ export class InvoiceComponent implements OnInit {
           }
         }
       });
-      if(this.dataService.posted_inv_type != 'ser'){
+      if (this.dataService.posted_inv_type != 'ser') {
         this.dataService.ARCTableLength = data?.result?.ven?.ok?.total_arc;
         this.archivedLength = data?.result?.ven?.ok?.total_arc;
       } else {
@@ -666,7 +708,7 @@ export class InvoiceComponent implements OnInit {
         invoiceData['docstatus'] = element.docstatus;
         invoicePushedArray.push(invoiceData);
       });
-      
+
       this.soDisplayData =
         this.dataService.SODisplayData.concat(invoicePushedArray);
       this.dataService.SODisplayData = this.soDisplayData;
@@ -710,6 +752,7 @@ export class InvoiceComponent implements OnInit {
       (data: any) => {
         const invoicePushedArray = [];
         if (data) {
+          this.resfrshBool = false;
           data.ok.Documentdata.forEach((element) => {
             let invoiceData = {
               ...element.Document,
@@ -782,14 +825,12 @@ export class InvoiceComponent implements OnInit {
         this.invoiceColumns = pushedInvoiceColumnsArray.filter((ele) => {
           return ele.isActive == 1;
         });
-        const arrayOfColumnId = [];
-        this.invoiceColumns.forEach((e) => {
-          arrayOfColumnId.push(e.dbColumnname);
-        });
-        this.columnstodisplayInvoice = arrayOfColumnId;
+
+        this.columnstodisplayInvoice = this.pushColumnsField(this.invoiceColumns);
         this.invoiceColumns = this.invoiceColumns.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
+        this.dataService.invTabColumns = this.invoiceColumns;
         this.allInColumnLength = this.invoiceColumns.length + 1;
         this.allColumns = pushedInvoiceColumnsArray.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
@@ -832,19 +873,16 @@ export class InvoiceComponent implements OnInit {
           pushedPOColumnsArray.push(arrayColumn);
         });
         this.poColumns = pushedPOColumnsArray.filter((element) => {
-          if(element.columnName == 'Vendor Name' && !this.dataService.ap_boolean){
+          if (element.columnName == 'Vendor Name' && !this.dataService.ap_boolean) {
             element.columnName = 'Customer Name'
           }
           return element.isActive == 1;
         });
-        const arrayOfColumnIdPO = [];
-        this.poColumns.forEach((e) => {
-          arrayOfColumnIdPO.push(e.dbColumnname);
-        });
-        this.columnstodisplayPO = arrayOfColumnIdPO;
+        this.columnstodisplayPO = this.pushColumnsField(this.poColumns);
         this.poColumns = this.poColumns.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
+        this.dataService.poTabColumns = this.poColumns
         this.allPOColumnLength = this.poColumns.length + 1;
         this.allColumns = pushedPOColumnsArray.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
@@ -882,25 +920,27 @@ export class InvoiceComponent implements OnInit {
           pushedArchivedColumnsArray.push(arrayColumn);
         });
         this.archivedColumns = pushedArchivedColumnsArray.filter((element) => {
-          if(element.columnName == 'Vendor Name' && !this.dataService.ap_boolean){
+          if (element.columnName == 'Vendor Name' && !this.dataService.ap_boolean) {
             element.columnName = 'Customer Name'
-          } 
-          if(!this.dataService.ap_boolean && element.columnName == 'Invoice Number'){
+          }
+          if (!this.dataService.ap_boolean && element.columnName == 'Invoice Number') {
             element.columnName = 'Document Number'
           }
           return element.isActive == 1;
         });
-        const arrayOfColumnIdArchived = [];
-        this.archivedColumns.forEach((e) => {
-          arrayOfColumnIdArchived.push(e.dbColumnname);
-        });
-        this.columnstodisplayArchived = arrayOfColumnIdArchived;
+        // const arrayOfColumnIdArchived = [];
+        // this.archivedColumns.forEach((e) => {
+        //   arrayOfColumnIdArchived.push(e.dbColumnname);
+        // });
+        this.columnstodisplayArchived = this.pushColumnsField(this.archivedColumns);
         this.allColumns = pushedArchivedColumnsArray.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
         this.archivedColumns = this.archivedColumns.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
+
+        this.dataService.arcTabColumns = this.archivedColumns;
         this.allARCColumnLength = this.archivedColumns.length + 1;
         // this.allColumns = pushedPOColumnsArray
         this.allColumns.forEach((val) => {
@@ -939,17 +979,14 @@ export class InvoiceComponent implements OnInit {
         this.serviceColumns = pushedArchivedColumnsArray.filter((element) => {
           return element.isActive == 1;
         });
-        const arrayOfColumnIdArchived = [];
-        this.serviceColumns.forEach((e) => {
-          arrayOfColumnIdArchived.push(e.dbColumnname);
-        });
-        this.columnstodisplayService = arrayOfColumnIdArchived;
+        this.columnstodisplayService = this.pushColumnsField(this.serviceColumns);
         this.allColumns = pushedArchivedColumnsArray.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
         this.serviceColumns = this.serviceColumns.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
+        this.dataService.serTabColumns = this.serviceColumns;
         this.allSRVColumnLength = this.serviceColumns.length + 1;
         // this.allColumns = pushedPOColumnsArray
         this.allColumns.forEach((val) => {
@@ -977,7 +1014,7 @@ export class InvoiceComponent implements OnInit {
 
   menuChange(value) {
     this.updateColumns = [];
-   
+
     this.activeMenuName = value;
     // this.getInvoiceData();
     this.dataService.allPaginationFirst = 0;
@@ -986,9 +1023,13 @@ export class InvoiceComponent implements OnInit {
       this.route.navigate([this.invoiceTab]);
       this.dataService.doc_status_tab = this.invoiceTab;
       this.allSearchInvoiceString = [];
-      // this.getInvoiceColumns();
+      if (!this.invoiceColumns) {
+        this.getInvoiceColumns();
+      }
     } else if (value == 'po') {
-      // this.getPOColums();
+      if (!this.poColumns) {
+        this.getPOColums();
+      }
       this.route.navigate([this.POTab]);
       this.dataService.doc_status_tab = this.POTab;
       this.allSearchInvoiceString = [];
@@ -999,16 +1040,22 @@ export class InvoiceComponent implements OnInit {
       this.dataService.doc_status_tab = this.SOTab;
       this.allSearchInvoiceString = [];
       this.searchStr = this.dataService.searchSOStr;
-    }else if (value == 'grn') {
+    } else if (value == 'grn') {
       this.route.navigate([this.GRNTab]);
       this.dataService.doc_status_tab = this.GRNTab;
       this.allSearchInvoiceString = [];
       this.searchStr = this.dataService.searchGRNStr;
     } else if (value == 'ServiceInvoices') {
+      if (!this.serviceColumns) {
+        this.getServiceColumns();
+      }
       this.route.navigate([this.serviceInvoiceTab]);
       this.dataService.doc_status_tab = this.serviceInvoiceTab;
       this.allSearchInvoiceString = [];
     } else if (value == 'archived') {
+      if (!this.archivedColumns) {
+        this.getArchivedColumns();
+      }
       this.route.navigate([this.archivedTab]);
       this.dataService.doc_status_tab = this.archivedTab;
       this.allSearchInvoiceString = [];
@@ -1048,25 +1095,25 @@ export class InvoiceComponent implements OnInit {
 
   exportExcel() {
     let exportData = [];
-    if(!this.tableImportData){
-    if (this.route.url == this.invoiceTab) {
-      exportData = this.invoiceDispalyData;
-    } else if (this.route.url == this.POTab) {
-      exportData = this.poDispalyData;
-    } else if (this.route.url == this.GRNTab) {
-      exportData = this.GRNDispalyData;
-    } else if (this.route.url == this.archivedTab) {
-      exportData = this.archivedDisplayData;
-    } else if (this.route.url == this.rejectedTab) {
-      exportData = this.rejectedDisplayData;
-    } else if (this.route.url == this.GRNExceptionTab) {
-      exportData = this.rejectedDisplayData;
-    } else if (this.route.url == this.serviceInvoiceTab) {
-      exportData = this.serviceinvoiceDispalyData;
+    if (!this.tableImportData) {
+      if (this.route.url == this.invoiceTab) {
+        exportData = this.invoiceDispalyData;
+      } else if (this.route.url == this.POTab) {
+        exportData = this.poDispalyData;
+      } else if (this.route.url == this.GRNTab) {
+        exportData = this.GRNDispalyData;
+      } else if (this.route.url == this.archivedTab) {
+        exportData = this.archivedDisplayData;
+      } else if (this.route.url == this.rejectedTab) {
+        exportData = this.rejectedDisplayData;
+      } else if (this.route.url == this.GRNExceptionTab) {
+        exportData = this.rejectedDisplayData;
+      } else if (this.route.url == this.serviceInvoiceTab) {
+        exportData = this.serviceinvoiceDispalyData;
+      }
+    } else {
+      exportData = this.tableImportData;
     }
-  } else {
-    exportData = this.tableImportData;
-  }
     if (this.allSearchInvoiceString && this.allSearchInvoiceString.length > 0) {
       this.ImportExcelService.exportExcel(this.allSearchInvoiceString);
     } else if (exportData && exportData.length > 0) {
@@ -1255,7 +1302,7 @@ export class InvoiceComponent implements OnInit {
           this.dataService.offsetCountArc++;
           this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}&inv_type=${this.dataService.posted_inv_type}`;
           this.getDisplayARCData(this.APIParams);
-        }else {
+        } else {
           this.dataService.offsetCountArc++;
           this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}`;
           this.getDisplayARCData(this.APIParams);
@@ -1291,7 +1338,7 @@ export class InvoiceComponent implements OnInit {
           this.getDisplaySOData(this.APIParams);
         }
       }
-    }else if (this.route.url == this.GRNExceptionTab) {
+    } else if (this.route.url == this.GRNExceptionTab) {
       this.dataService.GRNExceptionPaginationFisrt = this.first;
       this.dataService.GRNExceptionPaginationRowLength = event.rows;
     } else if (this.route.url == this.serviceInvoiceTab) {
@@ -1319,7 +1366,7 @@ export class InvoiceComponent implements OnInit {
       } else if (this.route.url == this.SOTab) {
         this.dataService.SODisplayData = [];
         this.getDisplaySOData(this.APIParams);
-      }  else if (this.route.url == this.serviceInvoiceTab) {
+      } else if (this.route.url == this.serviceInvoiceTab) {
       }
     }
   }
@@ -1387,7 +1434,7 @@ export class InvoiceComponent implements OnInit {
       // this.dataService.rejectedPaginationFisrt = 1;
     } else if (this.route.url == this.SOTab) {
       this.dataService.SOPaginationFisrt = 0;
-      this.dataService.offsetCountSO= 1;
+      this.dataService.offsetCountSO = 1;
       this.dataService.SODisplayData = [];
       this.dataService.searchSOStr = event;
       if (this.dataService.searchSOStr == '') {
@@ -1398,79 +1445,97 @@ export class InvoiceComponent implements OnInit {
         this.getDisplaySOData(this.APIParams);
       }
       // this.dataService.rejectedPaginationFisrt = 1;
-    }else if (this.route.url == this.serviceInvoiceTab) {
+    } else if (this.route.url == this.serviceInvoiceTab) {
     }
   }
-  selectinvType(val){
+  selectinvType(val) {
     this.dataService.archivedDisplayData = [];
     this.dataService.posted_inv_type = val;
     this.getDisplayARCData(`?offset=${this.dataService.offsetCountArc}&limit=50&inv_type=${val}`);
   }
 
-  filterEmit(event){
+  filterEmit(event) {
     this.tableImportData = event;
   }
 
-  mob_columns(){
+  mob_columns() {
     this.invoiceColumns = [
-      { columnName : 'Invoice Number', dbColumnname:'docheaderID'},
-      { columnName : 'Vendor Name', dbColumnname:'VendorName'},
-      { columnName : 'Entity', dbColumnname:'EntityName'},
-      { columnName : 'PO Number', dbColumnname:'PODocumentID'}
+      { columnName: 'Invoice Number', dbColumnname: 'docheaderID' },
+      { columnName: 'Vendor Name', dbColumnname: 'VendorName' },
+      { columnName: 'Entity', dbColumnname: 'EntityName' },
+      { columnName: 'PO Number', dbColumnname: 'PODocumentID' }
     ];
     this.poColumns = [
-      { columnName : 'Vendor Name', dbColumnname:'VendorName'},
-      { columnName : 'Entity', dbColumnname:'EntityName'},
-      { columnName : 'PO Number', dbColumnname:'docheaderID'},
-      { columnName : 'Status', dbColumnname:'docstatus'}
+      { columnName: 'Vendor Name', dbColumnname: 'VendorName' },
+      { columnName: 'Entity', dbColumnname: 'EntityName' },
+      { columnName: 'PO Number', dbColumnname: 'docheaderID' },
+      { columnName: 'Status', dbColumnname: 'docstatus' }
     ];
     this.GRNColumns = [
-      { columnName : 'GRN Number', dbColumnname:'docheaderID'},
-      { columnName : 'Vendor Name', dbColumnname:'VendorName'},
+      { columnName: 'GRN Number', dbColumnname: 'docheaderID' },
+      { columnName: 'Vendor Name', dbColumnname: 'VendorName' },
       // { columnName : 'Entity', dbColumnname:'EntityName'},
-      { columnName : 'PO Number', dbColumnname:'PODocumentID'},
+      { columnName: 'PO Number', dbColumnname: 'PODocumentID' },
     ];
     this.archivedColumns = [
-      { columnName : 'Invoice Number', dbColumnname:'docheaderID'},
-      { columnName : 'Vendor Name', dbColumnname:'VendorName'},
-      { columnName : 'PO Number', dbColumnname:'PODocumentID'},
-      { columnName : 'Payment status', dbColumnname:'PaymentStatus'},
+      { columnName: 'Invoice Number', dbColumnname: 'docheaderID' },
+      { columnName: 'Vendor Name', dbColumnname: 'VendorName' },
+      { columnName: 'PO Number', dbColumnname: 'PODocumentID' },
+      { columnName: 'Payment status', dbColumnname: 'PaymentStatus' },
     ];
     this.rejectedColumns = this.invoiceColumns;
     this.serviceColumns = [
-      { columnName : 'Invoice Number', dbColumnname:'docheaderID'},
-      { columnName : 'Service Provider', dbColumnname:'ServiceProviderName'},
-      { columnName : 'Entity', dbColumnname:'EntityName'},
-      { columnName : 'Service Account', dbColumnname:'Account'}
+      { columnName: 'Invoice Number', dbColumnname: 'docheaderID' },
+      { columnName: 'Service Provider', dbColumnname: 'ServiceProviderName' },
+      { columnName: 'Entity', dbColumnname: 'EntityName' },
+      { columnName: 'Service Account', dbColumnname: 'Account' }
     ];
   }
 
-    // to prepare display columns array
-    prepareColumnsArray_mobile() {
-      this.invoiceColumns.filter((element) => {
-        this.columnstodisplayInvoice.push(element.dbColumnname);
-      });
-      this.poColumns.filter((element) => {
-        this.columnstodisplayPO.push(element.dbColumnname);
-      });
-      this.GRNColumns.filter((element) => {
-        this.columnstodisplayGRN.push(element.dbColumnname);
-      });
-      this.archivedColumns.filter((element) => {
-        this.columnstodisplayArchived.push(element.dbColumnname);
-      });
-      this.rejectedColumns.filter((element) => {
-        this.columnstodisplayrejected.push(element.dbColumnname);
-      });
-      this.serviceColumns.filter((element) => {
-        this.columnstodisplayService.push(element.dbColumnname);
-      });
-  
-      this.allInColumnLength = this.invoiceColumns.length + 1;
-      this.allPOColumnLength = this.poColumns.length + 1;
-      this.GRNColumnLength = this.GRNColumns.length + 1;
-      this.allARCColumnLength = this.archivedColumns.length + 1;
-      this.rejectedColumnLength = this.rejectedColumns.length + 1;
-      this.allSRVColumnLength = this.serviceColumns.length + 1;
+  // to prepare display columns array
+  prepareColumnsArray_mobile() {
+    this.invoiceColumns.filter((element) => {
+      this.columnstodisplayInvoice.push(element.dbColumnname);
+    });
+    this.poColumns.filter((element) => {
+      this.columnstodisplayPO.push(element.dbColumnname);
+    });
+    this.GRNColumns.filter((element) => {
+      this.columnstodisplayGRN.push(element.dbColumnname);
+    });
+    this.archivedColumns.filter((element) => {
+      this.columnstodisplayArchived.push(element.dbColumnname);
+    });
+    this.rejectedColumns.filter((element) => {
+      this.columnstodisplayrejected.push(element.dbColumnname);
+    });
+    this.serviceColumns.filter((element) => {
+      this.columnstodisplayService.push(element.dbColumnname);
+    });
+
+    this.allInColumnLength = this.invoiceColumns.length + 1;
+    this.allPOColumnLength = this.poColumns.length + 1;
+    this.GRNColumnLength = this.GRNColumns.length + 1;
+    this.allARCColumnLength = this.archivedColumns.length + 1;
+    this.rejectedColumnLength = this.rejectedColumns.length + 1;
+    this.allSRVColumnLength = this.serviceColumns.length + 1;
+  }
+
+  refreshInvoice(type) {
+    this.resfrshBool = true;
+    if (type == 'inv') {
+      this.getInvoiceData();
+    } else if (type == 'ser') {
+      this.getDisplayServiceInvoicedata();
     }
+
+  }
+
+  pushColumnsField(element) {
+    const arrayOfColumnId = [];
+    element.forEach((e) => {
+      arrayOfColumnId.push(e.dbColumnname);
+    });
+    return arrayOfColumnId;
+  }
 }

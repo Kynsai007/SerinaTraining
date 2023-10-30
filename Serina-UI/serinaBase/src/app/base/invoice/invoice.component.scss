@@ -15,6 +15,27 @@
   background-color: #5dc5cc !important;
   color: white;
 }
+.rotate {
+  animation: spin 3s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 :host ::ng-deep {
   .p-orderlist .p-orderlist-controls {
@@ -57,6 +78,8 @@
 .tableFilters {
   display: flex;
   justify-content: right;
+position: absolute;
+  right: 0;
 }
 .reversed {
   flex-direction: row-reverse;
@@ -98,11 +121,18 @@
     max-width:100%;
     position: relative;
   }
+.tableFilters {
+    position: relative;
+  }
 }
 @media screen and (max-width: 1100px){
 //   .tableDataDiv {
 //     margin-top: 40px !important;
 // }
+.tableFilters {
+
+  position: relative;
+}
 }
 @media screen and (max-width: 576px) {
   .nav_pane_width {
@@ -139,5 +169,8 @@
   }
   .left_ser {
     left: -80px;
+  }
+.tableFilters {
+    position: relative;
   }
  }

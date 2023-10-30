@@ -329,8 +329,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     } else {
       this.portalName = 'customer'
     }
-    this.init();
     this.getEntity();
+    this.init();
     this.ERPCostAllocation();
     this.AddPermission();
     // this.readVendors();
@@ -1600,7 +1600,8 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   getEntity() {
     this.dataService.getEntity().subscribe((data: any) => {
       this.entityList = data;
-
+      console.log(this.entityList,this.dataService.entityID );
+      this.SharedService.selectedEntityId = this.dataService.entityID;
       this.entityList.forEach(val => {
         if (this.dataService.entityID == val.idEntity) {
           this.entityName = val.EntityName;

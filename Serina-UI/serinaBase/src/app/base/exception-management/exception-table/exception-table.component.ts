@@ -256,6 +256,8 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.sharedService.invoiceID = e.idDocument;
     this.tagService.documentType = e.UploadDocType;
     this.ds.idDocumentType = e.idDocumentType;
+    this.ds.entityID = e.idEntity;
+    this.sharedService.selectedEntityId = e.idEntity;
     if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`) {
       this.ds.grnWithPOBoolean = false;
       this.router.navigate([
@@ -301,8 +303,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
                 this.router.navigate([
                   `${this.portalName}/ExceptionManagement/InvoiceDetails/${e.idDocument}`,
                 ]);
-                this.ds.entityID = e.idEntity;
-                this.sharedService.selectedEntityId = e.idEntity;
+
                 if (e.documentsubstatusID == 29) {
 
                 } else if (e.documentStatusID == 24) {
@@ -350,8 +351,6 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
             this.tagService.submitBtnBoolean = true;
             this.tagService.headerName = 'Edit Invoice';
             this.tagService.approval_selection_boolean = true;
-            this.ds.entityID = e.idEntity;
-            this.sharedService.selectedEntityId = e.idEntity;
             // this.ExceptionsService.selectedRuleId = e?.ruleID;
             this.router.navigate([
               'customer/ExceptionManagement/InvoiceDetails/' + e.idDocument,

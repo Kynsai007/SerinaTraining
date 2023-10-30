@@ -77,7 +77,7 @@ export class DataService {
     { id:14, name :'Posted In ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
     { id:24, name :'Set Approval', bgcolor: '#ECF9ED', textColor :'#3EB948'},
   ]
-  serviceinvoiceLoadedData: any[];
+  serviceinvoiceLoadedData = [];
   approvalServicePaginationRowLength = 10;
   approvalServicePaginationFirst = 0;
   approvalVendorPaginationFirst = 0;
@@ -162,6 +162,10 @@ export class DataService {
   isDesktop: boolean;
   vendorId: any;
   posted_inv_type = '';
+  invTabColumns: any;
+  poTabColumns: any;
+  arcTabColumns: any;
+  serTabColumns: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

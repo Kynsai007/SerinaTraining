@@ -60,7 +60,7 @@
                 "
                 class="nav-link"
                 (click)="menuChange('invoice')"
-                >Invoice({{ allInvoiceLength }})</a
+                >Invoice({{ allInvoiceLength }}) <i class="fa fa-refresh cursor" [ngClass]="resfrshBool? 'rotate':''" (click)="refreshInvoice('inv')" ></i> </a
               >
             </li>
             <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess">
@@ -137,7 +137,7 @@
                 "
                 class="nav-link ite"
                 (click)="menuChange('ServiceInvoices')"
-                >Service Invoices({{ serviceInvoiceLength }})</a
+                >Service Invoices({{ serviceInvoiceLength }})<i class="fa fa-refresh cursor" [ngClass]="resfrshBool? 'rotate':''" (click)="refreshInvoice('ser')" ></i></a
               >
             </li>
           </ul>
