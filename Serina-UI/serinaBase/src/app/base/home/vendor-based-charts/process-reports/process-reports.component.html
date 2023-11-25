@@ -83,7 +83,7 @@
 <div class="charts_height">
   <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
     <div class="chart_title f-12">Invoice Count by Entity</div>
-    <button *ngIf="invoiceByEntityChartdata?.length>0" class="btnUpload dwnload_btn" (click)="downloadReport()">
+    <button *ngIf="invoiceByEntityChartdata?.length>0" class="btnUpload dwnload_btn" (click)="downloadReport(invoiceByEntityChartdata)">
       <i class="fa fa-download" aria-hidden="true"></i>
     </button>
     <div class="chart_div">
@@ -103,13 +103,28 @@
       </div>
     </div>
 
-    <div class="chart_title f-12 l-52">Aging in Serina</div>
+    <div class="chart_title f-12 l-52">PO info</div>
+    <button *ngIf="poinfoTabledata?.length>0" class="btnUpload pos_ab_20" (click)="downloadReport(poinfoTabledata)">
+      <i class="fa fa-download" aria-hidden="true"></i>
+    </button>
     <div class="chart_div">
-      <div [ngStyle]="{'visibility': !noDataAgeboolean ? 'visible':'hidden'}" id="vendor_clm_chart1" ></div>
-      <div [ngStyle]="{'visibility': noDataAgeboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
+      <!-- <div [ngStyle]="{'visibility': !noDataSourceEntityboolean ? 'visible':'hidden'}" id="column_chart_entity"></div>
+      <div [ngStyle]="{'visibility': noDataSourceEntityboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
         No Data Available
+      </div> -->
+      <div class="mt-4 tableD">
+        <app-table
+          [tableData]="poinfoTabledata"
+          [invoiceColumns]="columnsForPoInfo"
+          [showPaginator]="showPaginatorPOinfo"
+          [columnsToFilter]="poInfoColumnField"
+          [columnLength]="ColumnLengthPoInfo"
+        >
+        </app-table>
       </div>
     </div>
+
+    
   </div>
   <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
     <div class="chart_title f-12">Invoice Pending by Amount</div>
@@ -140,6 +155,14 @@
     <div class="chart_div">
       <div [ngStyle]="{'visibility': !noDataSourceboolean ? 'visible':'hidden'}" id="pie_chart" ></div>
       <div [ngStyle]="{'visibility': noDataSourceboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
+        No Data Available
+      </div>
+    </div>
+
+    <div class="chart_title f-12 l-52">Aging in Serina</div>
+    <div class="chart_div">
+      <div [ngStyle]="{'visibility': !noDataAgeboolean ? 'visible':'hidden'}" id="vendor_clm_chart1" ></div>
+      <div [ngStyle]="{'visibility': noDataAgeboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
         No Data Available
       </div>
     </div>

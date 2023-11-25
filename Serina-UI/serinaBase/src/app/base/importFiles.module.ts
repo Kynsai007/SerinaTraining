@@ -25,6 +25,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {CalendarModule} from 'primeng/calendar';
 import {ChipsModule} from 'primeng/chips';
 import { NgxSpinnerModule } from "ngx-spinner"; 
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 import { TextMaskModule } from 'angular2-text-mask';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
@@ -56,7 +57,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
         ToastModule,
         CalendarModule,
         TextMaskModule,
-        InfiniteScrollModule
+        InfiniteScrollModule,
+        PdfViewerModule
       ],
       exports:[
         CommonModule,
@@ -79,7 +81,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
         ToastModule,
         CalendarModule,
         TextMaskModule,
-        InfiniteScrollModule
+        InfiniteScrollModule,
+        PdfViewerModule
       ],
       providers:[DatePipe, MessageService ]
 })

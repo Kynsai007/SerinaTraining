@@ -198,10 +198,11 @@
                     </div>
                   </ng-template>
                 </p-autoComplete>
-              </div>
 
+                              
+              </div>
               <!-- select service account -->
-              <div class="mr-2" *ngIf="selectedOption === 'Service'">
+              <div class="mr-2" *ngIf="portal_name == 'customer' && selectedOption === 'Service'">
                 <label class="f-13 mb-0">Select Account </label><br />
                 <p-autoComplete
                   placeholder="Select Account"
@@ -219,6 +220,66 @@
                   </ng-template>
                 </p-autoComplete>
               </div>
+              <div *ngIf="portal_name == 'customer'">
+                <label class="f-13 mb-0"
+                  >Invoice Type
+                  </label><br />
+                <select
+                  class="form-control accountSelect f-12"
+                  (change)="onSelectPOType($event.target.value, 'ideal')"
+                  name="invoiceType"
+                  ngModel
+                  [value]="invoiceType"
+                  required
+                  >
+                  <option value=""></option>
+                  <option value="nonPO">Non-PO</option>
+                  <option value="singlePO">Single PO</option>
+                </select>
+              </div>
+
+              <div *ngIf="portal_name == 'customer' && viewType == 'ideal' && selectedInvoiceType == 'singlePO'">
+                <label class="f-13 mb-0">Select PO Number</label><br />
+                <p-autoComplete
+                  placeholder="Select PO Number"
+                  (onSelect)="selectedPO($event)"
+                  [group]="false"
+                  [forceSelection]="true"
+                  [suggestions]="filteredPO"
+                  (completeMethod)="filterPOnumber($event)"
+                  field="PODocumentID"
+                  [dropdown]="true"
+                  name="PONumber"
+                  [(ngModel)]="selectedPoNumber"
+                  required
+                >
+                  <ng-template let-group pTemplate="group">
+                    <div class="flex align-items-center">
+                      <span class="f-12">{{ group.PODocumentID }}</span>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+              </div>
+
+              <div *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO'">
+                <label class="f-13 mb-0">Select GRN</label><br />
+                <p-multiSelect
+                  class="accountSelect"
+                  [options]="po_grn_list"
+                  placeholder="Number"
+                  filter="false"
+                  inputStyleClass="form-control"
+                  optionLabel="PackingSlip"
+                  [maxSelectedLabels]="3"
+                  [selectedItemsLabel]="'{0} items selected'"
+                  (onChange)="selectIdealGrn($event)"
+                  name="PO_GRN_Number"
+                  [(ngModel)]="selectedGRNNumber"
+                >
+                </p-multiSelect>
+              </div>
+
+
 
               <!--Select type of Vendor-->
               <!-- <div>
@@ -312,6 +373,23 @@
                     >
                   </div>
                 </div>
+                
+
+                <div class="pagerange" *ngIf="selectPageRange">
+                  <label class="text-center f-13 mb-0">Select Page Of Invoice</label>
+                  <input type="text"
+                    class="form-control accountSelect f-12"
+                    name="pageLimit"
+                    [(ngModel)]="inputValue"
+                    (blur)="changeValue('ideal')"
+                    (input)="onInputValueChange('ideal')"
+                    required
+                    [min]="lowerLimit"
+                    [max]="upperLimit"
+                    placeholder="Eg:1-5, 7, 11-15"
+                    [pattern]="allowedPattern"
+                    required>
+                </div>
 
                 <div class="f-13 mt-2 mb-2" style="color: green">
                   {{ processStage }}
@@ -365,7 +443,7 @@
                 </button>
                 <button
                   class="btn btnVender bg-btn-success"
-                  [disabled]="progress || OcrProgress"
+                  [disabled]="progress || OcrProgress || isButtonDisabled"
                   (click)="selectedOption === 'Vendor' ? uploadInvoice() : uploadService()"
                 >
                   Upload
@@ -419,7 +497,6 @@
         <div>
           <label class="f-13 mb-0">Select Vendor</label><br />
           <p-autoComplete
-            #vdropdown
             placeholder="Select vendor"
             (onSelect)="selectVendorAccount($event)"
             [group]="false"
@@ -484,7 +561,7 @@
           </select>
         </div>
 
-        <div *ngIf="selectedInvoiceType == 'singlePO' || selectedInvoiceType == 'nonPO'">
+        <div *ngIf="viewType != 'ideal' && (selectedInvoiceType == 'singlePO' || selectedInvoiceType == 'nonPO')">
           <label class="f-13 mb-0">Select Category</label>
           <select
             class="form-control accountSelect f-12"
@@ -498,7 +575,7 @@
         </div>
 
         <!-- select PO Number -->
-        <div *ngIf="selectedInvoiceType == 'singlePO'">
+        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO'">
           <label class="f-13 mb-0">Select PO Number</label><br />
           <p-autoComplete
             placeholder="Select PO Number"
@@ -522,7 +599,7 @@
         </div>
 
         <!-- select Invoice Number -->
-        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory == 'returns'">
+        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO' && selectedCategory == 'returns'">
           <label class="f-13 mb-0">Select Invoice Number</label><br />
           <p-autoComplete
             placeholder="Select Invoice Number"
@@ -546,7 +623,7 @@
         </div>
 
         <!-- select GRN Number -->
-        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory == 'credit'" >
+        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO' && selectedCategory == 'credit'" >
           <label class="f-13 mb-0">Select GRN</label><br />
           <p-multiSelect
             [options]="po_grn_list"
@@ -564,7 +641,7 @@
         </div>
 
         <!-- select GRN Line -->
-        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory == 'credit'">
+        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO' && selectedCategory == 'credit'">
           <label class="f-13 mb-0">Select GRN Line</label><br />
           <p-multiSelect
             [options]="po_grn_line_list"
@@ -581,7 +658,7 @@
           </p-multiSelect>
         </div>
 
-        <div *ngIf="selectedInvoiceType == 'singlePO' && selectedCategory != 'returns'">
+        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO' && selectedCategory != 'returns'">
           <div style="visibility: hidden">visible</div>
           <button
             class="img-browse b-0 mt-0 bg-gray"
@@ -645,6 +722,42 @@
             ngModel
             required
           />
+        </div>
+        <!--hiding pdf not to view-->
+        <!-- <div #hiddenContainer style="position: absolute; left: -9999px; top: -9999px;">
+          <div  *ngIf="attachedBoolean">
+            <p>sucess</p>
+            <pdf-viewer
+                [src]="pdfSrc"
+                [show-all]="true"
+                [original-size]="false"
+                [fit-to-page]="true"
+                [render-text]="true"
+                [render-text-mode]="2"
+                (after-load-complete)="afterLoadComplete($event)"
+              >
+            </pdf-viewer>
+            
+          </div>
+        </div> -->
+
+        <!-- select page limit -->
+        <div *ngIf="slctinvoicelimit">
+          <label class="f-13 mb-0">Select Pages Of Invoice  </label>
+
+            <!-- lower limit as flexible -->
+            <input type="text"
+              class=" form-control accountSelect f-12"
+              name="pageLimit"
+              [(ngModel)]="inputValue"
+              (blur)="changeValue()"
+              (input)="onInputValueChange()"
+              required 
+              [min]="lowerLimit"
+              [max]="upperLimit"
+              placeholder="Eg:1-5, 7, 11-15"
+              [pattern]="allowedPattern"
+            >
         </div>
         <div>
           <div class="f-13 mb-1">Support Document</div>
@@ -719,8 +832,9 @@
           <div style="visibility: hidden">visible</div>
           <button
             class="img-browse b-0 mt-0 bg-blue"
-            [disabled]="quickUploadForm.invalid"
-            [ngClass]="quickUploadForm.invalid ? 'disable' : ''"
+            [disabled]="isButtonDisabled || quickUploadForm.invalid"
+            [ngClass]="isButtonDisabled || quickUploadForm.invalid ? 'disable' : ''"
+            (click)="checkSupportFile()"
           >
             + Add
           </button>
@@ -730,10 +844,10 @@
           <button
             class="img-browse b-0 mt-0 bg-btn-success"
             style="background: #89d390 !important"
-            [disabled]="quickUploadForm.invalid"
-            [ngClass]="quickUploadForm.invalid ? 'disable' : ''"
+            [disabled]="isButtonDisabled ||quickUploadForm.invalid"
+            [ngClass]=" isButtonDisabled || quickUploadForm.invalid ? 'disable' : ''"
             type="button"
-            (click)="uploadSigle(quickUploadForm.value)"
+            (click)="uploadCheck(quickUploadForm.value)"
           >
             Upload
           </button>
@@ -846,6 +960,22 @@
     >
       <help></help>
     </div>
+  </div>
+</div>
+<!--hiding pdf not to view-->
+<div #hiddenContainer style="position: absolute; left: -9999px; top: -9999px;">
+  <div  *ngIf="attachedBoolean">
+    <pdf-viewer
+        [src]="pdfSrc"
+        [show-all]="true"
+        [original-size]="false"
+        [fit-to-page]="true"
+        [render-text]="true"
+        [render-text-mode]="2"
+        (after-load-complete)="afterLoadComplete($event)"
+      >
+    </pdf-viewer>
+    
   </div>
 </div>
 

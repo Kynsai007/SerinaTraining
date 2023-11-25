@@ -4,7 +4,7 @@ import { ImportExcelService } from './../../services/importExcel/import-excel.se
 import { DateFilterService } from './../../services/date/date-filter.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
 
 import { MessageService } from 'primeng/api';
@@ -12,19 +12,6 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { MatSidenav } from '@angular/material/sidenav';
-
-export interface UserData {
-  invoiceId: number;
-  poNumber: number;
-  VenderId: string;
-  Vendername: string;
-  entity: string;
-  uploaded: string;
-  modified: string;
-  status: string;
-  amount: string;
-  date: string;
-}
 
 export interface updateColumn {
   idtabColumn: number;
@@ -42,7 +29,6 @@ export interface updateColumn {
 export class InvoiceComponent implements OnInit {
   displayInvoicePage: boolean = true;
   activeMenuName: string = 'invoice';
-  users: UserData[];
   showPaginator: boolean;
   invoiceDispalyData = [];
   allInvoiceLength: number;
@@ -101,7 +87,7 @@ export class InvoiceComponent implements OnInit {
   allARCColumnLength: any;
   allSRVColumnLength: any;
   filterData: any[];
-  filterDataService: any[];
+  filterds: any[];
   totalInvoicesData: any[];
   filterDataArchived: any;
 
@@ -118,13 +104,6 @@ export class InvoiceComponent implements OnInit {
   serviceInvoiceTab: any;
   first: any;
   searchStr: string;
-
-  // searchPOStr = '';
-  // searchGRNStr = '';
-  // searchArcStr = '';
-  // searchRejStr = '';
-  GRNExceptionTab: any;
-  GRNExcpLength: number;
   GRNCreateBool: boolean;
   vendorInvoiceAccess: boolean;
   serviceInvoiceAccess: boolean;
@@ -132,25 +111,15 @@ export class InvoiceComponent implements OnInit {
   partyType: string;
   isDesktop: boolean;
   tableImportData: any;
-  resfrshBool: boolean;
+  refreshBool: boolean;
+  invTabAllColumns: any;
+  poTabAllColumns: any;
+  arcTabAllColumns: any;
+  invsTabAllColumns: any;
   close(reason: string) {
     this.sidenav.close();
   }
   APIParams: string;
-  // offsetCountPO :number;
-  // pageCountVariablePO :number;
-  // offsetCountGRN :number;
-  // pageCountVariableGRN :number;
-  // offsetCountArc :number;
-  // pageCountVariableArc :number;
-  // offsetCountRej:number;
-  // pageCountVariableRej:number;
-
-  GRNExcpDispalyData = [];
-  GRNExcpColumns = [];
-  showPaginatorGRNExcp: boolean;
-  columnstodisplayGRNExcp = [];
-  GRNExcpColumnLength: number;
 
   rejectedColumns: any = [];
   columnstodisplayrejected: any = [];
@@ -166,28 +135,28 @@ export class InvoiceComponent implements OnInit {
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
     private messageService: MessageService,
-    private dataService: DataService,
+    private ds: DataService,
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
-    private location: Location,
     private authService: AuthenticationService
-  ) { }
+  ) { 
+  }
 
   ngOnInit(): void {
     this.userDetails = this.authService.currentUserValue;
-    this.GRNCreateBool = this.dataService.configData?.enableGRN;
-    this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
-    this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
-    this.isDesktop = this.dataService.isDesktop;
+    this.GRNCreateBool = this.ds.configData?.enableGRN;
+    this.vendorInvoiceAccess = this.ds?.configData?.vendorInvoices;
+    this.serviceInvoiceAccess = this.ds?.configData?.serviceInvoices;
+    this.isDesktop = this.ds.isDesktop;
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
       if (!this.vendorInvoiceAccess) {
-        if (this.dataService.doc_status_tab == undefined) {
+        if (this.ds.doc_status_tab == undefined) {
           this.route.navigate([`/${this.portal_name}/invoice/ServiceInvoices`])
         } else {
-          // this.route.navigate([`${this.dataService.doc_status_tab}`]);
+          // this.route.navigate([`${this.ds.doc_status_tab}`]);
         }
       }
     } else if (this.userDetails.user_type == 'vendor_portal') {
@@ -196,31 +165,22 @@ export class InvoiceComponent implements OnInit {
 
     }
     if (this.vendorInvoiceAccess) {
-      if (this.dataService.ap_boolean) {
+      if (this.ds.ap_boolean) {
         this.partyType = 'Vendor';
         this.invoceDoctype = true;
-        if (!this.dataService.doc_status_tab) {
+        if (!this.ds.doc_status_tab) {
           this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
         } else {
-          // this.route.navigate([`${this.dataService.doc_status_tab}`]);
+          // this.route.navigate([`${this.ds.doc_status_tab}`]);
         }
-        if (this.GRNCreateBool) {
-          this.readGRNExceptionData();
-        }
-
       } else {
-        if (!this.dataService.doc_status_tab) {
+        if (!this.ds.doc_status_tab) {
           this.route.navigate([`/${this.portal_name}/invoice/PO`]);
         } else {
-          this.route.navigate([`${this.dataService.doc_status_tab}`]);
+          this.route.navigate([`${this.ds.doc_status_tab}`]);
         }
         this.partyType = 'Customer';
-
       }
-    }
-    if (this.serviceInvoiceAccess) {
-      // this.getServiceColumns();
-      this.getDisplayServiceInvoicedata();
     }
     this.APIParams = `?offset=1&limit=50`;
 
@@ -235,43 +195,43 @@ export class InvoiceComponent implements OnInit {
     // this.getDisplayReceiptdata();
 
   }
+  
 
   deviceColumns() {
-    console.log(this.route.url)
-    if (this.dataService.isDesktop) {
-      if (this.route.url == this.invoiceTab) {
-        if (this.dataService.invTabColumns) {
-          this.invoiceColumns = this.dataService.invTabColumns;
+    if (this.ds.isDesktop) {
+      // if (this.route.url == this.invoiceTab) {
+        if (this.ds.invTabColumns) {
+          this.invoiceColumns = this.ds.invTabColumns;
           this.allInColumnLength = this.invoiceColumns.length + 1;
           this.columnstodisplayInvoice = this.pushColumnsField(this.invoiceColumns);
         } else {
           this.getInvoiceColumns();
         }
-      } else if (this.route.url == this.POTab) {
-        if (this.dataService.poTabColumns) {
-          this.poColumns = this.dataService.poTabColumns;
+      // } else if (this.route.url == this.POTab) {
+        if (this.ds.poTabColumns) {
+          this.poColumns = this.ds.poTabColumns;
           this.allPOColumnLength = this.poColumns.length + 1;
           this.columnstodisplayPO = this.pushColumnsField(this.poColumns);
         } else {
-          this.getPOColums();
+          this.getPOColumns();
         }
-      } else if (this.route.url == this.archivedTab) {
-        if (this.dataService.arcTabColumns) {
-          this.archivedColumns = this.dataService.arcTabColumns;
+      // } else if (this.route.url == this.archivedTab) {
+        if (this.ds.arcTabColumns) {
+          this.archivedColumns = this.ds.arcTabColumns;
           this.allARCColumnLength = this.archivedColumns.length + 1;
           this.columnstodisplayArchived = this.pushColumnsField(this.archivedColumns);
         } else {
           this.getArchivedColumns();
         }
-      } else if (this.route.url == this.serviceInvoiceTab) {
-        if (this.dataService.serTabColumns) {
-          this.serviceColumns = this.dataService.serTabColumns;
+      // } else if (this.route.url == this.serviceInvoiceTab) {
+        if (this.ds.serTabColumns) {
+          this.serviceColumns = this.ds.serTabColumns;
           this.allSRVColumnLength = this.serviceColumns.length + 1;
           this.columnstodisplayService = this.pushColumnsField(this.serviceColumns);
         } else {
           this.getServiceColumns();
         }
-      }
+      // }
       this.prepareColumns();
     } else {
       this.mob_columns();
@@ -280,69 +240,69 @@ export class InvoiceComponent implements OnInit {
   }
 
   restoreData() {
-    this.totalInvoicesData = this.dataService.invoiceLoadedData;
-    this.serviceinvoiceDispalyData = this.dataService.serviceinvoiceLoadedData;
+    this.invoiceDispalyData = this.ds.invoiceLoadedData;
+    this.serviceinvoiceDispalyData = this.ds.serviceinvoiceLoadedData;
 
     // this.filterData = this.invoiceDispalyData;
-    // this.allInvoiceLength = this.dataService.invoiceLoadedData.length;
-    // if (this.allInvoiceLength > 10) {
-    //   this.showPaginatorAllInvoice = true;
-    // }
+    this.allInvoiceLength = this.ds.invoiceLoadedData.length;
+    if (this.allInvoiceLength > 10) {
+      this.showPaginatorAllInvoice = true;
+    }
     this.serviceInvoiceLength = this.serviceinvoiceDispalyData.length;
     if (this.serviceInvoiceLength > 10) {
       this.showPaginatorServiceInvoice = true;
     }
-    this.filterForArchived();
-    this.poDispalyData = this.dataService.poLoadedData;
-    this.poArrayLength = this.dataService.POtableLength;
+    // this.filterForArchived();
+    this.poDispalyData = this.ds.poLoadedData;
+    this.poArrayLength = this.ds.POtableLength;
     if (this.poDispalyData.length > 10 && this.isDesktop) {
       this.showPaginatorPOTable = true;
     }
-    this.soDisplayData = this.dataService.SODisplayData;
-    this.soArrayLength = this.dataService.soArrayLength;
+    this.soDisplayData = this.ds.SODisplayData;
+    this.soArrayLength = this.ds.soArrayLength;
     if (this.soDisplayData.length > 10 && this.isDesktop) {
       this.showPaginatorSOTable = true;
     }
-    this.GRNDispalyData = this.dataService.GRNLoadedData;
-    this.GRNArrayLength = this.dataService.GRNTableLength;
+    this.GRNDispalyData = this.ds.GRNLoadedData;
+    this.GRNArrayLength = this.ds.GRNTableLength;
     if (this.GRNDispalyData.length > 10 && this.isDesktop) {
       this.showPaginatorGRNTable = true;
     }
-    this.archivedDisplayData = this.dataService.archivedDisplayData;
-    this.archivedLength = this.dataService.ARCTableLength;
+    this.archivedDisplayData = this.ds.archivedDisplayData;
+    this.archivedLength = this.ds.ARCTableLength;
     if (this.archivedDisplayData.length > 10 && this.isDesktop) {
       this.showPaginatorArchived = true;
     }
-    this.rejectedDisplayData = this.dataService.rejectedDisplayData;
-    this.rejectedLength = this.dataService.rejectTableLength;
+    this.rejectedDisplayData = this.ds.rejectedDisplayData;
+    this.rejectedLength = this.ds.rejectTableLength;
     if (this.rejectedDisplayData.length > 10 && this.isDesktop) {
       this.showPaginatorRejected = true;
     }
-    this.receiptDispalyData = this.dataService.receiptLoadedData;
-    this.receiptArrayLength = this.dataService.receiptLoadedData.length;
+    this.receiptDispalyData = this.ds.receiptLoadedData;
+    this.receiptArrayLength = this.ds.receiptLoadedData.length;
     this.visibleSidebar2 = this.sharedService.sidebarBoolean;
-    if (this.dataService.invoiceLoadedData.length == 0 && this.invoceDoctype) {
+    if (this.ds.invoiceLoadedData.length == 0 && this.invoceDoctype) {
       this.getInvoiceData();
     }
-    if (this.dataService.serviceinvoiceLoadedData.length == 0) {
+    if (this.ds.serviceinvoiceLoadedData.length == 0 && this.serviceInvoiceAccess) {
       this.getDisplayServiceInvoicedata();
     }
-    if (this.dataService.poLoadedData.length == 0) {
+    if (this.ds.poLoadedData.length == 0) {
       this.getDisplayPOData(this.APIParams);
     }
-    if (this.dataService.GRNLoadedData.length == 0 && this.invoceDoctype) {
+    if (this.ds.GRNLoadedData.length == 0 && this.invoceDoctype) {
       this.getDisplayGRNdata(this.APIParams);
     }
-    if (this.dataService.archivedDisplayData.length == 0) {
+    if (this.ds.archivedDisplayData.length == 0) {
       this.getDisplayARCData(this.APIParams);
     }
-    if (this.dataService.rejectedDisplayData.length == 0) {
+    if (this.ds.rejectedDisplayData.length == 0) {
       this.getDisplayRejectedData(this.APIParams);
     }
-    if (this.dataService.SODisplayData.length == 0) {
+    if (this.ds.SODisplayData.length == 0) {
       this.getDisplaySOData(this.APIParams);
     }
-    if (this.dataService.receiptLoadedData.length == 0) {
+    if (this.ds.receiptLoadedData.length == 0) {
       // this.getDisplayReceiptdata();
     }
   }
@@ -354,22 +314,10 @@ export class InvoiceComponent implements OnInit {
     this.GRNTab = `/${this.portal_name}/invoice/GRN`;
     this.archivedTab = `/${this.portal_name}/invoice/archived`;
     this.rejectedTab = `/${this.portal_name}/invoice/rejected`;
-    this.GRNExceptionTab = `/${this.portal_name}/invoice/GRNExceptions`;
     this.serviceInvoiceTab = `/${this.portal_name}/invoice/ServiceInvoices`;
   }
 
   prepareColumns() {
-    this.GRNExcpColumns = [
-      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
-      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
-      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
-      { dbColumnname: 'GRNNumber', columnName: 'GRN Number' },
-      { dbColumnname: 'EntityName', columnName: 'Entity' },
-      { dbColumnname: 'RejectDescription', columnName: 'Description' },
-      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
-      { dbColumnname: 'totalAmount', columnName: 'Amount' },
-      // { dbColumnname: 'documentPaymentStatus', columnName: 'Status' },
-    ];
     this.rejectedColumns = [
       // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
       { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
@@ -401,12 +349,9 @@ export class InvoiceComponent implements OnInit {
         columnName: `${this.partyType} Name`,
       });
     }
-    this.GRNExcpColumns.forEach((val) => {
-      this.columnstodisplayGRNExcp.push(val.dbColumnname);
-    });
 
     this.rejectedColumns.forEach((e) => {
-      if (!this.dataService.ap_boolean && e.columnName == 'Invoice Number') {
+      if (!this.ds.ap_boolean && e.columnName == 'Invoice Number') {
         e.columnName = 'Document Number'
       }
       this.columnstodisplayrejected.push(e.dbColumnname);
@@ -415,8 +360,6 @@ export class InvoiceComponent implements OnInit {
     this.GRNColumns.forEach((e) => {
       this.columnstodisplayGRN.push(e.dbColumnname);
     });
-
-    this.GRNExcpColumnLength = this.GRNExcpColumns.length + 1;
     this.rejectedColumnLength = this.rejectedColumns.length + 1;
     this.GRNColumnLength = this.GRNColumns.length + 1;
 
@@ -432,19 +375,19 @@ export class InvoiceComponent implements OnInit {
       this.routeName = 'allInvoices';
     } else if (this.route.url == this.POTab) {
       this.routeName = 'PO';
-      this.searchStr = this.dataService.searchPOStr;
+      this.searchStr = this.ds.searchPOStr;
     } else if (this.route.url == this.SOTab) {
       this.routeName = 'SO';
-      this.searchStr = this.dataService.searchSOStr;
+      this.searchStr = this.ds.searchSOStr;
     } else if (this.route.url == this.archivedTab) {
       this.routeName = 'archived';
-      this.searchStr = this.dataService.searchArcStr;
+      this.searchStr = this.ds.searchArcStr;
     } else if (this.route.url == this.rejectedTab) {
       this.routeName = 'rejected';
-      this.searchStr = this.dataService.searchRejStr;
+      this.searchStr = this.ds.searchRejStr;
     } else if (this.route.url == this.GRNTab) {
       this.routeName = 'GRN';
-      this.searchStr = this.dataService.searchGRNStr;
+      this.searchStr = this.ds.searchGRNStr;
     }
   }
   getInvoiceData() {
@@ -453,7 +396,7 @@ export class InvoiceComponent implements OnInit {
       (data: any) => {
         const invoicePushedArray = [];
         if (data) {
-          this.resfrshBool = false;
+          this.refreshBool = false;
           data.ok.Documentdata.forEach((element) => {
             let invoiceData = {
               ...element.Document,
@@ -477,49 +420,23 @@ export class InvoiceComponent implements OnInit {
             }
             invoicePushedArray.push(invoiceData);
           });
-          this.totalInvoicesData = invoicePushedArray;
-          this.filterForArchived();
-          this.dataService.invoiceLoadedData = invoicePushedArray;
+          this.invoiceDispalyData = invoicePushedArray;
+          // this.filterForArchived();
+          this.allInvoiceLength = this.invoiceDispalyData.length;
+          if (this.allInvoiceLength> 10 && this.isDesktop) {
+            this.showPaginatorAllInvoice = true;
+          }
+          this.ds.invoiceLoadedData = invoicePushedArray;
         }
         this.SpinnerService.hide();
       },
       (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTrigger(error.statusText);
         this.SpinnerService.hide();
       }
     ), err => {
       this.SpinnerService.hide();
     };
-  }
-
-  filterForArchived() {
-    const archived = [];
-    const allInvoices = [];
-    const rejected = [];
-    this.totalInvoicesData.forEach((ele) => {
-      allInvoices.push(ele);
-    });
-    setTimeout(() => {
-      // this.archivedDisplayData = archived;
-      this.filterDataArchived = this.archivedDisplayData;
-      // this.archivedLength = this.archivedDisplayData.length;
-      // if (this.archivedDisplayData.length > 10) {
-      //   this.showPaginatorArchived = true;
-      // }
-      this.invoiceDispalyData = allInvoices;
-      // this.rejectedDisplayData = rejected;
-      // this.rejectedLength = this.rejectedDisplayData.length;
-      // if (this.rejectedDisplayData.length > 10) {
-      //   this.showPaginatorRejected = true;
-      // }
-
-      this.filterData = this.invoiceDispalyData;
-      this.allInvoiceLength = this.invoiceDispalyData.length;
-      if (this.invoiceDispalyData.length > 10 && this.isDesktop) {
-        this.showPaginatorAllInvoice = true;
-      }
-    }, 500);
   }
 
   getDisplayPOData(data) {
@@ -543,18 +460,17 @@ export class InvoiceComponent implements OnInit {
           });
         }
         this.poDispalyData =
-          this.dataService.poLoadedData.concat(poPushedArray);
-        this.dataService.poLoadedData = this.poDispalyData;
+          this.ds.poLoadedData.concat(poPushedArray);
+        this.ds.poLoadedData = this.poDispalyData;
         this.poArrayLength = data.ok.total_po;
-        this.dataService.POtableLength = data.ok.total_po;
+        this.ds.POtableLength = data.ok.total_po;
         if (this.poDispalyData.length > 10 && this.isDesktop) {
           this.showPaginatorPOTable = true;
         }
         this.SpinnerService.hide();
       },
       (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTrigger(error.statusText);
         this.SpinnerService.hide();
       }
     );
@@ -565,18 +481,18 @@ export class InvoiceComponent implements OnInit {
     this.sharedService.getGRNdata(data).subscribe((data: any) => {
       let grnD = []
       data.grndata?.forEach(ele => {
-        let merg = { ...ele.Document }
-        merg.EntityName = ele.EntityName;
-        merg.VendorName = ele.VendorName;
-        merg.grn_type = ele.grn_type;
-        merg.firstName = ele.firstName;
-        merg.InvoiceNumber = ele.InvoiceNumber;
-        grnD.push(merg)
+        let merge = { ...ele.Document }
+        merge.EntityName = ele.EntityName;
+        merge.VendorName = ele.VendorName;
+        merge.grn_type = ele.grn_type;
+        merge.firstName = ele.firstName;
+        merge.InvoiceNumber = ele.InvoiceNumber;
+        grnD.push(merge)
       })
 
-      this.GRNDispalyData = this.dataService.GRNLoadedData.concat(grnD);
-      this.dataService.GRNLoadedData = this.GRNDispalyData;
-      this.dataService.GRNTableLength = data.grn_total;
+      this.GRNDispalyData = this.ds.GRNLoadedData.concat(grnD);
+      this.ds.GRNLoadedData = this.GRNDispalyData;
+      this.ds.GRNTableLength = data.grn_total;
       this.GRNArrayLength = data.grn_total;
       if (this.GRNDispalyData.length > 10 && this.isDesktop) {
         this.showPaginatorGRNTable = true;
@@ -620,8 +536,8 @@ export class InvoiceComponent implements OnInit {
 
 
       this.archivedDisplayData =
-        this.dataService.archivedDisplayData.concat(invoicePushedArray);
-      this.dataService.archivedDisplayData = this.archivedDisplayData;
+        this.ds.archivedDisplayData.concat(invoicePushedArray);
+      this.ds.archivedDisplayData = this.archivedDisplayData;
       this.archivedDisplayData.forEach((ele1) => {
         for (let name in ele1) {
           if (name == 'ServiceProviderName') {
@@ -629,11 +545,11 @@ export class InvoiceComponent implements OnInit {
           }
         }
       });
-      if (this.dataService.posted_inv_type != 'ser') {
-        this.dataService.ARCTableLength = data?.result?.ven?.ok?.total_arc;
+      if (this.ds.posted_inv_type != 'ser') {
+        this.ds.ARCTableLength = data?.result?.ven?.ok?.total_arc;
         this.archivedLength = data?.result?.ven?.ok?.total_arc;
       } else {
-        this.dataService.ARCTableLength = data?.result?.ser?.ok?.total_arc;
+        this.ds.ARCTableLength = data?.result?.ser?.ok?.total_arc;
         this.archivedLength = data?.result?.ser?.ok?.total_arc;
       }
       if (this.archivedLength > 10 && this.isDesktop) {
@@ -682,9 +598,9 @@ export class InvoiceComponent implements OnInit {
         }
       });
       this.rejectedDisplayData =
-        this.dataService.rejectedDisplayData.concat(invoicePushedArray);
-      this.dataService.rejectedDisplayData = this.rejectedDisplayData;
-      this.dataService.rejectTableLength = data?.result?.ven?.ok?.total_rejected;
+        this.ds.rejectedDisplayData.concat(invoicePushedArray);
+      this.ds.rejectedDisplayData = this.rejectedDisplayData;
+      this.ds.rejectTableLength = data?.result?.ven?.ok?.total_rejected;
       this.rejectedLength = data?.result?.ven?.ok?.total_rejected;
       if (this.rejectedDisplayData.length > 10 && this.isDesktop) {
         this.showPaginatorRejected = true;
@@ -710,9 +626,9 @@ export class InvoiceComponent implements OnInit {
       });
 
       this.soDisplayData =
-        this.dataService.SODisplayData.concat(invoicePushedArray);
-      this.dataService.SODisplayData = this.soDisplayData;
-      this.dataService.soArrayLength = data?.ok?.total_po;
+        this.ds.SODisplayData.concat(invoicePushedArray);
+      this.ds.SODisplayData = this.soDisplayData;
+      this.ds.soArrayLength = data?.ok?.total_po;
       this.soArrayLength = data?.ok?.total_po;
       if (this.soDisplayData.length > 10 && this.isDesktop) {
         this.showPaginatorSOTable = true;
@@ -721,38 +637,13 @@ export class InvoiceComponent implements OnInit {
     });
   }
 
-  readGRNExceptionData() {
-    this.sharedService.getGRNExceptionData('').subscribe((data: any) => {
-      const invoicePushedArray = [];
-      data?.result?.ok?.Documentdata?.forEach((element) => {
-        let invoiceData = {
-          ...element.Document,
-          ...element.Entity,
-          ...element.EntityBody,
-          ...element.VendorAccount,
-          ...element.Vendor,
-          ...element.GrnReupload
-        };
-        invoiceData['docstatus'] = element.docstatus;
-        invoicePushedArray.push(invoiceData);
-      });
-      this.GRNExcpDispalyData =
-        this.dataService.GRNExcpDispalyData.concat(invoicePushedArray);
-      this.dataService.GRNExcpTableLength = this.GRNExcpDispalyData.length;
-      this.GRNExcpLength = this.GRNExcpDispalyData.length;
-      if (this.GRNExcpDispalyData.length > 10 && this.isDesktop) {
-        this.showPaginatorGRNExcp = true;
-      }
-    })
-  }
-
   getDisplayServiceInvoicedata() {
     this.SpinnerService.show();
     this.sharedService.getServiceInvoices().subscribe(
       (data: any) => {
         const invoicePushedArray = [];
         if (data) {
-          this.resfrshBool = false;
+          this.refreshBool = false;
           data.ok.Documentdata.forEach((element) => {
             let invoiceData = {
               ...element.Document,
@@ -762,7 +653,6 @@ export class InvoiceComponent implements OnInit {
               ...element.ServiceAccount,
               ...element.DocumentSubStatus
             };
-            // invoiceData.append('docStatus',element.docStatus)
             invoiceData['docstatus'] = element.docstatus;
             invoicePushedArray.push(invoiceData);
           });
@@ -774,117 +664,65 @@ export class InvoiceComponent implements OnInit {
               allInvoicesService.push(ele);
             }
           });
-          // this.archivedDisplayData.forEach((ele1) => {
-          //   for (let name in ele1) {
-          //     if (name == 'ServiceProviderName') {
-          //       ele1['VendorName'] = ele1['ServiceProviderName'];
-          //     }
-          //   }
-          // });
-          // this.filterForArchived();
           setTimeout(() => {
             this.serviceinvoiceDispalyData = allInvoicesService;
-            this.filterDataService = this.serviceinvoiceDispalyData;
-            this.dataService.serviceinvoiceLoadedData = allInvoicesService;
+            this.filterds = this.serviceinvoiceDispalyData;
+            this.ds.serviceinvoiceLoadedData = allInvoicesService;
             this.serviceInvoiceLength = this.serviceinvoiceDispalyData.length;
             if (this.serviceinvoiceDispalyData.length > 10 && this.isDesktop) {
               this.showPaginatorServiceInvoice = true;
             }
-            // this.filterDataArchived = this.archivedDisplayData;
-            // this.archivedLength = this.archivedDisplayData.length;
-            // if (this.archivedDisplayData.length > 10) {
-            //   this.showPaginatorArchived = true;
-            // }
           }, 500);
         }
         this.SpinnerService.hide();
       },
       (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
+        this.errorTrigger(error.statusText);
         this.SpinnerService.hide();
       }
     );
   }
-
-  getColumnsData() { }
 
   getInvoiceColumns() {
-    this.SpinnerService.show();
-    this.updateColumns = [];
-    this.sharedService.readColumnInvoice('INV').subscribe(
-      (data: any) => {
-        const pushedInvoiceColumnsArray = [];
-        data.col_data.forEach((element) => {
-          let arrayColumn = {
-            ...element.DocumentColumnPos,
-            ...element.ColumnPosDef,
-          };
-          pushedInvoiceColumnsArray.push(arrayColumn);
-        });
-        this.invoiceColumns = pushedInvoiceColumnsArray.filter((ele) => {
-          return ele.isActive == 1;
-        });
-
-        this.columnstodisplayInvoice = this.pushColumnsField(this.invoiceColumns);
-        this.invoiceColumns = this.invoiceColumns.sort(
-          (a, b) => a.documentColumnPos - b.documentColumnPos
-        );
-        this.dataService.invTabColumns = this.invoiceColumns;
-        this.allInColumnLength = this.invoiceColumns.length + 1;
-        this.allColumns = pushedInvoiceColumnsArray.sort(
-          (a, b) => a.documentColumnPos - b.documentColumnPos
-        );
-        this.allColumns.forEach((val) => {
-          let activeBoolean;
-          if (val.isActive == 1) {
-            activeBoolean = true;
-          } else {
-            activeBoolean = false;
-          }
-          this.updateColumns.push({
-            idtabColumn: val.idDocumentColumn,
-            ColumnPos: val.documentColumnPos,
-            isActive: activeBoolean,
-          });
-        });
-
-        this.SpinnerService.hide();
-        // this.invoiceColumns= pushedInvoiceColumnsArray;
-      },
-      (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
-        this.SpinnerService.hide();
-      }
-    );
+    this.columnsFunc('INV','invTabColumns');
   }
 
-  getPOColums() {
+  getPOColumns() {
+    this.columnsFunc('PO','poTabColumns');
+  }
+
+  columnsFunc(tabType,serviceTab_name){
     this.updateColumns = [];
-    this.sharedService.readColumnInvoice('PO').subscribe(
+    this.SpinnerService.show();
+    let columnArray = [];
+    let columns_to_display = [];
+    let columnLength:number;
+    this.sharedService.readColumnInvoice(tabType).subscribe(
       (data: any) => {
-        const pushedPOColumnsArray = [];
+        const pushedColumnsArray = [];
         data.col_data.forEach((element) => {
           let arrayColumn = {
             ...element.ColumnPosDef,
             ...element.DocumentColumnPos,
           };
-          pushedPOColumnsArray.push(arrayColumn);
+          pushedColumnsArray.push(arrayColumn);
         });
-        this.poColumns = pushedPOColumnsArray.filter((element) => {
-          if (element.columnName == 'Vendor Name' && !this.dataService.ap_boolean) {
-            element.columnName = 'Customer Name'
+        columnArray = pushedColumnsArray.filter((element) => {
+          if (tabType == 'PO' && element.columnName == 'Vendor Name' && !this.ds.ap_boolean) {
+            element.columnName = 'Customer Name';
+          }
+          if (tabType == 'ARC' &&!this.ds.ap_boolean && element.columnName == 'Invoice Number') {
+            element.columnName = 'Document Number';
           }
           return element.isActive == 1;
         });
-        this.columnstodisplayPO = this.pushColumnsField(this.poColumns);
-        this.poColumns = this.poColumns.sort(
+        columns_to_display = this.pushColumnsField(columnArray);
+        columnArray = columnArray.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
-        this.dataService.poTabColumns = this.poColumns
-        this.allPOColumnLength = this.poColumns.length + 1;
-        this.allColumns = pushedPOColumnsArray.sort(
+        this.ds[serviceTab_name] = columnArray
+        columnLength = columnArray.length + 1;
+        this.allColumns = pushedColumnsArray.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
         this.allColumns.forEach((val) => {
@@ -900,116 +738,42 @@ export class InvoiceComponent implements OnInit {
             isActive: activeBoolean,
           });
         });
+        if(tabType == 'INV'){
+          this.invoiceColumns = columnArray;
+          this.columnstodisplayInvoice = columns_to_display;
+          this.allInColumnLength = columnLength;
+          this.invTabAllColumns = this.allColumns;
+        } else if(tabType == 'PO'){
+          this.poColumns = columnArray;
+          this.columnstodisplayPO = columns_to_display;
+          this.allPOColumnLength = columnLength;
+          this.poTabAllColumns = this.allColumns;
+        } else if(tabType == 'ARC'){
+          this.archivedColumns = columnArray;
+          this.columnstodisplayArchived = columns_to_display;
+          this.allARCColumnLength = columnLength;
+          this.arcTabAllColumns = this.allColumns;
+        } else if(tabType == 'INVS'){
+          this.serviceColumns = columnArray;
+          this.columnstodisplayService = columns_to_display;
+          this.allSRVColumnLength = columnLength;
+          this.invsTabAllColumns = this.allColumns;
+        }
+        this.SpinnerService.hide();
       },
       (error) => {
-        alert(error?.error?.detail[0]?.msg);
+        this.SpinnerService.hide();
+        this.errorTrigger(error.statusText);
       }
     );
   }
 
   getArchivedColumns() {
-    this.updateColumns = [];
-    this.sharedService.readColumnInvoice('ARC').subscribe(
-      (data: any) => {
-        const pushedArchivedColumnsArray = [];
-        data.col_data.forEach((element) => {
-          let arrayColumn = {
-            ...element.DocumentColumnPos,
-            ...element.ColumnPosDef,
-          };
-          pushedArchivedColumnsArray.push(arrayColumn);
-        });
-        this.archivedColumns = pushedArchivedColumnsArray.filter((element) => {
-          if (element.columnName == 'Vendor Name' && !this.dataService.ap_boolean) {
-            element.columnName = 'Customer Name'
-          }
-          if (!this.dataService.ap_boolean && element.columnName == 'Invoice Number') {
-            element.columnName = 'Document Number'
-          }
-          return element.isActive == 1;
-        });
-        // const arrayOfColumnIdArchived = [];
-        // this.archivedColumns.forEach((e) => {
-        //   arrayOfColumnIdArchived.push(e.dbColumnname);
-        // });
-        this.columnstodisplayArchived = this.pushColumnsField(this.archivedColumns);
-        this.allColumns = pushedArchivedColumnsArray.sort(
-          (a, b) => a.documentColumnPos - b.documentColumnPos
-        );
-        this.archivedColumns = this.archivedColumns.sort(
-          (a, b) => a.documentColumnPos - b.documentColumnPos
-        );
-
-        this.dataService.arcTabColumns = this.archivedColumns;
-        this.allARCColumnLength = this.archivedColumns.length + 1;
-        // this.allColumns = pushedPOColumnsArray
-        this.allColumns.forEach((val) => {
-          let activeBoolean;
-          if (val.isActive == 1) {
-            activeBoolean = true;
-          } else {
-            activeBoolean = false;
-          }
-          this.updateColumns.push({
-            idtabColumn: val.idDocumentColumn,
-            ColumnPos: val.documentColumnPos,
-            isActive: activeBoolean,
-          });
-        });
-      },
-      (error) => {
-        alert(error.statusText);
-      }
-    );
+    this.columnsFunc('ARC','arcTabColumns');
   }
 
   getServiceColumns() {
-    this.SpinnerService.show();
-    this.updateColumns = [];
-    this.sharedService.readColumnInvoice('INVS').subscribe(
-      (data: any) => {
-        const pushedArchivedColumnsArray = [];
-        data.col_data.forEach((element) => {
-          let arrayColumn = {
-            ...element.DocumentColumnPos,
-            ...element.ColumnPosDef,
-          };
-          pushedArchivedColumnsArray.push(arrayColumn);
-        });
-        this.serviceColumns = pushedArchivedColumnsArray.filter((element) => {
-          return element.isActive == 1;
-        });
-        this.columnstodisplayService = this.pushColumnsField(this.serviceColumns);
-        this.allColumns = pushedArchivedColumnsArray.sort(
-          (a, b) => a.documentColumnPos - b.documentColumnPos
-        );
-        this.serviceColumns = this.serviceColumns.sort(
-          (a, b) => a.documentColumnPos - b.documentColumnPos
-        );
-        this.dataService.serTabColumns = this.serviceColumns;
-        this.allSRVColumnLength = this.serviceColumns.length + 1;
-        // this.allColumns = pushedPOColumnsArray
-        this.allColumns.forEach((val) => {
-          let activeBoolean;
-          if (val.isActive == 1) {
-            activeBoolean = true;
-          } else {
-            activeBoolean = false;
-          }
-          this.updateColumns.push({
-            idtabColumn: val.idDocumentColumn,
-            ColumnPos: val.documentColumnPos,
-            isActive: activeBoolean,
-          });
-          this.SpinnerService.hide();
-        });
-      },
-      (error) => {
-        this.AlertService.errorObject.detail = error.statusText;
-        this.messageService.add(this.AlertService.errorObject);
-        this.SpinnerService.hide();
-      }
-    );
+    this.columnsFunc('INVS','serTabColumns');
   }
 
   menuChange(value) {
@@ -1017,59 +781,55 @@ export class InvoiceComponent implements OnInit {
 
     this.activeMenuName = value;
     // this.getInvoiceData();
-    this.dataService.allPaginationFirst = 0;
-    this.dataService.allPaginationRowLength = 10;
+    this.ds.allPaginationFirst = 0;
+    this.ds.allPaginationRowLength = 10;
     if (value == 'invoice') {
       this.route.navigate([this.invoiceTab]);
-      this.dataService.doc_status_tab = this.invoiceTab;
+      this.ds.doc_status_tab = this.invoiceTab;
       this.allSearchInvoiceString = [];
       if (!this.invoiceColumns) {
         this.getInvoiceColumns();
       }
     } else if (value == 'po') {
       if (!this.poColumns) {
-        this.getPOColums();
+        this.getPOColumns();
       }
       this.route.navigate([this.POTab]);
-      this.dataService.doc_status_tab = this.POTab;
+      this.ds.doc_status_tab = this.POTab;
       this.allSearchInvoiceString = [];
-      this.searchStr = this.dataService.searchPOStr;
+      this.searchStr = this.ds.searchPOStr;
     } else if (value == 'so') {
       // this.getPOColums();
       this.route.navigate([this.SOTab]);
-      this.dataService.doc_status_tab = this.SOTab;
+      this.ds.doc_status_tab = this.SOTab;
       this.allSearchInvoiceString = [];
-      this.searchStr = this.dataService.searchSOStr;
+      this.searchStr = this.ds.searchSOStr;
     } else if (value == 'grn') {
       this.route.navigate([this.GRNTab]);
-      this.dataService.doc_status_tab = this.GRNTab;
+      this.ds.doc_status_tab = this.GRNTab;
       this.allSearchInvoiceString = [];
-      this.searchStr = this.dataService.searchGRNStr;
+      this.searchStr = this.ds.searchGRNStr;
     } else if (value == 'ServiceInvoices') {
       if (!this.serviceColumns) {
         this.getServiceColumns();
       }
       this.route.navigate([this.serviceInvoiceTab]);
-      this.dataService.doc_status_tab = this.serviceInvoiceTab;
+      this.ds.doc_status_tab = this.serviceInvoiceTab;
       this.allSearchInvoiceString = [];
     } else if (value == 'archived') {
       if (!this.archivedColumns) {
         this.getArchivedColumns();
       }
       this.route.navigate([this.archivedTab]);
-      this.dataService.doc_status_tab = this.archivedTab;
+      this.ds.doc_status_tab = this.archivedTab;
       this.allSearchInvoiceString = [];
-      this.searchStr = this.dataService.searchArcStr;
+      this.searchStr = this.ds.searchArcStr;
     } else if (value == 'rejected') {
       this.route.navigate([this.rejectedTab]);
-      this.dataService.doc_status_tab = this.rejectedTab;
+      this.ds.doc_status_tab = this.rejectedTab;
       this.allSearchInvoiceString = [];
-      this.searchStr = this.dataService.searchRejStr;
-    } else if (value == 'GRNException') {
-      this.route.navigate([this.GRNExceptionTab]);
-      this.dataService.doc_status_tab = this.GRNExceptionTab;
-      this.allSearchInvoiceString = [];
-    }
+      this.searchStr = this.ds.searchRejStr;
+    } 
   }
   searchInvoiceDataV(value) {
     this.allSearchInvoiceString = [];
@@ -1079,17 +839,15 @@ export class InvoiceComponent implements OnInit {
     // this.visibleSidebar2 = value;
     this.sidenav.toggle();
     if (this.route.url == this.invoiceTab) {
-      this.getInvoiceColumns();
+      this.allColumns = this.invTabAllColumns;
     } else if (this.route.url == this.POTab) {
-      this.getPOColums();
+      this.allColumns = this.poTabAllColumns;
     } else if (this.route.url == this.archivedTab) {
-      this.getArchivedColumns();
+      this.allColumns = this.arcTabAllColumns;
     } else if (this.route.url == this.rejectedTab) {
-      this.getArchivedColumns();
-    } else if (this.route.url == this.GRNExceptionTab) {
-      this.getArchivedColumns();
+      this.allColumns = this.arcTabAllColumns;
     } else if (this.route.url == this.serviceInvoiceTab) {
-      this.getServiceColumns();
+      this.allColumns = this.invsTabAllColumns;
     }
   }
 
@@ -1106,9 +864,7 @@ export class InvoiceComponent implements OnInit {
         exportData = this.archivedDisplayData;
       } else if (this.route.url == this.rejectedTab) {
         exportData = this.rejectedDisplayData;
-      } else if (this.route.url == this.GRNExceptionTab) {
-        exportData = this.rejectedDisplayData;
-      } else if (this.route.url == this.serviceInvoiceTab) {
+      }  else if (this.route.url == this.serviceInvoiceTab) {
         exportData = this.serviceinvoiceDispalyData;
       }
     } else {
@@ -1133,7 +889,6 @@ export class InvoiceComponent implements OnInit {
       });
     });
   }
-  order(v) { }
   activeColumn(e, value) {
     // if (this.route.url == '/customer/invoice/allInvoices') {
     this.updateColumns.forEach((val) => {
@@ -1144,62 +899,32 @@ export class InvoiceComponent implements OnInit {
   }
 
   updateColumnPosition() {
-    if (this.route.url == this.invoiceTab) {
-      this.sharedService.updateColumnPOs(this.updateColumns, 'INV').subscribe(
-        (data: any) => {
-          this.getInvoiceColumns();
-          this.AlertService.updateObject.detail =
-            'Columns updated successfully';
-          this.messageService.add(this.AlertService.updateObject);
-        },
-        (error) => {
-          this.AlertService.errorObject.detail = error.statusText;
-          this.messageService.add(this.AlertService.errorObject);
-        }
-      );
-    } else if (this.route.url == this.POTab) {
-      this.sharedService.updateColumnPOs(this.updateColumns, 'PO').subscribe(
-        (data: any) => {
-          this.getPOColums();
-          this.AlertService.updateObject.detail =
-            'Columns updated successfully';
-          this.messageService.add(this.AlertService.updateObject);
-        },
-        (error) => {
-          this.AlertService.errorObject.detail = error.statusText;
-          this.messageService.add(this.AlertService.errorObject);
-        }
-      );
-    } else if (
-      this.route.url == this.archivedTab ||
-      this.route.url == this.rejectedTab
-    ) {
-      this.sharedService.updateColumnPOs(this.updateColumns, 'ARC').subscribe(
-        (data: any) => {
-          this.getArchivedColumns();
-          this.AlertService.updateObject.detail =
-            'Columns updated successfully';
-          this.messageService.add(this.AlertService.updateObject);
-        },
-        (error) => {
-          this.AlertService.errorObject.detail = error.statusText;
-          this.messageService.add(this.AlertService.errorObject);
-        }
-      );
-    } else if (this.route.url == this.serviceInvoiceTab) {
-      this.sharedService.updateColumnPOs(this.updateColumns, 'INVS').subscribe(
-        (data: any) => {
-          this.getServiceColumns();
-          this.AlertService.updateObject.detail =
-            'Columns updated successfully';
-          this.messageService.add(this.AlertService.updateObject);
-        },
-        (error) => {
-          this.AlertService.errorObject.detail = error.statusText;
-          this.messageService.add(this.AlertService.errorObject);
-        }
-      );
+    let param = '';
+    let funName:string;
+    if(this.route.url == this.invoiceTab){
+      param = 'INV';
+      funName = 'getInvoiceColumns';
+    } else if(this.route.url == this.POTab){
+      param = 'PO';
+      funName = 'getPOColumns';
+    } else if(this.route.url == this.archivedTab || this.route.url == this.rejectedTab){
+      param = 'ARC';
+      funName = 'getArchivedColumns';
+    } else if(this.route.url == this.serviceInvoiceTab){
+      param = 'INVS';
+      funName = 'getServiceColumns';
     }
+    this.sharedService.updateColumnPOs(this.updateColumns, param).subscribe(
+      (data: any) => {
+        this[funName]();
+        this.AlertService.updateObject.detail =
+          'Columns updated successfully';
+        this.messageService.add(this.AlertService.updateObject);
+      },
+      (error) => {
+        this.errorTrigger(error.statusText);
+      }
+    );
     this.sidenav.close();
   }
 
@@ -1217,7 +942,7 @@ export class InvoiceComponent implements OnInit {
         });
         this.allInvoiceLength = this.invoiceDispalyData.length;
       } else if (this.route.url == this.serviceInvoiceTab) {
-        this.serviceinvoiceDispalyData = this.filterDataService;
+        this.serviceinvoiceDispalyData = this.filterds;
         this.serviceinvoiceDispalyData = this.serviceinvoiceDispalyData.filter(
           (element) => {
             const dateF = new Date(element.documentDate)
@@ -1253,97 +978,94 @@ export class InvoiceComponent implements OnInit {
   paginate(event) {
     this.first = event.first;
     if (this.route.url == this.invoiceTab) {
-      this.dataService.allPaginationFirst = this.first;
-      this.dataService.allPaginationRowLength = event.rows;
+      this.ds.allPaginationFirst = this.first;
+      this.ds.allPaginationRowLength = event.rows;
     } else if (this.route.url == this.POTab) {
-      this.dataService.poPaginationFisrt = this.first;
-      this.dataService.poPaginationRowLength = event.rows;
-      if (this.first >= this.dataService.pageCountVariablePO) {
-        this.dataService.pageCountVariablePO = event.first;
-        if (this.dataService.searchPOStr == '') {
-          this.dataService.offsetCountPO++;
-          this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50`;
+      this.ds.poPaginationFirst = this.first;
+      this.ds.poPaginationRowLength = event.rows;
+      if (this.first >= this.ds.pageCountVariablePO) {
+        this.ds.pageCountVariablePO = event.first;
+        if (this.ds.searchPOStr == '') {
+          this.ds.offsetCountPO++;
+          this.APIParams = `?offset=${this.ds.offsetCountPO}&limit=50`;
           this.getDisplayPOData(this.APIParams);
         } else {
-          this.dataService.offsetCountPO++;
-          this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50&uni_search=${this.dataService.searchPOStr}`;
+          this.ds.offsetCountPO++;
+          this.APIParams = `?offset=${this.ds.offsetCountPO}&limit=50&uni_search=${this.ds.searchPOStr}`;
           this.getDisplayPOData(this.APIParams);
         }
       }
     } else if (this.route.url == this.GRNTab) {
-      this.dataService.GRNPaginationFisrt = this.first;
-      this.dataService.GRNPaginationRowLength = event.rows;
-      if (this.first >= this.dataService.pageCountVariableGRN) {
-        this.dataService.pageCountVariableGRN = event.first;
-        if (this.dataService.searchGRNStr == '') {
-          this.dataService.offsetCountGRN++;
-          this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50`;
+      this.ds.GRNPaginationFirst = this.first;
+      this.ds.GRNPaginationRowLength = event.rows;
+      if (this.first >= this.ds.pageCountVariableGRN) {
+        this.ds.pageCountVariableGRN = event.first;
+        if (this.ds.searchGRNStr == '') {
+          this.ds.offsetCountGRN++;
+          this.APIParams = `?offset=${this.ds.offsetCountGRN}&limit=50`;
           this.getDisplayGRNdata(this.APIParams);
         } else {
-          this.dataService.offsetCountGRN++;
-          this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50&uni_search=${this.dataService.searchGRNStr}`;
+          this.ds.offsetCountGRN++;
+          this.APIParams = `?offset=${this.ds.offsetCountGRN}&limit=50&uni_search=${this.ds.searchGRNStr}`;
           this.getDisplayGRNdata(this.APIParams);
         }
       }
     } else if (this.route.url == this.archivedTab) {
-      this.dataService.archivedPaginationFisrt = this.first;
-      this.dataService.archivedPaginationRowLength = event.rows;
-      if (this.first >= this.dataService.pageCountVariableArc) {
-        this.dataService.pageCountVariableArc = event.first;
-        if (this.dataService.searchArcStr == '' && this.dataService.posted_inv_type == '') {
-          this.dataService.offsetCountArc++;
-          this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50`;
+      this.ds.archivedPaginationFirst = this.first;
+      this.ds.archivedPaginationRowLength = event.rows;
+      if (this.first >= this.ds.pageCountVariableArc) {
+        this.ds.pageCountVariableArc = event.first;
+        if (this.ds.searchArcStr == '' && this.ds.posted_inv_type == '') {
+          this.ds.offsetCountArc++;
+          this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50`;
           this.getDisplayARCData(this.APIParams);
-        } else if (this.dataService.searchArcStr == '' && this.dataService.posted_inv_type != '') {
-          this.dataService.offsetCountArc++;
-          this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&inv_type=${this.dataService.posted_inv_type}`;
+        } else if (this.ds.searchArcStr == '' && this.ds.posted_inv_type != '') {
+          this.ds.offsetCountArc++;
+          this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50&inv_type=${this.ds.posted_inv_type}`;
           this.getDisplayARCData(this.APIParams);
-        } else if (this.dataService.searchArcStr != '' && this.dataService.posted_inv_type != '') {
-          this.dataService.offsetCountArc++;
-          this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}&inv_type=${this.dataService.posted_inv_type}`;
+        } else if (this.ds.searchArcStr != '' && this.ds.posted_inv_type != '') {
+          this.ds.offsetCountArc++;
+          this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50&uni_search=${this.ds.searchArcStr}&inv_type=${this.ds.posted_inv_type}`;
           this.getDisplayARCData(this.APIParams);
         } else {
-          this.dataService.offsetCountArc++;
-          this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}`;
+          this.ds.offsetCountArc++;
+          this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50&uni_search=${this.ds.searchArcStr}`;
           this.getDisplayARCData(this.APIParams);
         }
       }
     } else if (this.route.url == this.rejectedTab) {
-      this.dataService.rejectedPaginationFisrt = this.first;
-      this.dataService.rejectedPaginationRowLength = event.rows;
-      if (this.first >= this.dataService.pageCountVariableRej) {
-        this.dataService.pageCountVariableRej = event.first;
-        if (this.dataService.searchRejStr == '') {
-          this.dataService.offsetCountRej++;
-          this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50`;
+      this.ds.rejectedPaginationFirst = this.first;
+      this.ds.rejectedPaginationRowLength = event.rows;
+      if (this.first >= this.ds.pageCountVariableRej) {
+        this.ds.pageCountVariableRej = event.first;
+        if (this.ds.searchRejStr == '') {
+          this.ds.offsetCountRej++;
+          this.APIParams = `?offset=${this.ds.offsetCountRej}&limit=50`;
           this.getDisplayRejectedData(this.APIParams);
         } else {
-          this.dataService.offsetCountRej++;
-          this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50&uni_search=${this.dataService.searchRejStr}`;
+          this.ds.offsetCountRej++;
+          this.APIParams = `?offset=${this.ds.offsetCountRej}&limit=50&uni_search=${this.ds.searchRejStr}`;
           this.getDisplayRejectedData(this.APIParams);
         }
       }
     } else if (this.route.url == this.SOTab) {
-      this.dataService.SOPaginationFisrt = this.first;
-      this.dataService.SOPaginationRowLength = event.rows;
-      if (this.first >= this.dataService.pageCountVariableSO) {
-        this.dataService.pageCountVariableSO = event.first;
-        if (this.dataService.searchSOStr == '') {
-          this.dataService.offsetCountSO++;
-          this.APIParams = `?offset=${this.dataService.offsetCountSO}&limit=50`;
+      this.ds.SOPaginationFirst = this.first;
+      this.ds.SOPaginationRowLength = event.rows;
+      if (this.first >= this.ds.pageCountVariableSO) {
+        this.ds.pageCountVariableSO = event.first;
+        if (this.ds.searchSOStr == '') {
+          this.ds.offsetCountSO++;
+          this.APIParams = `?offset=${this.ds.offsetCountSO}&limit=50`;
           this.getDisplaySOData(this.APIParams);
         } else {
-          this.dataService.offsetCountSO++;
-          this.APIParams = `?offset=${this.dataService.offsetCountSO}&limit=50&uni_search=${this.dataService.searchSOStr}`;
+          this.ds.offsetCountSO++;
+          this.APIParams = `?offset=${this.ds.offsetCountSO}&limit=50&uni_search=${this.ds.searchSOStr}`;
           this.getDisplaySOData(this.APIParams);
         }
       }
-    } else if (this.route.url == this.GRNExceptionTab) {
-      this.dataService.GRNExceptionPaginationFisrt = this.first;
-      this.dataService.GRNExceptionPaginationRowLength = event.rows;
     } else if (this.route.url == this.serviceInvoiceTab) {
-      this.dataService.servicePaginationFisrt = this.first;
-      this.dataService.servicePaginationRowLength = event.rows;
+      this.ds.servicePaginationFirst = this.first;
+      this.ds.servicePaginationRowLength = event.rows;
     }
   }
 
@@ -1352,19 +1074,19 @@ export class InvoiceComponent implements OnInit {
       this.APIParams = `?offset=1&limit=50`
       if (this.route.url == this.invoiceTab) {
       } else if (this.route.url == this.POTab) {
-        this.dataService.poLoadedData = [];
+        this.ds.poLoadedData = [];
         this.getDisplayPOData(this.APIParams);
       } else if (this.route.url == this.GRNTab) {
-        this.dataService.GRNLoadedData = [];
+        this.ds.GRNLoadedData = [];
         this.getDisplayGRNdata(this.APIParams);
       } else if (this.route.url == this.archivedTab) {
-        this.dataService.archivedDisplayData = [];
+        this.ds.archivedDisplayData = [];
         this.getDisplayARCData(this.APIParams);
       } else if (this.route.url == this.rejectedTab) {
-        this.dataService.rejectedDisplayData = [];
+        this.ds.rejectedDisplayData = [];
         this.getDisplayRejectedData(this.APIParams);
       } else if (this.route.url == this.SOTab) {
-        this.dataService.SODisplayData = [];
+        this.ds.SODisplayData = [];
         this.getDisplaySOData(this.APIParams);
       } else if (this.route.url == this.serviceInvoiceTab) {
       }
@@ -1373,85 +1095,85 @@ export class InvoiceComponent implements OnInit {
 
   filterString(event) {
     if (this.route.url == this.invoiceTab) {
-      // this.dataService.allPaginationFirst = 0;
+      // this.ds.allPaginationFirst = 0;
     } else if (this.route.url == this.POTab) {
-      this.dataService.poPaginationFisrt = 0;
-      this.dataService.offsetCountPO = 1;
-      this.dataService.poLoadedData = [];
-      this.dataService.searchPOStr = event;
-      if (this.dataService.searchPOStr == '') {
-        this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50`;
+      this.ds.poPaginationFirst = 0;
+      this.ds.offsetCountPO = 1;
+      this.ds.poLoadedData = [];
+      this.ds.searchPOStr = event;
+      if (this.ds.searchPOStr == '') {
+        this.APIParams = `?offset=${this.ds.offsetCountPO}&limit=50`;
         this.getDisplayPOData(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.dataService.offsetCountPO}&limit=50&uni_search=${this.dataService.searchPOStr}`;
+        this.APIParams = `?offset=${this.ds.offsetCountPO}&limit=50&uni_search=${this.ds.searchPOStr}`;
         this.getDisplayPOData(this.APIParams);
       }
-      // this.dataService.poPaginationFisrt = 1;
+      // this.ds.poPaginationFisrt = 1;
     } else if (this.route.url == this.GRNTab) {
-      this.dataService.GRNPaginationFisrt = 0;
-      this.dataService.offsetCountGRN = 1;
-      this.dataService.GRNLoadedData = [];
-      this.dataService.searchGRNStr = event;
-      if (this.dataService.searchGRNStr == '') {
-        this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50`;
+      this.ds.GRNPaginationFirst = 0;
+      this.ds.offsetCountGRN = 1;
+      this.ds.GRNLoadedData = [];
+      this.ds.searchGRNStr = event;
+      if (this.ds.searchGRNStr == '') {
+        this.APIParams = `?offset=${this.ds.offsetCountGRN}&limit=50`;
         this.getDisplayGRNdata(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.dataService.offsetCountGRN}&limit=50&uni_search=${this.dataService.searchGRNStr}`;
+        this.APIParams = `?offset=${this.ds.offsetCountGRN}&limit=50&uni_search=${this.ds.searchGRNStr}`;
         this.getDisplayGRNdata(this.APIParams);
       }
-      // this.dataService.GRNPaginationFisrt = 1;
+      // this.ds.GRNPaginationFisrt = 1;
     } else if (this.route.url == this.archivedTab) {
-      this.dataService.archivedPaginationFisrt = 0;
-      this.dataService.offsetCountArc = 1;
-      this.dataService.archivedDisplayData = [];
-      this.dataService.searchArcStr = event;
-      if (this.dataService.searchArcStr == '' && this.dataService.posted_inv_type == '') {
-        this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50`;
+      this.ds.archivedPaginationFirst = 0;
+      this.ds.offsetCountArc = 1;
+      this.ds.archivedDisplayData = [];
+      this.ds.searchArcStr = event;
+      if (this.ds.searchArcStr == '' && this.ds.posted_inv_type == '') {
+        this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50`;
         this.getDisplayARCData(this.APIParams);
-      } else if (this.dataService.searchArcStr == '' && this.dataService.posted_inv_type != '') {
-        this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&inv_type=${this.dataService.posted_inv_type}`;
+      } else if (this.ds.searchArcStr == '' && this.ds.posted_inv_type != '') {
+        this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50&inv_type=${this.ds.posted_inv_type}`;
         this.getDisplayARCData(this.APIParams);
-      } else if (this.dataService.searchArcStr != '' && this.dataService.posted_inv_type != '') {
-        this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}&inv_type=${this.dataService.posted_inv_type}`;
+      } else if (this.ds.searchArcStr != '' && this.ds.posted_inv_type != '') {
+        this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50&uni_search=${this.ds.searchArcStr}&inv_type=${this.ds.posted_inv_type}`;
         this.getDisplayARCData(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.dataService.offsetCountArc}&limit=50&uni_search=${this.dataService.searchArcStr}`;
+        this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50&uni_search=${this.ds.searchArcStr}`;
         this.getDisplayARCData(this.APIParams);
       }
-      // this.dataService.archivedPaginationFisrt = 1;
+      // this.ds.archivedPaginationFisrt = 1;
     } else if (this.route.url == this.rejectedTab) {
-      this.dataService.rejectedPaginationFisrt = 0;
-      this.dataService.offsetCountRej = 1;
-      this.dataService.rejectedDisplayData = [];
-      this.dataService.searchRejStr = event;
-      if (this.dataService.searchRejStr == '') {
-        this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50`;
+      this.ds.rejectedPaginationFirst = 0;
+      this.ds.offsetCountRej = 1;
+      this.ds.rejectedDisplayData = [];
+      this.ds.searchRejStr = event;
+      if (this.ds.searchRejStr == '') {
+        this.APIParams = `?offset=${this.ds.offsetCountRej}&limit=50`;
         this.getDisplayRejectedData(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.dataService.offsetCountRej}&limit=50&uni_search=${this.dataService.searchRejStr}`;
+        this.APIParams = `?offset=${this.ds.offsetCountRej}&limit=50&uni_search=${this.ds.searchRejStr}`;
         this.getDisplayRejectedData(this.APIParams);
       }
-      // this.dataService.rejectedPaginationFisrt = 1;
+      // this.ds.rejectedPaginationFisrt = 1;
     } else if (this.route.url == this.SOTab) {
-      this.dataService.SOPaginationFisrt = 0;
-      this.dataService.offsetCountSO = 1;
-      this.dataService.SODisplayData = [];
-      this.dataService.searchSOStr = event;
-      if (this.dataService.searchSOStr == '') {
-        this.APIParams = `?offset=${this.dataService.offsetCountSO}&limit=50`;
+      this.ds.SOPaginationFirst = 0;
+      this.ds.offsetCountSO = 1;
+      this.ds.SODisplayData = [];
+      this.ds.searchSOStr = event;
+      if (this.ds.searchSOStr == '') {
+        this.APIParams = `?offset=${this.ds.offsetCountSO}&limit=50`;
         this.getDisplaySOData(this.APIParams);
       } else {
-        this.APIParams = `?offset=${this.dataService.offsetCountSO}&limit=50&uni_search=${this.dataService.searchSOStr}`;
+        this.APIParams = `?offset=${this.ds.offsetCountSO}&limit=50&uni_search=${this.ds.searchSOStr}`;
         this.getDisplaySOData(this.APIParams);
       }
-      // this.dataService.rejectedPaginationFisrt = 1;
+      // this.ds.rejectedPaginationFisrt = 1;
     } else if (this.route.url == this.serviceInvoiceTab) {
     }
   }
   selectinvType(val) {
-    this.dataService.archivedDisplayData = [];
-    this.dataService.posted_inv_type = val;
-    this.getDisplayARCData(`?offset=${this.dataService.offsetCountArc}&limit=50&inv_type=${val}`);
+    this.ds.archivedDisplayData = [];
+    this.ds.posted_inv_type = val;
+    this.getDisplayARCData(`?offset=${this.ds.offsetCountArc}&limit=50&inv_type=${val}`);
   }
 
   filterEmit(event) {
@@ -1522,7 +1244,7 @@ export class InvoiceComponent implements OnInit {
   }
 
   refreshInvoice(type) {
-    this.resfrshBool = true;
+    this.refreshBool = true;
     if (type == 'inv') {
       this.getInvoiceData();
     } else if (type == 'ser') {
@@ -1537,5 +1259,10 @@ export class InvoiceComponent implements OnInit {
       arrayOfColumnId.push(e.dbColumnname);
     });
     return arrayOfColumnId;
+  }
+
+  errorTrigger(error) {
+    this.AlertService.errorObject.detail = error;
+    this.messageService.add(this.AlertService.errorObject);
   }
 }

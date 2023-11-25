@@ -79,7 +79,7 @@ export class CreateGRNComponent implements OnInit {
 
   ngOnInit(): void {
     if(this.permissionService.GRNPageAccess == true){
-      this.viewType = this.tagService.GRNTab;
+      this.viewType = "grnWithPO";
       this.isDesktop = this.ds.isDesktop;
       if(!this.isDesktop){
         this.mob_columns()
@@ -193,6 +193,10 @@ export class CreateGRNComponent implements OnInit {
   readEntity(){
     this.ds.entityData.subscribe((data:[])=>{
       this.entityList = data;
+      if(this.entityList.length>0){
+        // this.PO_GRNForm['EntityName'] = this.entityList[0].EntityName;
+        this.selectEntity(this.entityList[0]);
+      }
     })
   }
   filterEntity(event) {
@@ -212,11 +216,12 @@ export class CreateGRNComponent implements OnInit {
   selectEntity(value) {
     this.selectedEntityId = value.idEntity;
     this.sharedService.selectedEntityId = value.idEntity;
-    this.entityName = value.EntityName;
+    this.entityName = value;
+    console.log(this.entityName)
     this.getCustomerVendors();
-    this.PO_GRNForm.controls['vendor'].reset();
-    this.PO_GRNForm.controls['PONumber'].reset();
-    this.PO_GRNForm.controls['PO_GRN_Number_line'].reset();
+    this.PO_GRNForm?.controls['vendor'].reset();
+    this.PO_GRNForm?.controls['PONumber'].reset();
+    this.PO_GRNForm?.controls['PO_GRN_Number_line'].reset();
   }
   getCustomerVendors() {
     this.sharedService

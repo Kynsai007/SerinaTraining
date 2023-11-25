@@ -48,7 +48,7 @@ export class GrnComponent implements OnInit {
 
   ngOnInit(): void {
     this.userType = this.authService.currentUserValue['user_type'];
-    this.first = this.storageService.GRNPaginationFisrt;
+    this.first = this.storageService.GRNPaginationFirst;
     this.rows = this.storageService.GRNPaginationRowLength;
     this.ap_boolean = this.storageService.ap_boolean;
   }

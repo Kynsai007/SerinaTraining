@@ -55,6 +55,11 @@
   .p-button.p-button-icon-only {
     background-color: #ffffff;
   }
+
+  .mapping .p-button.p-button-icon-only {
+    background-color: transparent;
+    border:0;
+  }
 }
 .input_disabled {
   background: inherit;

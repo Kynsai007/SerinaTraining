@@ -22,7 +22,7 @@
       this.currentTab == 'line' &&
       ap_boolean &&
       !showPdf &&
-      isDesktop&& !GRN_PO_Bool
+      isDesktop&& router.url.includes('comparision-docs')
     "
   >
     <!-- <button
@@ -432,7 +432,7 @@
                               [value]="
                                 data2.invline[0]?.DocumentLineItems.Value
                               "
-                              class="f-12 input_disabled"
+                              class="f-12 input_disabled w-fill"
                               style="text-transform: lowercase"
                               [disabled]="!editable || fin_boolean"
                               (change)="
@@ -475,7 +475,7 @@
                               type="text"
                               [title]="data2.poline[0]?.Value"
                               [value]="data2.poline[0]?.Value"
-                              class="f-12 input_disabled"
+                              class="f-12 input_disabled w-fill"
                               style="text-transform: lowercase"
                               disabled
                               [ngClass]="!editable ? 'input_disabled' : ''"
@@ -547,7 +547,7 @@
                             <!-- <div class="error-block error-symbol"></div> -->
 
                             <div class="f-12 d-flex" *ngIf="submitBtn_boolean">
-                              <select
+                              <!-- <select
                                 class="f-11 input_disabled form-control sel_drp"
                                 name="lineSelection"
                                 placeholder="mapping"
@@ -571,7 +571,30 @@
                                 >
                                   {{ line.Value }}
                                 </option>
-                              </select>
+                              </select> -->
+
+                              <div class="mapping">
+                                <p-autoComplete
+                                  (onSelect)="lineMapping(
+                                      data.linedetails[0].invline[0]
+                                        ?.DocumentLineItems?.itemCode,
+                                      $event.itemCode,
+                                      data.itemcode
+                                    )"
+                                  placeholder="Select PO Line"
+                                  [suggestions]="filteredPOLine"
+                                  (completeMethod)="filterPOLine($event)"
+                                  field="Value"
+                                  styleClass="f-11 input_disabled sel_drp"
+                                  [dropdown]="true"
+                                >
+                                  <ng-template let-line pTemplate="item">
+                                    <div class="line-item">
+                                      <div class="f-11">{{ line.Value }}</div>
+                                    </div>
+                                  </ng-template>
+                                </p-autoComplete>
+                              </div>
                               <div
                                 class="d-inline-block display-mapped"
                                 *ngFor="let description of mappedData"

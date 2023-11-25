@@ -180,7 +180,7 @@
                       <i class="fa fa-undo" aria-hidden="true"></i>
                     </button>
                     <i
-                      *ngIf="invoiceData.docstatus == 'Need To Review' || (invoiceData.docstatus == 'Posted In ERP' && invoiceData.documentsubstatusID == 80)"
+                      *ngIf="invoiceData.docstatus == 'Need To Review'|| (invoiceData.docstatus == 'Posted In ERP' && invoiceData.documentsubstatusID == 80)"
                       [pTooltip]="invoiceData.documentsubstatusID == 80 ? 'Manually Posted':invoiceData?.status"
                       tooltipPosition="top"
                       class="f-13 ml-3"
@@ -516,21 +516,8 @@
     </ngx-spinner>
   </div>
 </div>
-<!-- <p-sidebar [(visible)]="visibleSidebar2" position="right" [baseZIndex]="10000">
-  <h6 style="font-weight: 600;">Select Columns</h6>
 
-  <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
-    selectedItemsLabel="{0} columns selected" [style]="{minWidth: '300px'}" placeholder="Choose Columns">
-  </p-multiSelect>
-
-  <div class="btnFooterSave" mat-dialog-actions>
-    <button class="btn btnVender mr-4 clor" type="button" (click)="visibleSidebar2 = false">Cancel</button>
-    <button class="btn btnVender clor" (click)="onSave()" cdkFocusInitial>Save</button>
-  </div>
-
-</p-sidebar> -->
-
-<!-- Cnfirmation Dialog -->
+<!-- Confirmation Dialog -->
 <p-dialog
   header=" "
   [(visible)]="checkstatusPopupBoolean"
@@ -541,29 +528,10 @@
   [resizable]="false"
 >
   <div class="text-center">
-    <div>
-      <!-- <i
-        class="pi pi-exclamation-triangle"
-        style="font-size: 4rem; color: red"
-      ></i> -->
-    </div>
     <div class="deleteDivText">
       {{ statusText }} <br />
       <div class="f-12">{{ statusText1 }}</div>
     </div>
   </div>
-  <ng-template pTemplate="footer">
-    <!-- <div class="d-flex justify-content-center mb-3">
-      <button class="btn btnVender bg-btn-success mr-3" (click)="logout()">
-        Yes
-      </button>
-      <button
-        class="btn btnVender bg-btn-cancel"
-        (click)="displayResponsivepopup = false"
-      >
-        Cancel
-      </button>
-    </div> -->
-  </ng-template>
 </p-dialog>
 <p-toast></p-toast>

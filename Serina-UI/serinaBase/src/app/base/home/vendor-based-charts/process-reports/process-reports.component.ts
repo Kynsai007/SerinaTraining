@@ -67,6 +67,11 @@ export class ProcessReportsComponent implements OnInit {
     { cls: 'bg-5', icon: 'vendor_err', heading: 'Exceptions', count: ''},
     { cls: 'bg-3', icon: 'vendor_rm', heading: 'Average Upload Time', count: ''}
   ]
+  poinfoTabledata = [];
+  columnsForPoInfo = [];
+  showPaginatorPOinfo:boolean;
+  poInfoColumnField = [];
+  ColumnLengthPoInfo:number;
   constructor(
     private chartsService: ChartsService,
     private sharedService: SharedService,
@@ -97,6 +102,7 @@ export class ProcessReportsComponent implements OnInit {
     this.readInvCountBySource('');
     this.readInvAgeReport('');
     this.readInvCountByEntity('');
+    this.readPOSummary('');
     // this.readPageCountByEntity('');
 
     setTimeout(() => {
@@ -164,12 +170,23 @@ export class ProcessReportsComponent implements OnInit {
       { field: 'pagecount', header:'Pages Count'}
     ];
 
+    this.columnsForPoInfo = [
+      { field: 'VendorName', header: 'Vendor' },
+      { field: 'pocount', header:'PO Count'},
+      { field: 'grncount', header:'Received'},
+      { field: 'invoicecount', header:'Invoiced'}
+    ];
+
     this.columnsForTotal.forEach((e) => {
       this.totalColumnHeader.push(e.header);
       this.totalColumnField.push(e.field);
     });
+    this.columnsForPoInfo.forEach((e) => {
+      this.poInfoColumnField.push(e.field);
+    });
 
     this.ColumnLengthtotal = this.columnsForTotal.length;
+    this.ColumnLengthPoInfo = this.columnsForPoInfo.length;
   }
 
   readVendors() {
@@ -252,6 +269,18 @@ export class ProcessReportsComponent implements OnInit {
         //   this.invoiceByEntityChartdata.push([element.EntityName, element.count]);
         // });
         this.invoiceByEntityChartdata = data.data?.VendorBased;
+        this.SpinnerService.hide();
+      },
+      (err) => {
+        this.SpinnerService.hide();
+      }
+    );
+  }
+  readPOSummary(filter) {
+    this.SpinnerService.show();
+    this.chartsService.getPOSummary(filter).subscribe(
+      (data: any) => {
+        this.poinfoTabledata = data?.data;
         this.SpinnerService.hide();
       },
       (err) => {
@@ -471,6 +500,7 @@ export class ProcessReportsComponent implements OnInit {
     this.readInvCountBySource(query);
     this.readInvAgeReport(query);
     this.readInvCountByEntity(query);
+    this.readPOSummary(query);
     // this.readPageCountByEntity(query);
     // this.readSource();
     // this.getEntitySummary();
@@ -482,8 +512,8 @@ export class ProcessReportsComponent implements OnInit {
     this.selectedDateValue = '';
   }
 
-  downloadReport(){
-      this.ImportExcelService.exportExcel(this.invoiceByEntityChartdata);
+  downloadReport(data){
+      this.ImportExcelService.exportExcel(data);
   }
 
   convertToKM(value: number): string {

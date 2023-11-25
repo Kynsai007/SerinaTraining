@@ -118,10 +118,11 @@
         <div
           class="navLink"
           routerLinkActive="active"
+          [ngClass]="router.url.includes('invoice')?'active':''"
           data-text="Document Status"
-          [routerLink]="'invoice'"
+          (click)="doc_status_route()"
         >
-          <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
+          <span class="material-icons f-18 ml-r-12" [ngClass]="router.url.includes('invoice')?'ml-9':''">
             receipt
           </span>
           Document Status
@@ -271,7 +272,7 @@
           *ngIf="!isDesktop"
           class="navLink"
           data-text="Logout"
-          (click)="displayResponsivepopup = true"
+          (click)="logout_confirmation()"
         >
           <i
             class="fa fa-sign-out f-18 ml-r-12"
@@ -343,7 +344,7 @@
               </span></a>
               <a (click)="openDialog()">Change Password</a>
               <a routerLink="profile">Profile</a>
-              <a (click)="displayResponsivepopup = true">Logout</a>
+              <a (click)="logout_confirmation()">Logout</a>
             </div>
           </span>
         </div>
@@ -628,7 +629,7 @@
             <div
               class="navLink"
               data-text="Logout"
-              (click)="displayResponsivepopup = true"
+              (click)="logout_confirmation()"
             >
               <i
                 class="fa fa-sign-out f-18 ml-r-12"
@@ -644,41 +645,5 @@
     </div>
   </div>
 </mat-drawer-container>
-
-<!-- Cnfirmation Dialog -->
-<p-dialog
-  header=" "
-  [(visible)]="displayResponsivepopup"
-  [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '30vw' }"
-  [baseZIndex]="10000"
-  [draggable]="false"
-  [resizable]="false"
->
-  <div class="text-center">
-    <div>
-      <i
-        class="pi pi-exclamation-triangle"
-        style="font-size: 4rem; color: red"
-      ></i>
-    </div>
-    <div class="deleteDivText">
-      {{ BtnText }}
-    </div>
-  </div>
-  <ng-template pTemplate="footer">
-    <div class="d-flex justify-content-center mb-3">
-      <button class="btn btnVender bg-btn-success mr-3" (click)="logout()">
-        Yes
-      </button>
-      <button
-        class="btn btnVender bg-btn-cancel"
-        (click)="displayResponsivepopup = false"
-      >
-        Cancel
-      </button>
-    </div>
-  </ng-template>
-</p-dialog>
 
 <p-toast></p-toast>

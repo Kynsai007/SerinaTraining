@@ -191,10 +191,11 @@ export class Comparision3WayComponent
   APIResponse: any;
   so_id: any;
   isEmpty: boolean;
+  filteredPOLine = [];
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
-    private router: Router,
+    public router: Router,
     private authService: AuthenticationService,
     private _location: Location,
     private activatedRoute: ActivatedRoute,
@@ -1217,7 +1218,19 @@ export class Comparision3WayComponent
       this.lineItems = data.description;
     });
   }
-
+  filterPOLine(event){
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < this.lineItems.length; i++) {
+      let item = this.lineItems[i];
+      if (
+        item.Value.toLowerCase().includes(query.toLowerCase())
+      ) {
+        filtered.push(item);
+      }
+    }
+    this.filteredPOLine = filtered;
+  }
   readErrorTypes() {
     this.exceptionService.readErrorTypes().subscribe((data: any) => {
       this.givenErrors = data.description;

@@ -52,6 +52,8 @@ import { SalesOrderMappingComponent } from './exception-management/sales-order-m
 import { PoLinesComponent } from './exception-management/po-lines/po-lines.component';
 import { MappedGRNComponent } from './exception-management/mapped-grn/mapped-grn.component';
 import { PDFviewComponent } from './exception-management/pdfview/pdfview.component';
+import { FeatureComponent } from './feature/feature.component';
+import { SupportpdfViewerComponent } from './exception-management/supportpdf-viewer/supportpdf-viewer.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +98,9 @@ import { PDFviewComponent } from './exception-management/pdfview/pdfview.compone
     SalesOrderMappingComponent,
     PoLinesComponent,
     MappedGRNComponent,
-    PDFviewComponent
+    PDFviewComponent,
+    FeatureComponent,
+    SupportpdfViewerComponent
   ],
   imports: [
     CommonModule,
@@ -125,7 +129,8 @@ import { PDFviewComponent } from './exception-management/pdfview/pdfview.compone
     SalesOrderMappingComponent,
     PoLinesComponent,
     MappedGRNComponent,
-    PDFviewComponent
+    PDFviewComponent,
+    FeatureComponent
   ],
   providers: [
     DatePipe,

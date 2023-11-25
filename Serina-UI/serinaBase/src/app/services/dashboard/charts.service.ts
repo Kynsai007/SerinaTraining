@@ -558,6 +558,13 @@ export class ChartsService {
   getvendorBasedSummary(filter): Observable<any>{
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/vendorbasedsummary/${this.userId}/${this.docType}${filter}`);
   }
+  getPOSummary(filter): Observable<any>{
+    let fil = ''
+    if(filter != ''){
+      fil = `/${filter}`
+    }
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/dashboard/posummarybyVendor/${this.userId}${fil}`);
+  }
 
   /*vendor exception reports API's */
   getvendorExceptionSummary(query): Observable<any>{

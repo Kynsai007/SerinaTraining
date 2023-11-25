@@ -44,6 +44,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
     new EventEmitter<boolean>();
     @Output() public paginationEvent: EventEmitter<any> =
     new EventEmitter<boolean>();
+  @Output() public systemCheckEmit: EventEmitter<any> = new EventEmitter<any>();
   showPaginator: boolean;
   // columnsToDisplay =[];
   _selectedColumns: any[];
@@ -180,7 +181,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     } 
     else if (this.router.url.includes('PO') ) {
-      this.first = this.ds.poPaginationFisrt;
+      this.first = this.ds.poPaginationFirst;
       this.rows = this.ds.poPaginationRowLength;
       this.stateTable = 'PO';
       let stItem:any = JSON.parse(sessionStorage?.getItem('PO'));
@@ -190,7 +191,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     }
     else if (this.router.url.includes('GRN') && !this.router.url.includes('GRNExceptions')) {
-      this.first = this.ds.GRNPaginationFisrt;
+      this.first = this.ds.GRNPaginationFirst;
       this.rows = this.ds.GRNPaginationRowLength;
       this.stateTable = 'GRN';
       let stItem: any = JSON.parse(sessionStorage?.getItem('GRN'));
@@ -208,7 +209,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     }
     else if (this.router.url.includes('archived')) {
-      this.first = this.ds.archivedPaginationFisrt;
+      this.first = this.ds.archivedPaginationFirst;
       this.rows = this.ds.archivedPaginationRowLength;
       this.stateTable = 'Archived';
       let stItem:any = JSON.parse(sessionStorage?.getItem('Archived'));
@@ -218,7 +219,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     } 
     else if (this.router.url.includes('rejected')) {
-      this.first = this.ds.rejectedPaginationFisrt;
+      this.first = this.ds.rejectedPaginationFirst;
       this.rows = this.ds.rejectedPaginationRowLength;
       this.stateTable = 'rejected';
       let stItem:any = JSON.parse(sessionStorage?.getItem('rejected'));
@@ -227,7 +228,7 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
       }
     } 
     else if (this.router.url.includes('ServiceInvoices')) {
-      this.first = this.ds.servicePaginationFisrt;
+      this.first = this.ds.servicePaginationFirst;
       this.rows = this.ds.servicePaginationRowLength;
       this.stateTable = 'Service';
       let stItem:any = JSON.parse(sessionStorage?.getItem('Service'));
@@ -410,7 +411,8 @@ export class AllInvoicesComponent implements OnInit, OnChanges {
               };
             }
             if(sub_status != 1){
-              window.location.reload();
+              // window.location.reload();
+              this.systemCheckEmit.emit("inv");
             } else {
               this.AlertService.errorObject.detail = 'Hey, we are facing some issue so, our technical team will handle this Document';
               this.messageService.add(this.AlertService.errorObject)

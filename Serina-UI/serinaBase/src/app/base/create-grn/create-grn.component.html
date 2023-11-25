@@ -4,19 +4,19 @@
   <div>
     <div >
       <ul class="nav nav-tabs">
-        <li class="nav-item mr-1">
+        <!-- <li class="nav-item mr-1">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'normal'"
             (click)="chooseEditedpageTab('normal')"
             >Create GRN with Invoice({{ dataLength }})</a
           >
-        </li>
+        </li> -->
         <li class="nav-item ml-1">
           <a
             class="nav-link"
-            [class.active-tab]="viewType == 'editApproveGRN'"
-            (click)="chooseEditedpageTab('editApproveGRN')"
+            [class.active-tab]="viewType == 'grnWithPO'"
+            (click)="chooseEditedpageTab('grnWithPO')"
             >GRN Creation with PO</a
           >
         </li>
@@ -54,7 +54,7 @@
       </div>
 
       <!-- GRN With PO Tab -->
-      <div *ngSwitchCase="'editApproveGRN'">
+      <div *ngSwitchCase="'grnWithPO'">
         <div class="tableDiv">
           <form
           #PO_GRNForm="ngForm"
@@ -75,7 +75,7 @@
               [completeOnFocus]="true"
               [autofocus]="true"
               name="EntityName"
-              ngModel
+              [(ngModel)]="entityName"
               required
             >
             </p-autoComplete>

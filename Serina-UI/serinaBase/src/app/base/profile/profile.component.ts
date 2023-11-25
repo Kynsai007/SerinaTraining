@@ -54,20 +54,20 @@ export class ProfileComponent implements OnInit {
     this.editable = false;
   }
   config(){
-    if(this.vendorInvoiceAccess){
+    // if(this.vendorInvoiceAccess){
       this.landingPageObj = [
         { id: 1, page: 'Upload' },
         { id: 2, page: 'Document Status' },
         { id: 3, page: 'Dashboard' },
         { id: 4, page: 'Exception' },
       ];
-    } else {
-      this.landingPageObj = [
-        { id: 2, page: 'Document Status' },
-        { id: 3, page: 'Dashboard' },
-        { id: 4, page: 'Exception' },
-      ];
-    }
+    // } else {
+    //   this.landingPageObj = [
+    //     { id: 2, page: 'Document Status' },
+    //     { id: 3, page: 'Dashboard' },
+    //     { id: 4, page: 'Exception' },
+    //   ];
+    // }
   }
 
 }

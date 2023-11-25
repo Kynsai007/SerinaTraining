@@ -25,6 +25,7 @@ import { AutoComplete } from 'primeng/autocomplete';
 import { PopupComponent } from 'src/app/base/popup/popup.component';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PdfViewerComponent } from 'ng2-pdf-viewer';
 // declare var EventSourcePolyfill: any;
 export interface getApproverData {
   EntityID: number,
@@ -41,6 +42,14 @@ export interface getApproverData {
   styleUrls: ['./upload-section.component.scss'],
 })
 export class UploadSectionComponent implements OnInit {
+
+  // @ViewChild(PdfViewerComponent, { static: false })
+  // private pdfViewer: PdfViewerComponent;
+  // @ViewChild('hiddenContainer') hiddenContainer: Element;
+  pdfSrc: string | ArrayBuffer;
+  page: number = 1;
+  totalPages: number;
+
   apiVersion = environment.apiVersion;
   progress: number;
   invoiceUploadDetails: string | Blob;
@@ -145,7 +154,6 @@ export class UploadSectionComponent implements OnInit {
   // filterBool: boolean =  false;
   s_date: any;
   e_date: any;
-  @ViewChild('vdropdown') vdropdown: AutoComplete;
   GRN_number: any;
 
   selectedDepartment: any;
@@ -160,10 +168,11 @@ export class UploadSectionComponent implements OnInit {
     { header: "GRN Data", field: 'po_grn_data' },
     { header: "Department", field: 'departmentName' },
     { header: "Invoices", field: 'attchedInvoice' },
-    { header: "Supprot Docs", field: 'attchedSupport' },
+    { header: "Support Docs", field: 'attchedSupport' },
     { header: "Approvers", field: 'approvers' },
   ]
   @ViewChild('quickUploadForm') quickUploadForm: NgForm;
+
   preAproveBool: boolean;
   approversSendData: getApproverData[] = [];
   approverList: any;
@@ -205,36 +214,37 @@ export class UploadSectionComponent implements OnInit {
   isPOFlipped: boolean;
   flipPOData = [];
   UniqueGRNPO: any;
+ 
+  lowerLimit: number = 1;
+  upperLimit: number | undefined;
+  inputValue: string = '';
+  isButtonDisabled: boolean = true;
+  // entityName: any = '';
   slctinvoicelimit: boolean = false;
+  selectPageRange: boolean = false;
+  invoiceType: any;
+  vendorName: any;
+  selectedPoNumber: string;
+  selectedGRNNumber: string;
+  attachedBoolean: boolean = false;
+  upperValCheck: boolean;
+  totalPageValdation: boolean;
+  patternValidation: boolean;
   portal_name = 'vendorPortal';
 
   selectedOption: string;
   serviceData: any[] = [];
   filteredService: any;
-  mergefilteredService: any;
-  fulldata: any[] = [];
-  filterfulldata: any[] = [];
-  finalfiltereddata: any[] = [];
-  fileToUpload: any;
-  // client: any;
-  account_number: number;
-  socket: WebSocket;
   inputElement: HTMLInputElement;
-  fileContent: string;
   messages = [];
   selectedFile: Blob;
   sp_id: any;
   serviceAccounts: any;
   filteredServiceAccount: any[];
   selectedServiceAccount: any;
-  accountsData: any;
   selectedInvoiceType: any;
-  selectedEntity: string;
   returnmessage: boolean;
-  event: string;
   percentage: any;
-  final: string;
-  reason: any;
   serviceInvoiceAccess: boolean;
   vendorAccess: boolean;
   selectedCategory = 'credit';
@@ -429,21 +439,26 @@ export class UploadSectionComponent implements OnInit {
   onSelectPOType(val, type) {
     this.selectedInvoiceType = val ;
     if (type == 'ideal') {
-      this.LCMBoolean = 'No';
-      if (val == 'singlePO' || val == "nonPO") {
-        this.poTypeBoolean = true;
-      } else if (val == 'LCM') {
-        this.poTypeBoolean = true;
-        this.LCMBoolean = 'Yes';
+      if(val == 'nonPO'){
+        this.displaySelectPdfBoolean = true;
+      } else if(val == 'singlePO'){
+        this.displaySelectPdfBoolean = false;
       }
-      else if (val == 'multiPO') {
-        this.poTypeBoolean = false;
-        this.readPONumbers(this.s_date, this.e_date);
-        if (this.displaySelectPdfBoolean) {
-          this.mutliPODailog = true;
-          this.multiBtn = 'Submit';
-        }
-      }
+      // this.LCMBoolean = 'No';
+      // if (val == 'singlePO' || val == "nonPO") {
+      //   this.poTypeBoolean = true;
+      // } else if (val == 'LCM') {
+      //   this.poTypeBoolean = true;
+      //   this.LCMBoolean = 'Yes';
+      // }
+      // else if (val == 'multiPO') {
+      //   this.poTypeBoolean = false;
+      //   this.readPONumbers(this.s_date, this.e_date);
+      //   if (this.displaySelectPdfBoolean) {
+      //     this.mutliPODailog = true;
+      //     this.multiBtn = 'Submit';
+      //   }
+      // }
     } else {
       this.LCMBoolean = 'No';
       if (val == 'multiPO') {
@@ -522,7 +537,6 @@ export class UploadSectionComponent implements OnInit {
     this.sharedService
       .getServiceList(this.selectedEntityId)
       .subscribe((data: any) => {
-        console.log(data)
         this.filteredService = data.map(element => element.ServiceProvider);
         this.serviceData = data.map(element => element.ServiceProvider);
 
@@ -595,11 +609,11 @@ export class UploadSectionComponent implements OnInit {
         this.vendorAccountByEntity = data.result;
         this.vendorAccountId = this.vendorAccountByEntity[0].idVendorAccount;
         this.getPONumbers(this.vendorAccountId);
-        if (this.vendorAccountId && this.viewType == 'ideal') {
-          this.displaySelectPdfBoolean = true;
-        } else {
-          this.displaySelectPdfBoolean = false;
-        }
+        // if (this.vendorAccountId && this.viewType == 'ideal') {
+        //   this.displaySelectPdfBoolean = true;
+        // } else {
+        //   this.displaySelectPdfBoolean = false;
+        // }
       });
   }
   selectService(value) {
@@ -672,7 +686,6 @@ export class UploadSectionComponent implements OnInit {
 
   getVendorInvoices(po_num){
     this.sharedService.readVenInvoices(po_num).subscribe((data:any)=>{
-      console.log(data);
       this.invNumbersList = data;
     })
   }
@@ -694,7 +707,6 @@ export class UploadSectionComponent implements OnInit {
 
   selectedInv(event){
     this.sharedService.readInvLines(event.docheaderID).subscribe(data=>{
-      console.log(data);
       this.popupFun('flip returns',data,'');
     }, err=>{
       this.alertService.errorObject.detail = "Server error";
@@ -703,19 +715,53 @@ export class UploadSectionComponent implements OnInit {
   }
 
   selectedPO(event) {
-    if (this.selectedCategory == 'credit') {
-    this.readPOLines(event.PODocumentID);
+    if(this.viewType == 'ideal'){
+      this.displaySelectPdfBoolean = true;
+      this.readPOLines(event.PODocumentID);
     } else {
-      this.getVendorInvoices(event.PODocumentID);
+      if (this.selectedCategory == 'credit') {
+        this.readPOLines(event.PODocumentID);
+        } else {
+          this.getVendorInvoices(event.PODocumentID);
+        }
+        this.selectedPONumber = event.PODocumentID;
+        this.multiPO.controls['Name'].reset();
+        this.multiPO.controls['POLineAmount'].reset();
+        this.multiPO.controls['GRN_Name'].reset();
+        this.multiPO.controls['GRN_number'].reset();
+        this.multiPO.controls['GRNQty'].reset();
+        this.multiPO.controls['GRNLineAmount'].reset();
+        this.multiPO.controls['ConsumedPOQty'].reset();
     }
-    this.selectedPONumber = event.PODocumentID;
-    this.multiPO.controls['Name'].reset();
-    this.multiPO.controls['POLineAmount'].reset();
-    this.multiPO.controls['GRN_Name'].reset();
-    this.multiPO.controls['GRN_number'].reset();
-    this.multiPO.controls['GRNQty'].reset();
-    this.multiPO.controls['GRNLineAmount'].reset();
-    this.multiPO.controls['ConsumedPOQty'].reset();
+  }
+  selectIdealGrn(event){
+    this.po_grn_line_list = [];
+    event?.value?.forEach(ele=>{
+      this.GRNData.filter(el=>{
+        if(ele.PackingSlip == el.PackingSlip){
+          this.po_grn_line_list.push(el)
+        }
+      });
+    })
+    let arr = [];
+    this.po_grn_line_list?.forEach(val=>{
+        let ele = `${val.PackingSlip}-${val.POLineNumber}-${val.Name}`;
+        arr.push({PackingSlip:val.PackingSlip,POLineNumber:val.POLineNumber,GRNField:ele});
+      })
+      this.po_grn_line_list = arr.filter((val1,index,arr)=> arr.findIndex(v2=>['PackingSlip','POLineNumber'].every(k=>v2[k] ===val1[k])) === index);
+    this.PO_GRN_Number_line = this.po_grn_line_list;
+    // if(this.PO_GRN_Number_line.length>0){
+    //   this.flipBool = true;
+    // } else {
+    //   this.flipBool = false;
+    // }
+    if(event.value.length == 0 ){
+      this.displaySelectPdfBoolean = false;
+    }
+    else{
+      this.displaySelectPdfBoolean = true;
+      this.isuploadable = true;
+    }
   }
   filterPO_GRNnumber(event) {
     let filtered: any[] = [];
@@ -989,19 +1035,32 @@ export class UploadSectionComponent implements OnInit {
     let isSupportedFiletype = !!event.target.files[0].name.match(/(.png|.jpg|.pdf|.html|.htm)/);
     if (isSupportedFiletype) {
       this.isuploadable = false;
+      this.selectPageRange = true;
+      this.totalPages = event.numPages;
       this.dragfile = false;
       this.inputElement = event.target as HTMLInputElement;
       this.convertFileToUint8Array(event.target.files[0]);
       this.invoiceUploadDetails = event.target.files[0];
       if (event.target.files && event.target.files[0]) {
         var reader = new FileReader();
+        let reqUrl
         reader.readAsDataURL(event.target.files[0]); // read file as data url
 
         reader.onload = (event) => {
           // called once readAsDataURL is completed
           this.url = event.target.result;
+          reqUrl = this.url.split(',')[1]
           var img = new Image();
           img.onload = () => { };
+          let byteArray = new Uint8Array(
+            atob(reqUrl)
+              .split('')
+              .map((char) => char.charCodeAt(0))
+          );
+          this.pdfSrc = window.URL.createObjectURL(
+            new Blob([byteArray], { type: 'application/pdf' })
+          );
+          this.attachedBoolean = true;
         };
       }
 
@@ -1164,14 +1223,18 @@ export class UploadSectionComponent implements OnInit {
               MultiPO_upload: this.multiPO_filepath,
               lcmtype: this.LCMBoolean,
               vendorAccountID: this.vendorAccountId,
-              poNumber: '',
+              poNumber: this.selectedPONumber,
               VendoruserID: this.sharedService.userId,
+              po_grn_data: this.PO_GRN_Number_line,
+              invoicetype: this.invoiceType,
               filetype: filetype,
               filename: filename,
               source: 'Web',
               sender: JSON.parse(sessionStorage.currentLoginUser).userdetails.email,
               entityID: this.selectedEntityId,
-              document_type: this.document_type
+              document_type: this.document_type,
+              up_lt: this.upperLimit,
+              low_lt: this.lowerLimit,
             };
             this.runEventSource(eventSourceObj);
             let count = 0;
@@ -1357,7 +1420,29 @@ export class UploadSectionComponent implements OnInit {
         this.invoiceFilename = event.target.files[i].name;
         this.slctinvoicelimit = true;
       }
-    } else {
+      var reader = new FileReader();
+      let reqUrl
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+
+      reader.onload = (event) => {
+        // called once readAsDataURL is completed
+        this.url = event.target.result;
+        reqUrl = this.url.split(',')[1]
+        var img = new Image();
+        img.onload = () => { };
+        let byteArray = new Uint8Array(
+          atob(reqUrl)
+            .split('')
+            .map((char) => char.charCodeAt(0))
+        );
+        this.pdfSrc = window.URL.createObjectURL(
+          new Blob([byteArray], { type: 'application/pdf' })
+        );
+        this.attachedBoolean = true;
+
+      };
+    }
+    else {
       for (var i = 0; i < event.target.files?.length; i++) {
         this.supportDocList.push(event.target.files[i]);
         this.supportFileNamelist.push(event.target.files[i].name);
@@ -1455,7 +1540,8 @@ export class UploadSectionComponent implements OnInit {
       "Currency": this.selectedCurrency,
       "flippo_data": this.flipPOData,
       "return_lines": this.returnInvArr,
-      "up_lt": val.pageLimit
+      "up_lt": this.upperLimit,
+      "low_lt": this.lowerLimit
     }
     this.uploadInvoicesListData.push(obj);
     this.APIPostData.push(APIObj);
@@ -1648,6 +1734,129 @@ export class UploadSectionComponent implements OnInit {
 
     }
   }
+  afterLoadComplete(pdfData: any) {
+    this.totalPages = pdfData.numPages;
+  }
+
+  onInputValueChange(type) {
+    let allowedPattern = /^(?:(?!0)(?:\d+-\d+|\d+)(?:, ?|$))+$/;
+    this.upperValCheck = true;
+    this.totalPageValdation = true;
+    this.patternValidation = true;
+    let isRangeValid = true; // Initialize as true
+    if (!allowedPattern.test(this.inputValue)) {
+      this.patternValidation = false;
+      isRangeValid = false; // The input does not match the pattern
+    }
+    else{
+      const rangeParts = this.inputValue.split('-');
+
+      if (rangeParts.length === 1) {
+        const singleValue = + rangeParts[0];
+
+        if(singleValue > this.totalPages ){
+          isRangeValid = false;
+          this.totalPageValdation = false;
+        }
+        else if ( singleValue !== 0){
+          this.lowerLimit = singleValue;
+          this.upperLimit = singleValue;
+        }
+        else{
+          isRangeValid = false;
+          this.upperValCheck = false;
+        }
+
+      } else if (rangeParts.length === 2) {
+          const lower = parseInt(rangeParts[0]);
+          const upper = parseInt(rangeParts[1]);
+          if( lower > this.totalPages || upper > this.totalPages){
+            isRangeValid = false;
+            this.totalPageValdation = false;
+          }
+          else if (lower <= upper){
+            this.lowerLimit = + rangeParts[0];
+            this.upperLimit = + rangeParts[1];
+
+          }
+          else{
+             isRangeValid = false;
+             this.upperValCheck = false;
+          }
+      } else {
+        this.lowerLimit = undefined;
+        this.upperLimit = undefined;
+      }
+      if (this.lowerLimit === 0 || this.upperLimit === 0) {
+        isRangeValid = false;
+      }
+      // if(this.lowerLimit > this.totalPages || this.upperLimit > this.totalPages){
+      //   isRangeValid = false;
+      //   this.totalPageValdation = false;
+      // }
+
+    }
+
+    this.isButtonDisabled = !isRangeValid;
+    // if(this.isButtonDisabled && this.inputValue != ''){
+    //   this.changeValue()
+    // }
+
+  }
+  changeValue(){
+    if (this.isButtonDisabled) {
+      if (!this.upperValCheck) {
+        this.alertService.errorObject.detail = "Higher value must be greater than lower value";
+      } else if (!this.totalPageValdation) {
+        this.alertService.errorObject.detail = "The page limit must be inside the total pages of the invoice (Total Pages: " + this.totalPages + ")";
+      } else if (!this.patternValidation) {
+        this.alertService.errorObject.detail = "Enter value in valid pattern (Eg:1-5, 7, 11-15)";
+      } else {
+        // If none of the conditions are met
+        return;
+      }
+      this.messageService.add(this.alertService.errorObject);
+    }
+}
+checkSupportFile(){
+  if( this.lowerLimit === 1 && this.upperLimit === this.totalPages){
+    if (confirm('No supporting document found, are you sure to proceed without supporting document')){
+      this.isButtonDisabled = false;
+    }
+    else{
+      this.isButtonDisabled = true;
+    }
+  }
+}
+uploadCheck(event){
+  if( this.lowerLimit === 1 && this.upperLimit === this.totalPages){
+    if (confirm('No supporting document found, are you sure to proceed without supporting document')){
+      this.uploadSigle(event);
+      this.isButtonDisabled = false;
+    }
+    else{
+      this.isButtonDisabled = true;
+    }
+  }
+  else{
+    this.uploadSigle(event);
+  }
+
+}
+uploadInvoiceCheck(){
+  if( this.lowerLimit === 1 && this.upperLimit === this.totalPages){
+    if (confirm('No supporting document found, are you sure to proceed without supporting document')){
+      this.uploadInvoice();
+      this.isButtonDisabled = false;
+    }
+    else{
+      this.isButtonDisabled = true;
+    }
+  }
+  else{
+    this.uploadInvoice();
+  }
+}
   ngOnDestroy() {
     this.mat_dlg.closeAll();
   }

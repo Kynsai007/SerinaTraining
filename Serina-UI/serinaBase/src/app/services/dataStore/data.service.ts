@@ -19,17 +19,17 @@ export class DataService {
   // all invoices paagination variables
   allPaginationFirst = 0;
   allPaginationRowLength = 10;
-  poPaginationFisrt = 0;
+  poPaginationFirst = 0;
   poPaginationRowLength = 10;
-  GRNPaginationFisrt = 0;
+  GRNPaginationFirst = 0;
   GRNPaginationRowLength = 10;
   paymentPaginationFisrt = 0;
   paymentPaginationRowLength = 10;
-  archivedPaginationFisrt = 0;
+  archivedPaginationFirst = 0;
   archivedPaginationRowLength = 10;
-  rejectedPaginationFisrt = 0;
+  rejectedPaginationFirst = 0;
   rejectedPaginationRowLength = 10;
-  servicePaginationFisrt = 0;
+  servicePaginationFirst = 0;
   servicePaginationRowLength = 10;
 
   // Edited page pagination variables
@@ -153,7 +153,7 @@ export class DataService {
   searchSOStr = '';
   SODisplayData = [];
   soArrayLength: any;
-  SOPaginationFisrt = 1;
+  SOPaginationFirst = 1;
   SOPaginationRowLength = 10;
   offsetCountSO = 1;
   pageCountVariableSO = 0;

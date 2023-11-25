@@ -1,0 +1,50 @@
+
+<section>
+    <div class="carousel text-center">
+        <div class="slide" *ngFor="let slide of featureList; let i = index" [class.active]="isCurrentSlide(i)">
+        
+            <div class="d-flex justify-content-center">
+                <img src="assets/Serina Assets/Group 52.png">
+                <!-- <video src="assets/CREATE GRN - INVOICE PENDING.mp4"></video> -->
+                <!-- <video controls width="400" height="300">
+                  <source [src]="videoSource" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video> -->
+            </div>
+            <h5>Hey User, We have new Feature!</h5>
+            <h6>{{ slide.heading }}</h6>
+            <p class="f-13">{{ slide.description }}</p>
+            <p class="f-13"> <a [href]="slide.link" target="_blank">Click here for demo video</a> </p>
+        </div>
+      </div>
+      <div class="indicators">
+        <div class="indicator" *ngFor="let slide of featureList; let i = index" [class.active]="isCurrentSlide(i)" (click)="selectSlide(i)"></div>
+      </div>
+      <div class="footer">
+        <label for="show" class="f-12 d-block" >
+            <input type="checkbox" [(ngModel)]="doNotShowBool">
+            <span class="dont">Don't show this again</span>
+        </label>
+        <button class="btn btnVender bg-btn-success" mat-dialog-close (click)="closeForMe()">
+            Close
+        </button>
+      </div>
+</section>
+
+<!-- <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators" *ngFor="let item of featureList; let i =index;">
+      <li data-target="#carouselExampleIndicators" [data-slide-to]="item" class="active"></li>
+    </ol>
+    <div class="carousel-inner">
+      <div class="carousel-item active" *ngFor="let item of featureList; let i =index;">
+        <div>
+            <img src="assets/Serina Assets/Group 52.png"  class="d-block">
+        </div>
+        <div>
+            <h5>Hey User, We have new Feature!</h5>
+            <h6>{{ item.name }}</h6>
+            <p>{{ item.descrption }}</p>
+        </div>
+      </div>
+    </div>
+  </div> -->

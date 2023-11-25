@@ -12,8 +12,10 @@ import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
 import { environment1 } from 'src/environments/environment.prod';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
+import { FeatureComponent } from '../feature/feature.component';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 
 @Component({
   selector: 'app-base-type',
@@ -34,8 +36,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   openBoolean: boolean;
   last_login1: any;
   openBooleanException: boolean;
-  displayResponsivepopup: boolean;
-  BtnText = 'Are you sure you want to Logout?';
   messageBox: any;
   financeapproveDisplayBoolean: boolean;
   uploadPermissionBoolean: boolean;
@@ -63,6 +63,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   isDesktop:boolean;
   sidebarMode = 'side';
   isnotTablet = true;
+  portalName:string;
 
   constructor(
     public router: Router,
@@ -73,7 +74,6 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     private serviceBased: ServiceInvoiceService,
     private exceptionService: ExceptionsService,
     // private _mqttService: MqttService,
-    private chartSerivce : ChartsService,
     private chartService: ChartsService,
     private alertService: AlertService,
     private authService: AuthenticationService,
@@ -91,6 +91,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   ngOnInit(): void {
     this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
     this.dataStoreService.ap_boolean = JSON.parse(sessionStorage.getItem('ap_boolean'));
+    this.portalName = this.dataStoreService.portalName;
     if(!this.dataStoreService.configData){
       this.readConfig();
     }
@@ -132,6 +133,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     script.type = 'text/javascript';
     script.src = 'https://datasemanticschatbots.in/bot_script/Serina Bot/cGluZWFwcGxl';
 
+    // append the script element to the body of the document
+    this.renderer.appendChild(document.body, script);
   }
   removeSession(){
     sessionStorage.clear();
@@ -193,7 +196,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
         this.switchtext = "AR";
         this.cust_type = 'Vendor';
         this.invoceDoctype = true;
-        this.chartSerivce.docType = 3;
+        this.chartService.docType = 3;
         this.SharedService.docType = 3;
       } else {
         this.DocumentPageRoute = 'invoice/PO';
@@ -201,7 +204,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
         this.switchtext = "AP";
         this.dataStoreService.ap_boolean = false;
         this.cust_type = 'Customer';
-        this.chartSerivce.docType = 1;
+        this.chartService.docType = 1;
         this.SharedService.docType = 1;
       }
     // } else {
@@ -235,6 +238,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login1 = this.userDetails.last_login;
+    this.financeapproveDisplayBoolean =
+      this.settingService.finaceApproveBoolean;
+      if(this.userDetails.userdetails.show_updates){
+        this.releaseDocs();
+      }
 
   }
 
@@ -410,11 +418,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   // Read entity once data is subscribed then passing the data through observable
   getEntitySummary() {
     this.serviceProviderService.getSummaryEntity().subscribe((data: any) => {
-       data.result.forEach((ele)=>{
-       if(ele.EntityName == "Al Ghurair Investment LLC") {
-        this.isAGIUser = true;
-       }
-      })
+      //  data.result.forEach((ele)=>{
+      //  if(ele.EntityName == "Al Ghurair Investment LLC") {
+      //   this.isAGIUser = true;
+      //  }
+      // })
       this.dataStoreService.entityData.next(data.result);
     });
   }
@@ -444,13 +452,47 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       window.location.reload()
     }, 1000);
   }
+  releaseDocs(){
+    this.settingService.releseNotes().subscribe((data:any)=>{
+      if(data){
+        this.releaseDailog(data)
+      }
+    })
+  }
+  releaseDailog(value){
+    const drf:MatDialogRef<FeatureComponent> = this.dialog.open(FeatureComponent,{ 
+      width : '50%',
+      height: '85vh',
+      hasBackdrop: false,
+      data : value})
+  }
+  doc_status_route(){
+    if(this.vendorInvoiceAccess && this.ap_boolean){
+      this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+    } else if(this.vendorInvoiceAccess && !this.ap_boolean){
+      this.router.navigate([`${this.portalName}/invoice/PO`]);
+    } else{
+      this.router.navigate([`${this.portalName}/invoice/ServiceInvoices`]);
+    }
+  }
+  logout_confirmation(){
+    const dialogRef:MatDialogRef<ConfirmationComponent> = this.dialog.open(ConfirmationComponent,{
+      width: '30svw',
+      height: '40svh',
+      hasBackdrop: false,
+      data:{  body: "Are you sure you want to Logout?"}
+    })
 
+    dialogRef.afterClosed().subscribe((response:any)=>{
+      if(response){
+        this.logout();
+      }
+    })
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
     this.dialog.closeAll();
-    
-    
   }
 }

@@ -1059,6 +1059,7 @@
               !approval_selection_boolean
             "
           >
+          
             <table class="table">
               <tr class="f-12 lineName">
                 <th>S.No</th>
@@ -1070,17 +1071,18 @@
                 class="f-11"
               >
                 <td>{{ i + 1 }}</td>
-                <td class="break_word">{{ file }}</td>
+                <td class="break_word pointer" (click)="downloadDoc(file,'view')">{{ file }}</td>
                 <td>
                   <i
-                    class="fa fa-download"
+                    class="fa fa-download pointer"
                     aria-hidden="true"
-                    style="cursor: pointer"
-                    (click)="downloadDoc(file)"
+                    (click)="downloadDoc(file,'down')"
                   ></i>
                 </td>
               </tr>
             </table>
+          <p class="f-11">*Supporting document is not being read by Serina, please check and review manually.</p>
+
           </div>
           <div
             *ngIf="
@@ -1274,7 +1276,8 @@
               Upload
             </button> -->
               <div class="f-11" style="color: #e56767">
-                Note: Please upload supporting documents if you have any
+                Note: Please upload supporting documents if you have any <br>
+                *Supporting document is not being read by Serina, please check and review manually
               </div>
             </div>
           </div>
@@ -1286,6 +1289,7 @@
             style="min-height: auto"
           >
             <h6 class="f-13">Supporting Documents</h6>
+            
             <table class="table">
               <tr class="f-12 lineName">
                 <th>S.No</th>

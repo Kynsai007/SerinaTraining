@@ -6,13 +6,14 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { PermissionService } from 'src/app/services/permission.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ChangePasswordComponent } from 'src/app/base/change-password/change-password.component';
 import { environment1 } from 'src/environments/environment.prod';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
 import { ChartsService } from 'src/app/services/dashboard/charts.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { SettingsService } from 'src/app/services/settings/settings.service';
+import { ConfirmationComponent } from 'src/app/base/confirmation/confirmation.component';
 
 @Component({
   selector: 'app-vendor-base',
@@ -27,8 +28,6 @@ export class VendorBaseComponent implements OnInit {
   last_login: string;
   showLogout: boolean;
   subscription:Subscription;
-  displayResponsivepopup:boolean;
-  BtnText ="Are you sure you want to Logout?"
   menubarBoolean: boolean;
   excpetionPageAccess: boolean;
   uploadPermissionBoolean: boolean;
@@ -196,5 +195,20 @@ export class VendorBaseComponent implements OnInit {
   }
   logout(){
     this.authService.logout();
+  }
+  
+  logout_confirmation(){
+    const dialogRef:MatDialogRef<ConfirmationComponent> = this.dialog.open(ConfirmationComponent,{
+      width: '30svw',
+      height: '40svh',
+      hasBackdrop: false,
+      data:{  body: "Are you sure you want to Logout?"}
+    })
+
+    dialogRef.afterClosed().subscribe((response:any)=>{
+      if(response){
+        this.logout();
+      }
+    })
   }
 }

@@ -70,6 +70,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   drilldownarray = [];
   drillBool: boolean;
   docId: any;
+  user_name: string;
 
   constructor(
     private tagService: TaggingService,
@@ -128,6 +129,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   initialData() {
     this.userType = this.authService.currentUserValue['user_type'];
+    this.user_name = this.authService.currentUserValue['userdetails'].firstName;
     this.isDesktop = this.ds.isDesktop;
     if (this.userType == 'vendor_portal') {
       this.portalName = 'vendorPortal';
@@ -260,9 +262,10 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.sharedService.selectedEntityId = e.idEntity;
     if (this.router.url == `/${this.portalName}/Create_GRN_inv_list`) {
       this.ds.grnWithPOBoolean = false;
-      this.router.navigate([
-        `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
-      ]);
+      // this.router.navigate([
+      //   `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
+      // ]);
+      this.updatePO(e);
     } else {
       this.SpinnerService.show();
       let session = {
@@ -408,6 +411,34 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       //   ]
       // }
 
+    
+  }
+
+  updatePO(e) {
+    this.SpinnerService.show();
+    this.sharedService.get_poDoc_id(e.PODocumentID).subscribe((data: any) => {
+      this.sharedService.updatePO(data.result).subscribe((data: any) => {
+        if(data?.po_status.toLowerCase() == 'open' && data?.po_confirmation_status.toLowerCase() == 'confirmed'){
+          this.router.navigate([
+            `${this.portalName}/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
+          ]);
+        } else if(data.po_status.toLowerCase() != 'open') {
+          this.displayResponsivepopup = true;
+          this.confirmText = `Hey ${this.user_name}, PO(${e.PODocumentID}) is closed. Please check if entered PO value is correct, if still issue persist, please contact support`;
+        } else if(data.po_status.toLowerCase() != 'confirmed') {
+          this.displayResponsivepopup = true;
+          this.confirmText = `Hey ${this.user_name}, PO(${e.PODocumentID}) is not confirmed. please confirm it in the ERP and try again.`;
+        }
+        
+        this.SpinnerService.hide();
+      }, err => {
+        this.SpinnerService.hide();
+        this.alertService.errorObject.detail = 'Server error';
+        this.MessageService.add(this.alertService.errorObject);
+      })
+    },err => {
+      this.SpinnerService.hide();
+    })
     
   }
 }

@@ -66,5 +66,10 @@ export class SettingsService {
   update_profile(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Customer/ProfileUpdate/${this.userId}`,data)
   }
-
+  releseNotes(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/releaseinfo`).pipe(retry(2))
+  }
+  removeRelesebyId(){
+    return this.http.delete(`${environment.apiUrl}/${environment.apiVersion}/removereleaseinfo/${this.userId}`);
+  }
 }

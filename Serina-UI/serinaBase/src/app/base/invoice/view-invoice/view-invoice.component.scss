@@ -113,7 +113,7 @@ a {
 .tabsDiv {
   position: relative;
   max-height: 82svh;
-  min-height: 81svh;
+  min-height: 79svh;
   margin-top: 5px;
   z-index: 3;
   overflow-y: auto;
@@ -333,6 +333,22 @@ a {
   .p-button.p-button-icon-only {
     background-color: #ffffff;
   }
+  .mapping .p-autocomplete-dd .p-autocomplete-dropdown {
+    height: 28px;
+  }
+  .mapping .p-autocomplete-dd .p-autocomplete-input,
+    .p-autocomplete-dd .p-autocomplete-multiple-container {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+      color: #272727;
+      font-weight: 600;
+      height: 28px;
+      font-size: 11px;
+      font-family: "Segoe UI Regular", "Segoe UI", Arial;
+      background: transparent;
+      border: 0px solid lightgray;
+      border-right: hidden;
+    }
 }
 
 .radioBtn {

@@ -94,9 +94,10 @@ export class LoginPageComponent implements OnInit {
     private authenticationService: AuthenticationService,private msalService: MsalService,private googleService: SocialAuthService) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
+      let prev_route = JSON.parse(sessionStorage.getItem("prev_URL"));
       this.User_type = this.authenticationService.currentUserValue.user_type;
       if (this.User_type === 'customer_portal') {
-        this.router.navigate(['/customer']);
+        this.router.navigate([`/customer${prev_route}`]);
       } else if (this.User_type === 'vendor_portal') {
         this.router.navigate(['/vendorPortal']);
       }
@@ -377,31 +378,38 @@ export class LoginPageComponent implements OnInit {
         } else if (data.user_type === 'customer_portal') {
           let route = '';
             if(data.userdetails?.landingPage == 'Upload'){
-              if(this.vendorInvoiceAccess){
+              if(data.permissioninfo.NewInvoice){
                 route = '/uploadInvoices'
               } else {
                 if(invoceDoctype){
-                  route = '/invoice/allInvoices'
+                  route = '/invoice/ServiceInvoices'
                 } else {
                   route = '/invoice/PO'
                 }
               }
             } else if(data.userdetails?.landingPage == 'Document Status'){
               if(invoceDoctype){
-                route = '/invoice/allInvoices'
+                if(this.vendorInvoiceAccess){
+                  route = '/invoice/allInvoices';
+                } else {
+                  route = '/invoice/ServiceInvoices';
+                }
               } else {
                 route = '/invoice/PO'
               }
+              this.dataStoreService.doc_status_tab = `/customer${route}`;
             } else if(data.userdetails?.landingPage == 'Dashboard'){
               route = '/home'
             } else if(data.userdetails?.landingPage == 'Exception'){
               route = '/ExceptionManagement'
             }
             this.router.navigate([`/customer${route}`]);
+            sessionStorage.setItem("prev_URL", JSON.stringify(route));
         } else if (data.user_type === 'vendor_portal') {
           this.router.navigate(['/vendorPortal']);
         }
-        environment1.username = this.loginForm.controls["username"].value;;
+        environment1.username = this.loginForm.controls["username"].value;
+        window.location.reload();
       } else {
         alert('The instance is inactive. Please contact Service Admin.');
         sessionStorage.clear();
