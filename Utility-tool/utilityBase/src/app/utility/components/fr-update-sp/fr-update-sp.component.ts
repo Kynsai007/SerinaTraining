@@ -211,7 +211,11 @@ export class FrUpdateSpComponent implements OnInit {
   }
   
   getValue(field){
-    return this.testingFields[field]['confidence']*100;
+    if(this.testingFields[field]){
+      return this.testingFields[field]['confidence']*100;
+    }else{
+      return 0
+    }
   }
   checkincludes(key){
     if(key.includes('tab_1')){
