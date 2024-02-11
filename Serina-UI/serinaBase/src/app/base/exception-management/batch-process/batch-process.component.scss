@@ -44,3 +44,90 @@
     }
   }
 }
+@media screen and (max-width: 1100px) and (min-width: 800px){
+.filter_input {
+  top: -34px !important;
+  right: 215px !important;
+}
+}
+
+// new theme
+.headh6 {
+  background: white;
+  height: 54px;
+  padding: 10px 20px;
+  margin: 0px 8px 0px 0px;
+  border-radius: 5px;
+  left: -4px;
+}
+.filters {
+  gap: 20px;
+  // margin-right: 53px;
+}
+.filters .filter {
+  background: #ffffff 0% 0% no-repeat padding-box;
+    border-radius: 5px;
+    opacity: 1;
+    padding: 4px 10px;
+    width: 300px;
+    border: 0;
+    height: 54px;
+}
+
+.png_label {
+  position: relative;
+  top: -5px;
+  z-index: 1;
+}
+.wild_search_all {
+  display: flex;
+  height: 54px;
+  background: #ffffff;
+  padding: 4px 16px;
+  border-radius: 4px;
+  width: 45vw;
+}
+.filter_box input {
+  border: 0;
+  background: inherit;
+  height: 30px;
+  padding: 6px 0px;
+  width: 39vw;
+}
+.filter_box input:focus {
+  outline: 0;
+}
+// .calender_div {
+//   position: relative;
+//     top: 14px;
+// }
+
+:host ::ng-deep  {
+.p-autocomplete-dd .p-autocomplete-input {
+  flex: 1 1 auto;
+  width: 250px;
+  background: inherit;
+  border: 0;
+  height: 30px;
+  position: relative;
+  top: -5px;
+  padding: 6px 0px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.status .p-button.p-button-icon-only {
+  background: inherit;
+  border: 0;
+  position: relative;
+  top: -18px;
+}
+.p-autocomplete {
+  top: -9px;
+}
+  // .p-calendar .p-inputtext {
+  //   background-color: inherit;
+  //   border: 0 !important;
+  //   width: 0 !important;
+  // }
+
+}

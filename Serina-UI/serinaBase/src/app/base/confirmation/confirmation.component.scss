@@ -5,3 +5,40 @@
     align-items: center;
     height: -webkit-fill-available;
 }
+.backg {
+    position: relative;
+}
+.backg > img {
+    width: 100%;
+}
+.secondary_icon {
+    position: absolute;
+    right: 0px;
+    top: 0;
+    background-color: white;
+    height: 130px;
+    width: 145px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+.secondary_icon img {
+    width: fit-content;
+}
+.dialog_text h6 {
+    color: #FF0303;
+    margin-bottom: 4px;
+}
+// :host::ng-deep{
+//     .mat-dialog-container {
+//         padding: 0px 0px 20px 0px !important;
+//     }
+// }
+.dialog_text {
+    padding: 20px;
+}
+.secondary_btn {
+    margin-left: 20px;
+}

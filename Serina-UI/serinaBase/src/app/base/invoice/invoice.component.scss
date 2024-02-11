@@ -54,16 +54,13 @@
     padding: 4px;
   }
 }
-.searchInput{
-  margin: 0;
-  width: 130px;
-}
+
 
 .downlod_btn {
   position: absolute;
   top: -37px;
 }
-.nav_pane_width{
+.nav_pane_width {
   max-width: 70%;
   // display: flex;
   // margin-bottom: 7px;
@@ -75,26 +72,27 @@
 .left_ser {
   left: -45px;
 }
-.tableFilters {
-  display: flex;
-  justify-content: right;
-position: absolute;
-  right: 0;
-}
+// .tableFilters {
+//   display: flex;
+//   justify-content: right;
+//   position: absolute;
+//   right: 0;
+// }
 .reversed {
   flex-direction: row-reverse;
-}
-.selectFilter {
-  width: 120px;
-  height: 30px;
 }
 .filter_input {
   position: absolute;
   top: 56px;
   right: 215px;
 }
+.loader_text {
+  color: #272727;
+  width: 70svw;
+  text-align: center;
+}
 
-@media screen and (max-width: 800px) and (min-width:577px) {
+@media screen and (max-width: 800px) and (min-width: 577px) {
   .uni_dwn_btn {
     right: -40px !important;
   }
@@ -118,26 +116,25 @@ position: absolute;
   }
   .nav_pane_width {
     flex-wrap: wrap;
-    max-width:100%;
+    max-width: 100%;
     position: relative;
   }
-.tableFilters {
+  .tableFilters {
     position: relative;
   }
 }
-@media screen and (max-width: 1100px){
-//   .tableDataDiv {
-//     margin-top: 40px !important;
-// }
-.tableFilters {
-
-  position: relative;
-}
+@media screen and (max-width: 1100px) {
+  //   .tableDataDiv {
+  //     margin-top: 40px !important;
+  // }
+  .tableFilters {
+    position: relative;
+  }
 }
 @media screen and (max-width: 576px) {
   .nav_pane_width {
     flex-wrap: wrap;
-    max-width:100%;
+    max-width: 100%;
     position: relative;
   }
   :host ::ng-deep {
@@ -170,7 +167,175 @@ position: absolute;
   .left_ser {
     left: -80px;
   }
-.tableFilters {
+  .tableFilters {
     position: relative;
   }
- }
+}
+
+//  new theme
+.inv_nav_container {
+  // width: 50%;
+  // background-color: white;
+  padding-top: 12px;
+  // margin: 0px 53px;
+  column-gap: 10px;
+}
+.nav_sub {
+  background-color: #FFFFFF;
+  height: 54px;
+  width: 49%;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: space-between;
+}
+.inv_nav_container ul {
+  border-bottom: 1px solid #00000080 !important;
+  padding: 0px 15px;
+}
+.nav-tabs .nav-link {
+  padding: 0;
+}
+.row .col-md-2 {
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  height: 100vh;
+}
+.wild_search_all {
+  display: flex;
+  height: 54px;
+  padding: 4px 23px;
+  border-radius: 4px;
+}
+.filter_box input {
+  border: 0;
+  background-color: inherit;
+  width: 38vw;
+}
+.filter_box input:focus {
+  outline: 0;
+}
+.searchInput {
+  width: 41vw;
+    border: 0;
+    margin: 0;
+    top: 10px;
+    position: relative;
+    z-index: 1;
+}
+.click_search {
+  min-width: 50px;
+    border-radius: 5px;
+    color: #140101;
+}
+.selectFilter {
+    height: 30px;
+    border: 0;
+    position: relative;
+    top: -8px;
+    padding: 0;
+    left: -4px;
+    z-index: 1;
+}
+.posted_filter {
+  width: 23%;
+  padding: 6px 14px;
+}
+.input-group label {
+  position: absolute;
+    top: 0px;
+    left: 14px;
+    z-index: 2;
+}
+dialog {
+  z-index: 10;
+  margin-top: 10px;
+  background: #ffffff;
+  box-shadow: 0px 6px 12px #00000029;
+  border: none;
+  border-radius: 5px;
+  height: 310px;
+  width: 450px;
+  position: absolute;
+  transform: translatey(50%);
+  overflow: visible;
+}
+dialog::backdrop {
+  background-color: hsla(240, 2%, 10%, 0.651);
+  opacity: 0.5;
+}
+dialog .inputBox {
+  width: 100%;
+  background: #f3f3f3;
+  border-radius: 5px;
+  padding: 0px 10px;
+  margin-bottom: 10px;
+  height: 54px;
+}
+dialog .inputBox input {
+  height: 30px;
+  border: 0;
+  background-color: inherit;
+  position: relative;
+  top: -10px;
+  padding: 0;
+}
+.selectionDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+dialog .footer {
+  border-top: 1px solid lightgray;
+    padding: 20px 0px;
+}
+.activeClass {
+  background-color: #358dc0 !important;
+  color: white;
+}
+.pointer .fa-close {
+  position: relative;
+  top: -5px;
+}
+:host::ng-deep {
+  dialog .inputBox .p-calendar {
+    width: -webkit-fill-available !important;
+  }
+  
+  dialog .inputBox .p-calendar .p-inputtext {
+    width: -webkit-fill-available !important;
+    border: 0px solid #d3d3d3 !important;
+    height: 30px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    background-color: inherit;
+    padding: 0;
+    position: relative;
+    top: -10px;
+  }
+  dialog .inputBox .p-button.p-button-icon-only {
+    height: 30px;
+    background: inherit;
+    border: 0;
+    color: #272727;
+    position: relative;
+    top: -14px;
+  }
+  .p-inputtext:enabled:focus {
+    box-shadow: 0 0 0 0rem #ffffff !important;
+  }
+  .p-datepicker .p-datepicker-buttonbar {
+    padding: 0rem 0
+  }
+  .p-datepicker .p-datepicker-header {
+    padding: 0;
+  }
+  .p-dialog {
+    background-color: white;
+    max-height: 100%;
+    margin: 0 !important;
+  }
+  .p-dialog .p-dialog-header {
+    padding: 10px 21px !important;
+    border-bottom: 1px solid #00000033;
+  }
+}

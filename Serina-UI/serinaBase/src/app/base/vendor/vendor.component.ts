@@ -9,24 +9,12 @@ import {  Location } from '@angular/common';
 import { NgxSpinnerService } from "ngx-spinner";
 import { PermissionService } from 'src/app/services/permission.service';
 
-
-export interface UserData {
-  name: string;
-  contact: string;
-  lastModified: string;
-  status: string;
-  emailId: string;
-  id: string;
-}
-
 @Component({
   selector: 'app-vendor',
   templateUrl: './vendor.component.html',
   styleUrls: ['./vendor.component.scss']
 })
 export class VendorComponent implements OnInit, AfterViewInit {
-  @Input() VenderFullData: any;
-  users: UserData[] = []
 
   vendorData = []
   VendorAccount = []
@@ -51,20 +39,10 @@ export class VendorComponent implements OnInit, AfterViewInit {
 
   rows = 10;
 
-  vendorreaddata = [];
+  vendors_list = [];
   vendoraccountreaddata: Object;
   vendorbyidreaddata: Object;
   showPaginator: boolean;
-
-  vendorUpdateName = '';
-  vendorUpdateCompany = '';
-  vendorUpdateVenderCode = '';
-  vendorUpdateEmail;
-  vendorUpdateDesc;
-  vendorUpdateContact;
-  vendorUpdateAddress;
-  vendorUpdateCity;
-  vendorUpdateCountry;
 
   editable: boolean = false;
   savebooleansp = false;
@@ -84,39 +62,60 @@ export class VendorComponent implements OnInit, AfterViewInit {
   isDesktop: boolean;
   fst: number = 0;
 
-  constructor(private fb: FormBuilder,
+  tabName:string;
+  itemsList = [];
+  searchTextVendor: string;
+  searchTextSP: string;
+  supplier_id:number;
+  SP_list: any[];
+  sub_tab2 = 'Vendor Sites';
+  sub_tab3 = 'Vendor Details';
+  supplier_data: any;
+  vendorInvoiceAccess: boolean;
+  serviceInvoiceAccess: boolean;
+
+  constructor(
     private route: Router,
     private sharedService: SharedService,
     private serviceProviderService : ServiceInvoiceService,
     private SpinnerService: NgxSpinnerService,
     private permissionService : PermissionService,
     private dataService : DataService,
+    private _location : Location,
     private router :Router) {
 
   }
 
   ngOnInit(): void {
     if(this.permissionService.vendor_SP_PageAccess == true){
-      this.initialViewVendor = this.sharedService.initialViewVendorBoolean;
-      this.ap_boolean = this.dataService.ap_boolean;
+      this.routerDetails();
       this.isDesktop = this.dataService.isDesktop;
+      this.vendorInvoiceAccess = this.dataService.configData.vendorInvoices;
+      this.serviceInvoiceAccess = this.dataService.configData.serviceInvoices;
       if(this.dataService.ap_boolean){
         this.partyType = 'vendor';
       } else {
         this.partyType = 'customer';
       }
-      this.vendorreaddata = this.dataService.vendorsListData;
-      this.entityFilterData = this.dataService.vendorsListData;
-      if(this.vendorreaddata.length <= 0){
+      this.vendors_list = this.dataService?.vendorsListData;
+      this.entityFilterData = this.dataService?.vendorsListData;
+      if(this.vendors_list.length <= 10 && this.vendorInvoiceAccess){
+        this.tabName = 'vendor';
         this.APIParams = `?partyType=${this.partyType}&offset=1&limit=50`;
         this.DisplayVendorDetails(this.APIParams);
       }
-      if(this.vendorreaddata.length > 10 && this.isDesktop){
-        this.showPaginator = true;
-      } else {
-        this.showPaginator = false;
+      // if(this.vendors_list.length > 10 && this.isDesktop){
+      //   this.showPaginator = true;
+      // } else {
+      //   this.showPaginator = false;
+      // }
+      if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess){
+        this.tabName = 'service';
       }
+      this.getServicesList();
       this.getEntitySummary();
+      console.log(this.tabName)
+      this.dataService.masterTabName = this.tabName;
     } else{
       alert("Sorry!, you do not have access");
       this.router.navigate(['customer/invoice/allInvoices'])
@@ -124,56 +123,20 @@ export class VendorComponent implements OnInit, AfterViewInit {
 
 
   }
+  routerDetails(){
+    if(this.router.url.includes('vendorDetails') && this.vendorInvoiceAccess){
+      this.tabName = 'vendor';
+      this.vendorTabNames();
+    } else{
+      this.tabName = 'service';
+      this.serviceTabNames();
+    }
+  }
   ngAfterViewInit() {
     // this.DisplayVendorAccountDetails();
     // this.DisplayVendorDetailsById()
   }
 
-
-  filterData() {
-    this.openFilter = !this.openFilter;
-  }
-  toCreateNew() {
-    // this.vendorDetailsForm.reset();
-    this.vendorList = false;
-    this.savedataboolean = true;
-  }
-  viewFullDetails(e) {
-    // this.route.navigate(['/customer/vendor/vendorDetails'])
-    this.initialViewVendor = false;
-    this.sharedService.initialViewVendorBoolean = false;
-    this.sharedService.vendorFullDetails = e;
-    this.venderdetails = e
-    this.sharedService.vendorID = e.idVendor;
-    // this.DisplayVendorAccountDetails();
-    // this.DisplayVendorDetailsById();
-    // this.DisplayVendorDetails();
-  }
-  colseDiv(value) {
-    this.initialViewVendor = value;
-    if (value === true) {
-      this.ngOnInit();
-    }
-  }
-
-  onCancel() {
-    this.editable = false;
-    this.savebooleansp = false;
-  }
-  selectedPayment(e) {
-  }
-  onSelectCol(e, value) {
-    if (e.target.checked == true) {
-    }
-  }
-
-  editVenderData(e) {
-    this.vendorList = false;
-  }
-  onEdit() {
-    this.editable = true;
-    this.savebooleansp = true;
-  }
   DisplayVendorDetails(data) {
     this.SpinnerService.show();
 
@@ -182,20 +145,22 @@ export class VendorComponent implements OnInit, AfterViewInit {
       let onboardBoolean:boolean;
       data.forEach(ele=>{
         let mergedData = {...ele.Entity,...ele.Vendor};
-        if(ele.OnboardedStatus == 'Onboarded'){
-          onboardBoolean = true
-        } else {
-          onboardBoolean = false
-        }
-        mergedData.OnboardedStatus = onboardBoolean;
+        // if(ele.OnboardedStatus == 'Onboarded'){
+        //   onboardBoolean = true
+        // } else {
+        //   onboardBoolean = false
+        // }
+        // mergedData.OnboardedStatus = onboardBoolean;
         mergedData.idVendorAccount = ele.idVendorAccount;
         pushArray.push(mergedData);
       })
-      this.vendorreaddata = this.dataService.vendorsListData.concat(pushArray);
-      this.dataService.vendorsListData = this.vendorreaddata;
-      this.entityFilterData = this.vendorreaddata; 
-      // this.totalRecords = this.vendorreaddata.length;
-      if (this.vendorreaddata.length > 10 && this.isDesktop) {
+      this.vendors_list = this.dataService.vendorsListData.concat(pushArray);
+      this.dataService.vendorsListData = this.vendors_list;
+      this.entityFilterData = this.vendors_list;
+      this.supplier_data = this.vendors_list[0];
+      this.supplier_id = this.vendors_list[0].idVendor;
+      // this.totalRecords = this.vendors_list.length;
+      if (this.vendors_list.length > 10 && this.isDesktop) {
         this.showPaginator = true;
       }
       this.SpinnerService.hide();
@@ -214,7 +179,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
   filter(value) {
     this.dataService.vendorsListData = [];
     this.dataService.offsetCount = 1;
-    this.vendorreaddata = this.entityFilterData;
+    this.vendors_list = this.entityFilterData;
     this.selectedEntityId = value.idEntity;
     this.filtersForAPI(50);
   }
@@ -236,13 +201,13 @@ export class VendorComponent implements OnInit, AfterViewInit {
   }
   filtersForAPI(limit) {
     if (this.selectedEntityId != 'All' && this.selectedEntityId) {
-      this.APIParams = `?partyType=${this.partyType}&ent_id=${this.selectedEntityId}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?ent_id=${this.selectedEntityId}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     }else if (this.vendorNameForSearch && this.vendorNameForSearch != '') {
-      this.APIParams = `?partyType=${this.partyType}&ven_code=${this.vendorNameForSearch}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?ven_code=${this.vendorNameForSearch}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     } else {
-      this.APIParams = `?partyType=${this.partyType}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     }
   }
@@ -258,5 +223,68 @@ export class VendorComponent implements OnInit, AfterViewInit {
     } else {
       console.log('Desktop mode');
     }
+  }
+  onTabChange(str) {
+    this.tabName = str;
+    this.dataService.masterTabName = str;
+    if(str == 'vendor'){
+      this.router.navigate(['/customer/vendor/vendorDetails']);
+      this.supplier_data = this.vendors_list[0];
+      this.supplier_id = this.vendors_list[0].idVendor;
+      this.vendorTabNames();
+    } else if (str == 'service') {
+      this.router.navigate(['/customer/vendor/ServiceDetails']);
+      this.supplier_data = this.SP_list[0];
+      this.supplier_id = this.SP_list[0].idServiceProvider;
+      this.serviceTabNames();
+    }
+  }
+  vendorTabNames(){
+    this.sub_tab2 = 'Vendor Sites';
+    this.sub_tab3 = 'Vendor Details';
+  }
+  serviceTabNames(){
+    this.sub_tab2 = 'Account numbers';
+    this.sub_tab3 = 'Service Details';
+  }
+  onSubTabChange(str){
+    this.dataService.masterSubTabName = str;
+  }
+  readVendorMasterData(ven_acc_id) {
+    this.sharedService.readItemListData(ven_acc_id).subscribe((data:any)=>{
+      this.itemsList = data.result;
+    })
+  }
+  onChange(data){
+    this.supplier_data = data;
+    if(this.tabName == 'vendor'){
+      this.supplier_id = data.idVendor;
+    } else {
+      this.supplier_id = data.idServiceProvider;
+    }
+  }
+  getServicesList() {
+    this.SpinnerService.show();
+    this.sharedService.readserviceprovider().subscribe((data:any) => {
+
+      let mergerdArray = [];
+      data.forEach(element => {
+        let spData = {...element.Entity,...element.ServiceProvider};
+        mergerdArray.push(spData);
+      });
+      this.SP_list = mergerdArray;
+      this.supplier_data = this.SP_list[0];
+      this.supplier_id = this.SP_list[0].idServiceProvider;
+      this.SpinnerService.hide();
+      var res = [];
+      for (var x in this.SP_list) {
+        this.SP_list.hasOwnProperty(x) && res.push(this.SP_list[x])
+      }
+      if (res.length > 10 && this.isDesktop) {
+        this.showPaginator = true;
+      }
+    }, err =>{
+      this.SpinnerService.hide();
+    })
   }
 }

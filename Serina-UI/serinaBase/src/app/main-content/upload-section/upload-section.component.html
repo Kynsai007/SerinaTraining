@@ -1,439 +1,559 @@
 <!-- upload Invoice -->
-<div>
-  <h6 class="headh6">Upload Section</h6>
-  <div>
-    <ul class="nav nav-tabs ml-2" id="myTab" role="tablist">
-      <li
-        class="nav-item mr-1"
-        *ngIf="bothOptBoolean || !isQuickUploadbool"
-        (click)="chooseTab('ideal')"
-      >
-        <a
-          class="nav-link"
-          id="ideal-tab"
-          data-toggle="tab"
-          href="#ideal"
-          role="tab"
-          aria-controls="ideal"
-          aria-selected="true"
-          [ngClass]="viewType == 'ideal' ? 'active' : ''"
-          >Ideal Upload</a
-        >
-      </li>
-      <li
-        class="nav-item"
-        *ngIf="vendorAccess && (bothOptBoolean || isQuickUploadbool)"
-        (click)="chooseTab('quick')"
-      >
-        <a
-          class="nav-link"
-          id="quick-tab"
-          data-toggle="tab"
-          href="#quick"
-          role="tab"
-          aria-controls="quick"
-          aria-selected="true"
-          [ngClass]="viewType == 'quick' ? 'active' : ''"
-          >Quick Upload</a
-        >
-      </li>
-
-      <li
-        class="nav-item helpSection"
-        *ngIf="vendorAccess && (bothOptBoolean || isQuickUploadbool)"
-        (click)="chooseTab('help')"
-      >
-        <a
-          class="nav-link"
-          id="help-tab"
-          data-toggle="tab"
-          href="#help"
-          role="tab"
-          aria-controls="help"
-          aria-selected="true"
-          [ngClass]="viewType == 'help' ? 'active' : ''"
-          >Help <i class="fa fa-question" aria-hidden="true"></i
-        ></a>
-      </li>
-    </ul>
+<!-- <h6 class="headh6">Upload Section</h6> -->
+<div class="row pt-3 m-0">
+  <div class="col-md-4 pl-0 pr-0">
+    <div class="imgPlaceholder">
+      <!-- <img src="../../../assets/Serina Assets/new_theme/Group 933.svg" alt=""> -->
+    </div>
+    <div class="welcomtext">
+      <h6 class="f-16 mt-4 text-center">Welcome. Let's get you settled in.</h6>
+    </div>
+    <div class="f-14 shade_color wlcom_bdy">
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum has been the industry's standard dummy text ever since the
+      1500s, when an unknown printer took a galley of type and scrambled it to
+      make a type specimen book.
+    </div>
   </div>
-
-  <div
-    class="tab-content tabDiv bg-design-all max_data_scroll pt-2 pb-2"
-    id="myTabContent"
-  >
-    <div
-      class="tab-pane"
-      id="ideal"
-      role="tabpanel"
-      aria-labelledby="ideal-tab"
-      [ngClass]="viewType == 'ideal' ? 'show active' : 'fade'"
-    >
-      <div class="fileUploadDiv p-2 m-2">
-        <div class="centerSelection">
-          <div *ngIf="!reuploadBoolean" class="">
-            <!--Customer Portal Upload-->
-            <div class="d-flex flex-wrap" style="gap: 0px 10px">
-              <div
-                class="selectFilter mr-2"
-                *ngIf="
-                  serviceInvoiceAccess &&
-                  vendorAccess &&
-                  portal_name == 'customer'
-                "
-              >
-                <label class="f-13 mb-0">Select Invoice Type</label><br />
-                <select
-                  class="form-control accountSelect f-12"
-                  (change)="selectType($event.target.value)"
-                >
-                  <option value="" style="font-weight: 500">Select type</option>
-                  <option>Vendor invoice</option>
-                  <option>Service invoice</option>
-                </select>
+  <div class="col-md-8 p-0" style="padding-left: 30px !important">
+    <div class="f-18 d-flex">
+      Hey User,<img
+        src="../../../assets/Serina Assets/new_theme/wave.png"
+        alt=""
+      />
+      Please select the below options to upload the invoice
+    </div>
+    <div class="tabs_div mr_54 mt-3">
+      <ul class="nav nav-tabs nav_sub" id="myTab" role="tablist">
+        <li class="nav-item" *ngIf="bothOptBoolean || !isQuickUploadbool">
+          <a
+            class="nav-link"
+            id="ideal-tab"
+            data-toggle="tab"
+            href="#ideal"
+            role="tab"
+            aria-controls="ideal"
+            aria-selected="true"
+            [ngClass]="viewType == 'ideal' ? 'active' : ''"
+            (click)="chooseTab('ideal')"
+          >
+            <div class="d-flex align-items-center ideal_tab_msg">
+              <div class="d-flex flex-column align-items-center icon_tag">
+                <span class="material-icons icon_span"> upload_file </span>
+                Ideal Upload
               </div>
-              <!-- <div>
-              <label class="f-13 mb-0">Select Document Type</label><br />
-              <select class="form-control accountSelect f-12" name="document_type" [(ngModel)]="document_type">
-                <option *ngFor="let type of DocumentTypes" [value]="type">{{type}}</option>
+              <div class="shade_color primary_clr f-12">
+                We usually recommend uploading one invoice at a time for better
+                accuracy
+              </div>
+            </div>
+          </a>
+        </li>
+        <li
+          class="nav-item"
+          *ngIf="vendorAccess && (bothOptBoolean || isQuickUploadbool)"
+          (click)="chooseTab('quick')"
+        >
+          <a
+            class="nav-link"
+            id="quick-tab"
+            data-toggle="tab"
+            href="#quick"
+            role="tab"
+            aria-controls="quick"
+            aria-selected="true"
+            [ngClass]="viewType == 'quick' ? 'active' : ''"
+          >
+            <div class="d-flex align-items-center ideal_tab_msg">
+              <div class="d-flex flex-column align-items-center icon_tag">
+                <span class="material-icons icon_span"> upload_file </span>
+                Quick Upload
+              </div>
+              <div class="shade_color primary_clr f-12">
+                We also support multiple uploads at one go
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="tab-content mt-2" id="myTabContent">
+      <div
+        class="tab-pane pt-2"
+        [ngClass]="viewType == 'ideal' ? 'show active' : 'fade'"
+        id="ideal"
+      >
+        <!--Vendor Portal Upload-->
+        <form #uploadForm="ngForm" class="d-flex flex-wrap gap">
+          <div
+            class="selectFilter"
+            *ngIf="
+              serviceInvoiceAccess && vendorAccess && portal_name == 'customer'
+            "
+          >
+            <label class="f-13 mb-0">Select Invoice Type</label><br />
+            <select
+              class="form-control accountSelect f-12"
+              [(ngModel)]="selectedOption"
+              (change)="selectType($event.target.value)"
+              name="inv_type"
+            >
+              <option value="" style="font-weight: 500">Select type</option>
+              <option value="Vendor" >Vendor invoice</option>
+              <option value="Service">Service invoice</option>
+            </select>
+          </div>
+          <div class="selectFilter">
+            <label class="f-12 mb-0">Select Entity</label>
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              id="entity_v"
+              (onSelect)="selectEntity($event)"
+              [group]="false"
+              [suggestions]="filteredEnt"
+              (completeMethod)="filterEntity($event)"
+              field="EntityName"
+              [dropdown]="true"
+              [completeOnFocus]="true"
+              [autofocus]="true"
+              name="EntityName"
+              [(ngModel)]="EntityName"
+              required
+            >
+            </p-autoComplete>
+          </div>
+          <div *ngIf="!isCustomerPortal" class="selectFilter">
+            <label class="f-12 mb-0 z_index">Select Vendor Account</label>
+            <select
+              placeholder="Search or select from dropdown"
+              class="form-control f-14 accountSelect"
+              [(ngModel)]="vendorAccountName"
+              (change)="selectVendorAccount_vdr(vendorAccountName)"
+              name="vendor"
+              required
+            >
+              <option
+                *ngFor="let vendorA of vendorAccount"
+                [value]="vendorA.idVendorAccount"
+              >
+                {{ vendorA.Account }}
+              </option>
+            </select>
+          </div>
+          <!-- <div class="selectFilter">
+            <label class="f-12 mb-0">Select PO Number</label>
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              id="po_v"
+              (onSelect)="selectedPO($event)"
+              [group]="false"
+              [suggestions]="filteredPO"
+              (completeMethod)="filterPOnumber($event)"
+              field="PODocumentID"
+              [dropdown]="true"
+              name="PONumber"
+              [(ngModel)]="PONumber"
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.PODocumentID }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+            </div> -->
+          <div *ngIf="isCustomerPortal" class="selectFilter">
+            <!-- <label class="f-12 mb-0">Select Vendor</label><br /> -->
+            <label class="f-12 mb-0">{{
+              selectedOption === "Service" ? "Select Service" : "Select Vendor"
+            }}</label>
+            <!-- select vendor -->
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              *ngIf="selectedOption === 'Vendor'"
+              id="vendr_c"
+              (onSelect)="selectVendorAccount($event)"
+              [group]="false"
+              [suggestions]="filteredVendors"
+              (completeMethod)="filterVendor($event)"
+              field="VendorName"
+              [dropdown]="true"
+              name="vendor"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center group-item">
+                  <div
+                    [ngStyle]="{
+                      color: group.is_onboarded ? '#099309' : '#f97e7e'
+                    }"
+                  >
+                    {{ group.VendorName }}
+                  </div>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+            <!-- select service -->
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              *ngIf="selectedOption === 'Service'"
+              id="service_c"
+              (onSelect)="selectService($event.idServiceProvider)"
+              [group]="false"
+              [suggestions]="filteredService"
+              (completeMethod)="filterServices($event)"
+              field="ServiceProviderName"
+              [dropdown]="true"
+              name="service"
+            >
+              <ng-template let-service pTemplate="item">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ service.ServiceProviderName }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+
+          <!-- select service account -->
+          <div
+            class="selectFilter"
+            *ngIf="portal_name == 'customer' && selectedOption === 'Service'"
+          >
+            <label class="f-13 mb-0">Select Account </label><br />
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              (onSelect)="selectServiceAccount($event)"
+              [group]="false"
+              [suggestions]="filteredServiceAccount"
+              (completeMethod)="filterServicesAccount($event)"
+              field="Account"
+              [dropdown]="true"
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.Account }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+          <div
+            *ngIf="portal_name == 'customer' && selectedOption != 'Service'"
+            class="selectFilter"
+          >
+            <label class="f-13 mb-0">Invoice Type </label><br />
+            <select
+              class="form-control accountSelect f-12"
+              (change)="onSelectPOType($event.target.value, 'ideal')"
+              name="invoiceType"
+              ngModel
+              [value]="invoiceType"
+              required
+            >
+              <option value=""></option>
+              <option value="nonPO">Non-PO</option>
+              <option value="singlePO">Single PO</option>
+            </select>
+          </div>
+          <div
+            *ngIf="
+              portal_name == 'customer' &&
+              viewType == 'ideal' &&
+              selectedInvoiceType == 'singlePO'
+            "
+            class="selectFilter"
+          >
+            <label class="f-13 mb-0">Select PO Number</label>
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              (onSelect)="selectedPO($event)"
+              [group]="false"
+              [forceSelection]="true"
+              [suggestions]="filteredPO"
+              (completeMethod)="filterPOnumber($event)"
+              field="PODocumentID"
+              [dropdown]="true"
+              name="PONumber"
+              [(ngModel)]="selectedPoNumber"
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.PODocumentID }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+
+          <div
+            *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO'"
+            class="selectFilter"
+          >
+            <label class="f-13 mb-0">Select GRN</label>
+            <p-multiSelect
+              class="accountSelect"
+              [options]="po_grn_list"
+              placeholder="Number"
+              filter="false"
+              inputStyleClass="form-control"
+              optionLabel="PackingSlip"
+              [maxSelectedLabels]="3"
+              [selectedItemsLabel]="'{0} items selected'"
+              (onChange)="selectIdealGrn($event)"
+              name="PO_GRN_Number"
+              [(ngModel)]="selectedGRNNumber"
+            >
+            </p-multiSelect>
+          </div>
+        </form>
+
+        <!--Customer Portal Upload-->
+        <form
+          style="display: none"
+          #uploadForm="ngForm"
+          *ngIf="isCustomerPortal"
+          class="d-flex flex-wrap gap"
+        >
+          <!-- <div class="selectFilter mr-2">
+              <label class="f-12 mb-0">Select Invoice Type</label><br />
+              <select class="form-control accountSelect f-12"(change)="selectType($event.target.value)">
+                <option value="" style="font-weight: 500;">Select type</option>
+                <option>Vendor invoice</option>
+                <option>Service invoice</option>
               </select>
             </div> -->
-              <div>
-                <label class="f-13 mb-0">Select Entity</label><br />
-                <p-autoComplete
-                  placeholder="Select Entity"
-                  (onSelect)="selectEntity($event)"
-                  [group]="false"
-                  [suggestions]="filteredEnt"
-                  (completeMethod)="filterEntity($event)"
-                  field="EntityName"
-                  [dropdown]="true"
-                  [completeOnFocus]="true"
-                  [autofocus]="true"
-                  name="EntityName"
-                  ngModel
-                  required
-                >
-                  <ng-template let-group pTemplate="group">
-                    <div class="flex align-items-center">
-                      <span class="f-12">{{ group.EntityName }}</span>
-                    </div>
-                  </ng-template>
-                </p-autoComplete>
-              </div>
+          <!-- <div class="selectFilter">
+            <label class="f-12 mb-0">Select Entity</label>
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              id="entity_c"
+              (onSelect)="selectEntity($event)"
+              [group]="false"
+              [suggestions]="filteredEnt"
+              (completeMethod)="filterEntity($event)"
+              field="EntityName"
+              [dropdown]="true"
+              [autofocus]="true"
+              name="EntityName"
+              [(ngModel)]="EntityName"
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.EntityName }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div> -->
 
-              <!--Vendor Portal Upload-->
-              <div *ngIf="!isCustomerPortal">
-                <label class="f-13 mb-0">Select Vendor Account</label>
-                <select
-                  class="form-control accountSelect"
-                  [(ngModel)]="vendorAccountName"
-                  (change)="selectVendorAccount_vdr(vendorAccountName)"
-                  required
-                >
-                  <option
-                    *ngFor="let vendorA of vendorAccount"
-                    [value]="vendorA.idVendorAccount"
-                  >
-                    {{ vendorA.Account }}
-                  </option>
-                </select>
-              </div>
+          <!--Vendor Selection-->
 
-              <!--Vendor Selection-->
-              <div *ngIf="isCustomerPortal">
-                <label class="f-13 mb-0"
-                  >Select
-                  <span *ngIf="document_type != 'Purchase Orders'">{{
-                    selectedOption === "Service" ? "Service provider" : "vendor"
-                  }}</span>
-                  <span *ngIf="document_type == 'Purchase Orders'"
-                    >Customer</span
-                  ></label
-                ><br />
-                <p-autoComplete
-                  *ngIf="selectedOption === 'Vendor'"
-                  (onSelect)="selectVendorAccount($event)"
-                  [group]="false"
-                  [suggestions]="filteredVendors"
-                  (completeMethod)="filterVendor($event)"
-                  field="VendorName"
-                  [dropdown]="true"
-                >
-                  <ng-template let-group pTemplate="item">
-                    <div class="flex align-items-center group-item">
-                      <div
-                        [ngStyle]="{
-                          color: group.is_onboarded ? '#099309' : '#f97e7e'
-                        }"
-                      >
-                        {{ group.VendorName }}
-                      </div>
-                    </div>
-                  </ng-template>
-                </p-autoComplete>
+          <!-- <div class="mr-2 selectFilter">
+            <label class="f-12 mb-0">Select PO Number</label>
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              id="po_c"
+              (onSelect)="selectedPO($event)"
+              [group]="false"
+              [suggestions]="filteredPO"
+              (completeMethod)="filterPOnumber($event)"
+              field="PODocumentID"
+              [dropdown]="true"
+              name="PONumber"
+              [(ngModel)]="PONumber"
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.PODocumentID }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div> -->
+          <!-- select service account -->
+          <!-- <div class="mr-2 selectFilter" *ngIf="selectedOption === 'Service'">
+            <label class="f-12 mb-0">Select Account </label><br />
+            <p-autoComplete
+              placeholder="Search or select from dropdown"
+              id="serAc_c"
+              (onSelect)="selectServiceAccount($event)"
+              [group]="false"
+              [suggestions]="filteredServiceAccount"
+              (completeMethod)="filterServicesAccount($event)"
+              field="Account"
+              [dropdown]="true"
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.Account }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div> -->
+        </form>
 
-                <!-- select service -->
-                <p-autoComplete
-                  *ngIf="selectedOption === 'Service'"
-                  placeholder="Select Service"
-                  (onSelect)="selectService($event.idServiceProvider)"
-                  [group]="false"
-                  [suggestions]="filteredService"
-                  (completeMethod)="filterServices($event)"
-                  field="ServiceProviderName"
-                  [dropdown]="true"
-                >
-                  <ng-template let-service pTemplate="item">
-                    <div class="flex align-items-center">
-                      <span class="f-12">{{
-                        service.ServiceProviderName
-                      }}</span>
-                    </div>
-                  </ng-template>
-
-                  <ng-template let-group pTemplate="group">
-                    <div class="flex align-items-center">
-                      <span class="f-12">{{ group.ServiceProviderName }}</span>
-                    </div>
-                  </ng-template>
-                </p-autoComplete>
-
-                              
-              </div>
-              <!-- select service account -->
-              <div class="mr-2" *ngIf="portal_name == 'customer' && selectedOption === 'Service'">
-                <label class="f-13 mb-0">Select Account </label><br />
-                <p-autoComplete
-                  placeholder="Select Account"
-                  (onSelect)="selectServiceAccount($event)"
-                  [group]="false"
-                  [suggestions]="filteredServiceAccount"
-                  (completeMethod)="filterServicesAccount($event)"
-                  field="Account"
-                  [dropdown]="true"
-                >
-                  <ng-template let-group pTemplate="group">
-                    <div class="flex align-items-center">
-                      <span class="f-12">{{ group.Account }}</span>
-                    </div>
-                  </ng-template>
-                </p-autoComplete>
-              </div>
-              <div *ngIf="portal_name == 'customer'">
-                <label class="f-13 mb-0"
-                  >Invoice Type
-                  </label><br />
-                <select
-                  class="form-control accountSelect f-12"
-                  (change)="onSelectPOType($event.target.value, 'ideal')"
-                  name="invoiceType"
-                  ngModel
-                  [value]="invoiceType"
-                  required
-                  >
-                  <option value=""></option>
-                  <option value="nonPO">Non-PO</option>
-                  <option value="singlePO">Single PO</option>
-                </select>
-              </div>
-
-              <div *ngIf="portal_name == 'customer' && viewType == 'ideal' && selectedInvoiceType == 'singlePO'">
-                <label class="f-13 mb-0">Select PO Number</label><br />
-                <p-autoComplete
-                  placeholder="Select PO Number"
-                  (onSelect)="selectedPO($event)"
-                  [group]="false"
-                  [forceSelection]="true"
-                  [suggestions]="filteredPO"
-                  (completeMethod)="filterPOnumber($event)"
-                  field="PODocumentID"
-                  [dropdown]="true"
-                  name="PONumber"
-                  [(ngModel)]="selectedPoNumber"
-                  required
-                >
-                  <ng-template let-group pTemplate="group">
-                    <div class="flex align-items-center">
-                      <span class="f-12">{{ group.PODocumentID }}</span>
-                    </div>
-                  </ng-template>
-                </p-autoComplete>
-              </div>
-
-              <div *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO'">
-                <label class="f-13 mb-0">Select GRN</label><br />
-                <p-multiSelect
-                  class="accountSelect"
-                  [options]="po_grn_list"
-                  placeholder="Number"
-                  filter="false"
-                  inputStyleClass="form-control"
-                  optionLabel="PackingSlip"
-                  [maxSelectedLabels]="3"
-                  [selectedItemsLabel]="'{0} items selected'"
-                  (onChange)="selectIdealGrn($event)"
-                  name="PO_GRN_Number"
-                  [(ngModel)]="selectedGRNNumber"
-                >
-                </p-multiSelect>
-              </div>
-
-
-
-              <!--Select type of Vendor-->
-              <!-- <div>
-              <label class="f-13 mb-0" style="visibility: hidden"
-                >Is LCM Type</label
-              ><br />
-              <label class="check_div">
-                <input
-                  type="checkbox"
-                  (change)="onSelectLCM($event.target.checked)"
-                />
-                <span class="f-13">Is LCM Invoice</span>
-              </label>
-            </div> -->
-
-              <!-- select PO Number -->
-              <!-- <div>
-          <label class="f-13 mb-0">Select PO Number</label><br />
-          <p-autoComplete
-            placeholder="Select PO Number"
-            (onSelect)="selectedPO($event)"
-            [group]="false"
-            [suggestions]="filteredPO"
-            (completeMethod)="filterPOnumber($event)"
-            field="PODocumentID"
-            [dropdown]="true"
+        <!-- Upload Option-->
+        <div class="mt-3" *ngIf="displaySelectPdfBoolean || reuploadBoolean">
+          <div
+            *ngIf="isuploadable"
+            ng2FileDrop
+            [uploader]="uploader"
+            [ngClass]="{ 'file-over': hasBaseDropZoneOver }"
+            (fileOver)="fileOverBase($event)"
+            class="file-upload"
+            (onFileDrop)="fileDrop($event)"
+            class="dashed-border"
           >
-            <ng-template let-group pTemplate="group">
-              <div class="flex align-items-center">
-                <span class="f-12">{{ group.PODocumentID }}</span>
+            <div style="margin: 8px" *ngIf="isuploadable">
+              <!-- <span class="material-icons f-80"> filter_none </span> -->
+              <div class="f-13">
+                Drag and Drop an Document to fetch the details
               </div>
-            </ng-template>
-          </p-autoComplete>
-        </div> -->
+              <small class="f-12">File type must be in .jpeg .png .pdf</small>
+              <div class="fileText">Or</div>
+              <label for="img" class="img-browse"> Upload </label>
+              <input
+                ng2FileSelect
+                accept=".png, .jpg, .pdf"
+                (change)="onSelectFile($event)"
+                [uploader]="uploader"
+                #fileInput
+                type="file"
+                id="img"
+                name="img"
+                hidden
+              />
             </div>
           </div>
 
-          <!-- Upload Option-->
-          <div class="d-flex justify-content-center mt-3">
-            <div class="" *ngIf="displaySelectPdfBoolean || reuploadBoolean">
+          <!--Filename dispaly with size-->
+          <!-- <div> -->
+          <div
+            class="d-flex justify-content-between mr-2 flex-wrap"
+            *ngIf="progress || OcrProgress"
+          >
+            <div class="img-name">{{ name }}</div>
+            <!-- <div class="img-type">
+                <strong>FileSize : &nbsp;</strong>{{ size }} &nbsp;MB
+              </div> -->
+            <div class="f-12">
+              <div style="color: #14bb12" *ngIf="OcrProgress && !isError">
+                <i class="fa fa-check-o mr-1"></i> Invoice Upload Completed
+              </div>
               <div
-                *ngIf="isuploadable"
-                ng2FileDrop
-                [uploader]="uploader"
-                [ngClass]="{ 'file-over': hasBaseDropZoneOver }"
-                (fileOver)="fileOverBase($event)"
-                class="file-upload"
-                (onFileDrop)="fileDrop($event)"
-                class="dashed-border"
+                *ngIf="progressText == 'Duplicate Invoice Uploaded!'"
+                style="color: #ed4040"
               >
-                <div style="margin: 30px" *ngIf="isuploadable">
-                  <span class="material-icons f-80"> filter_none </span>
-                  <div class="underdropIcon">
-                    Drag and drop an Document copy
-                  </div>
-                  <small class="f-12"
-                    >File type must be in .jpg .png .pdf .html .htm</small
-                  >
-                  <div class="fileText">Or</div>
-                  <label for="img" class="img-browse"> Attach Document </label>
-                  <input
-                    ng2FileSelect
-                    accept=".png, .jpg, .pdf, .html, .htm"
-                    (change)="onSelectFile($event)"
-                    [uploader]="uploader"
-                    #fileInput
-                    type="file"
-                    id="img"
-                    name="img"
-                    hidden
-                  />
-                </div>
+                <i class="fa fa-exclamation-triangle mr-1"></i>Upload failed-
+                {{ errorMsg }}
               </div>
+            </div>
+            <!-- <div class="pagerange" *ngIf="selectPageRange">
+              <label class="text-center f-13 mb-0"
+                >Select Page Of Invoice</label
+              >
+              <input
+                type="text"
+                class="form-control accountSelect f-12"
+                name="pageLimit"
+                [(ngModel)]="inputValue"
+                (blur)="changeValue('ideal')"
+                (input)="onInputValueChange('ideal')"
+                required
+                [min]="lowerLimit"
+                [max]="upperLimit"
+                placeholder="Eg:1-5, 7, 11-15"
+                [pattern]="allowedPattern"
+                required
+              />
+            </div> -->
+            <div class="d-flex f-12">
+              {{ processStage }}
+              <span class="cls" aria-hidden="true" (click)="cancelQueue()"
+                >&times;</span
+              >
+            </div>
+          </div>
 
-              <!--Filename dispaly with size-->
-              <div *ngIf="!isuploadable">
-                <div class="b-type">
-                  <button type="button" class="close" (click)="cancelSelect()">
-                    <span class="cls" aria-hidden="true">&times;</span>
-                  </button>
-                  <div class="img-name">
-                    <strong>FileName : &nbsp;</strong>{{ name }}
-                  </div>
-                  <div class="img-type">
-                    <strong>FileSize : &nbsp;</strong>{{ size }} &nbsp;MB
-                  </div>
-                  <div class="img-type">
-                    <strong>Total Upload Time - </strong
-                    ><span class="upload-time"
-                      >{{ minutes }}:{{ seconds }}</span
-                    >
-                  </div>
-                </div>
-                
+          <!-- <div class="f-13 mt-2 mb-2">
+              {{ processStage }} Step - 1/2 Completed.
+            </div> -->
+          <!-- </div> -->
 
-                <div class="pagerange" *ngIf="selectPageRange">
-                  <label class="text-center f-13 mb-0">Select Page Of Invoice</label>
-                  <input type="text"
-                    class="form-control accountSelect f-12"
-                    name="pageLimit"
-                    [(ngModel)]="inputValue"
-                    (blur)="changeValue('ideal')"
-                    (input)="onInputValueChange('ideal')"
-                    required
-                    [min]="lowerLimit"
-                    [max]="upperLimit"
-                    placeholder="Eg:1-5, 7, 11-15"
-                    [pattern]="allowedPattern"
-                    required>
-                </div>
+          <!--Progress bar-->
+          <div
+            class="f-12 mr-2 d-flex justify-content-between"
+            *ngIf="progress"
+          >
+            <div>
+              Uploading
+              <span class="f-14">{{ progress }}{{ progressWidth }}%</span>
+            </div>
+            <div>{{ minutes }}:{{ seconds }}</div>
+          </div>
+          <div class="progress mr-2" *ngIf="progress">
+            <div
+              class="progress-bar bg-success"
+              [style.width]="progress + '%'"
+            ></div>
+          </div>
+          <div
+            class="f-12 percText d-flex justify-content-between mr-2"
+            *ngIf="OcrProgress"
+            id="percText"
+            [ngClass]="isError ? 'duplicate' : 'normal'"
+          >
+            <div *ngIf="isError">Upload Failed</div>
+          </div>
+          <div class="progress mb-2 mr-2" *ngIf="OcrProgress">
+            <div
+              class="progress-bar"
+              id="precWidth"
+              [ngClass]="isError ? 'bg-red' : 'bg-success'"
+              [style.width]="progressWidth + '%'"
+            ></div>
+          </div>
 
-                <div class="f-13 mt-2 mb-2" style="color: green">
-                  {{ processStage }}
-                </div>
-              </div>
+          <div
+            class="f-12 d-flex justify-content-between mr-2"
+            *ngIf="OcrProgress"
+          >
+            {{ progressText }}
+            <a class="f-12 pointer" *ngIf="isError" (click)="cancelQueue()">
+              Retry Upload
+            </a>
+          </div>
+          <!-- <div
+            class="f-12 percText"
+            
+            style="float: right;"
+          >
+            <p style="color: #ed4040">
+              Upload failed <br />
+              <span
+                class="f-11"
+                *ngIf="progressText == 'Duplicate Invoice Uploaded!'"
+                >The invoice is already present in the system</span
+              >
+            </p>
+          </div> -->
 
-              <!--Progress bar-->
-              <div class="f-12" *ngIf="progress">Upload progressbar</div>
-              <div class="progress mb-2" *ngIf="progress">
-                <div
-                  class="progress-bar bg-success progress-bar-striped progress-bar-animated"
-                  [style.width]="progress + '%'"
-                >
-                  {{ progress }}%
-                </div>
-              </div>
-              <div class="f-12" *ngIf="OcrProgress" id="percText">
-                {{ progressText }}
-              </div>
-              <div class="progress mb-2" *ngIf="OcrProgress">
-                <div
-                  class="progress-bar bg-success progress-bar-striped progress-bar-animated"
-                  id="precWidth"
-                  [style.width]="progressWidth + '%'"
-                >
-                  {{ progressWidth }}%
-                </div>
-              </div>
-              <div class="f-12" *ngIf="returnmessage">Upload progressbar</div>
-              <div class="f-12" *ngIf="returnmessage" id="percText">
-                {{ progressText }}
-              </div>
-              <div class="progress mb-2" *ngIf="returnmessage">
-                <div
-                  class="progress-bar bg-success progress-bar-striped progress-bar-animated"
-                  id="precWidth"
-                  [style.width]="progressbar + '%'"
-                >
-                  {{ progressbar }}%
-                </div>
-              </div>
+          <div class="f-12" *ngIf="returnmessage">Upload progressbar</div>
+          <div class="f-12" *ngIf="returnmessage" id="percText">
+            {{ progressText }}
+          </div>
+          <div class="progress mb-2" *ngIf="returnmessage">
+            <div
+              class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+              id="precWidth"
+              [style.width]="progressbar + '%'"
+            >
+              {{ progressbar }}%
+            </div>
+          </div>
 
-              <!--buttons-->
-              <div class="text-center" *ngIf="!isuploadable">
+          <!--buttons-->
+          <!-- <div class="text-center" *ngIf="!isuploadable">
                 <button
                   type="button"
                   class="btn btnVender bg-btn-cancel mr-2"
@@ -448,534 +568,579 @@
                 >
                   Upload
                 </button>
-              </div>
-            </div>
-          </div>
+              </div> -->
         </div>
       </div>
-    </div>
-
-    <!-- Quick upload Tab -->
-    <div
-      class="tab-pane"
-      id="quick"
-      role="tabpanel"
-      aria-labelledby="quick-tab"
-      [ngClass]="viewType == 'quick' ? 'show active' : 'fade'"
-    >
-      <form
-        #quickUploadForm="ngForm"
-        (ngSubmit)="addInvoiceDetailsToQueue(quickUploadForm.value)"
-        class="d-flex flex-wrap ml-2"
-        style="gap: 5px"
+      <!-- Quick upload Tab -->
+      <div
+        class="tab-pane pt-2"
+        id="quick"
+        role="tabpanel"
+        aria-labelledby="quick-tab"
+        [ngClass]="viewType == 'quick' ? 'show active' : 'fade'"
       >
-        <div>
-          <label class="f-13 mb-0">Select Entity</label><br />
-          <p-autoComplete
-            placeholder="Select Entity"
-            (onSelect)="selectEntity($event)"
-            [group]="false"
-            [suggestions]="filteredEnt"
-            (completeMethod)="filterEntity($event)"
-            field="EntityName"
-            [dropdown]="true"
-            [completeOnFocus]="true"
-            [autofocus]="true"
-            name="EntityName"
-            ngModel
-            required
-          >
-            <ng-template let-group pTemplate="group">
-              <div class="flex align-items-center">
-                <span class="f-12">{{ group.EntityName }}</span>
-              </div>
-            </ng-template>
-          </p-autoComplete>
-        </div>
-
-        <!--Vendor Selection-->
-        <div>
-          <label class="f-13 mb-0">Select Vendor</label><br />
-          <p-autoComplete
-            placeholder="Select vendor"
-            (onSelect)="selectVendorAccount($event)"
-            [group]="false"
-            [suggestions]="filteredVendors"
-            (completeMethod)="filterVendor($event)"
-            field="VendorName"
-            [dropdown]="true"
-            [completeOnFocus]="true"
-            [autofocus]="true"
-            name="vendor"
-            ngModel
-            required
-          >
-            <ng-template let-group pTemplate="item">
-              <div class="flex align-items-center group-item">
-                <div
-                  [ngStyle]="{
-                    color: group.is_onboarded ? '#099309' : '#f97e7e'
-                  }"
-                >
-                  {{ group.VendorName }}
+        <form
+          #quickUploadForm="ngForm"
+          (ngSubmit)="addInvoiceDetailsToQueue(quickUploadForm.value)"
+          class="d-flex flex-wrap gap"
+         
+        >
+          <div class="selectFilter">
+            <label class="f-13 mb-0">Select Entity</label><br />
+            <p-autoComplete
+              placeholder="Select Entity"
+              (onSelect)="selectEntity($event)"
+              [group]="false"
+              [suggestions]="filteredEnt"
+              (completeMethod)="filterEntity($event)"
+              field="EntityName"
+              [dropdown]="true"
+              [completeOnFocus]="true"
+              [autofocus]="true"
+              name="EntityName"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.EntityName }}</span>
                 </div>
-              </div>
-            </ng-template>
-          </p-autoComplete>
-        </div>
-
-        <!--Select PO type-->
-        <div>
-          <label class="f-13 mb-0"
-            >Invoice Type
-            <i
-              *ngIf="this.multiPO_filepath != ''"
-              class="fa fa-edit ml-1"
-              style="cursor: pointer"
-              (click)="editMulti()"
-            ></i></label
-          ><br />
-          <select
-            class="form-control accountSelect f-12"
-            (change)="onSelectPOType($event.target.value, 'Quick')"
-            name="invoiceType"
-            ngModel
-            required
-          >
-            <option value="" disabled></option>
-            <option *ngFor="let item of invTypeArr" [value]="item.value">{{ item.name }}</option>
-          </select>
-        </div>
-
-        <div *ngIf="LCMBoolean !== 'No'">
-          <label class="f-13 mb-0">Select Currency</label>
-          <select
-            class="form-control accountSelect f-12"
-            [(ngModel)]="selectedCurrency"
-            name="Currency"
-            ngModel
-          >
-            <option *ngFor="let name of currencyList" [value]="name">
-              {{ name }}
-            </option>
-          </select>
-        </div>
-
-        <div *ngIf="viewType != 'ideal' && (selectedInvoiceType == 'singlePO' || selectedInvoiceType == 'nonPO')">
-          <label class="f-13 mb-0">Select Category</label>
-          <select
-            class="form-control accountSelect f-12"
-            [(ngModel)]="selectedCategory"
-            name="invoice_category"
-            ngModel
-          >
-            <option value="" disabled></option>
-            <option *ngFor="let item of categoryArr" [value]="item.value">{{ item.name }}</option>
-          </select>
-        </div>
-
-        <!-- select PO Number -->
-        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO'">
-          <label class="f-13 mb-0">Select PO Number</label><br />
-          <p-autoComplete
-            placeholder="Select PO Number"
-            (onSelect)="selectedPO($event)"
-            [group]="false"
-            [forceSelection]="true"
-            [suggestions]="filteredPO"
-            (completeMethod)="filterPOnumber($event)"
-            field="PODocumentID"
-            [dropdown]="true"
-            name="PONumber"
-            ngModel
-            required
-          >
-            <ng-template let-group pTemplate="group">
-              <div class="flex align-items-center">
-                <span class="f-12">{{ group.PODocumentID }}</span>
-              </div>
-            </ng-template>
-          </p-autoComplete>
-        </div>
-
-        <!-- select Invoice Number -->
-        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO' && selectedCategory == 'returns'">
-          <label class="f-13 mb-0">Select Invoice Number</label><br />
-          <p-autoComplete
-            placeholder="Select Invoice Number"
-            (onSelect)="selectedInv($event)"
-            [group]="false"
-            [forceSelection]="true"
-            [suggestions]="filteredInv"
-            (completeMethod)="filterInvnumber($event)"
-            field="docheaderID"
-            [dropdown]="true"
-            name="PONumber"
-            ngModel
-            required
-          >
-            <ng-template let-group pTemplate="group">
-              <div class="flex align-items-center">
-                <span class="f-12">{{ group.docheaderID }}</span>
-              </div>
-            </ng-template>
-          </p-autoComplete>
-        </div>
-
-        <!-- select GRN Number -->
-        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO' && selectedCategory == 'credit'" >
-          <label class="f-13 mb-0">Select GRN</label><br />
-          <p-multiSelect
-            [options]="po_grn_list"
-            placeholder="Number"
-            filter="false"
-            inputStyleClass="form-control"
-            optionLabel="PackingSlip"
-            [maxSelectedLabels]="3"
-            [selectedItemsLabel]="'{0} items selected'"
-            (onChange)="addGrnLine($event)"
-            name="PO_GRN_Number"
-            ngModel
-          >
-          </p-multiSelect>
-        </div>
-
-        <!-- select GRN Line -->
-        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO' && selectedCategory == 'credit'">
-          <label class="f-13 mb-0">Select GRN Line</label><br />
-          <p-multiSelect
-            [options]="po_grn_line_list"
-            placeholder="Number-line-description"
-            filter="false"
-            inputStyleClass="form-control"
-            optionLabel="GRNField"
-            [maxSelectedLabels]="3"
-            [selectedItemsLabel]="'{0} items selected'"
-            name="PO_GRN_Number_line"
-            ngModel
-            [(ngModel)]="PO_GRN_Number_line"
-          >
-          </p-multiSelect>
-        </div>
-
-        <div *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO' && selectedCategory != 'returns'">
-          <div style="visibility: hidden">visible</div>
-          <button
-            class="img-browse b-0 mt-0 bg-gray"
-            type="button"
-            [disabled]="!flipBool"
-            [ngClass]="{
-              disable: !flipBool,
-              'b-success': isPOFlipped
-            }"
-            (click)="open_dialog_comp('flip')"
-          >
-            <span *ngIf="!isPOFlipped">Flip PO</span>
-            <span
-              *ngIf="isPOFlipped"
-              class="material-icons d-flex justify-content-center"
-            >
-              check_circle
-            </span>
-          </button>
-        </div>
-
-        <div>
-          <label class="f-13 mb-0">Select Department</label>
-          <select
-            class="form-control accountSelect f-12"
-            [(ngModel)]="selectedDepartment"
-            (change)="onSelectDepartment($event.target.value)"
-            name="departmentName"
-            ngModel
-          >
-            <option
-              *ngFor="let name of DepartmentList"
-              [value]="name.DepartmentName"
-            >
-              {{ name.DepartmentName }}
-            </option>
-          </select>
-        </div>
-        <div>
-          <div class="f-13 mb-1">Invoice</div>
-          <label
-            for="img1"
-            class="img-browse mt-0"
-            [ngClass]="invoiceFilename == '' ? 'bg-gray' : 'b-success'"
-          >
-            <span *ngIf="invoiceFilename == ''">Attach Invoice</span>
-            <span
-              *ngIf="invoiceFilename != ''"
-              class="material-icons d-flex justify-content-center"
-            >
-              check_circle
-            </span>
-          </label>
-          <input
-            accept=".png, .jpg, .pdf, .html, .htm"
-            (change)="onSelectFile_quick($event, 'invoice')"
-            type="file"
-            id="img1"
-            hidden
-            name="attchedInvoice"
-            ngModel
-            required
-          />
-        </div>
-        <!--hiding pdf not to view-->
-        <!-- <div #hiddenContainer style="position: absolute; left: -9999px; top: -9999px;">
-          <div  *ngIf="attachedBoolean">
-            <p>sucess</p>
-            <pdf-viewer
-                [src]="pdfSrc"
-                [show-all]="true"
-                [original-size]="false"
-                [fit-to-page]="true"
-                [render-text]="true"
-                [render-text-mode]="2"
-                (after-load-complete)="afterLoadComplete($event)"
-              >
-            </pdf-viewer>
-            
+              </ng-template>
+            </p-autoComplete>
           </div>
-        </div> -->
 
-        <!-- select page limit -->
-        <div *ngIf="slctinvoicelimit">
-          <label class="f-13 mb-0">Select Pages Of Invoice  </label>
+          <!--Vendor Selection-->
+          <div class="selectFilter">
+            <label class="f-13 mb-0">Select Vendor</label><br />
+            <p-autoComplete
+              placeholder="Select vendor"
+              (onSelect)="selectVendorAccount($event)"
+              [group]="false"
+              [suggestions]="filteredVendors"
+              (completeMethod)="filterVendor($event)"
+              field="VendorName"
+              [dropdown]="true"
+              [completeOnFocus]="true"
+              [autofocus]="true"
+              name="vendor"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="item">
+                <div class="flex align-items-center group-item">
+                  <div
+                    [ngStyle]="{
+                      color: group.is_onboarded ? '#099309' : '#f97e7e'
+                    }"
+                  >
+                    {{ group.VendorName }}
+                  </div>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
 
-            <!-- lower limit as flexible -->
-            <input type="text"
-              class=" form-control accountSelect f-12"
+          <!--Select PO type-->
+          <div class="selectFilter">
+            <label class="f-13 mb-0"
+              >Invoice Type
+              <i
+                *ngIf="this.multiPO_filepath != ''"
+                class="fa fa-edit ml-1"
+                style="cursor: pointer"
+                (click)="editMulti()"
+              ></i></label
+            ><br />
+            <select
+              class="form-control accountSelect f-12"
+              (change)="onSelectPOType($event.target.value, 'Quick')"
+              name="invoiceType"
+              ngModel
+              required
+            >
+              <option value="" disabled></option>
+              <option *ngFor="let item of invTypeArr" [value]="item.value">
+                {{ item.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="selectFilter" *ngIf="LCMBoolean !== 'No'">
+            <label class="f-13 mb-0">Select Currency</label>
+            <select
+              class="form-control accountSelect f-12"
+              [(ngModel)]="selectedCurrency"
+              name="Currency"
+              ngModel
+            >
+              <option *ngFor="let name of currencyList" [value]="name">
+                {{ name }}
+              </option>
+            </select>
+          </div>
+
+          <div
+            class="selectFilter"
+            *ngIf="
+              viewType != 'ideal' &&
+              (selectedInvoiceType == 'singlePO' ||
+                selectedInvoiceType == 'nonPO')
+            "
+          >
+            <label class="f-13 mb-0">Select Category</label>
+            <select
+              class="form-control accountSelect f-12"
+              [(ngModel)]="selectedCategory"
+              name="invoice_category"
+              ngModel
+            >
+              <option value="" disabled></option>
+              <option *ngFor="let item of categoryArr" [value]="item.value">
+                {{ item.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- select PO Number -->
+          <div
+            class="selectFilter"
+            *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO'"
+          >
+            <label class="f-13 mb-0">Select PO Number</label><br />
+            <p-autoComplete
+              placeholder="Select PO Number"
+              (onSelect)="selectedPO($event)"
+              [group]="false"
+              [forceSelection]="true"
+              [suggestions]="filteredPO"
+              (completeMethod)="filterPOnumber($event)"
+              field="PODocumentID"
+              [dropdown]="true"
+              name="PONumber"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.PODocumentID }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+
+          <!-- select Invoice Number -->
+          <div
+            class="selectFilter"
+            *ngIf="
+              viewType != 'ideal' &&
+              selectedInvoiceType == 'singlePO' &&
+              selectedCategory == 'returns'
+            "
+          >
+            <label class="f-13 mb-0">Select Invoice Number</label><br />
+            <p-autoComplete
+              placeholder="Select Invoice Number"
+              (onSelect)="selectedInv($event)"
+              [group]="false"
+              [forceSelection]="true"
+              [suggestions]="filteredInv"
+              (completeMethod)="filterInvnumber($event)"
+              field="docheaderID"
+              [dropdown]="true"
+              name="PONumber"
+              ngModel
+              required
+            >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.docheaderID }}</span>
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+
+          <!-- select GRN Number -->
+          <div
+            class="selectFilter"
+            *ngIf="
+              viewType != 'ideal' &&
+              selectedInvoiceType == 'singlePO' &&
+              selectedCategory == 'credit'
+            "
+          >
+            <label class="f-13 mb-0">Select GRN</label>
+            <p-multiSelect
+              [options]="po_grn_list"
+              placeholder="Number"
+              filter="false"
+              inputStyleClass="form-control"
+              optionLabel="PackingSlip"
+              [maxSelectedLabels]="3"
+              [selectedItemsLabel]="'{0} items selected'"
+              (onChange)="addGrnLine($event)"
+              name="PO_GRN_Number"
+              ngModel
+            >
+            </p-multiSelect>
+          </div>
+
+          <!-- select GRN Line -->
+          <div
+            class="selectFilter"
+            *ngIf="
+              viewType != 'ideal' &&
+              selectedInvoiceType == 'singlePO' &&
+              selectedCategory == 'credit'
+            "
+          >
+            <label class="f-13 mb-0">Select GRN Line</label>
+            <p-multiSelect
+              [options]="po_grn_line_list"
+              placeholder="Number-line-description"
+              filter="false"
+              inputStyleClass="form-control"
+              optionLabel="GRNField"
+              [maxSelectedLabels]="3"
+              [selectedItemsLabel]="'{0} items selected'"
+              name="PO_GRN_Number_line"
+              ngModel
+              [(ngModel)]="PO_GRN_Number_line"
+            >
+            </p-multiSelect>
+          </div>
+
+          <div
+            *ngIf="
+              viewType != 'ideal' &&
+              selectedInvoiceType == 'singlePO' &&
+              selectedCategory != 'returns'
+            "
+          >
+            <div style="visibility: hidden">visible</div>
+            <button
+              class="img-browse b-0 mt-0 bg-gray"
+              type="button"
+              [disabled]="!flipBool"
+              [ngClass]="{
+                disable: !flipBool,
+                'b-success': isPOFlipped
+              }"
+              (click)="open_dialog_comp('flip')"
+            >
+              <span *ngIf="!isPOFlipped">Flip PO</span>
+              <span
+                *ngIf="isPOFlipped"
+                class="material-icons d-flex justify-content-center"
+              >
+                check_circle
+              </span>
+            </button>
+          </div>
+
+          <div class="selectFilter">
+            <label class="f-13 mb-0">Select Department</label>
+            <select
+              class="form-control accountSelect f-12"
+              [(ngModel)]="selectedDepartment"
+              (change)="onSelectDepartment($event.target.value)"
+              name="departmentName"
+              ngModel
+            >
+              <option
+                *ngFor="let name of DepartmentList"
+                [value]="name.DepartmentName"
+              >
+                {{ name.DepartmentName }}
+              </option>
+            </select>
+          </div>
+          <div>
+            <div class="f-13 mb-1">Invoice</div>
+            <label
+              for="img1"
+              class="img-browse mt-0"
+              [ngClass]="invoiceFilename == '' ? 'bg-gray' : 'b-success'"
+            >
+              <span *ngIf="invoiceFilename == ''">Attach Invoice</span>
+              <span
+                *ngIf="invoiceFilename != ''"
+                class="material-icons d-flex justify-content-center"
+              >
+                check_circle
+              </span>
+            </label>
+            <input
+              accept=".png, .jpg, .pdf, .html, .htm"
+              (change)="onSelectFile_quick($event, 'invoice')"
+              type="file"
+              id="img1"
+              hidden
+              name="attchedInvoice"
+              ngModel
+              required
+            />
+          </div>
+          <!--hiding pdf not to view-->
+          <!-- <div #hiddenContainer style="position: absolute; left: -9999px; top: -9999px;">
+                <div  *ngIf="attachedBoolean">
+                  <p>sucess</p>
+                  <pdf-viewer
+                      [src]="pdfSrc"
+                      [show-all]="true"
+                      [original-size]="false"
+                      [fit-to-page]="true"
+                      [render-text]="true"
+                      [render-text-mode]="2"
+                      (after-load-complete)="afterLoadComplete($event)"
+                    >
+                  </pdf-viewer>
+                  
+                </div>
+              </div> -->
+
+          <!-- select page limit -->
+          <div class="selectFilter" *ngIf="slctinvoicelimit">
+            <label class="f-13 mb-0">Select Pages Of Invoice </label>
+
+            <input
+              type="text"
+              class="form-control accountSelect f-12"
               name="pageLimit"
               [(ngModel)]="inputValue"
               (blur)="changeValue()"
               (input)="onInputValueChange()"
-              required 
+              required
               [min]="lowerLimit"
               [max]="upperLimit"
               placeholder="Eg:1-5, 7, 11-15"
               [pattern]="allowedPattern"
-            >
-        </div>
-        <div>
-          <div class="f-13 mb-1">Support Document</div>
-          <label
-            for="img11"
-            class="img-browse mt-0"
-            [ngClass]="
-              !(supportFileNamelist?.length > 0) ? 'bg-gray' : 'b-success'
-            "
-          >
-            <span *ngIf="!(supportFileNamelist?.length > 0)"
-              >Attach Support</span
-            >
-            <span
-              *ngIf="supportFileNamelist?.length > 0"
-              class="material-icons d-flex justify-content-center"
-            >
-              check_circle
-            </span>
-          </label>
-          <input
-            accept=".doc, .pdf"
-            (change)="onSelectFile_quick($event, 'support')"
-            type="file"
-            id="img11"
-            hidden
-            name="attchedSupport"
-            multiple
-            ngModel
-          />
-        </div>
-
-        <div *ngIf="approvalBoolean">
-          <label class="f-13 mb-0" style="visibility: hidden">Is LCM Type</label
-          ><br />
-          <label class="check_div">
-            <input
-              type="checkbox"
-              name="preApprove"
-              [(ngModel)]="preAproveBool"
-              ngModel
-              (change)="onSelectPreaprve(preAproveBool)"
             />
-            <span class="f-13">Pre Approved</span>
-          </label>
-        </div>
-        <div *ngIf="approvalBoolean">
-          <div style="visibility: hidden">visible</div>
-          <button
-            class="img-browse b-0 mt-0 bg-gray"
-            type="button"
-            [disabled]="preAproveBool"
-            [ngClass]="{
-              disable: preAproveBool,
-              'b-success': approverNameListFinal?.length > 0
-            }"
-            (click)="approverDialog = true"
-          >
-            <span *ngIf="!(approverNameListFinal?.length > 0)"
-              >Add Approvers</span
+          </div>
+          <div>
+            <div class="f-13 mb-1">Support Document</div>
+            <label
+              for="img11"
+              class="img-browse mt-0"
+              [ngClass]="
+                !(supportFileNamelist?.length > 0) ? 'bg-gray' : 'b-success'
+              "
             >
-            <span
-              *ngIf="approverNameListFinal?.length > 0"
-              class="material-icons d-flex justify-content-center"
-            >
-              check_circle
-            </span>
-          </button>
-        </div>
+              <span *ngIf="!(supportFileNamelist?.length > 0)"
+                >Attach Support</span
+              >
+              <span
+                *ngIf="supportFileNamelist?.length > 0"
+                class="material-icons d-flex justify-content-center"
+              >
+                check_circle
+              </span>
+            </label>
+            <input
+              accept=".doc, .pdf"
+              (change)="onSelectFile_quick($event, 'support')"
+              type="file"
+              id="img11"
+              hidden
+              name="attchedSupport"
+              multiple
+              ngModel
+            />
+          </div>
 
-        <div>
-          <div style="visibility: hidden">visible</div>
-          <button
-            class="img-browse b-0 mt-0 bg-blue"
-            [disabled]="isButtonDisabled || quickUploadForm.invalid"
-            [ngClass]="isButtonDisabled || quickUploadForm.invalid ? 'disable' : ''"
-            (click)="checkSupportFile()"
-          >
-            + Add
-          </button>
-        </div>
-        <div *ngIf="uploadInvoicesListData?.length < 1">
-          <div style="visibility: hidden">visible</div>
-          <button
-            class="img-browse b-0 mt-0 bg-btn-success"
-            style="background: #89d390 !important"
-            [disabled]="isButtonDisabled ||quickUploadForm.invalid"
-            [ngClass]=" isButtonDisabled || quickUploadForm.invalid ? 'disable' : ''"
-            type="button"
-            (click)="uploadCheck(quickUploadForm.value)"
-          >
-            Upload
-          </button>
-        </div>
-      </form>
-      <!-- <table
-        class="d-flex lcm_table_ht"
-        *ngIf="uploadInvoicesListData?.length > 0"
-      >
-        <div
-          class="mutliTable"
-          *ngFor="let item of quickUploadTable; let i = index"
-        >
-          <tr>
-            <th class="lineName text-center f-12" style="min-width: 100px">
-              {{ item.name }}
-            </th>
-            <th
-              *ngIf="i > 6"
-              class="lineName text-center f-12"
-              style="min-width: 80px"
+          <div *ngIf="approvalBoolean">
+            <label class="f-13 mb-0" style="visibility: hidden"
+              >Is LCM Type</label
+            ><br />
+            <label class="check_div">
+              <input
+                type="checkbox"
+                name="preApprove"
+                [(ngModel)]="preAproveBool"
+                ngModel
+                (change)="onSelectPreaprve(preAproveBool)"
+              />
+              <span class="f-13">Pre Approved</span>
+            </label>
+          </div>
+          <div *ngIf="approvalBoolean">
+            <div style="visibility: hidden">visible</div>
+            <button
+              class="img-browse b-0 mt-0 bg-gray"
+              type="button"
+              [disabled]="preAproveBool"
+              [ngClass]="{
+                disable: preAproveBool,
+                'b-success': approverNameListFinal?.length > 0
+              }"
+              (click)="approverDialog = true"
             >
-              Actions
-            </th>
-          </tr>
-          <tr
-            *ngFor="let p of uploadInvoicesListData; let ind = index"
-            class="mb-2"
-          >
-            <td
-              class="f-12 linevalue lcm_table_td text-center break_word"
-              [title]="p[item.field]"
-            >
-              {{ p[item.field] }}
-            </td>
-            <td
-              *ngIf="i > 6"
-              class="f-12 linevalue text-center"
-              style="cursor: pointer"
-              (click)="deleteQueue(ind, p)"
-            >
-              <i class="fa fa-trash-o"></i>
-            </td>
-          </tr>
-        </div>
-      </table> -->
-      <p-table
-        *ngIf="uploadInvoicesListData?.length > 0"
-        [value]="uploadInvoicesListData"
-        [paginator]="false"
-        [columns]="quickUploadTable"
-        styleClass="p-datatable-striped"
-      >
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <th
-              *ngFor="let col of columns"
-              [pTooltip]="col.header"
-              tooltipPosition="top"
-              class="lineName"
-            >
-              {{ col.header }}
-            </th>
-            <th class="action_Zindex" style="width: 60px">Actions</th>
-          </tr>
-        </ng-template>
-        <ng-template
-          pTemplate="body"
-          let-invoiceData
-          let-columns="columns"
-          let-rowIndex="rowIndex"
-        >
-          <tr>
-            <td *ngFor="let col of columns" [title]="invoiceData[col.field]">
-              {{ invoiceData[col.field] }}
-            </td>
-            <td>
-              <i
-                class="fa fa-trash-o"
-                style="cursor: pointer"
-                (click)="deleteQueue(rowIndex, invoiceData)"
-              ></i>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage"> </ng-template>
-        <ng-template pTemplate="paginatorleft"> </ng-template>
-        <ng-template pTemplate="paginatorright"> </ng-template>
-      </p-table>
-      <footer *ngIf="uploadInvoicesListData?.length > 0">
-        <div class="d-flex">
-          <!-- <button class="btn bg-btn-cancel mr-2 f-14">Cancel</button> -->
-          <button
-            class="btn bg-btn-success f-13"
-            style="background: #89d390 !important; width: 150px"
-            (click)="uploadAllFiles()"
-          >
-            Upload
-          </button>
-        </div>
-      </footer>
-    </div>
+              <span *ngIf="!(approverNameListFinal?.length > 0)"
+                >Add Approvers</span
+              >
+              <span
+                *ngIf="approverNameListFinal?.length > 0"
+                class="material-icons d-flex justify-content-center"
+              >
+                check_circle
+              </span>
+            </button>
+          </div>
 
-    <div
-      class="tab-pane"
-      id="help"
-      role="tabpanel"
-      aria-labelledby="help-tab"
-      [ngClass]="viewType == 'help' ? 'show active' : 'fade'"
-    >
-      <help></help>
+          <div>
+            <div style="visibility: hidden">visible</div>
+            <button
+              class="img-browse b-0 mt-0 bg-blue"
+              [disabled]="isButtonDisabled || quickUploadForm.invalid"
+              [ngClass]="
+                isButtonDisabled || quickUploadForm.invalid ? 'disable' : ''
+              "
+              (click)="checkSupportFile()"
+            >
+              + Add
+            </button>
+          </div>
+          <div *ngIf="uploadInvoicesListData?.length < 1">
+            <div style="visibility: hidden">visible</div>
+            <button
+              class="img-browse b-0 mt-0 bg-btn-success"
+              style="background: #89d390 !important"
+              [disabled]="isButtonDisabled || quickUploadForm.invalid"
+              [ngClass]="
+                isButtonDisabled || quickUploadForm.invalid ? 'disable' : ''
+              "
+              type="button"
+              (click)="uploadCheck(quickUploadForm.value)"
+            >
+              Upload
+            </button>
+          </div>
+        </form>
+        <!-- <table
+              class="d-flex lcm_table_ht"
+              *ngIf="uploadInvoicesListData?.length > 0"
+            >
+              <div
+                class="mutliTable"
+                *ngFor="let item of quickUploadTable; let i = index"
+              >
+                <tr>
+                  <th class="lineName text-center f-12" style="min-width: 100px">
+                    {{ item.name }}
+                  </th>
+                  <th
+                    *ngIf="i > 6"
+                    class="lineName text-center f-12"
+                    style="min-width: 80px"
+                  >
+                    Actions
+                  </th>
+                </tr>
+                <tr
+                  *ngFor="let p of uploadInvoicesListData; let ind = index"
+                  class="mb-2"
+                >
+                  <td
+                    class="f-12 linevalue lcm_table_td text-center break_word"
+                    [title]="p[item.field]"
+                  >
+                    {{ p[item.field] }}
+                  </td>
+                  <td
+                    *ngIf="i > 6"
+                    class="f-12 linevalue text-center"
+                    style="cursor: pointer"
+                    (click)="deleteQueue(ind, p)"
+                  >
+                    <i class="fa fa-trash-o"></i>
+                  </td>
+                </tr>
+              </div>
+            </table> -->
+        <p-table
+          *ngIf="uploadInvoicesListData?.length > 0"
+          [value]="uploadInvoicesListData"
+          [paginator]="false"
+          [columns]="quickUploadTable"
+          styleClass="p-datatable-striped"
+        >
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th
+                *ngFor="let col of columns"
+                [pTooltip]="col.header"
+                tooltipPosition="top"
+                class="lineName"
+              >
+                {{ col.header }}
+              </th>
+              <th class="action_Zindex" style="width: 60px">Actions</th>
+            </tr>
+          </ng-template>
+          <ng-template
+            pTemplate="body"
+            let-invoiceData
+            let-columns="columns"
+            let-rowIndex="rowIndex"
+          >
+            <tr>
+              <td *ngFor="let col of columns" [title]="invoiceData[col.field]">
+                {{ invoiceData[col.field] }}
+              </td>
+              <td>
+                <i
+                  class="fa fa-trash-o"
+                  style="cursor: pointer"
+                  (click)="deleteQueue(rowIndex, invoiceData)"
+                ></i>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage"> </ng-template>
+          <ng-template pTemplate="paginatorleft"> </ng-template>
+          <ng-template pTemplate="paginatorright"> </ng-template>
+        </p-table>
+        <footer *ngIf="uploadInvoicesListData?.length > 0">
+          <div class="d-flex">
+            <!-- <button class="btn bg-btn-cancel mr-2 f-14">Cancel</button> -->
+            <button
+              class="btn bg-btn-success f-13"
+              style="background: #89d390 !important; width: 150px"
+              (click)="uploadAllFiles()"
+            >
+              Upload
+            </button>
+          </div>
+        </footer>
+      </div>
+
+      <div
+        class="tab-pane"
+        id="help"
+        role="tabpanel"
+        aria-labelledby="help-tab"
+        [ngClass]="viewType == 'help' ? 'show active' : 'fade'"
+      >
+        <help></help>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- </div>
+</div> -->
 <!--hiding pdf not to view-->
-<div #hiddenContainer style="position: absolute; left: -9999px; top: -9999px;">
-  <div  *ngIf="attachedBoolean">
+<div #hiddenContainer style="position: absolute; left: -9999px; top: -9999px">
+  <div *ngIf="attachedBoolean">
     <pdf-viewer
-        [src]="pdfSrc"
-        [show-all]="true"
-        [original-size]="false"
-        [fit-to-page]="true"
-        [render-text]="true"
-        [render-text-mode]="2"
-        (after-load-complete)="afterLoadComplete($event)"
-      >
+      [src]="pdfSrc"
+      [show-all]="true"
+      [original-size]="false"
+      [fit-to-page]="true"
+      [render-text]="true"
+      [render-text-mode]="2"
+      (after-load-complete)="afterLoadComplete($event)"
+    >
     </pdf-viewer>
-    
   </div>
 </div>
 
@@ -1135,7 +1300,7 @@
         </p-autoComplete>
       </div>
       <div>
-        <label class="f-12 mb-0">PO Unitprice</label><br />
+        <label class="f-12 mb-0">PO Unit price</label><br />
         <input
           type="text"
           class="form-control accountSelect width-100"
@@ -1332,5 +1497,7 @@
   [fullScreen]="false"
   type="ball-spin-clockwise"
 >
-  <p style="color: rgb(0, 0, 0)"></p>
+  <div class="loader_text">
+    Hey, please wait we are moving into invoice details page...
+  </div>
 </ngx-spinner>

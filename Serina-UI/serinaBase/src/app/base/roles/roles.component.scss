@@ -40,8 +40,8 @@ table {
 }
 .positionCreateUpload{
     position: absolute;
-    right: 8px;
-    top: 70px;
+    right: 0px;
+    top: 10px;
     z-index: 11;
 }
 tbody{
@@ -86,6 +86,7 @@ td{
   .d_flex_wrap {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     gap: 0 8px;
   }
   .inputForm:focus {
@@ -124,7 +125,7 @@ td{
 .fixed_pos {
     position: fixed;
     bottom: 0;
-    right: 0;
+    right: 53px;
 }
 
 .mt-10{
@@ -499,3 +500,75 @@ td{
         margin-bottom: 6px;
     }
   }
+  // new theme
+.head_m {
+    margin: 0px 54px 10px;
+}
+.tabBox {
+    height: 54px;
+    background-color: white;
+    width: 49%;
+    // display: flex;
+    justify-content: space-between;
+    border-radius: 5px;
+}
+.tabBox input {
+    border: 0;
+    background: inherit;
+    position: relative;
+    top: -15px;
+    padding: 0;
+}
+.pl_20 {
+    padding-left: 20px;
+}
+.card_container {
+    // margin: 0px 54px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.card {
+    width: clamp(250px, 22svw, 300px);
+    height: 175px;
+    padding: 20px 15px 10px;
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 5px;
+    border: 0;
+}
+.user_icon {
+    height: 60px;
+    width: 60px;
+    border: 1px solid lavender;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: aliceblue;
+    margin-right: 20px;
+}
+.user_name {
+    margin-top: 5px;
+}
+.user_data {
+    padding-bottom: 12px;
+    border-bottom: 1px solid lightgray;
+}
+.user_down {
+    padding-top: 12px;
+}
+.e_count {
+    height: 30px;
+    width: 30px;
+    background: #358dc01a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    margin-right: 22px;
+}
+.tableDataDiv {
+    max-height: calc(100vh - 300px);
+}
+.mr-53 {
+    margin-right: 53px;
+}

@@ -1,0 +1,8 @@
+<div class="carousel text-center">
+    <div class="slide" *ngFor="let slide of factsList; let i = index" [class.active]="isCurrentSlide(i)">
+    <p>"{{ slide }}"</p>
+    </div>
+</div>
+  <!-- <div class="indicators">
+    <div class="indicator" *ngFor="let slide of factsList; let i = index" [class.active]="isCurrentSlide(i)" (click)="selectSlide(i)"></div>
+  </div> -->

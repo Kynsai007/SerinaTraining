@@ -1,0 +1,12 @@
+<div class="snackbar">
+  <div class="d-flex justify-content-between">
+    <h6>{{ data.text_header }}</h6>
+    <div class=" pointer" (click)="closeSnackBar()">
+      <span class="material-icons f-16"> close </span>
+    </div>
+  </div>
+  <img [src]="data.image" alt="Your Image" width="200" height="135" />
+  <footer [style.backgroundColor]="data.bg_color" class="f-14">
+    {{ data.text_foot }}
+  </footer>
+</div>

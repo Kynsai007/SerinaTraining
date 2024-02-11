@@ -1,4 +1,4 @@
-<mat-sidenav-container
+<!-- <mat-sidenav-container
   class="example-container"
   hasBackdrop="false"
   (backdropClick)="close('backdrop')"
@@ -48,265 +48,442 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <h6 class="headh6">All Documents</h6>
 
-    <div class="container-fluid" style="overflow: hidden; max-height: 92vh">
-        <div class="nav_pane_width1 d-flex justify-content-between flex-wrap">
-          <ul class="nav nav-tabs d-flex" [class.reversed]="!vendorInvoiceAccess">
-            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess && invoceDoctype">
-              <a
-                [ngClass]="
-                  route.url == invoiceTab ? 'active-tab' : ''
-                "
-                class="nav-link"
-                (click)="menuChange('invoice')"
-                >Invoice({{ allInvoiceLength }}) <i class="fa fa-refresh cursor" [ngClass]="resfrshBool? 'rotate':''" (click)="refreshInvoice('inv')" ></i> </a
-              >
-            </li>
-            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess">
-              <a
-                [ngClass]="
-                  route.url == POTab ? 'active-tab' : ''
-                "
-                class="nav-link"
-                (click)="menuChange('po')"
-                >PO({{ poArrayLength }})</a
-              >
-            </li>
-            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess && !invoceDoctype">
-              <a
-                [ngClass]="
-                  route.url == SOTab ? 'active-tab' : ''
-                "
-                class="nav-link"
-                (click)="menuChange('so')"
-                >SO({{ soArrayLength }})</a
-              >
-            </li>
-            <li class="nav-item mr-1" *ngIf="vendorInvoiceAccess && invoceDoctype">
-              <a
-                [ngClass]="
-                  route.url == GRNTab ? 'active-tab' : ''
-                "
-                class="nav-link"
-                (click)="menuChange('grn')"
-                >GRN({{ GRNArrayLength }})</a
-              >
-            </li>
-            <li class="nav-item mr-1">
-              <a
-                [ngClass]="
-                  route.url == archivedTab ? 'active-tab' : ''
-                "
-                class="nav-link"
-                (click)="menuChange('archived')"
-                >Posted({{ archivedLength }})</a
-              >
-            </li>
-            <li class="nav-item mr-1">
-              <a
-                [ngClass]="
-                  route.url == rejectedTab ? 'active-tab' : ''
-                "
-                class="nav-link"
-                (click)="menuChange('rejected')"
-                >Rejected({{ rejectedLength }})</a
-              >
-            </li>
-            
 
-            <li class="nav-item service" *ngIf="usertypeBoolean && serviceInvoiceAccess "
-            [ngClass]="!vendorInvoiceAccess ? 'mr-2':'ml-2'">
-              <a
-                [ngClass]="
-                  route.url == serviceInvoiceTab
-                    ? 'active-tab'
-                    : ''
-                "
-                class="nav-link ite"
-                (click)="menuChange('ServiceInvoices')"
-                >Service Invoices({{ serviceInvoiceLength }})<i class="fa fa-refresh cursor" [ngClass]="resfrshBool? 'rotate':''" (click)="refreshInvoice('ser')" ></i></a
-              >
-            </li>
-          </ul>
-
-          <div class="tableFilters">
-            <div
-            class="mr-2"
-            *ngIf="route.url == invoiceTab"
-          >
-            <p-calendar
-              [(ngModel)]="rangeDates"
-              selectionMode="range"
-              [minDate]="minDate"
-              [maxDate]="maxDate"
-              placeholder="Select dates to Filter"
-              [readonlyInput]="true"
-              [showIcon]="true"
-              showButtonBar="true"
-              (onClearClick)="clearDates()"
-              inputId="range"
-            ></p-calendar>
-            <button
-              class="btnUpload filter_btn_m z_index"
-              (click)="filterByDate(rangeDates)"
-            >
-            <i class="fa fa-filter" aria-hidden="true"></i>
-            </button>
-          </div>
-          <div class="mr-2"
-           *ngIf="route.url == archivedTab">
-              <select class="form-control selectFilter f-12" (change)="selectinvType($event.target.value)">
-                <option value=" ">Both</option>
-                <option value="ven">Vendor</option>
-                <option value="ser">Service</option>
-              </select>
-          </div>
-
-            <div class="input-group  uni_dwn_btn1 left1_ser" *ngIf="!route.url.includes('allInvoices') && !route.url.includes('GRNExceptions') && !route.url.includes('ServiceInvoices')">
-              <input #serachStr type="text" class="searchInput b-r-right-0" placeholder="Search" (keyup)="keySearch(serachStr.value)" [(ngModel)]="searchStr">
-              <button class="btnUpload b-r-left-0 mr-2" (click)="filterString(serachStr.value)">
-                <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
-            </div>
-            <button class="btnUpload  mr-2" (click)="exportExcel()" [ngClass]="(route.url.includes('allInvoices') || route.url.includes('GRNExceptions') || route.url.includes('ServiceInvoices'))? 'downlod_btn1':''">
-              <i class="fa fa-download" aria-hidden="true"></i>
-            </button>
-          </div>
-
-          
-          <!-- <ul class="nav nav-tabs d-inline-block service_navs" *ngIf="usertypeBoolean && serviceInvoiceAccess "
-              [ngClass]="!vendorInvoiceAccess ? 'mr-2':'ml-2'">
-            <li class="nav-item service">
-              <a
-                [ngClass]="
-                  route.url == serviceInvoiceTab
-                    ? 'active-tab'
-                    : ''
-                "
-                class="nav-link ite"
-                (click)="menuChange('ServiceInvoices')"
-                >Service Invoices({{ serviceInvoiceLength }})</a
-              >
-            </li>
-          </ul> -->
-        </div>
-
-        <div style="position: relative;">
-          <!-- tabs display starts here -->
-          <div class="tableDataDiv bg-design-all">
-                <!-- Invoice tab -->
-                <app-all-invoices
-                  [tableData]="invoiceDispalyData"
-                  [invoiceColumns]="invoiceColumns"
-                  [showPaginatorAllInvoice]="showPaginatorAllInvoice"
-                  [columnsToDisplay]="columnstodisplayInvoice"
-                  (searchInvoiceData)="searchInvoiceDataV($event)"
-                  (sideBarBoolean)="showSidebar($event)"
-                  (paginationEvent) = "paginate($event)"
-                  [columnLength]="allInColumnLength"
-                  (filterDataEmit) = "filterEmit($event)"
-                  (systemCheckEmit)="refreshInvoice($event)"
-                  *ngIf="route.url == invoiceTab"
-                >
-                </app-all-invoices>
-
-                <!-- PO tab -->
-                <app-all-invoices
-                  [tableData]="poDispalyData"
-                  [invoiceColumns]="poColumns"
-                  [columnsToDisplay]="columnstodisplayPO"
-                  [showPaginatorAllInvoice]="showPaginatorPOTable"
-                  (sideBarBoolean)="showSidebar($event)"
-                  (paginationEvent) = "paginate($event)"
-                  (filterDataEmit) = "filterEmit($event)"
-                  [columnLength]="allPOColumnLength"
-                  (searchInvoiceData)="searchInvoiceDataV($event)"
-                  *ngIf="route.url == POTab"
-                ></app-all-invoices>
-
-                <!-- SO tab -->
-                <app-all-invoices
-                  [tableData]="soDisplayData"
-                  [invoiceColumns]="poColumns"
-                  [columnsToDisplay]="columnstodisplayPO"
-                  [showPaginatorAllInvoice]="showPaginatorSOTable"
-                  (sideBarBoolean)="showSidebar($event)"
-                  (paginationEvent) = "paginate($event)"
-                  (filterDataEmit) = "filterEmit($event)"
-                  [columnLength]="allPOColumnLength"
-                  (searchInvoiceData)="searchInvoiceDataV($event)"
-                  *ngIf="route.url == SOTab"
-                ></app-all-invoices>
-  
-                <!-- GRN tab -->
-                <app-all-invoices
-                  [tableData]="GRNDispalyData"
-                  [invoiceColumns]="GRNColumns"
-                  [columnsToDisplay]="columnstodisplayGRN"
-                  [showPaginatorAllInvoice]="showPaginatorGRNTable"
-                  (sideBarBoolean)="showSidebar($event)"
-                  (paginationEvent) = "paginate($event)"
-                  (filterDataEmit) = "filterEmit($event)"
-                  [columnLength]="GRNColumnLength"
-                  (searchInvoiceData)="searchInvoiceDataV($event)"
-                  *ngIf="route.url == GRNTab"
-                ></app-all-invoices>
-  
-                <!-- Posted tab -->
-                <app-all-invoices
-                  [tableData]="archivedDisplayData"
-                  [invoiceColumns]="archivedColumns"
-                  [columnsToDisplay]="columnstodisplayArchived"
-                  [showPaginatorAllInvoice]="showPaginatorArchived"
-                  (searchInvoiceData)="searchInvoiceDataV($event)"
-                  (sideBarBoolean)="showSidebar($event)"
-                  (paginationEvent) = "paginate($event)"
-                  (filterDataEmit) = "filterEmit($event)"
-                  [columnLength]="allARCColumnLength"
-                  *ngIf="route.url == archivedTab"
-                ></app-all-invoices>
-  
-                <!-- Rejected tab -->
-                <app-all-invoices
-                  [tableData]="rejectedDisplayData"
-                  [invoiceColumns]="rejectedColumns"
-                  [columnsToDisplay]="columnstodisplayrejected"
-                  [showPaginatorAllInvoice]="showPaginatorRejected"
-                  (searchInvoiceData)="searchInvoiceDataV($event)"
-                  (sideBarBoolean)="showSidebar($event)"
-                  (paginationEvent) = "paginate($event)"
-                  (filterDataEmit) = "filterEmit($event)"
-                  [columnLength]="rejectedColumnLength"
-                  *ngIf="route.url == rejectedTab"
-                ></app-all-invoices>
-  
-                <!-- service invoice tab -->
-                <app-all-invoices
-                  [tableData]="serviceinvoiceDispalyData"
-                  [invoiceColumns]="serviceColumns"
-                  [showPaginatorAllInvoice]="showPaginatorServiceInvoice"
-                  [columnsToDisplay]="columnstodisplayService"
-                  (searchInvoiceData)="searchInvoiceDataV($event)"
-                  (sideBarBoolean)="showSidebar($event)"
-                  (paginationEvent) = "paginate($event)"
-                  (filterDataEmit) = "filterEmit($event)"
-                  [columnLength]="allSRVColumnLength"
-                  *ngIf="route.url == serviceInvoiceTab"
-                ></app-all-invoices>
-            <ngx-spinner
-              bdColor="rgba(251, 251, 251, 0.8)"
-              size="medium"
-              color="#070900"
-              [fullScreen]="false"
-              type="ball-spin-clockwise"
-            >
-              <p style="color: rgb(0, 0, 0)"></p>
-            </ngx-spinner>
-          </div>
-        </div>
-    </div>
   </mat-sidenav-content>
-</mat-sidenav-container>
+</mat-sidenav-container> -->
+<div class="row1">
+  <!-- <div class="col-md-2 p-0"></div> -->
+  <div class="col-md-12 p-0">
+    <div
+      class="nav_pane_width1 d-flex justify-content-between flex-wrap inv_nav_container"
+    >
+      <ul class="nav nav-tabs d-flex  nav_sub" [class.reversed]="!vendorInvoiceAccess">
+        <li class="nav-item" *ngIf="vendorInvoiceAccess">
+          <a
+            [ngClass]="route.url == invoiceTab ? 'active' : ''"
+            class="nav-link shade_color"
+            (click)="menuChange('invoice')"
+            >Invoice({{ allInvoiceLength }})
+            <i
+              class="fa fa-refresh cursor"
+              [ngClass]="refreshBool ? 'rotate' : ''"
+              (click)="refreshInvoice('inv')"
+            ></i>
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="vendorInvoiceAccess">
+          <a
+            [ngClass]="route.url == POTab ? 'active' : ''"
+            class="nav-link shade_color"
+            (click)="menuChange('po')"
+            >PO({{ poArrayLength }})</a
+          >
+        </li>
+        <li class="nav-item" *ngIf="vendorInvoiceAccess">
+          <a
+            [ngClass]="route.url == GRNTab ? 'active' : ''"
+            class="nav-link shade_color"
+            (click)="menuChange('grn')"
+            >GRN({{ GRNArrayLength }})</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            [ngClass]="route.url == archivedTab ? 'active' : ''"
+            class="nav-link shade_color"
+            (click)="menuChange('archived')"
+            >Posted({{ archivedLength }})</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            [ngClass]="route.url == rejectedTab ? 'active' : ''"
+            class="nav-link shade_color"
+            (click)="menuChange('rejected')"
+            >Rejected({{ rejectedLength }})</a
+          >
+        </li>
+
+        <li class="nav-item service" *ngIf="usertypeBoolean  && serviceInvoiceAccess"
+        >
+          <a
+            [ngClass]="route.url == serviceInvoiceTab ? 'active' : ''"
+            class="nav-link ite shade_color"
+            (click)="menuChange('ServiceInvoices')"
+            >Service Invoices({{ serviceInvoiceLength }})
+            <i
+              class="fa fa-refresh cursor"
+              [ngClass]="resfrshBool ? 'rotate' : ''"
+              (click)="refreshInvoice('ser')"
+            ></i
+          ></a>
+        </li>
+      </ul>
+
+      <div class="nav_sub mr-2 posted_filter" *ngIf="route.url == archivedTab" style="width: 23%;">
+        <label class="f-12 mb-0 z_index">Select</label>
+        <select
+          class="form-control selectFilter f-14"
+          (change)="selectinvType($event.target.value)"
+        >
+          <option value=" ">Both</option>
+          <option value="ven">Vendor</option>
+          <option value="ser">Service</option>
+        </select>
+      </div>
+
+      <div class="d-flex nav_sub" [ngStyle]="{'width': route.url == archivedTab ? '23%':'49%'}">
+        <div class="mr-2 wild_search_all" *ngIf="route.url == invoiceTab || route.url == serviceInvoiceTab">
+          <div class="filter_box">
+            <label for="uni" class="f-12">
+              Search Universal <br />
+              <input
+                [(ngModel)]="searchText"
+                type="text"
+                id="uni"
+                class="textFilter f-14"
+                [placeholder]="search_placeholder"
+                (keyup)="universalSearch(searchText)"
+              />
+            </label>
+          </div>
+          <p-calendar
+            #datePicker
+            [(ngModel)]="rangeDatesinv"
+            selectionMode="range"
+            [minDate]="minDate"
+            [maxDate]="maxDate"
+            placeholder=""
+            [readonlyInput]="true"
+            [showIcon]="true"
+            showButtonBar="true"
+            (onClearClick)="clearDates()"
+            (onSelect)="filterByDate(rangeDatesinv)"
+            inputId="range"
+          ></p-calendar>
+        </div>
+        <div
+          class="input-group uni_dwn_btn1 left1_ser"
+          *ngIf="
+            !(
+              route.url.includes('allInvoices') ||
+              route.url.includes('GRNExceptions') ||
+              route.url.includes('ServiceInvoices')
+            )
+          "
+        >
+        <label class="f-12 mb-0 z_index">Search</label><br>
+          <input
+            #serachStr
+            type="text"
+            class="searchInput b-r-right-0 f-14"
+            [ngStyle]="{'width': route.url == archivedTab ? '17vw':'41vw'}"
+            placeholder="Ex: PO number, etc.."
+            (keyup)="keySearch(serachStr.value,$event)"
+            [(ngModel)]="searchStr"
+          />
+          <button
+            class="secondary_btn b-r-left-0 click_search"
+            (click)="filterString(serachStr.value)"
+          >
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </button>
+        </div>
+        <!-- <button
+          class="btnUpload mr-2"
+          (click)="exportExcel()"
+        >
+          <i class="fa fa-download" aria-hidden="true"></i>
+        </button> -->
+      </div>
+    </div>
+    <div class="pt-2">
+      <app-exception-table
+        [invoiceColumns]="invoiceColumns"
+        [columnsToDisplay]="columnstodisplayInvoice"
+        [showPaginatorAllInvoice]="showPaginatorAllInvoice"
+        [ColumnLength]="allInColumnLength"
+        (searchInvoiceData)="searchInvoiceDataV($event)"
+        [columnsData]="invoiceDispalyData"
+        [searchText]="searchText"
+        (systemCheckEmit)="refreshInvoice($event)"
+        (paginationEvent) = "paginate($event)"
+        [pageNumber]="pageNumber"
+        [pageId]="'inv'"
+        (sideBarBoolean)="showSidebar($event)"
+        *ngIf="route.url == invoiceTab"
+      >
+      </app-exception-table>
+      <!-- <app-all-invoices
+          [tableData]="invoiceDispalyData"
+          [invoiceColumns]="invoiceColumns"
+          [showPaginatorAllInvoice]="showPaginatorAllInvoice"
+          [columnsToDisplay]="columnstodisplayInvoice"
+          (searchInvoiceData)="searchInvoiceDataV($event)"
+          (sideBarBoolean)="showSidebar($event)"
+          (paginationEvent) = "paginate($event)"
+          (filterDataEmit) = "filterEmit($event)"
+          (systemCheckEmit)="refreshInvoice($event)"
+          [columnLength]="allInColumnLength"
+        >
+        </app-all-invoices>-->
+        <app-exception-table
+        [invoiceColumns]="poColumns"
+        [columnsToDisplay]="columnstodisplayPO"
+        [showPaginatorAllInvoice]="showPaginatorPOTable"
+        [ColumnLength]="allPOColumnLength"
+        (searchInvoiceData)="searchInvoiceDataV($event)"
+        [columnsData]="poDispalyData"
+        [searchText]="searchText"
+        (paginationEvent) = "paginate($event)"
+        (systemCheckEmit)="refreshInvoice($event)"
+        [pageId]="'PO'"
+        [pageNumber]="pageNumber"
+        (sideBarBoolean)="showSidebar($event)"
+        *ngIf="route.url == POTab"
+      >
+      </app-exception-table>
+
+      <!-- <app-all-invoices
+        [tableData]="poDispalyData"
+        [invoiceColumns]="poColumns"
+        [columnsToDisplay]="columnstodisplayPO"
+        [showPaginatorAllInvoice]="showPaginatorPOTable"
+        (sideBarBoolean)="showSidebar($event)"
+        (paginationEvent)="paginate($event)"
+        [columnLength]="allPOColumnLength"
+        (searchInvoiceData)="searchInvoiceDataV($event)"
+        (filterDataEmit)="filterEmit($event)"
+        *ngIf="route.url == POTab"
+      ></app-all-invoices> -->
+
+      <app-exception-table
+        [invoiceColumns]="GRNColumns"
+        [columnsToDisplay]="columnstodisplayGRN"
+        [showPaginatorAllInvoice]="showPaginatorGRNTable"
+        [ColumnLength]="GRNColumnLength"
+        (searchInvoiceData)="searchInvoiceDataV($event)"
+        [columnsData]="GRNDispalyData"
+        [searchText]="searchText"
+        (paginationEvent) = "paginate($event)"
+        [pageId]="'GRN'"
+        [pageNumber]="pageNumber"
+        (sideBarBoolean)="showSidebar($event)"
+        *ngIf="route.url == GRNTab"
+      >
+      </app-exception-table>
+
+      <!-- <app-all-invoices
+        [tableData]="GRNDispalyData"
+        [invoiceColumns]="GRNColumns"
+        [columnsToDisplay]="columnstodisplayGRN"
+        [showPaginatorAllInvoice]="showPaginatorGRNTable"
+        (sideBarBoolean)="showSidebar($event)"
+        (paginationEvent)="paginate($event)"
+        [columnLength]="GRNColumnLength"
+        (searchInvoiceData)="searchInvoiceDataV($event)"
+        (filterDataEmit)="filterEmit($event)"
+        *ngIf="route.url == GRNTab"
+      ></app-all-invoices> -->
+
+      <app-exception-table
+      [invoiceColumns]="archivedColumns"
+      [columnsToDisplay]="columnstodisplayArchived"
+      [showPaginatorAllInvoice]="showPaginatorArchived"
+      [ColumnLength]="allARCColumnLength"
+      (searchInvoiceData)="searchInvoiceDataV($event)"
+      [columnsData]="archivedDisplayData"
+      [searchText]="searchText"
+      (paginationEvent) = "paginate($event)"
+      [pageId]="'arc'"
+      [pageNumber]="pageNumber"
+      (sideBarBoolean)="showSidebar($event)"
+      *ngIf="route.url == archivedTab"
+    >
+    </app-exception-table>
+
+      <!-- <app-all-invoices
+        [tableData]="archivedDisplayData"
+        [invoiceColumns]="archivedColumns"
+        [columnsToDisplay]="columnstodisplayArchived"
+        [showPaginatorAllInvoice]="showPaginatorArchived"
+        (searchInvoiceData)="searchInvoiceDataV($event)"
+        (sideBarBoolean)="showSidebar($event)"
+        (paginationEvent)="paginate($event)"
+        (filterDataEmit)="filterEmit($event)"
+        [columnLength]="allARCColumnLength"
+        *ngIf="route.url == archivedTab"
+      ></app-all-invoices> -->
+
+      <app-exception-table
+      [invoiceColumns]="rejectedColumns"
+      [columnsToDisplay]="columnstodisplayrejected"
+      [showPaginatorAllInvoice]="showPaginatorRejected"
+      [ColumnLength]="rejectedColumnLength"
+      (searchInvoiceData)="searchInvoiceDataV($event)"
+      [columnsData]="rejectedDisplayData"
+      [searchText]="searchText"
+      (paginationEvent) = "paginate($event)"
+      [pageId]="'reject'"
+      [pageNumber]="pageNumber"
+      (sideBarBoolean)="showSidebar($event)"
+      *ngIf="route.url == rejectedTab"
+    >
+    </app-exception-table>
+
+      <!-- <app-all-invoices
+        [tableData]="rejectedDisplayData"
+        [invoiceColumns]="rejectedColumns"
+        [columnsToDisplay]="columnstodisplayrejected"
+        [showPaginatorAllInvoice]="showPaginatorRejected"
+        (searchInvoiceData)="searchInvoiceDataV($event)"
+        (sideBarBoolean)="showSidebar($event)"
+        (paginationEvent)="paginate($event)"
+        (filterDataEmit)="filterEmit($event)"
+        [columnLength]="rejectedColumnLength"
+        *ngIf="route.url == rejectedTab"
+      ></app-all-invoices> -->
+
+      <app-exception-table
+      [invoiceColumns]="serviceColumns"
+      [columnsToDisplay]="columnstodisplayService"
+      [showPaginatorAllInvoice]="showPaginatorServiceInvoice"
+      [ColumnLength]="allSRVColumnLength"
+      (searchInvoiceData)="searchInvoiceDataV($event)"
+      [columnsData]="serviceinvoiceDispalyData"
+      [searchText]="searchText"
+      (paginationEvent) = "paginate($event)"
+      [pageId]="'service'"
+      (sideBarBoolean)="showSidebar($event)"
+      [pageNumber]="pageNumber"
+      *ngIf="route.url == serviceInvoiceTab"
+    >
+    </app-exception-table>
+
+      <!-- <app-all-invoices
+        [tableData]="serviceinvoiceDispalyData"
+        [invoiceColumns]="serviceColumns"
+        [showPaginatorAllInvoice]="showPaginatorServiceInvoice"
+        [columnsToDisplay]="columnstodisplayService"
+        (searchInvoiceData)="searchInvoiceDataV($event)"
+        (sideBarBoolean)="showSidebar($event)"
+        (paginationEvent)="paginate($event)"
+        (filterDataEmit)="filterEmit($event)"
+        [columnLength]="allSRVColumnLength"
+        *ngIf="route.url == serviceInvoiceTab"
+      ></app-all-invoices> -->
+    </div>
+  </div>
+  <ngx-spinner
+    bdColor="rgba(251, 251, 251, 0.8)"
+    size="medium"
+    color="#070900"
+    [fullScreen]="false"
+    type="ball-spin-clockwise"
+  >
+    <div class="loader_text">
+      Hey, please wait...
+      <div *ngIf="showFactsComponent">
+        <fun-facts [factsList]="factsList"></fun-facts>
+      </div>
+    </div>
+  </ngx-spinner>
+
+  <!-- GRN data download -->
+  <dialog #dialog>
+    <div class="d-flex justify-content-between mb-2">
+      <h6 class="f-14">Fill the details</h6>
+      <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
+    </div>
+    <div class="inputBox">
+      <label class="f-12"> Start & End Date </label> <br>
+      <p-calendar
+        #datePicker
+          [(ngModel)]="rangeDates"
+          selectionMode="range"
+          [minDate]="minDate"
+          [maxDate]="maxDate"
+          placeholder="Select dates to Filter"
+          [readonlyInput]="true"
+          [showIcon]="true"
+          showButtonBar="true"
+          (onClearClick)="clearDates()"
+          inputId="range"
+        ></p-calendar>
+    </div>
+    <div class="inputBox">
+      <label for="email" class="f-12">Email ID</label> <br>
+      <input type="email" id="email" class="form-control f-14" [(ngModel)]="userEmailID">
+    </div>
+    <div class="d-flex justify-content-between pointer">
+      <div class="inputBox f-14 mr-3 selectionDiv" (click)="grnDownloadSelection('All')" [ngClass]="grnTabDownloadOpt == 'All'?'activeClass':''">
+        All Record
+      </div>
+      <div class="inputBox f-14 selectionDiv pointer" (click)="grnDownloadSelection('Pending')" [ngClass]="grnTabDownloadOpt == 'Pending'?'activeClass':''">
+        Pending Invoice
+      </div>
+    </div>
+
+    <div class="footer d-flex justify-content-end">
+      <button class="btnUpload btn_extra_bg" (click)='email_download()' [disabled]="!userEmailID">Download to email</button>
+    </div>
+    <ngx-spinner
+        bdColor="rgba(251, 251, 251, 0.8)"
+        size="medium"
+        color="#070900"
+        [fullScreen]="false"
+        type="ball-spin-clockwise"
+      >
+        <div class="loader_text">
+          Hey, please wait...
+        </div>
+      </ngx-spinner>
+  </dialog>
+</div>
+
+<p-dialog header="Select Columns" [(visible)]="visibleSidebar2" position="right" [modal]="true" [style]="{width: '300px',height:'100vh',margin:'0px'}" [baseZIndex]="10000"
+[draggable]="false" [resizable]="false">
+  <ul
+    class="pl-3 sidebar_height"
+    cdkDropList
+    (cdkDropListDropped)="onOptionDrop($event)"
+  >
+    <li
+      class="allCols"
+      *ngFor="let displayColumn of allColumns; let i = index"
+      cdkDrag
+    >
+      <label class="container" [for]="i" cdkDragHandle
+        >{{ displayColumn.columnName }}
+        <input
+          type="checkbox"
+          [id]="i"
+          (change)="activeColumn($event, displayColumn)"
+          [checked]="displayColumn.isActive == 1"
+        />
+        <span class="checkmark"></span>
+      </label>
+      <i class="fa fa-bars dragCols" aria-hidden="true" cdkDragHandle></i>
+    </li>
+  </ul>
+
+  <div class="btnFooterSave" mat-dialog-actions>
+    <button
+      class="secondary_btn f-12 mr-2"
+      type="button"
+      (click)="visibleSidebar2 = false"
+    >
+      Cancel
+    </button>
+    <button
+      class="primary_btn f-12"
+      (click)="updateColumnPosition()"
+      cdkFocusInitial
+    >
+      Save
+    </button>
+  </div>
+</p-dialog>
 
 <p-toast></p-toast>

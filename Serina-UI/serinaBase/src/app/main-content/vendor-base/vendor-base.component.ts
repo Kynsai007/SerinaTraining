@@ -28,6 +28,8 @@ export class VendorBaseComponent implements OnInit {
   last_login: string;
   showLogout: boolean;
   subscription:Subscription;
+  displayResponsivepopup:boolean;
+  BtnText ="Are you sure you want to Logout?"
   menubarBoolean: boolean;
   excpetionPageAccess: boolean;
   uploadPermissionBoolean: boolean;
@@ -35,6 +37,9 @@ export class VendorBaseComponent implements OnInit {
   isDesktop:boolean;
   sidebarMode = 'side';
   timezone: string;
+  name_short: string;
+  isTableView: boolean;
+
   constructor(private router:Router,
     private settingService : SettingsService,
     private SharedService:SharedService,
@@ -46,7 +51,8 @@ export class VendorBaseComponent implements OnInit {
     private exceptionService: ExceptionsService,
     private serviceproviderService : ServiceInvoiceService,
     private DS : DataService,
-    private renderer: Renderer2) { 
+    private renderer: Renderer2,
+    private mat_dlg: MatDialog) { 
       this.subscription = this.SharedService.getMessage().subscribe(message => {
         this.numberOfNotify = message.Arraylength;
         // if (this.SharedService.keepLogin === true) {
@@ -88,6 +94,7 @@ export class VendorBaseComponent implements OnInit {
     this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login = this.userDetails.last_login;
+    this.name_short = this.userDetails.userdetails.firstName[0] + this.userDetails.userdetails?.lastName[0]
     this.readVendor();
     this.getPermissions();
     
@@ -193,22 +200,28 @@ export class VendorBaseComponent implements OnInit {
     const date = new Date();
     this.timezone = date.toLocaleTimeString('en', { timeZoneName: 'short' }).split(' ')[2];
   }
+  confirm_pop(){
+    const drf:MatDialogRef<ConfirmationComponent> = this.mat_dlg.open(ConfirmationComponent,{ 
+      width : '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data : { body: this.BtnText, type: 'confirmation',heading:'Confirmation',icon:'assets/Serina Assets/new_theme/Group 1336.svg'}})
+
+      drf.afterClosed().subscribe((bool)=>{
+        if(bool){
+          this.logout();
+        } 
+      })
+  }
+  onChangeUI(val){
+    this.isTableView = val;
+    this.DS.isTableView.next(this.isTableView);
+  }
   logout(){
     this.authService.logout();
+    this.DS.invoiceLoadedData = [];
+    this.DS.poLoadedData = [];
+    this.DS.GRNLoadedData = [];
   }
-  
-  logout_confirmation(){
-    const dialogRef:MatDialogRef<ConfirmationComponent> = this.dialog.open(ConfirmationComponent,{
-      width: '30svw',
-      height: '40svh',
-      hasBackdrop: false,
-      data:{  body: "Are you sure you want to Logout?"}
-    })
 
-    dialogRef.afterClosed().subscribe((response:any)=>{
-      if(response){
-        this.logout();
-      }
-    })
-  }
 }

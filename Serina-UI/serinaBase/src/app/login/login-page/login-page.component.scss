@@ -1,5 +1,5 @@
 .leftSide{
-background-color: #30336b;
+background-color: #358DC0;
 min-height: 100vh;
 max-height: 100vh;
 padding-right: 0;
@@ -13,19 +13,34 @@ max-height: 100vh;
     color: #eb2f06;
     font-size: xx-small;
 }
-/* In your component's CSS file */
+h1 {
+    font-size: 24px;
+    color: white; 
+}
+
+.login-div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 .microsoft-login-button {
-    color: #ffffff; /* Text color */
     border: none;
-    padding: 2px 5px 5px 5px;
-    border-radius: 50%; /* Make the button rounded */
-    cursor: pointer;
+    width: 100%;
   }
   
   .microsoft-login-button img {
-    width: 18px; /* Adjust the size of the Microsoft logo */
+    width: 25px;
+    height: 20px;
   }
-  
+  .ms {
+    width: 20px !important;
+    height: 18px !important;
+
+  }
+  .msb {
+    border-right: 1px solid lightgray;
+  }
   
 .opaque{
     opacity: 0.5;
@@ -49,17 +64,7 @@ max-height: 100vh;
     font-weight: bold;
     text-align: center;
 }
-.login-div{
-    position: absolute;
-    top: 73px;
-    right: 7%;
-    height: 513px;
-    width: 454px;
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 1px 1px 20px rgb(0 0 0 / 30%);
-}
+
 .t-center{
     text-align: center;
     font-weight: 600;
@@ -83,8 +88,14 @@ max-height: 100vh;
     height: 46px;
 }
 label{
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
+    margin: 0;
+    color: #14010180;
+    position: relative;
+    z-index: 2;
+    top: 3px;
+    left: 0;
 }
 .f-14{
 font-size: 14px;
@@ -94,9 +105,10 @@ font-size: 14px;
 }
 .eye-show{
     position: absolute;
-    top: 20px;
+    top: 0px;
     right: 20px;
     cursor: pointer;
+    z-index: 2;
 }
 .eye-show-1{
     position: absolute;
@@ -115,22 +127,23 @@ font-size: 14px;
 }
 .nameHead{
     position: absolute;
-    top: 2%;
-    right: 3%;
-    color: #000000;
-    font-weight: 600;
-    font-size: 25px;
+    top: 0;
+    right: 0;
+    img{
+        height: 88px;
+    }
 }
 .loginContent{
-    position: absolute;
-    top: 60%;
-    color: white;
-    left: 6%;
-    margin-right: 48%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 120px;
 }
 .loginPageText{
     font-weight: 600;
-    color: #d8d8d8;
+    color: white;
+    font-size: 14px;
+    text-align: center;
 }
 .forgotText{
     font-size: 12px;
@@ -165,16 +178,14 @@ input::-webkit-input-placeholder {
         font-size: 20px;
     }
 }
-// .bgImageMask {
-//     background-image: url("loginmask.png");
-//     background-color: #cccccc;
-//     height: 100vh;
-//     background-position: center;
-//     background-repeat: no-repeat;
-//     background-size: cover;
-//     position: relative;
-//     /* width: 100vw; */
-//   }
+.bgImageMask {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+  }
+
 
 .d_mobile {
     display: block;
@@ -182,6 +193,85 @@ input::-webkit-input-placeholder {
 .pos_rel {
     position: relative;
 }
+.pos_rel .topRightImg {
+    position: absolute;
+    top: -80px;
+    right: -50px;
+}
+.pos_rel .topRightImg1 {
+    position: relative;
+    left: -30px;
+    top: -30px;
+}
+.mainImg {
+    padding: 0px 60px;
+}
+.bottomLeftImg {
+    position: absolute;
+    left: -92px;
+    bottom: -110px;
+}
+.bottomLeftImg1 {
+    position: absolute;
+    left: 80px;
+    bottom: 0;
+}
+.color2{
+    color: #B2B2B2;
+}
+.inputGroup {
+    background: #F3F3F3 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 2px #00000029;
+    border-radius: 5px;
+    height: 54px;
+    input {
+        border: 0;
+        background: inherit;
+        position: relative;
+        top: -8px;
+        z-index: 1;
+        padding: 0;
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+.icon {
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loginOptions{
+    height: 34px;
+    background: #F3F3F3 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 2px #00000029;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+}
+.horizontal-line {
+    position: relative;
+    text-align: center;
+  }
+
+  .horizontal-line::before,
+  .horizontal-line::after {
+    content: "";
+    display: inline-block;
+    width: 46%;
+    border-top: 1px solid #7070702a;
+    position: absolute;
+    top: 56%;
+    transform: translateY(-50%);
+  }
+
+  .horizontal-line::before {
+    right: 54%; 
+  }
+
+  .horizontal-line::after {
+    left: 54%; 
+  }
 @media screen and (max-width: 576px){
     .login-div {
       width: 90vw;
