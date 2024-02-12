@@ -235,27 +235,15 @@ export class UploadSectionComponent implements OnInit {
   selectedOption: string;
   serviceData: any[] = [];
   filteredService: any;
-  mergefilteredService: any;
-  fulldata: any [] = [];
-  filterfulldata: any[] = [];
-  finalfiltereddata: any[] = [];
-  fileToUpload: any;
-  // client: any;
-  account_number: number;
-  socket: WebSocket;
   inputElement: HTMLInputElement;
-  fileContent: string;
   messages = [];
   selectedFile: Blob;
   sp_id: any;
   serviceAccounts: any;
   filteredServiceAccount: any[];
   selectedServiceAccount: any;
-  accountsData: any;
   selectedInvoiceType: any;
-  selectedEntity: string;
   returnmessage: boolean;
-  event: string;
   percentage: any;
   serviceInvoiceAccess: boolean;
   vendorAccess: boolean;
@@ -270,25 +258,6 @@ export class UploadSectionComponent implements OnInit {
     { name:'Multiple PO', value:'multiPO'}
   ];
   categoryArr = [];
-  final: string;
-  reason: any;
-  isError: boolean;
-  factsList= [
-    "Ever wonder how your phone can scan QR codes and text? It's thanks to OCR technology, which deciphers the information hidden in those little square patterns",
-    "OCR is like a multilingual genius: It can read and understand text in multiple languages, making it a polyglot of the digital world",
-    "OCR is used in various applications, including digitizing books, automating data entry, and reading text from scanned documents.",
-    "The first commercial OCR system was introduced in the 1950s by David Shepard, which could read numbers on electric utility bills.",
-    'Do you ever play "guess the font" when you see text in a fancy or unique style? OCR technology can identify fonts, making it the ultimate font detective.'
-  ];
-  showFunFactsComponent = false;
-  PONumber:any;
-  @ViewChild('uploadForm') uploadForm:NgForm;
-  entity_floating =  false;
-  vendor_floating = false;
-  service_floating = false;
-  po_number_floating = false;
-  EntityName: any;
-  errorMsg: string;
 
   constructor(
     private http: HttpClient,
@@ -361,7 +330,7 @@ export class UploadSectionComponent implements OnInit {
     }
     this.seconds = "00";
     this.minutes = "00";
-    // this.isCustomerPortal = this.sharedService.isCustomerPortal;
+
     this.GRNUploadID = this.dataService.reUploadData?.grnreuploadID;
     this.getEntitySummary();
     this.dateRange();
@@ -443,12 +412,12 @@ export class UploadSectionComponent implements OnInit {
     this.entity = '';
     this.displaySelectPdfBoolean = false;
     this.getEntitySummary();
-    // if (value === 'Service invoice') {
-    //   this.selectedOption = 'Service';
-    // }
-    // else if (value === 'Vendor invoice') {
-    //   this.selectedOption = 'Vendor';
-    // }
+    if (value === 'Service invoice') {
+      this.selectedOption = 'Service';
+    }
+    else if (value === 'Vendor invoice') {
+      this.selectedOption = 'Vendor';
+    }
   }
 
   // selectEntity(value){
@@ -619,24 +588,14 @@ export class UploadSectionComponent implements OnInit {
 
   selectVendorAccount_vdr(value) {
     this.vendorAccountId = value;
-    this.selectedPONumber = '';
-    delete this.PONumber;
-    this.displayUploadOpt();
-    this.uploadForm?.controls['PONumber'].reset();
-    this.getPONumbers(this.vendorAccountId,this.selectedEntityId);
-    // if (value) {
-    //   this.displaySelectPdfBoolean = true;
-    // } else {
-    //   this.displaySelectPdfBoolean = false;
-    // }
+    if (value) {
+      this.displaySelectPdfBoolean = true;
+    } else {
+      this.displaySelectPdfBoolean = false;
+    }
   }
 
   selectVendorAccount(value) {
-    this.selectedVendor = value.idVendor;
-    this.selectedPONumber = '';
-    delete this.PONumber;
-    this.displayUploadOpt();
-    
     // this.vendorAccountId = value.vendoraccounts[0].idVendorAccount;
     // this.getPONumbers(this.vendorAccountId);
     this.selectedVendorID = value.idVendor;
@@ -649,8 +608,8 @@ export class UploadSectionComponent implements OnInit {
       .subscribe((data: any) => {
         this.vendorAccountByEntity = data.result;
         this.vendorAccountId = this.vendorAccountByEntity[0].idVendorAccount;
-        this.getPONumbers(this.vendorAccountId,this.selectedEntityId);
-        // if (this.vendorAccountId) {
+        this.getPONumbers(this.vendorAccountId);
+        // if (this.vendorAccountId && this.viewType == 'ideal') {
         //   this.displaySelectPdfBoolean = true;
         // } else {
         //   this.displaySelectPdfBoolean = false;
@@ -695,11 +654,11 @@ export class UploadSectionComponent implements OnInit {
       this.selectedCurrency = data[0];
     })
   }
-  // getPONumbers(id) {
-  //   this.sharedService.getPoNumbers(id).subscribe((data: any) => {
-  //     this.poNumbersList = data;
-  //   })
-  // }
+  getPONumbers(id) {
+    this.sharedService.getPoNumbers(id).subscribe((data: any) => {
+      this.poNumbersList = data;
+    })
+  }
 
   filterPOnumber(event) {
     // if(this.filterBool){
@@ -709,7 +668,7 @@ export class UploadSectionComponent implements OnInit {
     if (this.poNumbersList?.length > 0) {
       for (let i = 0; i < this.poNumbersList?.length; i++) {
         let PO: any = this.poNumbersList[i];
-        if (PO.PODocumentID.toLowerCase().includes(query.toLowerCase())) {
+        if (PO.PODocumentID.toLowerCase().indexOf(query.toLowerCase()) == 0) {
           filtered.push(PO);
         }
       }
@@ -757,8 +716,7 @@ export class UploadSectionComponent implements OnInit {
 
   selectedPO(event) {
     if(this.viewType == 'ideal'){
-      this.selectedPONumber = event.PODocumentID;
-      this.displayUploadOpt();
+      this.displaySelectPdfBoolean = true;
       this.readPOLines(event.PODocumentID);
     } else {
       if (this.selectedCategory == 'credit') {
@@ -881,13 +839,6 @@ export class UploadSectionComponent implements OnInit {
       this.flipBool = true;
     } else {
       this.flipBool = false;
-    }
-  }
-  displayUploadOpt(){
-    if (this.selectedPONumber) {
-      this.displaySelectPdfBoolean = true;
-    } else {
-      this.displaySelectPdfBoolean = false;
     }
   }
   filterPOLine(event) {
@@ -1160,9 +1111,8 @@ export class UploadSectionComponent implements OnInit {
       this.size = this.size / 1024 / 1024;
       this.fileDataProcess(event);
     } else {
-      // this.alertService.errorObject.detail = "";
-      // this.messageService.add(this.alertService.errorObject);
-      this.error("Please Upload mentioned file type only")
+      this.alertService.errorObject.detail = "Please Upload mentioned file type only";
+      this.messageService.add(this.alertService.errorObject);
     }
   }
 
@@ -1173,7 +1123,6 @@ export class UploadSectionComponent implements OnInit {
 
   //file data processing on file selection
   fileDataProcess(event) {
-    this.uploadInvoice();
   }
 
   // identify drop file area
@@ -1193,9 +1142,6 @@ export class UploadSectionComponent implements OnInit {
     this.isuploadable = true;
     this.uploader.queue.length = 0;
     this.OcrProgress = 0;
-    this.isError = false;
-    this.seconds = "00";
-    this.minutes = "00";
     this.progress = null;
     if(this.selectedOption == 'Service'){
       this.returnmessage = false;
@@ -1205,18 +1151,17 @@ export class UploadSectionComponent implements OnInit {
     }
   }
 
-  getPONumbers(v_id,ent_id) {
-    this.sharedService.getPoNumbers(v_id,ent_id).subscribe((data: any) => {
-      this.poNumbersList = data;
-    })
-  }
+  // getPONumbers(id) {
+  //   this.sharedService.getPoNumbers(id).subscribe((data: any) => {
+  //     console.log(data)
+  //     this.poNumbersList = data;
+  //   })
+  // }
 
   uploadInvoice() {
     this.seconds = "00";
     this.minutes = "00";
-    this.processStage = 'Step - 0/2 : In progress';
-    this.showFunFactsComponent = true;
-    this.isError = false;
+    this.processStage = '0/2 (step 1) : Document uploading initiated';
     this.progress = 1;
     const formData = new FormData();
     formData.append('file', this.invoiceUploadDetails);
@@ -1254,9 +1199,13 @@ export class UploadSectionComponent implements OnInit {
             this.OCRInput = event.body.filepath;
             let filetype = event.body.filetype;
             let filename = event.body.filename;
-            this.success("File Uploaded, OCR Process started Successfully!");
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File Uploaded',
+              detail: 'File Uploaded, OCR Process started Successfully',
+            });
             this.processStage =
-              'Step - 1/2 Completed.';
+              '1/2 (step 2): Document upload completed, OCR processing underway.';
 
             /* OCR Process Starts*/
             this.OcrProgress = 1;
@@ -1297,10 +1246,6 @@ export class UploadSectionComponent implements OnInit {
               this.progressBarObj[count].percent = this.updateData['percentage'];
               this.progressWidth = this.updateData['percentage'];
               count = count + 1;
-              if(this.progressText  == "Duplicate Invoice Uploaded!" || this.progressText.includes("index")){
-                this.isError = true;
-                this.showFunFactsComponent = false;
-              }
               if (this.progressText == 'ERROR') {
                 alert('ERROR');
               }
@@ -1309,7 +1254,6 @@ export class UploadSectionComponent implements OnInit {
             this.evtSource.addEventListener('end', (event: any) => {
               this.progressEvent = JSON.parse(event.data);
               clearInterval(timer);
-              this.showFunFactsComponent = false;
               if (this.progressEvent.InvoiceID) {
                 this.selectedPONumber = '';
                 this.vendorAccountName = '';
@@ -1318,10 +1262,7 @@ export class UploadSectionComponent implements OnInit {
                 this.invoiceUploadDetails = '';
                 this.evtSource.close();
                 if (this.progressEvent.InvoiceID) {
-                  this.success("OCR process completed successfully!");
-                  this.spinnerService.show();
-                  setTimeout(() => {
-                    if (this.isCustomerPortal == false) {
+                  if (this.isCustomerPortal == false) {
                     this.route.navigate([
                       `vendorPortal/invoice/InvoiceDetails/vendorUpload/${this.progressEvent.InvoiceID}`,
                     ], { queryParams: { uploadtime: this.minutes + ":" + this.seconds } });
@@ -1330,8 +1271,6 @@ export class UploadSectionComponent implements OnInit {
                       `customer/invoice/InvoiceDetails/CustomerUpload/${this.progressEvent.InvoiceID}`,
                     ], { queryParams: { uploadtime: this.minutes + ":" + this.seconds } });
                   }
-                  this.spinnerService.hide();
-                  }, 2000);
                   // this.tagService.createInvoice = true;
                   // this.tagService.invoicePathBoolean = true;
                   this.tagService.documentType = this.progressEvent.UploadDocType;
@@ -1351,11 +1290,9 @@ export class UploadSectionComponent implements OnInit {
                   this.tagService.headerName = 'Review Invoice';
                 }
               } else {
-                // this.alertService.errorObject.detail =
-                //   this.progressEvent['status'];
-                // this.messageService.add(this.alertService.errorObject);
-                this.error(this.progressEvent['status']);
-                this.errorMsg = this.progressEvent['status'];
+                this.alertService.errorObject.detail =
+                  this.progressEvent['status'];
+                this.messageService.add(this.alertService.errorObject);
                 this.OcrProgress = null;
                 this.isuploadable = true;
                 this.uplaodInvoiceDialog = false;
@@ -1364,23 +1301,19 @@ export class UploadSectionComponent implements OnInit {
               }
             });
             this.evtSource.onerror = (err) => {
-              this.isError = true;
               clearInterval(timer);
-              this.showFunFactsComponent = false;
-              let error;
+              let error = ''
               if(this.progressText == "Duplicate Invoice Uploaded!") {
-                error = 'Duplicate Invoice Uploaded!';
-                this.errorMsg = "The invoice is already present in the system"
-               } else {
-                 error = 'Something went wrong, Please try again';
-                 this.errorMsg = 'Something went wrong, Please try again';
-               }
-              // this.messageService.add({
-              //   severity: 'error',
-              //   summary: 'error',
-              //   detail: error,
-              // });
-              // this.error(error);
+               error = 'Duplicate Invoice Uploaded!';
+              } else {
+                error = 'Something went wrong, Plase try again';
+              }
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'error',
+                  detail: error,
+                });
+              
               this.processStage = '';
               this.evtSource.close();
             };
@@ -1740,21 +1673,20 @@ export class UploadSectionComponent implements OnInit {
             const lastreason = JSON.parse(this.messages[lastMessageIndex]).reason;
             const doc_id = JSON.parse(this.messages[lastMessageIndex]).doc_id;
             // Check if it's the last event.
-            if(lastreason != ''){
-              // this.messageService.add({
-              //     severity: 'error',
-              //     summary: 'error',
-              //     detail: lastreason,
-              //   });
-                this.error(lastreason)
+            if (lastreason != '') {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'error',
+                detail: lastreason,
+              });
+              this.returnmessage = false;
             }
-            if(lastEvent == 'File Processed successfully.'){
-              // this.messageService.add({
-              //   severity: 'success',
-              //   summary: 'File Uploaded',
-              //   detail: lastEvent,
-              // });
-              this.success(lastEvent);
+            if (lastEvent == 'File Processed successfully.') {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'File Uploaded',
+                detail: lastEvent,
+              });
               this.route.navigate([
                 `customer/invoice/InvoiceDetails/CustomerUpload/${doc_id}`,
               ]);
@@ -1924,12 +1856,6 @@ uploadInvoiceCheck(){
   else{
     this.uploadInvoice();
   }
-}
-success(msg) {
-  this.alertService.success_alert(msg);
-}
-error(msg) {
- this.alertService.error_alert(msg);
 }
   ngOnDestroy() {
     this.mat_dlg.closeAll();

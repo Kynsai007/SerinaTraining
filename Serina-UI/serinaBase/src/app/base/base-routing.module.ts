@@ -31,7 +31,6 @@ import { UploadSectionComponent } from '../main-content/upload-section/upload-se
 import { ErrorPageComponent } from '../error-page/error-page.component';
 import { BusinessChartsComponent } from './home/business-charts/business-charts.component';
 import { SalesOrderMappingComponent } from './exception-management/sales-order-mapping/sales-order-mapping.component';
-import { UnsavedChangesGuard } from './exception-management/UnsavedChanges.guard';
 
 const routes: Routes = [
   { 
@@ -83,11 +82,11 @@ const routes: Routes = [
           },
           {
             path: 'invoice/InvoiceDetails/:id',
-            component: Comparision3WayComponent,
+            component: ViewInvoiceComponent,
           },
           {
             path: 'invoice/PODetails/:id',
-            component: Comparision3WayComponent,
+            component: ViewInvoiceComponent,
           },
           {
             path: 'invoice/SODetails/:id',
@@ -95,15 +94,11 @@ const routes: Routes = [
           },
           {
             path: 'invoice/GRNDetails/:id',
-            component: Comparision3WayComponent,
-          },
-          {
-            path: 'invoice/serviceDetails/:id',
-            component: Comparision3WayComponent,
+            component: ViewInvoiceComponent,
           },
           {
             path: 'invoice/InvoiceDetails/CustomerUpload/:id',
-            component: Comparision3WayComponent,canDeactivate: [UnsavedChangesGuard]
+            component: ViewInvoiceComponent,
           },
           {
             path: 'invoice/InvoiceStatus/:id',
@@ -120,23 +115,15 @@ const routes: Routes = [
           {
             path: 'Create_GRN_inv_list',
             component: CreateGRNComponent,
-          }
-          ,{
-            path: 'GRN_approvals',
-            component: CreateGRNComponent,
           },
           {
             path: 'Create_GRN_inv_list/Inv_vs_GRN_details/:id',
             component: Comparision3WayComponent,canDeactivate: [CanDeactivateGuard]
           },
-          {
-            path: 'GRN_approvals/approval_id/:id',
-            component: Comparision3WayComponent,canDeactivate: [CanDeactivateGuard]
-          },
           { path: 'payment-status', component:PipComponent},
           {
             path: 'approved/InvoiceDetails/:id',
-            component: Comparision3WayComponent,
+            component: ViewInvoiceComponent,
           },
           {
             path: 'ExceptionManagement',
@@ -161,7 +148,7 @@ const routes: Routes = [
           
           {
             path: 'ExceptionManagement/InvoiceDetails/:id',
-            component: Comparision3WayComponent,
+            component: ViewInvoiceComponent,
           },
           {
             path: 'vendor',

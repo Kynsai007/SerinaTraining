@@ -2,7 +2,6 @@ import { importFilesModule } from './../importFiles.module';
 import { VendorComponent } from './vendor.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { VendorRoutingModule } from './vendor-routing.module';
 import { VendorInvoiceComponent } from './vendor-invoice/vendor-invoice.component';
@@ -18,9 +17,7 @@ import { BaseModule } from '../base.module';
     CommonModule,
     VendorRoutingModule,
     importFilesModule,
-    BaseModule,
-    FormsModule,
-    ReactiveFormsModule
+    BaseModule
   ]
 })
 export class VendorModule { }

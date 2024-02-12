@@ -87,7 +87,7 @@ export class LoginPageComponent implements OnInit {
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
-    public sharedService: SharedService,
+    private sharedService: SharedService,
     private route: ActivatedRoute,
     private settingService: SettingsService,
     private dataStoreService: DataService,

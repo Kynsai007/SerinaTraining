@@ -32,11 +32,10 @@ export class InvoiceStatusComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    
+    this.getHistorylogs();
     this.routeIdCapture = this.activatedRoute.params.subscribe((params) => {
       this.sharedService.invoiceID = params['id'];
     });
-    this.getHistorylogs();
   }
 
   getHistorylogs() {
@@ -86,10 +85,13 @@ export class InvoiceStatusComponent implements OnInit {
       // window.open(url);
       //window.location.href = response.url;
       fileSaver.saveAs(response, `Invoice#${this.invoiceNumber}_JSON`);
-      this.alertService.success_alert("Document Downloaded successfully");
+      this.alertService.addObject.summary="Success";
+      this.alertService.addObject.detail = "Document Downloaded successfully";
+      this.messageService.add(this.alertService.addObject);
     }
       ,err=>{
-        this.alertService.error_alert("Server error");
+        this.alertService.errorObject.detail = "Server error";
+        this.messageService.add(this.alertService.errorObject);
       })
   }
 }

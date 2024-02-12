@@ -1,88 +1,10 @@
-<!-- <div class="d-flex justify-content-between"> -->
-  <!-- <h6 *ngIf="!dashboardViewBoolean" class="headh6">{{ heading }}</h6> -->
-  <!-- filters -->
-  <div class="filters d-flex pt-2">
-    <!-- universal search -->
-    <!-- <div class="filter">
-        <label for="uni" class="f-12"> Search Universal <br>
-          <input [(ngModel)]="searchText" type="text" id="uni" class="textFilter f-13" placeholder="Ex: By Vendor, By PO" (keyup)="universalSearch(searchText)">
-        </label>
-      </div> -->
-    <div class="wild_search_all">
-      <div class="filter_box">
-        <label for="uni" class="f-12">
-          Search Universal <br />
-          <input
-            [(ngModel)]="searchText"
-            type="text"
-            id="uni"
-            class="textFilter f-13"
-            [placeholder]="search_placeholder"
-            (keyup)="universalSearch(searchText)"
-          />
-        </label>
-      </div>
-      <div class="calender_div">
-        <p-calendar
-          #datePicker
-          [(ngModel)]="rangeDates"
-          selectionMode="range"
-          [minDate]="minDate"
-          [maxDate]="maxDate"
-          placeholder=""
-          [readonlyInput]="true"
-          [showIcon]="true"
-          showButtonBar="true"
-          (onClearClick)="clearDates()"
-          (onSelect)="filterByDate(rangeDates)"
-          inputId="range"
-        ></p-calendar>
-      </div>
-    </div>
+<h6 *ngIf="!dashboardViewBoolean" class="headh6">{{heading}}</h6>
 
-    <!-- search by VendorName -->
-    <div class="filter status">
-        <label class="f-12 png_label"> Search by PO Requestor </label>
-        <p-autoComplete
-        (onSelect)="onSelectVendor($event)"
-        placeholder="Ex: abc@xyz.com"
-        [suggestions]="filteredVendor"
-        (completeMethod)="filterByVendorName($event)"
-        field="VendorName"
-        [dropdown]="true"
-      >
-        <ng-template let-vendor pTemplate="item">
-          <div class="">
-            <div class="f-12">{{ vendor.VendorName }}</div>
-          </div>
-        </ng-template>
-      </p-autoComplete>
-      </div>
-
-    <!-- search by Status -->
-    <div class="filter status">
-      <label class="f-12 png_label"> Search by Status </label>
-      <p-autoComplete
-        (onSelect)="onSelectStatus($event)"
-        placeholder="Please Select Status"
-        [suggestions]="filteredStatusList"
-        (completeMethod)="filterByStatus($event)"
-        field="name"
-        [dropdown]="true"
-        [(ngModel)]="selected_status_obj"
-      >
-        <ng-template let-status pTemplate="item">
-          <div class="">
-            <div class="f-12">{{ status.name }}</div>
-          </div>
-        </ng-template>
-      </p-autoComplete>
-    </div>
-  </div>
-<!-- </div> -->
-
-<!-- <ul class="nav nav-tabs">
-        <li class="nav-item mr-1">
+<div class="container-fluid">
+  
+    <div *ngIf="!dashboardViewBoolean">
+      <ul class="nav nav-tabs">
+        <li class="nav-item mr-1" *ngIf="invoceDoctype || !isVendorBoolean">
           <a
             class="nav-link"
             [class.active-tab]="viewType == 'normal'"
@@ -112,6 +34,7 @@
         <button class="btnUpload mr-2" (click)="exportExcel()">
           <i class="fa fa-download" aria-hidden="true"></i>
         </button>
+        <!-- <button class=" btnUpload mr-2" (click)="toCreateNew()"><span class="f-16">+</span> Create</button> -->
       </div>
       <div
           class="filter_input"
@@ -135,34 +58,69 @@
           <i class="fa fa-filter" aria-hidden="true"></i>
           </button>
         </div>
-    </div> -->
+    </div>
 
-<div class="pt-1" [ngSwitch]="viewType">
-  <!-- All Tab -->
-  <div *ngSwitchCase="'normal'">
-    <app-exception-table
-      [invoiceColumns]="ColumnsForBatch"
-      [columnsToDisplay]="columnsToDisplay"
-      [showPaginatorAllInvoice]="showPaginatorAllInvoice"
-      [ColumnLength]="batchProcessColumnLength"
-      (searchInvoiceData)="searchInvoiceDataV($event)"
-      [columnsData]="columnsData"
-      [searchText]="searchText"
-      [pageId]="'exc_v'"
-      [pageNumber]="pageNumber"
-      (paginationEvent) = "paginate($event)"
-    >
-    </app-exception-table>
+    <div class="tableDataDiv bg-design-all pt-1" [ngSwitch]="viewType">
+      <!-- All Tab -->
+      <div *ngSwitchCase="'normal' || 'PODoc'">
+        <div class="tableDiv">
+          <div>
+            <app-exception-table
+              [invoiceColumns]="ColumnsForBatch"
+              [columnsToDisplay]="columnsToDisplay"
+              [ColumnLength]="batchProcessColumnLength"
+              (searchInvoiceData)="searchInvoiceDataV($event)"
+              [columnsData]="columnsData"
+            >
+            </app-exception-table>
+          </div>
+          
+        </div>
+      </div>
+
+       <!-- PO Tab -->
+       <div *ngSwitchCase="'PODoc'">
+        <div class="tableDiv">
+          <div>
+            <app-exception-table
+              [invoiceColumns]="ColumnsForBatch"
+              [columnsToDisplay]="columnsToDisplayPO"
+              [ColumnLength]="batchProcessPOColumnLength"
+              (searchInvoiceData)="searchInvoiceDataV($event)"
+              [columnsData]="columnsData"
+            >
+            </app-exception-table>
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- Inprogress Tab -->
+      <div *ngSwitchCase="'editApproveBatch'">
+        <div *ngIf="!dashboardViewBoolean" class="tableDiv">
+          <div>
+            <app-exception-table
+              [invoiceColumns]="ColumnsForBatch"
+              [columnsToDisplay]="columnsToDisplay"
+              (searchInvoiceData)="searchInvoiceDataV($event)"
+              [ColumnLength]="batchProcessColumnLength"
+              [columnsData]="columnsDataAdmin"
+            >
+            </app-exception-table>
+          </div>
+        </div>
+      </div>
+
+      <ngx-spinner
+            bdColor="rgba(251, 251, 251, 0.8)"
+            size="medium"
+            color="#070900"
+            [fullScreen]="false"
+            type="ball-spin-clockwise"
+          >
+            <p style="color: rgb(0, 0, 0)"></p>
+          </ngx-spinner>
+    </div>
   </div>
-
-  <ngx-spinner
-    bdColor="rgba(251, 251, 251, 0.8)"
-    size="medium"
-    color="#070900"
-    [fullScreen]="false"
-    type="ball-spin-clockwise"
-  >
-    <p style="color: rgb(0, 0, 0)"></p>
-  </ngx-spinner>
 </div>
 <p-toast></p-toast>

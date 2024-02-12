@@ -265,7 +265,6 @@ export class RolesComponent implements OnInit {
 
   ngOnInit(): void {
     this.isDesktop = this.dataService.isDesktop;
-    this.vendorInvoiceAccess = this.dataService.configData.vendorInvoices;
     if(this.isDesktop){
       this.thCount = 6;
     } else {

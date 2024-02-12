@@ -9,7 +9,7 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 @Component({
   selector: 'app-popup',
   templateUrl: './popup.component.html',
-  styleUrls: ['./popup.component.scss']
+  styleUrls: ['./popup.component.scss','../invoice/view-invoice/view-invoice.component.scss']
 })
 export class PopupComponent implements OnInit {
   POLineData = [];
@@ -23,10 +23,6 @@ export class PopupComponent implements OnInit {
   entityList = [];
   approverList:any;
   rejectionComments:string;
-  isQuantityChanged: boolean;
-  linesTotal: number = 0;
-  inv_total:number;
-  select_all_bool:boolean;
   approversSendData: any;
   lineTable = [ 'Description','Unit','Price','Quantity'];
   orderHistoryData: any;
@@ -42,6 +38,7 @@ export class PopupComponent implements OnInit {
     public dialogRef: MatDialogRef<PopupComponent>,
     private ES: ExceptionsService,
     private alert: AlertService,
+    private message : MessageService,
     private spin: NgxSpinnerService,
     private ds : DataService,
     private mat_dlg: MatDialog,
@@ -81,18 +78,11 @@ export class PopupComponent implements OnInit {
     if (this.data.comp == 'upload') {
       this.uploadBool = true;
     }
-    this.POLineData = this.data?.resp?.podata;
-    this.inv_total = this.data?.resp?.sub_total;
-    console.log(this.inv_total,this.POLineData)
-    this.POLineData?.forEach(val => {
-      val.isSelected = false;
-      val.Quantity = val.PurchQty;
-    })
 
   }
 
   flipPOFun(){
-    this.POLineData = this.data?.resp?.podata;
+    this.POLineData = this.data.resp;
     this.POLineData.forEach(val => {
       val.isSelected = false;
     })
@@ -103,11 +93,13 @@ export class PopupComponent implements OnInit {
       if (data?.result) {
         if(data.Flippo_Approval){
           this.flipApproverlist();
-          this.success("PO flip is successful")
+          this.alert.addObject.detail = "PO flip is successful, Please set the approvers."
+          this.message.add(this.alert.addObject);
           this.approveBool = true;
         } else {
           this.ES.popupmsg.next(this.component);
-          this.success("PO flip is successful")
+          this.alert.addObject.detail = "PO flip is successful"
+          this.message.add(this.alert.addObject);
           this.dialogRef.close();
         }
 
@@ -118,11 +110,13 @@ export class PopupComponent implements OnInit {
         //   hasBackdrop: false
         // });
       } else {
-        this.error(data?.error)
+        this.alert.errorObject.detail = data?.error
+        this.message.add(this.alert.errorObject)
       }
       this.spin.hide();
     }, err => {
-      this.error("Server error");
+      this.alert.errorObject.detail = "Server error"
+      this.message.add(this.alert.errorObject)
       this.spin.hide();
     })
   }
@@ -133,19 +127,12 @@ export class PopupComponent implements OnInit {
       let boolean = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (boolean) {
         this.selectedPOLines.push(data);
-        this.linesTotal = Number(this.linesTotal) + Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
     } else {
       const ind = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
-        this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
-    }
-    if(this.selectedPOLines.length == this.POLineData.length){
-      this.select_all_bool = true;
-    } else {
-      this.select_all_bool = false;
     }
   }
   onSelectAll(bool,field) {
@@ -154,15 +141,10 @@ export class PopupComponent implements OnInit {
         val.isSelected = true;
         let id = val[field];
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
-        this.linesTotal = Number(this.linesTotal) + Number((val?.Quantity * val?.UnitPrice).toFixed(2))
       })
-      const allData = [...this.POLineData]
-      this.selectedPOLines = allData;
-      this.select_all_bool = true;
+      this.selectedPOLines = this.POLineData
     } else {
-      this.select_all_bool = false;
       this.selectedPOLines = [];
-      this.linesTotal = 0;
       this.POLineData.forEach(val => {
         val.isSelected = false;
       })
@@ -170,8 +152,6 @@ export class PopupComponent implements OnInit {
   }
   changeQty(qty, lineid,field) {
     let el_flied = 'Quantity';
-    this.isQuantityChanged = true;
-    this.linesTotal = 0;
     if(this.type == 'flip returns'){
       el_flied = 'rtn_qty'
     }
@@ -179,15 +159,6 @@ export class PopupComponent implements OnInit {
       if (el[field] == lineid) {
         el[el_flied] = qty;
       }
-      this.linesTotal = Number(this.linesTotal) + Number((el?.Quantity * el?.UnitPrice).toFixed(2))
-    });
-    // this.linesTotal = 0;
-    this.POLineData.forEach(el => {
-      if (el.LineNumber == lineid) {
-        el.Quantity = qty;
-      }
-      // this.linesTotal = Number(this.linesTotal) + Number((el.PurchQty * el.UnitPrice).toFixed(2))
-
     })
   }
   onSubmitRequest(val) {
@@ -204,14 +175,17 @@ export class PopupComponent implements OnInit {
       this.ES.validateFlipPO(JSON.stringify(obj),this.po_num).subscribe((data:string) => {
         if (data == 'success') {
           this.ES.popupmsg.next(this.component);
-          this.success("PO flip is successful")
+          this.alert.addObject.detail = "PO flip is successful";
+          this.message.add(this.alert.addObject);
           this.dialogRef.close(this.selectedPOLines);
         } else {
-          this.error(data)
+          this.alert.errorObject.detail = data;
+          this.message.add(this.alert.errorObject);
         }
         this.spin.hide();
       }, err => {
-        this.error("Server error");
+        this.alert.errorObject.detail = "Server error"
+        this.message.add(this.alert.errorObject)
         this.spin.hide();
       });
     } else {
@@ -227,14 +201,17 @@ export class PopupComponent implements OnInit {
       })
       this.ES.validateReturns(JSON.stringify(APIdata)).subscribe((data:any)=>{
         if(data.result == 'Success') {
-          this.success("Successful")
+          this.alert.addObject.detail = "Successful";
+          this.message.add(this.alert.addObject);
           this.dialogRef.close(APIdata);
         } else {
-          this.error(data.result)
+          this.alert.errorObject.detail = data.result;
+          this.message.add(this.alert.errorObject);
         }
         this.spin.hide();
       }, err => {
-        this.error("Server error");
+        this.alert.errorObject.detail = "Server error"
+        this.message.add(this.alert.errorObject)
         this.spin.hide();
       });
     }
@@ -265,10 +242,9 @@ export class PopupComponent implements OnInit {
 
   setApprover(){
     this.ES.setFlipApproval(JSON.stringify(this.approversSendData)).subscribe((data)=>{
-      this.success("Successfully sent for Approvals")
+      this.alert.addObject.detail = "Successfully sent for Approvals"
+      this.message.add(this.alert.addObject);
       this.dialogRef.close('success');
-    },err=>{
-      this.error("Server error");
     })
   }
 
@@ -278,8 +254,6 @@ export class PopupComponent implements OnInit {
       this.orderHistoryData = data;
       this.orderData = data.order_history;
       this.masterData = data.master_data;
-    },err=>{
-
     })
   }
 
@@ -318,15 +292,9 @@ export class PopupComponent implements OnInit {
 
   updateMapping() {
     this.ES.updateSOmap(this.so_id,this.v_a_id,this.updateSOObj).subscribe((data)=>{
-      // this.alert.addObject.detail = "SO Line is mapped successfully";
-      // this.message.add(this.alert.addObject);
+      this.alert.addObject.detail = "SO Line is mapped successfully";
+      this.message.add(this.alert.addObject);
       this.dialogRef.close('Mapped');
     })
-  }
-  success(msg) {
-    this.alert.success_alert(msg);
-  }
-  error(msg) {
-   this.alert.error_alert(msg);
   }
 }

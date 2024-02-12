@@ -19,6 +19,5 @@ serviceTriggerBoolean: boolean;
   settingsPageAccess: boolean;
   vendor_SP_PageAccess: boolean;
   uploadPermissionBoolean: any;
-  enable_create_grn: boolean;
   constructor() { }
 }

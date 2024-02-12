@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MessageService } from 'primeng/api';
 import { SettingsService } from 'src/app/services/settings/settings.service';
-import { AlertService } from 'src/app/services/alert/alert.service';
 
 @Component({
   selector: 'app-change-password',
@@ -15,7 +14,7 @@ export class ChangePasswordComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<ChangePasswordComponent>,
     private settingService :  SettingsService,
-    private alertService : AlertService,
+    private messageService : MessageService,
     private authService : AuthenticationService) { }
 
   ngOnInit(): void {
@@ -27,16 +26,26 @@ export class ChangePasswordComponent implements OnInit {
       "new_pass": value.newpassword
     }
     this.settingService.changePassword(JSON.stringify(passwordObj)).subscribe((data:any)=>{
-    this.alertService.success_alert("Password changed successfully");
+      this.messageService.add({
+        severity: 'success',
+        summary : "Saved",
+        detail : "Password changed successfully"
+      })
     this.dialogRef.close();
     setTimeout(()=>{
       this.authService.logout();
     },1000)
     },err=>{
+      let errorObj = {
+        severity: 'error',
+        summary : "error",
+        detail : "Please enter correct password"
+      }
       if(err.status == 400){
-        this.alertService.error_alert("Please enter correct old password");
+        this.messageService.add(errorObj)
       } else {
-        this.alertService.error_alert("Server error");
+        errorObj.detail = "Server error"
+        this.messageService.add(errorObj);
       }
     })
   }
@@ -88,4 +97,5 @@ export class ChangePasswordComponent implements OnInit {
       this.passwordMatchBoolean = true;
     }
   }
+
 }

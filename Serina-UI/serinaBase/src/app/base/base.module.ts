@@ -19,8 +19,6 @@ import { NotificationsComponent } from './notifications/notifications.component'
 import { ViewInvoiceComponent } from './invoice/view-invoice/view-invoice.component';
 
 import { CanDeactivateGuard } from './can-deactivate/can-deactivate.guard';
-import { UnsavedChangesGuard } from './exception-management/UnsavedChanges.guard';
-import { FilterPipe } from './invoice/filter.pipe';
 import { GrnComponent } from './invoice/grn/grn.component';
 import { PipComponent } from './invoice/pip/pip.component';
 import { AllInvoicesComponent } from './invoice/all-invoices/all-invoices.component';
@@ -56,13 +54,10 @@ import { MappedGRNComponent } from './exception-management/mapped-grn/mapped-grn
 import { PDFviewComponent } from './exception-management/pdfview/pdfview.component';
 import { FeatureComponent } from './feature/feature.component';
 import { SupportpdfViewerComponent } from './exception-management/supportpdf-viewer/supportpdf-viewer.component';
-import { FunFactsComponent } from './fun-facts/fun-facts.component';
-import { AppNotificationComponent } from './app-notification/app-notification.component';
 
 @NgModule({
   declarations: [
     BaseTypeComponent,
-    FilterPipe,
     HomeComponent,
     InvoiceComponent,
     NonPoComponent,
@@ -105,8 +100,7 @@ import { AppNotificationComponent } from './app-notification/app-notification.co
     MappedGRNComponent,
     PDFviewComponent,
     FeatureComponent,
-    FunFactsComponent,
-    AppNotificationComponent
+    SupportpdfViewerComponent
   ],
   imports: [
     CommonModule,
@@ -136,17 +130,13 @@ import { AppNotificationComponent } from './app-notification/app-notification.co
     PoLinesComponent,
     MappedGRNComponent,
     PDFviewComponent,
-    FeatureComponent,
-    FunFactsComponent,
-    FilterPipe,
+    FeatureComponent
   ],
   providers: [
     DatePipe,
-    FilterPipe,
     ConfirmationService,
     MessageService,
     CanDeactivateGuard,
-    UnsavedChangesGuard
   ],
 })
 export class BaseModule {}
