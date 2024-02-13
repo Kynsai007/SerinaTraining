@@ -67,7 +67,7 @@ export class SharedService {
   spAccountSub = new BehaviorSubject<any>([])
   docType: any;
   fileSrc: string;
-
+  
   constructor(private http: HttpClient) { }
 
   sendMessage(isLogin: boolean) {
@@ -158,7 +158,7 @@ export class SharedService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/newAccessPermissionUser/${this.userId}`, data);
   }
   updateRoleData(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/${this.ap_id}`, data);
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/${this.ap_id}`, data);
   }
   deleteRole() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Permission/deletePermissionRole/${this.userId}/accessPermissionDefID/${this.ap_id}`);

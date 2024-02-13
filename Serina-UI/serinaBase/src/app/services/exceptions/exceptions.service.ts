@@ -101,7 +101,7 @@ export class ExceptionsService {
 
   // line related
   removeLineData(item_code):Observable<any> {
-    return this.http.delete(`${environment.apiUrl}/${environment.apiVersion}/Invoice/deleteLineItem/${this.invoiceID}/${item_code}`)
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/deleteLineItem/${this.invoiceID}/${item_code}`)
   }
   checkItemCode(item_code):Observable<any> {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/checkLineItemExists/${this.invoiceID}/${item_code}`)

@@ -98,7 +98,7 @@ export class DocumentService {
     return this.http.post(`/${this.apiVersion}/Permission/newAccessPermissionVendor/${this.userId}`,data)
   }
   updateRoleData(data:any): Observable<any>{
-    return this.http.put(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/{ap_id}?apd_id=${this.ap_id}`,data)
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Permission/updateAccessPermission/${this.userId}/idAccessPermission/{ap_id}?apd_id=${this.ap_id}`,data)
   }
   deleteRole(){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Permission/deletePermissionRole/${this.userId}/AccessPermissionDefID${this.ap_id}`)
@@ -160,7 +160,7 @@ export class DocumentService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Vendor/newVendorUser/${this.userId}`,data);
   }
   updateVendorUser(data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${this.apiVersion}/Vendor/updateVendorUser/updateVendorUserID/${this.userId}?vu_id=${this.cuserID}`, data);
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Vendor/updateVendorUser/updateVendorUserID/${this.userId}?vu_id=${this.cuserID}`, data);
   }
   readVendorAccountsData(ent_id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorAccount/${this.userId}?ent_id=${ent_id}`);

@@ -70,6 +70,6 @@ export class SettingsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/releaseinfo`).pipe(retry(2))
   }
   removeRelesebyId(){
-    return this.http.delete(`${environment.apiUrl}/${environment.apiVersion}/removereleaseinfo/${this.userId}`);
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/removereleaseinfo/${this.userId}`);
   }
 }

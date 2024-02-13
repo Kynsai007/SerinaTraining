@@ -185,7 +185,7 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/documentrulesnew`);
   }
   updateFrMetaData(documentId,data): Observable<any> {
-    return this.http.put(`${this.url}/${this.apiVersion}/fr/update_metadata/${documentId}`,data);
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/update_metadata/${documentId}`,data);
   }
   getModalList(v_id,doctype): Observable<any> {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/getmodellist/${v_id}?doctype=${doctype}`);
@@ -219,7 +219,7 @@ export class SharedService {
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/save_labels_file`,frobj)
   }
   deleteBlob(blobname): Observable<any> {
-    return this.http.delete(`${this.url}/${this.apiVersion}/ModelOnBoard/DeleteBlob?blob=${blobname}`);
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/DeleteBlob?blob=${blobname}`);
   }
   checkModelStatus(modelId): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/check_model_status/${modelId}`);
@@ -260,7 +260,7 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/fr/get_all_entities/${this.userId}`);
   }
   updateEntity(ent,obj):Observable<any>{
-    return this.http.put(`${this.url}/${this.apiVersion}/fr/update_entity/${ent}`,obj);
+    return this.http.post(`${this.url}/${this.apiVersion}/fr/update_entity/${ent}`,obj);
   }
   uploadDb(data, modal_id):Observable<any>{
     return  this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/newModel/${modal_id}/${this.userId}`, data);
