@@ -22,7 +22,6 @@ export class ChangePasswordComponent implements OnInit {
 
   savePassword(value){
     const passwordObj = {
-      "old_pass": value.oldPassword,
       "new_pass": value.newpassword
     }
     this.settingService.changePassword(JSON.stringify(passwordObj)).subscribe((data:any)=>{
