@@ -87,9 +87,10 @@ export class BatchProcessComponent implements OnInit {
   filteredStatusList = [];
   searchText:string;
   selected_status_obj;
-  search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
+  search_placeholder:string;
   @ViewChild('datePicker') datePicker: Calendar;
   pageNumber: any;
+  page_supplier: string;
 
   constructor(
     private tagService: TaggingService,
@@ -176,9 +177,11 @@ export class BatchProcessComponent implements OnInit {
       this.viewType = 'normal';
       this.isVendorBoolean = false;
       this.ColumnsForBatch = this.serviceColumns;
+      this.page_supplier = 'Service';
       this.getServiceInvoiceData();
     } else {
       this.heading = `${this.partytype} based Exception`;
+      this.page_supplier = `${this.partytype}`;
       this.pageNumber = this.ds.excTabPageNumber;this.isVendorBoolean = true;
       this.getBatchInvoiceData();
       if(this.apprveBool && this.portalName == 'customer'){
@@ -192,6 +195,8 @@ export class BatchProcessComponent implements OnInit {
       this.dashboardViewBoolean = false;
     }
     this.prepareColumnsArray();
+    this.search_placeholder = `Ex : By ${this.page_supplier},By Entity, Select Date range from the Calendar icon`;
+
   }
   // to prepare display columns array
   prepareColumnsArray() {
@@ -397,7 +402,7 @@ export class BatchProcessComponent implements OnInit {
             this.dataLength = this.columnsData.length;
         }
     } else {
-      this.search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon'
+      this.search_placeholder = `Ex : By ${this.page_supplier},By Entity, Select Date range from the Calendar icon`;
       this.columnsData = this.filterData;
       this.dataLength = this.columnsData.length;
     }

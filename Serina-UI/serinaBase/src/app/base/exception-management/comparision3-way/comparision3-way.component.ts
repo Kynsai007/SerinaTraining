@@ -1715,7 +1715,11 @@ export class Comparision3WayComponent
     this.SharedService.serviceSubmit().subscribe((data: any) => {
       this.success("Sent to Batch Successfully!");
       setTimeout(() => {
-        this._location.back();
+        if(this.router.url.includes('CustomerUpload')){
+          this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+        } else {
+          this._location.back();
+        }
       }, 1000);
     }, err => {
       this.error("Server error");

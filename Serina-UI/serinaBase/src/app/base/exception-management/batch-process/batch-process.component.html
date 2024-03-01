@@ -10,8 +10,9 @@
       </div> -->
     <div class="wild_search_all">
       <div class="filter_box">
-        <label for="uni" class="f-12">
-          Search Universal <br />
+        <label for="uni" class="f-12 mb-0">
+          Search Universal
+        </label> 
           <input
             [(ngModel)]="searchText"
             type="text"
@@ -20,7 +21,6 @@
             [placeholder]="search_placeholder"
             (keyup)="universalSearch(searchText)"
           />
-        </label>
       </div>
       <div class="calender_div">
         <p-calendar
@@ -41,7 +41,7 @@
     </div>
 
     <!-- search by VendorName -->
-    <div class="filter status">
+    <div class="filter status" *ngIf="heading.includes('Vendor')">
         <label class="f-12 png_label"> Search by PO Requestor </label>
         <p-autoComplete
         (onSelect)="onSelectVendor($event)"

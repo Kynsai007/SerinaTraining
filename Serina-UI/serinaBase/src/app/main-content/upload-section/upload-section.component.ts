@@ -1766,7 +1766,7 @@ export class UploadSectionComponent implements OnInit {
               // });
               this.success(lastEvent);
               this.route.navigate([
-                `customer/invoice/InvoiceDetails/CustomerUpload/${doc_id}`,
+                `customer/invoice/serviceDetails/CustomerUpload/${doc_id}`,
               ]);
               this.tagService.isUploadScreen = true;
               this.tagService.displayInvoicePage = false;

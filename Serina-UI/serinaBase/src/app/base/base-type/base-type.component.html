@@ -652,14 +652,30 @@
           Upload
         </div>
 
-        <div
-          class="nav_Link f-14"
-          routerLinkActive="active_cls"
-          [routerLink]="exceptionRoute"
-          (click)="showInnerException()"
-          *ngIf="excpetionPageAccess"
-        >
-          Exceptions
+        <div style="position: relative;">
+          <div
+            class="nav_Link f-14"
+            [ngClass]="{
+              'active_cls': router.url.includes('ExceptionManagement')
+            }"
+            (click)="exceptionDrop()"
+            *ngIf="excpetionPageAccess"
+          >
+            Exceptions
+            <span class="material-icons more_pos" *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && !isOpen" >
+              expand_more
+              </span>
+              <span class="material-icons more_pos" *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && isOpen" >
+                expand_less
+                </span>
+          </div>
+          <div
+            [ngStyle]="{ display: isOpen ? 'block' : 'none' }"
+            class="dropdown-content"
+          >
+            <a [routerLink]="'ExceptionManagement'" routerLinkActive="active_sub_cls" (click)="exceptionMenu('vendor')">Vendor</a>
+            <a [routerLink]="'ExceptionManagement/Service_ExceptionManagement'" routerLinkActive="active_sub_cls" (click)="exceptionMenu('service')">Service</a>
+          </div>
         </div>
         <div
           class="nav_Link f-14"

@@ -74,7 +74,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   supplier_route = "vendor/vendorDetails";
   // switchtext = "Table";
   isTableView:boolean;
-  DisplayMode : Subscription
+  DisplayMode : Subscription;
+  isOpen: boolean;
 
   constructor(
     public router: Router,
@@ -490,6 +491,14 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.router.navigate([`${this.portalName}/invoice/ServiceInvoices`]);
     }
   }
+  exceptionDrop(){
+    this.isOpen = !this.isOpen;
+    if(this.isOpen){
+      document.getElementById('body_content').style.opacity = '0.2';
+    } else {
+      document.getElementById('body_content').style.opacity = '1';
+    }
+  }
   more_routes(){
     if(this.more_icon == 'expand_more'){
       this.more_icon = 'expand_less';
@@ -503,6 +512,12 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     document.getElementById('body_content').style.opacity = '1';
     this.more_icon = 'expand_more';
     this.more_text = str;
+    
+  }
+  exceptionMenu(str){
+    document.getElementById('body_content').style.opacity = '1';
+    this.more_icon = 'expand_more';
+    this.isOpen = false;
   }
   confirm_pop(){
     const drf:MatDialogRef<ConfirmationComponent> = this.dialog.open(ConfirmationComponent,{ 

@@ -107,6 +107,10 @@ const routes: Routes = [
             component: Comparision3WayComponent,canDeactivate: [UnsavedChangesGuard]
           },
           {
+            path: 'invoice/serviceDetails/CustomerUpload/:id',
+            component: Comparision3WayComponent,canDeactivate: [UnsavedChangesGuard]
+          },
+          {
             path: 'invoice/InvoiceStatus/:id',
             component: InvoiceStatusComponent,
           },
