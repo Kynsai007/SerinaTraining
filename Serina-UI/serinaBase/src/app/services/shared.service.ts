@@ -355,8 +355,8 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getDocid_PO/${this.userId}/PODocumentid/${id}`).pipe(retry(2));
   }
   
-  readReadyGRNData(API_route,param):Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/${API_route}/${this.userId}${param}`).pipe(retry(2))
+  readReadyGRNData(param):Observable<any> {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceList/${this.userId}${param}`).pipe(retry(2))
   }
   readReadyGRNInvData():Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceData/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(2))
@@ -382,11 +382,11 @@ export class SharedService {
   checkGRN_PO_balance(bool){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POInvoiceBalanceCheckForGRN/${this.userId}?po_doc_id=${this.po_doc_id}&overbal=${bool}`)
   }
-  createGRNWithPO(param,value){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value).pipe(retry(2))
+  createGRNWithPO(value){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}`,value).pipe(retry(2))
   }
-  duplicateGRNCheck(value,param){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value).pipe(retry(2))
+  duplicateGRNCheck(value){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}`,value).pipe(retry(2))
   }
   validateUnitprice(data){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/validateInvPOUnitPrice/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))
