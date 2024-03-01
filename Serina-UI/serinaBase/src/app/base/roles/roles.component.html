@@ -1,56 +1,60 @@
-<h6 *ngIf="normalRole" class="headh6">User Details</h6>
+<h6 *ngIf="normalRole" class="headh6">User Management</h6>
 
-<div class="container-fluid rolespage">
+<div class="rolespage">
   <div *ngIf="normalRole">
-    <div class="mt-3">
-      <ul class="nav nav-tabs">
-        <li [routerLink]="['/customer/roles', 'createdUsers']" class="mr-1">
-          <a
-            class="nav-link"
-            [class.active-tab]="viewType == 'user'"
-            (click)="viewType = 'user'"
-            >Users</a
-          >
-        </li>
-        <li [routerLink]="['/customer/roles', 'definedRoles']" class="mr-1">
-          <a
-            class="nav-link"
-            [class.active-tab]="viewType == 'roles'"
-            (click)="viewType = 'roles'"
-            >Roles</a
-          >
-        </li>
-        <li *ngIf="isVendorportalRequired && vendorInvoiceAccess && ap_boolean" [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
-          <a
-            class="nav-link"
-            [class.active-tab]="viewType == 'vendorAdminUser'"
-            (click)="viewType = 'vendorAdminUser'"
-            >Vendor Admin</a
-          >
-        </li>
-
-        <li *ngIf="isVendorportalRequired && vendorInvoiceAccess && ap_boolean" [routerLink]="['/customer/roles', 'vendorAdmin']" class="mr-1">
-          <a
-            class="nav-link"
-            [class.active-tab]="viewType == 'vendorAdminUserApprve'"
-            (click)="viewType = 'vendorAdminUserApprve'"
-            >Admin Approval</a
-          >
-        </li>
-      </ul>
+    <div class=" d-flex justify-content-between">
+        <ul class="nav nav-tabs tabBox pl-2">
+          <li [routerLink]="['/customer/roles', 'createdUsers']">
+            <a
+              class="nav-link"
+              [class.active]="viewType == 'user'"
+              (click)="viewType = 'user'"
+              >Users</a
+            >
+          </li>
+          <li [routerLink]="['/customer/roles', 'definedRoles']">
+            <a
+              class="nav-link"
+              [class.active]="viewType == 'roles'"
+              (click)="viewType = 'roles'"
+              >Roles</a
+            >
+          </li>
+          <li  [routerLink]="['/customer/roles', 'vendorAdmin']" *ngIf="vendorInvoiceAccess">
+            <a
+              class="nav-link"
+              [class.active]="viewType == 'vendorAdminUser'"
+              (click)="viewType = 'vendorAdminUser'"
+              >Vendor Admin</a
+            >
+          </li>
+  
+          <li [routerLink]="['/customer/roles', 'vendorAdmin']" *ngIf="vendorInvoiceAccess">
+            <a
+              class="nav-link"
+              [class.active]="viewType == 'vendorAdminUserApprve'"
+              (click)="viewType = 'vendorAdminUserApprve'"
+              >Admin Approval</a
+            >
+          </li>
+        </ul>
+      <div class="tabBox pl_20">
+          <label class="f-12 z_index">Search</label><br>
+          <input type="text" class="form-control f-14" placeholder="Ex: John" [(ngModel)]="searchText">
+      </div>
     </div>
 
-    <div [ngSwitch]="viewType" class="bg-design-all tableDataDiv pt-2 pb-2">
+    <div [ngSwitch]="viewType" class=" tableDataDiv pt-2 pb-2">
       <!-- All users -->
       <div *ngSwitchCase="'user'">
         <div class="positionCreateUpload">
           <!-- <button class=" btnUpload mr-2">Export</button> -->
-          <button class="btnUpload mr-2" (click)="createCustomerUserPage()">
+          <button class="btnUpload mr-53" (click)="createCustomerUserPage()">
             <span class="f-16">+</span> Add New User
           </button>
         </div>
-        <div *ngIf="initialView" class="mat-elevation-z8">
-          <div>
+        <div *ngIf="initialView" class="card_container d-flex justify-content-between">
+          <!-- <div>
             <div class="searchBar">
               <input
                 class="searchInput"
@@ -107,14 +111,6 @@
                   <td>{{ users.LogName }}</td>
                   <td>{{ users.firstName }} {{ users.lastName }}</td>
                   <td>{{ users.NameOfRole }}</td>
-                  <!-- <td class="p-0">
-                    <select class="form-control inputHeight f-12"
-                      (change)="changeUserRole(users,users.NameOfRole)"
-                      [(ngModel)]="users.NameOfRole">
-                      <option *ngFor="let role of DisplayRoleName" [value]="role.NameOfRole">{{role.NameOfRole}}
-                      </option>
-                    </select>
-                  </td> -->
 
                   <td *ngIf="isDesktop">
                     <span style="margin-left: 16px">{{
@@ -166,14 +162,45 @@
                 </tr>
               </ng-template>
             </p-table>
-          </div>
+          </div> -->
+          <ng-container *ngFor="let user of CustomerUserReadData | filter : searchText ">
+            <div class="card" (click)="editUser(user)">
+              <div class="d-flex user_data">
+                <div class="user_icon">
+                  <i class="fa fa-user"></i>
+                </div>
+                <div class="user_name">
+                  <div class="f-16">{{ user.firstName }} {{ user.lastName }}</div>
+                  <div class="f-14 shade_color">{{ user.LogName }}</div>
+                </div>
+              </div>
+              <div class="user_down">
+                <div class="f-12 d-flex justify-content-between">
+                  <div>{{ user.NameOfRole}}</div>
+                  <div>No of Entities</div>
+                </div>
+                <div class="f-12 mt-2 d-flex justify-content-between">
+                  <div [ngStyle]="{
+                      'color':
+                          user.isActive == 1
+                          ? '#00D42A'
+                          : user.isActive == 0
+                          ? '#BF2D28'
+                          : ''
+                    }">{{ user.isActive ? 'Activated':'Inactive' }}
+                  </div>
+                  <div class="e_count">{{ user.entity_site_count }}</div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
         </div>
       </div>
 
       <!-- roles -->
       <div *ngSwitchCase="'roles'">
         <div class="positionCreateUpload">
-          <button class="btnUpload mr-2" (click)="createRole()">
+          <button class="btnUpload mr-53" (click)="createRole()">
             <span class="f-16">+</span> Create New Role
           </button>
         </div>
@@ -863,14 +890,14 @@
           </div>
           <div class="btnAction">
             <button
-              class="btn btnVender bg-btn-cancel mr-3"
+              class="f-12 secondary_btn mr-3"
               (click)="cancelRoles()"
             >
               Cancel
             </button>
             <button
               *ngIf="saveRoleBoolean"
-              class="btn btnVender bg-btn-success"
+              class="f-12 primary_btn"
               [disabled]="createRole.invalid || createRolePriority.invalid"
               [ngStyle]="{
                 cursor: createRole.invalid ? 'not-allowed' : 'pointer'
@@ -881,7 +908,7 @@
             </button>
             <button
               *ngIf="!saveRoleBoolean"
-              class="btn btnVender bg-btn-success"
+              class="primary_btn f-12"
               (click)="updateRoleInfoData()"
             >
               Update
@@ -907,10 +934,10 @@
       <span class="goBackIn" (click)="canceleditUser()">
         <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
       </span>
-      <h6 class="headh6 p-l-30" *ngIf="headerEdituserboolean">
+      <h6 class="headh6 " *ngIf="headerEdituserboolean">
         <span class="ml-35">Edit User</span>
       </h6>
-      <h6 class="headh6 p-l-30" *ngIf="!headerEdituserboolean">
+      <h6 class="headh6 " *ngIf="!headerEdituserboolean">
         <span class="ml-35">Create New User</span>
       </h6>
     </div>
@@ -926,7 +953,7 @@
               <label class="label-head">User Name</label>
               <input
                 type="text"
-                class="form-control inputForm mb-3 f-13"
+                class="form-control inputForm mb-1 f-13"
                 name="username"
                 ngModel
                 #UserName="ngModel"
@@ -964,7 +991,7 @@
               <label class="label-head">First Name</label>
               <input
                 type="text"
-                class="form-control inputForm mb-3 f-13"
+                class="form-control inputForm mb-1 f-13"
                 name="FirstName"
                 ngModel
                 #firstname="ngModel"
@@ -988,7 +1015,7 @@
               <label class="label-head">Last Name</label>
               <input
                 type="text"
-                class="form-control inputForm mb-3 f-13"
+                class="form-control inputForm mb-1 f-13"
                 name="Lastname"
                 ngModel
                 #LastName="ngModel"
@@ -1011,7 +1038,7 @@
                 name="email"
                 ngModel
                 #mail="ngModel"
-                class="form-control inputForm mb-3 f-13"
+                class="form-control inputForm mb-1 f-13"
                 [(ngModel)]="userEmail"
                 placeholder="Email"
                 pattern="[a-zA-Z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,9}$"
@@ -1029,7 +1056,7 @@
             <div>
               <label class="label-head">Role Name</label>
               <select
-                class="form-control inputForm f-12 mb-3"
+                class="form-control inputForm f-12 mb-1"
                 name="editrole"
                 ngModel
                 #editRole="ngModel"
@@ -1071,7 +1098,7 @@
           </div>
         </div>
         <hr />
-        <div class="col-sm-12 mt-3">
+        <div class="col-sm-12 mt-1">
           <div class="f-14 header_div">Entity access related details</div>
           <div class="d_flex_wrap">
             <div>

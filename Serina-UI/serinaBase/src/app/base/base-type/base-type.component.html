@@ -1,7 +1,7 @@
-<mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer class="example-sidenav sideBar d-flex" [mode]="sidebarMode" [opened]="isnotTablet" [ngStyle]="{ backgroundColor: !ap_boolean? '#162F65':'#272727'}">
+<!-- <mat-drawer-container class="example-container" autosize style="display: none;">
+  <mat-drawer #drawer class="example-sidenav sideBar d-flex" [mode]="sidebarMode" [opened]="isnotTablet">
     <div class="d_desk1">
-      <div class="logotitle" *ngIf="ap_boolean">
+      <div class="logotitle">
         <div class="logoPlaceholder">
           <img
             class="logo_img"
@@ -43,7 +43,6 @@
           </span>
           Upload
         </div>
-
         <div
           class="navLink"
           routerLinkActive="active"
@@ -214,22 +213,7 @@
           >
             Utility Invoice Batch
           </li>
-          <!-- <li class="navLink" id="sp_sub" [routerLink]="'serviceProvider/summary'"
-                      [ngClass]="router.url == '/customer/serviceProvider/summary'?'active':'navLink'">Summary </li> -->
-          <!-- <li class="navLink" id="sp_sub" [routerLink]="'serviceProvider/invoices'"
-                      [ngClass]="router.url == '/customer/serviceProvider/invoices'?'active':'navLink'">invoices</li> -->
-          <!-- <li
-            class="navLink"
-            id="sp_sub"
-            [routerLink]="'serviceProvider/bulk_upload'"
-            [ngClass]="
-              router.url == '/customer/serviceProvider/bulk_upload'
-                ? 'active'
-                : 'navLink'
-            "
-          >
-            Bulk Upload
-          </li> -->
+          
           <li
             *ngIf="isAGIUser"
             class="navLink"
@@ -252,7 +236,6 @@
           routerLinkActive="active"
           [routerLink]="'roles'"
         >
-          <!-- <i class="fa fa-user-plus f-18 ml-r-12" aria-hidden="true"></i> -->
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             manage_accounts
           </span>
@@ -284,7 +267,7 @@
       </div>
 
       <div class="copy">
-        Copyrights <span class="cpr f-14">&#169;</span> 2023
+        Copyrights <span class="cpr f-14">&#169;</span> 2024
       </div>
     </div>
   </mat-drawer>
@@ -351,7 +334,7 @@
       </div>
 
       <nav class="d_mobile1">
-        <!-- <div class="logotitle">
+         <div class="logotitle">
           <div class="logoPlaceholder">
             <img
               class="logo_img"
@@ -371,7 +354,7 @@
           <label for="toggle-nav">
             <span class="menu-icon"></span>
           </label>
-        </div> -->
+        </div>
         <section class="pos_rel" *ngIf="menubarBoolean">
           <div class="routeLinks route_mobile">
             <div
@@ -569,7 +552,7 @@
               >
                 Utility Invoice Batch
               </li>
-              <!-- <li class="navLink" id="sp_sub" [routerLink]="'serviceProvider/summary'"
+            <li class="navLink" id="sp_sub" [routerLink]="'serviceProvider/summary'"
                           [ngClass]="router.url == '/customer/serviceProvider/summary'?'active':'navLink'">Summary </li> -->
               <!-- <li class="navLink" id="sp_sub" [routerLink]="'serviceProvider/invoices'"
                           [ngClass]="router.url == '/customer/serviceProvider/invoices'?'active':'navLink'">invoices</li> -->
@@ -584,7 +567,7 @@
                 "
               >
                 Bulk Upload
-              </li> -->
+              </li> 
               <li
                 *ngIf="isAGIUser"
                 class="navLink"
@@ -644,6 +627,188 @@
       <router-outlet></router-outlet>
     </div>
   </div>
-</mat-drawer-container>
+</mat-drawer-container> -->
+
+<div class="layout">
+  <nav class="desktop d-flex justify-content-between">
+    <div class="d-flex" style="gap: 64px;">
+      <div class="logo">
+        <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" />
+      </div>
+      <div class="navLinks d-flex justify-content-between">
+        <div
+          class="nav_Link f-14"
+          [routerLink]="'home'"
+          routerLinkActive="active_cls"
+        >
+          Dashboard
+        </div>
+        <div
+          class="nav_Link f-14"
+          [routerLink]="'uploadInvoices'"
+          routerLinkActive="active_cls"
+          *ngIf="uploadPermissionBoolean"
+        >
+          Upload
+        </div>
+
+        <div
+          class="nav_Link f-14"
+          routerLinkActive="active_cls"
+          [routerLink]="exceptionRoute"
+          (click)="showInnerException()"
+          *ngIf="excpetionPageAccess"
+        >
+          Exceptions
+        </div>
+        <div
+          class="nav_Link f-14"
+          [routerLink]="'Create_GRN_inv_list'"
+          routerLinkActive="active_cls"
+          *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
+        >
+          Create GRN
+        </div>
+        <div
+          class="nav_Link f-14"
+          [routerLink]="'invoice'"
+          (click)="doc_status_route()"
+          [ngClass]="router.url.includes('invoice')?'active_cls':''"
+          routerLinkActive="active_cls"
+        >
+          Document Status
+        </div>
+        <div
+          class="nav_Link f-14"
+          [routerLink]="'GRN_approvals'"
+          routerLinkActive="active_cls"
+          *ngIf="GRNApprovalAccess"
+        >
+          Approvals
+        </div>
+        <div style="position: relative;" (clickOutside)="onClickedOutside($event,'more')">
+          <div class="nav_Link f-14" (click)="more_routes()"
+          [ngClass]="{
+            'active_cls': router.url.includes('vendor') || router.url.includes('serviceProvider') || router.url.includes('documentSummary') || router.url.includes('roles')
+          }"
+          >
+            {{more_text}} <span class="material-icons more_pos" >
+              {{ more_icon}}
+              </span>
+              
+          </div>
+          <div
+              [ngStyle]="{ display: more_icon == 'expand_less' ? 'block' : 'none' }"
+              class="dropdown-content"
+            >
+              <a [routerLink]="'documentSummary'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Summary')">Summary</a>
+              <a [routerLink]="supplier_route" routerLinkActive="active_sub_cls" (click)="onMenuChange(supplier_names)" *ngIf="vendor_SP_PageAccess">{{supplier_names}}</a>
+              <a [routerLink]="'roles'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Roles')" *ngIf="addUsersBoolean">Roles</a>
+            </div>
+        </div>
+        
+        <!-- <div >
+          <div
+          class="nav_Link f-14"
+          [routerLink]="'vendor'"
+          routerLinkActive="active_cls"
+          *ngIf="vendor_SP_PageAccess"
+        >
+          Vendors
+        </div>
+        <div
+          class="nav_Link f-14"
+          [routerLink]="'serviceProvider'"
+          routerLinkActive="active_cls"
+          *ngIf="vendor_SP_PageAccess"
+        >
+          Service Providers
+        </div>
+        <div
+          class="nav_Link f-14"
+          [routerLink]="'roles'"
+          routerLinkActive="active_cls"
+          *ngIf="addUsersBoolean"
+        >
+          Roles
+        </div>
+        </div> -->
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center ">
+      <div class="user_d f-13">Card
+        <span class="portal">
+        <label class="switch">
+          <input
+            type="checkbox"
+            [checked]="isTableView"
+            (change)="onChangeUI($event.target.checked)"
+          />
+          <span class="slider round"></span>
+        </label>
+      </span> Table
+    </div>
+      <div class="short_name f-12">{{name_short}}</div>
+      <div class="f-12 mr-1">{{ userDetails.userdetails.firstName }}</div>
+      <div  (clickOutside)="onClickedOutside($event,'logout')">
+        <mat-icon
+          class="sign_out dropdown"
+          svgIcon="logout"
+          title="Sign Out"
+          (click)="isActive()"
+        ></mat-icon>
+        <div
+          [ngStyle]="{ display: showLogout ? 'block' : 'none' }"
+          class="dropdown-content"
+        >
+          <a (click)="openDialog()">Change Password</a>
+          <a (click)="confirm_pop()">Logout</a>
+        </div>
+    </div>
+    </div>
+    
+  </nav>
+
+  <section id="body_content">
+    <router-outlet></router-outlet>
+  </section>
+</div>
+
+<!-- Cnfirmation Dialog -->
+<!-- <p-dialog
+  header=" "
+  [(visible)]="displayResponsivepopup"
+  [breakpoints]="{ '960px': '75vw' }"
+  [style]="{ width: '30vw' }"
+  [baseZIndex]="10000"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="text-center">
+    <div>
+      <i
+        class="pi pi-exclamation-triangle"
+        style="font-size: 4rem; color: red"
+      ></i>
+    </div>
+    <div class="deleteDivText">
+      {{ BtnText }}
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="d-flex justify-content-center mb-3">
+      <button class="btn btnVender bg-btn-success mr-3" (click)="logout()">
+        Yes
+      </button>
+      <button
+        class="btn btnVender bg-btn-cancel"
+        (click)="displayResponsivepopup = false"
+      >
+        Cancel
+      </button>
+    </div>
+  </ng-template>
+</p-dialog> -->
 
 <p-toast></p-toast>

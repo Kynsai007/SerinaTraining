@@ -33,6 +33,8 @@ import { PopupComponent } from '../../popup/popup.component';
 import { MultiPOComponent } from 'src/app/main-content/multi-po/multi-po.component';
 import { MatAccordion } from '@angular/material/expansion';
 import { SupportpdfViewerComponent } from '../../exception-management/supportpdf-viewer/supportpdf-viewer.component';
+import { NullVisitor } from '@angular/compiler/src/render3/r3_ast';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 export interface getApproverData {
@@ -278,6 +280,22 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
   selectDate: Date;
   filterDataPO: any;
   searchPOArr: any;
+  isBoxOpen: boolean = false;
+  activeTab: string = 'percentage';
+  percentageData: string = '';
+  amountData: string = '';
+  isSubmitDisabled: boolean = true;
+  isButtonDisabled: boolean = true;
+  advancedInvoice: boolean = false;
+  resultAmount: any;
+  inv_type: boolean = true;
+  paData: string;
+  submitted: boolean;
+  prePayBox: boolean = false;
+  ciTab: boolean = false;
+  invoiceType: string = '';
+  disableButton: boolean = false;
+  
 
   constructor(
     private tagService: TaggingService,
@@ -296,7 +314,9 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     private settingsService: SettingsService,
     private route: ActivatedRoute,
     private mat_dlg: MatDialog,
-    private datePipe:DatePipe
+    private datePipe:DatePipe,
+    private dialog:MatDialog,
+    private cdr: ChangeDetectorRef
 
   ) {
     this.exceptionService.getMsg().pipe(take(2)).subscribe((msg) => {
@@ -545,7 +565,10 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
           let merge = { ...cost.AccountCostAllocation }
           this.costAllocation.push(merge);
         })
-
+        console.log(data.ok.doc_type)
+        if(data.ok.doc_type.toLowerCase() === 'advance'){
+          this.advancedInvoice = true;
+        }
         if (data?.ok?.uploadtime) {
           this.uploadtime = data.ok.uploadtime;
         }
@@ -2224,4 +2247,77 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
     delete this.SharedService.fileSrc;
     // this.vendorsSubscription.unsubscribe();
   }
+  openTab(tabName: string) {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(tabContent => tabContent.classList.remove('active'));
+
+    document.getElementById(tabName + 'Tab').classList.add('active');
+    document.querySelector('.tab[data-tab="' + tabName + '"]').classList.add('active');
+  }
+
+
+  
+  openBox() {
+    this.isBoxOpen = true;
+      this.activeTab = 'percentage';
+      this.isSubmitDisabled = true;
+    
+    
+ 
+  }
+  saveData(tab: string){
+    this.submitted = true;
+    if (tab === 'percentage') {
+      this.paData = this.percentageData;
+      this.inv_type = true;
+    }
+    else{
+      this.paData = this.amountData;
+      this.inv_type = false;
+    }
+    console.log(this.inv_type)
+    this.SharedService.uploadPercentageAndAmountDetails(this.paData,this.inv_type,tab).subscribe((data: any) => {
+      this.AlertService.addObject.detail = 'submitted successfully';
+      this.AlertService.addObject.summary = 'sent';
+      this.messageService.add(this.AlertService.addObject);
+      setTimeout(() => {
+        this.isBoxOpen = false;
+      }, 100);
+    }, err => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'error',
+        detail: "Server error",
+      })
+      setTimeout(() => {
+        this.isBoxOpen = false;
+      }, 100);
+    });
+  }
+  closeBox(): void {
+    this.isBoxOpen = false;
+    // Reset other properties as needed
+  }
+  updateButtonState(tab: string) {
+    // Enable the button only when both percentageData and amountData are provided
+    this.isButtonDisabled = !(this.percentageData || this.amountData);
+    if(this.percentageData == ''){
+      this.resultAmount = 0;
+    }
+    if (tab === 'percentage') {
+      this.isButtonDisabled = !/^[0-9]*$/.test(this.percentageData);
+      this.SharedService.getAmountofPercentage(this.percentageData).subscribe((data: any) => {
+        this.resultAmount = data;
+        this.cdr.detectChanges();
+      });
+    } else if (tab === 'amount') {
+      this.isButtonDisabled = !/^[0-9]*$/.test(this.amountData);
+    }
+  }
+  
+  
 }
+

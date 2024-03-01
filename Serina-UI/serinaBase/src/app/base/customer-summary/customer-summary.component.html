@@ -1,38 +1,75 @@
-<h6 class="headh6">Document Summary</h6>
+<!-- <h6 class="headh6">Document Summary</h6> -->
 
-<div class="container-fluid" style="height: 90vh;overflow:hidden;">
-  <div>
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="nav-item mr-1">
-        <a
-          class="nav-link"
-          [ngClass]="vendorInvoiceAccess ? 'active':''"
-          id="vendor-tab"
-          data-toggle="tab"
-          href="#vendor"
-          role="tab"
-          aria-controls="vendor"
-          aria-selected="true"
-          *ngIf="vendorInvoiceAccess"
-          >{{partyType}} Based</a
-        >
-      </li>
-      <li class="nav-item">
-        <a
-          class="nav-link"
-          [ngClass]="!vendorInvoiceAccess ? 'active':''"
-          id="vendor-tab"
-          data-toggle="tab"
-          href="#service"
-          role="tab"
-          aria-controls="service"
-          aria-selected="true"
-          *ngIf="serviceInvoiceAccess"
-          >Service Based</a>
-      </li>
-    </ul>
-  </div>
-  <div class="down_filter">
+<div class="s_p_body">
+    <div class="d-flex justify-content-between p_head">
+      <ul class="nav nav-tabs nav_sub" id="myTab" role="tablist">
+        <li class="nav-item" *ngIf="vendorInvoiceAccess">
+          <a
+            class="nav-link"
+            id="vendor-tab"
+            data-toggle="tab"
+            [ngClass]="vendorInvoiceAccess ? 'active':''"
+            href="#vendor"
+            role="tab"
+            aria-controls="vendor"
+            aria-selected="true"
+            (click)="onTabChange('vendor')"
+            > <span class="material-icons f-18 font_weight100">
+              person_outline
+              </span>
+               Vendor Based</a
+          >
+        </li>
+        <li class="nav-item" *ngIf="serviceInvoiceAccess">
+          <a
+            class="nav-link"
+            [ngClass]="!vendorInvoiceAccess ? 'active':''"
+            id="service-tab"
+            data-toggle="tab"
+            href="#service"
+            role="tab"
+            aria-controls="service"
+            aria-selected="true"
+            (click)="onTabChange('service')"
+            > <span class="material-icons f-18 font_weight100">
+              person_outline
+              </span> Service Based</a
+          >
+        </li>
+      </ul>
+
+      <div class="f-12 nav_sub c_gap"> <span>Total Pages Count</span> <span class="f-22">{{ tabName == 'vendor'? totalSuccessPages : totalSuccessPagesSP }}</span></div>
+      <div class="f-12 nav_sub c_gap"> <span>Total Invoices</span> <span class="f-22">{{ tabName == 'vendor'? totalInvoices : totalInvoicesSP }}</span></div>
+      <div class="f-12 nav_sub c_gap"> <span>OCR Pages Count</span> <span class="f-22">{{ tabName == 'vendor'? totalSuccessPages : totalSuccessPagesSP }}</span></div>
+      <div class="nav_sub">
+          <div class="filter_box">
+            <label for="uni" class="f-12">
+              Search Universal <br />
+              <input
+                [(ngModel)]="searchText"
+                type="text"
+                id="uni"
+                class="textFilter f-13"
+                [placeholder]="search_placeholder"
+              />
+            </label>
+          </div>
+          <p-calendar
+          [(ngModel)]="rangeDates"
+          selectionMode="range"
+          [minDate]="minDate"
+          [maxDate]="maxDate"
+          showButtonBar="true"
+          (onClearClick)="clearDates()"
+          placeholder="Select dates to Filter"
+          [readonlyInput]="true"
+          (onSelect)="filterData(rangeDates)"
+          [showIcon]="true"
+          inputId="range"
+        ></p-calendar>
+      </div>
+    </div>
+  <!-- <div class="down_filter">
     <div>
       <button class="btnUpload dwnload_btn " (click)="downloadReport()">
         Download Report
@@ -50,27 +87,11 @@
         </option>
       </select>
     </div>
-    <div>
-      <p-calendar
-        [(ngModel)]="rangeDates"
-        selectionMode="range"
-        [minDate]="minDate"
-        [maxDate]="maxDate"
-        showButtonBar="true"
-        (onClearClick)="clearDates()"
-        placeholder="Select dates to Filter"
-        [readonlyInput]="true"
-        [showIcon]="true"
-        inputId="range"
-      ></p-calendar>
-      <button class="btnUpload filter_btn_m" (click)="filterData(rangeDates)">
-        Filter
-      </button>
-    </div>
-  </div>
+    
+  </div> -->
 
   <div
-    class="tab-content tabDiv bg-design-all max_data_scroll pt-2 pb-2 pt-55"
+    class="tab-content mt-2"
     id="myTabContent"
   >
     <div
@@ -80,50 +101,15 @@
       role="tabpanel"
       aria-labelledby="vendor-tab"
     >
-      <div class="d-flex">
-        <div class="card-div card1-bg d-flex mr-3 ml-2">
-          <div class="img-wrapper bg-1">
-            <mat-icon svgIcon="total_page"></mat-icon>
-          </div>
-          <div>
-            <div class="text_color">Total Pages Count</div>
-            <div class="f-15">{{ totalSuccessPages }}</div>
-          </div>
-        </div>
-
-        <div class="card-div card2-bg d-flex">
-          <div class="img-wrapper bg-2">
-            <mat-icon svgIcon="total_inv"></mat-icon>
-          </div>
-          <div>
-            <div class="text_color">Total Invoices</div>
-            <div class="f-15">{{ totalInvoices }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="table_scroll">
-        <div class="tableDataDiv table_top">
-          <app-table
-            [tableData]="customerSummary"
-            [invoiceColumns]="summaryColumn"
-            [showPaginator]="showPaginatorSummary"
-            [columnsToFilter]="summaryColumnField"
-            [columnLength]="ColumnLengthVendor"
-          >
-          </app-table>
-        </div>
-
-        <ngx-spinner
-          bdColor="rgba(251, 251, 251, 0.8)"
-          size="medium"
-          color="#070900"
-          [fullScreen]="false"
-          type="ball-spin-clockwise"
-        >
-          <p style="color: rgb(0, 0, 0)"></p>
-        </ngx-spinner>
-      </div>
+      <app-exception-table
+        [invoiceColumns]="summaryColumn"
+        [columnsToDisplay]="summaryColumnField"
+        [showPaginatorAllInvoice]="showPaginatorSummary"
+        [ColumnLength]="ColumnLengthVendor"
+        [columnsData]="customerSummary"
+        [searchText]="searchText"
+      >
+      </app-exception-table>
     </div>
 
     <div
@@ -133,50 +119,15 @@
       aria-labelledby="service-tab"
       [ngClass]="!vendorInvoiceAccess ? 'show active':''"
     >
-      <div class="d-flex">
-        <div class="card-div card1-bg d-flex mr-3 ml-2">
-          <div class="img-wrapper bg-1">
-            <mat-icon svgIcon="total_page"></mat-icon>
-          </div>
-          <div>
-            <div class="text_color">Total Pages Count</div>
-            <div class="f-15">{{ totalSuccessPagesSP }}</div>
-          </div>
-        </div>
-
-        <div class="card-div card2-bg d-flex">
-          <div class="img-wrapper bg-2">
-            <mat-icon svgIcon="total_inv"></mat-icon>
-          </div>
-          <div>
-            <div class="text_color">Total Invoices</div>
-            <div class="f-15">{{ totalInvoicesSP }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="table_scroll">
-        <div class="tableDataDiv table_top">
-          <app-table
-            [tableData]="customerSummarySP"
-            [invoiceColumns]="summaryColumnSP"
-            [showPaginator]="showPaginatorSummarySP"
-            [columnsToFilter]="summaryColumnFieldSP"
-            [columnLength]="ColumnLengthSP"
-          >
-          </app-table>
-        </div>
-
-        <ngx-spinner
-          bdColor="rgba(251, 251, 251, 0.8)"
-          size="medium"
-          color="#070900"
-          [fullScreen]="false"
-          type="ball-spin-clockwise"
-        >
-          <p style="color: rgb(0, 0, 0)"></p>
-        </ngx-spinner>
-      </div>
+      <app-exception-table
+      [invoiceColumns]="summaryColumnSP"
+      [columnsToDisplay]="summaryColumnFieldSP"
+      [showPaginatorAllInvoice]="showPaginatorSummarySP"
+      [ColumnLength]="ColumnLengthSP"
+      [columnsData]="customerSummarySP"
+      [searchText]="searchText"
+    >
+    </app-exception-table>
     </div>
   </div>
 </div>

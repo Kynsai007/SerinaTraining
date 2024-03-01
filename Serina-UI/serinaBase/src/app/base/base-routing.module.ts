@@ -31,6 +31,8 @@ import { UploadSectionComponent } from '../main-content/upload-section/upload-se
 import { ErrorPageComponent } from '../error-page/error-page.component';
 import { BusinessChartsComponent } from './home/business-charts/business-charts.component';
 import { SalesOrderMappingComponent } from './exception-management/sales-order-mapping/sales-order-mapping.component';
+import { UnsavedChangesGuard } from './exception-management/UnsavedChanges.guard';
+import { ExceptionTableComponent } from './exception-management/exception-table/exception-table.component';
 
 const routes: Routes = [
   { 
@@ -69,24 +71,24 @@ const routes: Routes = [
             path: 'invoice',
             component: InvoiceComponent,
             children:[
-              { path:'allInvoices', component:AllInvoicesComponent },
-              { path:'PO', component:AllInvoicesComponent },
-              { path:'SO', component:AllInvoicesComponent },
-              { path: 'GRN', component:AllInvoicesComponent },
-              { path: 'archived' , component:AllInvoicesComponent },
-              { path: 'rejected' , component:AllInvoicesComponent },
-              { path: 'GRNExceptions' , component:AllInvoicesComponent },
-              { path: 'ServiceInvoices' , component:AllInvoicesComponent },
+              { path:'allInvoices', component:ExceptionTableComponent },
+              { path:'PO', component:ExceptionTableComponent },
+              { path:'SO', component:ExceptionTableComponent },
+              { path: 'GRN', component:ExceptionTableComponent },
+              { path: 'archived' , component:ExceptionTableComponent },
+              { path: 'rejected' , component:ExceptionTableComponent },
+              { path: 'GRNExceptions' , component:ExceptionTableComponent },
+              { path: 'ServiceInvoices' , component:ExceptionTableComponent },
               { path: '' , redirectTo:'allInvoices', pathMatch:'full'}
             ]
           },
           {
             path: 'invoice/InvoiceDetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'invoice/PODetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'invoice/SODetails/:id',
@@ -94,11 +96,15 @@ const routes: Routes = [
           },
           {
             path: 'invoice/GRNDetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
+          },
+          {
+            path: 'invoice/serviceDetails/:id',
+            component: Comparision3WayComponent,
           },
           {
             path: 'invoice/InvoiceDetails/CustomerUpload/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,canDeactivate: [UnsavedChangesGuard]
           },
           {
             path: 'invoice/InvoiceStatus/:id',
@@ -115,15 +121,23 @@ const routes: Routes = [
           {
             path: 'Create_GRN_inv_list',
             component: CreateGRNComponent,
+          }
+          ,{
+            path: 'GRN_approvals',
+            component: CreateGRNComponent,
           },
           {
             path: 'Create_GRN_inv_list/Inv_vs_GRN_details/:id',
             component: Comparision3WayComponent,canDeactivate: [CanDeactivateGuard]
           },
+          {
+            path: 'GRN_approvals/approval_id/:id',
+            component: Comparision3WayComponent,canDeactivate: [CanDeactivateGuard]
+          },
           { path: 'payment-status', component:PipComponent},
           {
             path: 'approved/InvoiceDetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'ExceptionManagement',
@@ -148,7 +162,7 @@ const routes: Routes = [
           
           {
             path: 'ExceptionManagement/InvoiceDetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'vendor',

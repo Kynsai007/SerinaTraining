@@ -13,3 +13,64 @@
 .ml-9 {
     margin-left: 9px !important;
 }
+
+
+// new theme designs
+.layout {
+    overflow: hidden;
+    height: 100svh;
+  }
+  .layout nav {
+    gap: 70px;
+    height: 60px;
+    padding: 0px 20px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 2px 4px #00000029;
+    opacity: 1;
+    // position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .navLinks{
+    align-items: center;
+    gap: 20px;
+  }
+  .navLinks .nav_Link {
+    text-align: left;
+    font: normal normal medium 16px/25px Poppins;
+    letter-spacing: 0px;
+    color: #140101;
+    opacity: 0.5;
+    cursor: pointer;
+    height: 60px;
+    display: flex;
+    align-items: center;
+  }
+  .active_cls {
+    opacity: 1 !important;
+    border-bottom: 2px solid #358DC0;
+  }
+  .layout section {
+    padding: 0px 54px; 
+    background: #f1f1f1 0% 0% no-repeat padding-box;
+    position: relative;
+    z-index: 1;
+    height: calc(100svh - 60px);
+    margin-top: 2px;
+  }
+  .logo img {
+    padding: 10px 0;
+    margin-left: 38px;
+  }
+  .short_name {
+    height: 30px;
+    width: 30px;
+    background-color: #358DC0;
+    color: #ffffff;
+    border-radius: 50%;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 10px;
+  }

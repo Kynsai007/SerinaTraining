@@ -35,10 +35,7 @@
       background-color: #f2be42 !important;
       border-radius: 10px;
     }
-    .f-12 {
-      font-size: 12px;
-      font-weight: 600;
-    }
+
     .removeBtn {
       padding: 2px 6px;
       font-size: 14px;
@@ -54,21 +51,13 @@
       top: -36px;
       z-index: 11
     }
-    .p-sidebar {
-      background: #272727;
-      color: #f2be42;
-      overflow: auto;
-      overflow-x: hidden;
-    }
-    .clor {
-      color: #f2be42;
-    }
+
     .allCols {
       display: block;
       float: none;
       font-size: 13px;
       padding-top: 12px;
-      border-bottom: 1.3px solid #f2be4266;
+      border-bottom: 1.3px solid #dee2e6;
       font-weight: 600;
     }
     .labelCols {
@@ -84,13 +73,13 @@
       cursor: move;
     }
     .btnFooterSave {
-      position: relative;
-      left: 14%;
-      margin-top: 50px;
+      display: flex;
+      justify-content: center;
     }
     .sidebar_height {
-      height: 71vh;
+      height: 80svh;
       overflow: auto;
+      padding: 0 !important;
     }
 
     :host ::ng-deep {
@@ -141,8 +130,8 @@
       left: 0;
       height: 18px;
       width: 18px;
-      background-color: #212727;
-      border: 1px solid #f2be42;
+      background-color: #dee2e6;
+      border: 1px solid #358dc0;
       border-radius: 5px;
     }
 
@@ -153,7 +142,7 @@
 
     /* When the checkbox is checked, add a blue background */
     .container input:checked ~ .checkmark {
-      background-color: #f2be42;
+      background-color: #358dc0;
     }
 
     /* Create the checkmark/indicator (hidden when not checked) */
@@ -318,9 +307,10 @@
       box-shadow: none;
       border-color: lightgray;
     }
-    :host ::ng-deep .p-dialog .p-dialog-content {
-      min-height: 40vh;
-    }
+    // .p-dialog .p-dialog-content {
+    //   min-height: 40vh;
+    // }
+
     @media screen and (max-width: 800px) {
       .searchBar {
         position: fixed;

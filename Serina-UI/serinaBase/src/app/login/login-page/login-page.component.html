@@ -1,310 +1,353 @@
-<div style="overflow: hidden; height: 100vh">
-  <div class="row d_mobile">
-    <div class="col-1 col-md-8 col-xl-9 leftSide">
-      <div class="bgImageMask">
-        <img
-          src="assets/loginmask.png"
+
+  <div class="row m-0" style="overflow: hidden;">
+    <div class="col-1 col-md-6 m-0 leftSide">
+      
+        <div class="d-flex justify-content-between">
+          <img class="ml-3"
+          src="assets/Serina Assets/new_theme/Group 27317.svg"
           alt="login"
-          style="height: 100vh; width: 100%; opacity: 1"
         />
+        <div class="pos_rel">
+          <img class="topRightImg1"
+          src="assets/Serina Assets/new_theme/Group 1943.svg"
+          alt="login"
+        />
+          <img class="topRightImg"
+          src="assets/Serina Assets/new_theme/blob (3).svg"
+          alt="login"
+        />
+        </div>
+        </div>
+        <div class="bgImageMask">
+        <img class="w-100 mainImg"
+          src="assets/Serina Assets/new_theme/Group 1939.svg"
+          alt="login"
+        />
+        <div class="loginContent">
+          <h1>Invoice Processing Simplified</h1>
+          <p class="loginPageText">
+            Seamless Invoice Process Interface for Vendor Invoice or Service
+            Invoice through ingestion, Processing, Validating and ERP Upload for
+            an, almost "Touch less Invoice" Processing Experience...
+          </p>
+        </div>
+        <div>
+          <img class="bottomLeftImg"
+          src="assets/Serina Assets/new_theme/blob (3) (1).svg"
+          alt="login"
+        />
+          <img class="bottomLeftImg1"
+          src="assets/Serina Assets/new_theme/Group 1942.svg"
+          alt="login"
+        />
+          
+        </div>
       </div>
     </div>
-    <div class="col-11 col-md-4 col-xl-3 rightSide"></div>
-  </div>
-  <div class="background-mask">
-    <div>
-      <div class="login-center">
-        <div class="login-div">
-          <!-- Login page -->
-          <div *ngIf="loginboolean && !loginsuccess">
-            <h5 class="log-head t-center">Log in to your account</h5>
-            <form [formGroup]="loginForm" (ngSubmit)="login('normal')">
-              <div class="form-group">
-                <label for="username">Username</label>
-                <input
-                  type="text"
-                  formControlName="username"
-                  class="form-control h-55"
-                  [ngClass]="{ 'is-invalid': submitted && f.username.errors }"
-                />
-                <div *ngIf="submitted && f.username.errors" class="alertDiv">
-                  <div *ngIf="f.username.errors.required">
-                    Username is required
+    <div class="col-11 col-md-6">
+          <div class="login-div">
+            <!-- Login page -->
+            <div *ngIf="loginboolean && !loginsuccess">
+              <h5 class="f-24 mb-0">It's good to have you back!</h5>
+              <div class="f-14 color2 mb-3">Enter your Email and Password and get the help you need.</div>
+              <form [formGroup]="loginForm" (ngSubmit)="login('normal')">
+                <div class="form-group">
+                  <div class="inputGroup d-flex">
+                    <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                    <div  class="w-100">
+                      <label for="username">Enter Email Id or Username</label>
+                      <input
+                        type="text"
+                        formControlName="username"
+                        class="form-control "
+                        [ngClass]="{ 'is-invalid': submitted && f.username.errors }"
+                      />
+                        </div>
+                  </div>
+                  <div *ngIf="submitted && f.username.errors" class="alertDiv">
+                    <div *ngIf="f.username.errors.required">
+                      Username is required
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="password">Password</label>
-                <div class="pos_rel">
-                  <input
-                    type="password"
-                    formControlName="password"
-                    class="form-control h-55"
-                    [type]="fieldTextType ? 'text' : 'password'"
-                    [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
-                  />
-                  <i
-                    class="fa fa-eye eye-show"
-                    [ngClass]="{
-                      'fa-eye-slash': !fieldTextType,
-                      'fa-eye': fieldTextType
-                    }"
-                    (click)="toggleFieldTextType()"
-                  ></i>
-                </div>
-                <div
-                  *ngIf="submitted && f.password.errors"
-                  class="alertDiv"
-                  style="margin-top: -22px"
-                >
-                  <div *ngIf="f.password.errors.required">
-                    Password is required
+                <div class="form-group">
+                  <div class="inputGroup d-flex">
+                    <div class="icon"><i class="fa fa-lock" aria-hidden="true"></i></div>
+                    <div class="w-100">
+                      <label for="password">Enter Password</label>
+                  <div class="pos_rel">
+                    <input
+                      type="password"
+                      formControlName="password"
+                      class="form-control"
+                      [type]="fieldTextType ? 'text' : 'password'"
+                      [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                    />
+                    <i
+                      class="fa fa-eye eye-show"
+                      [ngClass]="{
+                        'fa-eye-slash': !fieldTextType,
+                        'fa-eye': fieldTextType
+                      }"
+                      (click)="toggleFieldTextType()"
+                    ></i>
+                  </div>
+                        </div>
+                  </div>
+                  
+                  <div
+                    *ngIf="submitted && f.password.errors"
+                    class="alertDiv"
+                  >
+                    <div *ngIf="f.password.errors.required">
+                      Password is required
+                    </div>
                   </div>
                 </div>
+  
+                <div *ngIf="error" class="alert alert-danger f-13 mt-3 mb-0">
+                  {{ error }}
+                </div>
+                <div class="d-flex justify-content-end">
+                  <a class="f-12 color2" (click)="forgot()"
+                    >Forgot password?</a
+                  >
+                </div>
+                <button [disabled]="loading" class="primary_btn btn-block f-14 mt-2">
+                  <span
+                    *ngIf="loading"
+                    class="spinner-border spinner-border-sm mr-1"
+                  ></span>
+                  Login
+                </button>
+              </form>
+              <div class="horizontal-line f-12 mt-3">Or</div>
+              <div class="loginOptions mt-3">
+                <button class="microsoft-login-button f-14 msb" (click)="loginMS()">
+                  <img class="mr-2 ms" src="assets/microsoft-logo.png" alt="Microsoft Logo" /> Microsoft
+                </button>
+                <button class="microsoft-login-button f-14" (click)="signInWithGoogle()">
+                  <img class="mr-2" src="assets/google-logo.png" alt="Google Logo" /> Google
+                </button>
               </div>
-
-              <div *ngIf="error" class="alert alert-danger f-13 mt-3 mb-0">
-                {{ error }}
+              <div class="t-center mt-3">
+                <!-- <input class=" mr-2" type="checkbox" name="keep" (change)="storeUser($event)" id="keeplogin">
+                              <label for="keeplogin">Remember me</label> -->
+  
+                <div>
+                  
+                  <div class="mt-2 f-14 color2">If you are a vendor and don't have an account? <br><a style="color:royalblue" routerLink="/registration-page/signUp">Please click me</a> </div>
+                </div>
               </div>
-              <button [disabled]="loading" class="btn btn-block bgClr mt-2">
-                <span
-                  *ngIf="loading"
-                  class="spinner-border spinner-border-sm mr-1"
-                ></span>
-                Login
-              </button>
-            </form>
-            <div class="t-center mt-3">
-              <button class="microsoft-login-button" (click)="loginMS()">
-                <img src="assets/microsoft-logo.png" alt="Microsoft Logo" />
-              </button>&nbsp;
-              <button class="microsoft-login-button" (click)="signInWithGoogle()">
-                <img src="assets/google-logo.png" alt="Google Logo" />
-              </button>
-
             </div>
-            <div class="t-center mt-3">
-              <!-- <input class=" mr-2" type="checkbox" name="keep" (change)="storeUser($event)" id="keeplogin">
-                            <label for="keeplogin">Remember me</label> -->
-
-              <div>
-                <a class="mt-2 f-14 forgotText" (click)="forgot()"
-                  >Forgot password?</a
+            <div *ngIf="loginsuccess">
+              <h5 class="log-head t-center">Verify OTP</h5>
+              <!-- <form [formGroup]="otpForm" (ngSubmit)="verifyOTP()">
+                <div class="form-group">
+                <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp1" id="otp1" (input)="checkValidity('otp1')" (focus)="clearValid('otp1')">
+                <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp2" id="otp2" (input)="checkValidity('otp2')" (focus)="clearValid('otp2')">
+                <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp3" id="otp3" (input)="checkValidity('otp3')" (focus)="clearValid('otp3')">
+                <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp4" id="otp4" (input)="checkValidity('otp4')" (focus)="clearValid('otp4')">
+                <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp5" id="otp5" (input)="checkValidity('otp5')" (focus)="clearValid('otp5')">
+                <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp6" id="otp6" (input)="checkValidity('otp6')" (focus)="clearValid('otp6')">
+                </div>
+                <button [disabled]="verifying" class="btn btn-block bgClr mt-2">
+                  <span *ngIf="verifying"
+                    class="spinner-border spinner-border-sm mr-1"
+                  ></span>
+                  Verify
+                </button>
+                <div class="form-group">
+                <p class="errorclass" style="text-align: center;">{{errorotp}}</p>
+                <p class="restrictclass"><b>{{restricterr}}</b></p>
+                <div style="text-align: center;"><a href="javascript:void(0);" [ngClass]="canresend ? 'clear' : 'opaque'" (click)="resendOTP()">Resend OTP</a></div>
+              </div>
+              </form> -->
+              <div class="otp">
+                <ng-otp-input
+                  #ngOtpInput2
+                  (onInputChange)="onOtpAdding($event)"
+                  [config]="config"
                 >
-                <div class="mt-2 f-14 forgotText">If you are a vendor and don't have an account? Please <a style="color:royalblue" (click)="signUpLink()">click me</a> </div>
+                </ng-otp-input>
               </div>
-            </div>
-          </div>
-          <div *ngIf="loginsuccess">
-            <h5 class="log-head t-center">Verify OTP</h5>
-            <!-- <form [formGroup]="otpForm" (ngSubmit)="verifyOTP()">
-              <div class="form-group">
-              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp1" id="otp1" (input)="checkValidity('otp1')" (focus)="clearValid('otp1')">
-              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp2" id="otp2" (input)="checkValidity('otp2')" (focus)="clearValid('otp2')">
-              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp3" id="otp3" (input)="checkValidity('otp3')" (focus)="clearValid('otp3')">
-              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp4" id="otp4" (input)="checkValidity('otp4')" (focus)="clearValid('otp4')">
-              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp5" id="otp5" (input)="checkValidity('otp5')" (focus)="clearValid('otp5')">
-              <input type="text" class="form-control inputinline" style="border: 1px solid #000000" formControlName="otp6" id="otp6" (input)="checkValidity('otp6')" (focus)="clearValid('otp6')">
-              </div>
-              <button [disabled]="verifying" class="btn btn-block bgClr mt-2">
+              <button [disabled]="verifying" class="primary_btn btn-block f-14 mt-2" (click)="verifyOTP()">
                 <span *ngIf="verifying"
                   class="spinner-border spinner-border-sm mr-1"
                 ></span>
                 Verify
               </button>
               <div class="form-group">
-              <p class="errorclass" style="text-align: center;">{{errorotp}}</p>
-              <p class="restrictclass"><b>{{restricterr}}</b></p>
-              <div style="text-align: center;"><a href="javascript:void(0);" [ngClass]="canresend ? 'clear' : 'opaque'" (click)="resendOTP()">Resend OTP</a></div>
-            </div>
-            </form> -->
-            <div class="otp">
-              <ng-otp-input
-                #ngOtpInput2
-                (onInputChange)="onOtpAdding($event)"
-                [config]="config"
-              >
-              </ng-otp-input>
-            </div>
-            <button [disabled]="verifying" class="btn btn-block bgClr mt-2" (click)="verifyOTP()">
-              <span *ngIf="verifying"
-                class="spinner-border spinner-border-sm mr-1"
-              ></span>
-              Verify
-            </button>
-            <div class="form-group">
-              <p class="errorclass" style="text-align: center;">{{errorotp}}</p>
-              <p class="restrictclass"><b>{{restricterr}}</b></p>
-              <div style="text-align: center;"><a href="javascript:void(0);" [ngClass]="canresend ? 'clear' : 'opaque'" (click)="resendOTP()">Resend OTP</a></div>
-            </div>
-          </div>
-          <!-- Forgot password -->
-          <div *ngIf="forgotboolean">
-            <h5 class="log-head mt-2 mb-3">Forgot your Password ?</h5>
-            <div class="log-text t-center">
-              Don’t worry! Resetting your password is easy. Just type in the
-              email you registered to Serina
-            </div>
-
-            <input
-              type="email"
-              id="email"
-              [(ngModel)]="sendMail"
-              class="form-control mt-4 h-55"
-              placeholder="Enter your mail Id"
-            /><br />
-
-            <div *ngIf="errorMail" class="alert alert-danger f-13 mt-3 mb-0">
-              {{ errorMailText }}
-            </div>
-            <button
-              *ngIf="showSendbtn"
-              [disabled]="loading"
-              class="btn btn-block bgClr mt-3"
-              (click)="sendOtp()"
-            >
-              <span
-                *ngIf="loading"
-                class="spinner-border spinner-border-sm mr-1"
-              ></span>
-              Send
-            </button>
-
-            <button
-              *ngIf="!showSendbtn"
-              class="btn btn-block bgClr mt-3"
-              (click)="verifyOtp()"
-            >
-              Update Password
-            </button>
-
-            <div class="mt-4 f-13">
-              Did you remember your password?
-              <a class="mr-1" (click)="tryLogin()">Try Log in</a>
-            </div>
-          </div>
-
-          <!-- Reset password -->
-          <div *ngIf="resetPassword">
-            <h5 class="log-head mt-2 mb-3">Reset your Password</h5>
-
-            <div class="otp">
-              <ng-otp-input
-                #ngOtpInput
-                (onInputChange)="onOtpChange($event)"
-                [config]="config"
-              >
-              </ng-otp-input>
-            </div>
-            <div style="position: relative">
-              <input
-                id="newpass"
-                [(ngModel)]="newPassword"
-                [type]="fieldTextTypeReset ? 'text' : 'password'"
-                placeholder="Enter a new Password"
-                name="newPassword"
-                ngModel
-                #newPass="ngModel"
-                required
-                minlength="8"
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.]).{8,}"
-                class="form-control mt-3 h-55"
-              />
-              <i
-                class="fa fa-eye eye-show-1"
-                [ngClass]="{
-                  'fa-eye-slash': !fieldTextTypeReset,
-                  'fa-eye': fieldTextTypeReset
-                }"
-                (click)="toggleFieldTextTypeReset()"
-              ></i>
-            </div>
-            <div
-              *ngIf="newPass.invalid && (newPass.touched || newPass.dirty)"
-              class="alertDiv"
-            >
-              <div [hidden]="!newPass.errors?.pattern">
-                Password must contain numbers, lowercase letters, uppercase
-                letters special characters and minimum 8 characters.
+                <p class="errorclass" style="text-align: center;">{{errorotp}}</p>
+                <p class="restrictclass"><b>{{restricterr}}</b></p>
+                <div style="text-align: center;"><a href="javascript:void(0);" [ngClass]="canresend ? 'clear' : 'opaque'" (click)="resendOTP()">Resend OTP</a></div>
               </div>
-              <div [hidden]="!newPass.errors.required">**Required field</div>
             </div>
-            <div style="position: relative">
+            <!-- Forgot password -->
+            <div *ngIf="forgotboolean">
+              <h5 class="log-head mt-2 mb-3">Forgot your Password ?</h5>
+              <div class="log-text t-center">
+                Don’t worry! Resetting your password is easy. Just type in the
+                email you registered to Serina
+              </div>
+  
               <input
-                id="confirmpass"
-                [(ngModel)]="confirmPassword"
-                [type]="fieldTextTypeReset1 ? 'text' : 'password'"
-                placeholder="Confirm your new Password"
-                name="confirmPassword"
-                ngModel
-                #confirmPass="ngModel"
-                required
-                (keyup)="test($event)"
-                class="form-control mt-3 h-55"
-                [(ngModel)]="paswrd"
-              />
-              <i
-                class="fa fa-eye eye-show-2"
-                [ngClass]="{
-                  'fa-eye-slash': !fieldTextTypeReset1,
-                  'fa-eye': fieldTextTypeReset1
+                type="email"
+                id="email"
+                [(ngModel)]="sendMail"
+                class="form-control mt-4 h-55"
+                placeholder="Enter your mail Id"
+              /><br />
+  
+              <div *ngIf="errorMail" class="alert alert-danger f-13 mt-3 mb-0">
+                {{ errorMailText }}
+              </div>
+              <button
+                *ngIf="showSendbtn"
+                [disabled]="loading"
+                class="primary_btn btn-block f-14 mt-3"
+                (click)="sendOtp()"
+              >
+                <span
+                  *ngIf="loading"
+                  class="spinner-border spinner-border-sm mr-1"
+                ></span>
+                Send
+              </button>
+  
+              <button
+                *ngIf="!showSendbtn"
+                class="primary_btn btn-block f-14 mt-3"
+                (click)="verifyOtp()"
+              >
+                Update Password
+              </button>
+  
+              <div class="mt-4 f-13">
+                Did you remember your password?
+                <a class="mr-1" (click)="tryLogin()">Try Log in</a>
+              </div>
+            </div>
+  
+            <!-- Reset password -->
+            <div *ngIf="resetPassword">
+              <h5 class="log-head mt-2 mb-3">Reset your Password</h5>
+  
+              <div class="otp">
+                <ng-otp-input
+                  #ngOtpInput
+                  (onInputChange)="onOtpChange($event)"
+                  [config]="config"
+                >
+                </ng-otp-input>
+              </div>
+              <div style="position: relative">
+                <input
+                  id="newpass"
+                  [(ngModel)]="newPassword"
+                  [type]="fieldTextTypeReset ? 'text' : 'password'"
+                  placeholder="Enter a new Password"
+                  name="newPassword"
+                  ngModel
+                  #newPass="ngModel"
+                  required
+                  minlength="8"
+                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.]).{8,}"
+                  class="form-control mt-3 h-55"
+                />
+                <i
+                  class="fa fa-eye eye-show-1"
+                  [ngClass]="{
+                    'fa-eye-slash': !fieldTextTypeReset,
+                    'fa-eye': fieldTextTypeReset
+                  }"
+                  (click)="toggleFieldTextTypeReset()"
+                ></i>
+              </div>
+              <div
+                *ngIf="newPass.invalid && (newPass.touched || newPass.dirty)"
+                class="alertDiv"
+              >
+                <div [hidden]="!newPass.errors?.pattern">
+                  Password must contain numbers, lowercase letters, uppercase
+                  letters special characters and minimum 8 characters.
+                </div>
+                <div [hidden]="!newPass.errors.required">**Required field</div>
+              </div>
+              <div style="position: relative">
+                <input
+                  id="confirmpass"
+                  [(ngModel)]="confirmPassword"
+                  [type]="fieldTextTypeReset1 ? 'text' : 'password'"
+                  placeholder="Confirm your new Password"
+                  name="confirmPassword"
+                  ngModel
+                  #confirmPass="ngModel"
+                  required
+                  (keyup)="test($event)"
+                  class="form-control mt-3 h-55"
+                  [(ngModel)]="paswrd"
+                />
+                <i
+                  class="fa fa-eye eye-show-2"
+                  [ngClass]="{
+                    'fa-eye-slash': !fieldTextTypeReset1,
+                    'fa-eye': fieldTextTypeReset1
+                  }"
+                  (click)="toggleFieldTextTypeReset1()"
+                ></i>
+              </div>
+              <div class="alert alert-danger f-12" *ngIf="passwordMatchBoolean">
+                Password doesn't match.
+              </div>
+              <button
+                class="primary_btn btn-block f-14 mt-4 mb-2"
+                [disabled]="
+                  passwordMatchBoolean ||
+                  !newPass.valid ||
+                  (!confirmPass.valid && loading)
+                "
+                [ngStyle]="{
+                  cursor:
+                    passwordMatchBoolean || !newPass.valid || !confirmPass.valid
+                      ? 'not-allowed'
+                      : 'pointer'
                 }"
-                (click)="toggleFieldTextTypeReset1()"
-              ></i>
+                (click)="resetPass()"
+              >
+                <span
+                  *ngIf="loading"
+                  class="spinner-border spinner-border-sm mr-1"
+                ></span>
+                Reset Password
+              </button>
             </div>
-            <div class="alert alert-danger f-12" *ngIf="passwordMatchBoolean">
-              Password doesn't match.
+  
+            <!-- Sucess password reset -->
+            <div *ngIf="successPassword">
+              <h5 class="log-head mt-2 mb-3">Successful Password Reset!</h5>
+  
+              <div class="log-text t-center">
+                You can now use your new password to log in to your account
+              </div>
+  
+              <button
+                class="primary_btn btn-block f-14 mt-4 mb-2"
+                (click)="resetSuccess()"
+              >
+                Login
+              </button>
             </div>
-            <button
-              class="btn btn-block bgClr mt-4 mb-2"
-              [disabled]="
-                passwordMatchBoolean ||
-                !newPass.valid ||
-                (!confirmPass.valid && loading)
-              "
-              [ngStyle]="{
-                cursor:
-                  passwordMatchBoolean || !newPass.valid || !confirmPass.valid
-                    ? 'not-allowed'
-                    : 'pointer'
-              }"
-              (click)="resetPass()"
-            >
-              <span
-                *ngIf="loading"
-                class="spinner-border spinner-border-sm mr-1"
-              ></span>
-              Reset Password
-            </button>
           </div>
-
-          <!-- Sucess password reset -->
-          <div *ngIf="successPassword">
-            <h5 class="log-head mt-2 mb-3">Successful Password Reset!</h5>
-
-            <div class="log-text t-center">
-              You can now use your new password to log in to your account
-            </div>
-
-            <button
-              class="btn btn-block bgClr mt-4 mb-2"
-              (click)="resetSuccess()"
-            >
-              Login
-            </button>
+          <div class="nameHead">
+            <img
+              src="assets/Serina Assets/new_theme/OD4FW00.png"
+              alt="login"
+            />
           </div>
-        </div>
-        <div class="nameHead">Serina Plus</div>
-        <div class="loginContent">
-          <h1 class="f-50">Invoice Processing Simplified</h1>
-          <p class="loginPageText">
-            Seamless Invoice Process Interface for Vendor Invoice or Service
-            Invoice through ingestion, Processing, Validating and ERP Upload for
-            an, almost "Touchless Invoice" Processing Experience...
-          </p>
-        </div>
-      </div>
-      <div class="bottom">Copyright &#169; 2023. Made by DataSemantics</div>
+        <div class="bottom">Copyright &#169; {{sharedService.current_year}}. Made by DataSemantics</div>
     </div>
   </div>
-</div>
+  <!-- <div class="background-mask">
+    
+  </div> -->

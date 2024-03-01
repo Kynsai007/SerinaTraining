@@ -87,7 +87,7 @@ export class LoginPageComponent implements OnInit {
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private route: ActivatedRoute,
     private settingService: SettingsService,
     private dataStoreService: DataService,
@@ -242,7 +242,6 @@ export class LoginPageComponent implements OnInit {
       "password": this.f.password.value,
       "type":type
     }
-    
     sessionStorage.setItem('username',JSON.stringify(data1.username));
     this.authenticationService.login(JSON.stringify(data1))
       .subscribe(
@@ -409,7 +408,7 @@ export class LoginPageComponent implements OnInit {
           this.router.navigate(['/vendorPortal']);
         }
         environment1.username = this.loginForm.controls["username"].value;
-        window.location.reload();
+        // window.location.reload();
       } else {
         alert('The instance is inactive. Please contact Service Admin.');
         sessionStorage.clear();

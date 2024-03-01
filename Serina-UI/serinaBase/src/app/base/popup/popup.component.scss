@@ -1,23 +1,62 @@
 .tb_div {
-  max-height: 315px;
-  overflow: auto;
+    max-height: 66vh;
+    overflow: auto;
+    position: relative;
 }
 .tb_head {
-  background: #b8e5e5;
-  position: sticky;
-  top: 0;
+    background: #f3f3f3 !important;
+    position: sticky;
+    top: -1px;
+}
+.tb_head th{
+    padding: 8px 10px !important;
+}
+.total_table{
+    position: absolute;
+    top: 0;
+    color: white;
+}
+.total_table tr:nth-child(1) {
+  height: 30px;
+  background: #358dc0;
+}
+.total_table tr:nth-child(2){
+  height: 30px;
+  background: #358dc01a;
+  color: black;
+}
+.total_table tr td {
+  width: 10vw;
+}
+.footer {
+  height: 55px;
+  align-items: flex-end;
+}
+.table th, .table td {
+  padding: 0px 10px;
+  vertical-align: middle;
+  border: 0
+}
+.p_l_40 {
+  padding-left: 40px;
+}
+.table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+.table tr:nth-child(odd) {
+  background-color: #358dc01a;
 }
 .inputHeight {
-  font-size: 11px;
-  font-weight: 600;
-  color: black;
-  height: 30px;
-  margin-right: 5px;
-  width: 142px;
-}
-.tabDiv{
-  border-top: 2px solid lightgray;
-  max-height: 53vh !important;
-  margin-top: 2px;
-  min-height: 50vh !important;
-}
+    font-size: 11px;
+    font-weight: 600;
+    color: black;
+    height: 30px;
+    margin-right: 5px;
+    width: 142px;
+  }
+  .tabDiv{
+    border-top: 2px solid lightgray;
+    max-height: 53vh !important;
+    margin-top: 2px;
+    min-height: 50vh !important;
+  }

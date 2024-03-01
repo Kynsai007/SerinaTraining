@@ -22,18 +22,18 @@ export class CustomerSummaryComponent implements OnInit {
   @ViewChild('approve') approve: Table;
   rangeDates: Date[];
   summaryColumn = [
-    { field: 'VendorName', header: 'Vendor Name' },
-    { field: 'EntityName', header: 'Entity Name' },
-    // { field: 'status', header: 'Status' },
-    { field: 'TotalPages', header: 'Total Pages' },
-    { field: 'TotalInvoices', header: 'Total Invoices' },
+    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+    { dbColumnname: 'EntityName', columnName: 'Entity Name' },
+    // { dbColumnname: 'status', columnName: 'Status' },
+    { dbColumnname: 'TotalPages', columnName: 'Total Pages' },
+    { dbColumnname: 'TotalInvoices', columnName: 'Total Invoices' },
   ];
   summaryColumnSP = [
-    { field: 'ServiceProviderName', header: 'Service Provider Name' },
-    { field: 'EntityName', header: 'Entity Name' },
-    // { field: 'status', header: 'Status' },
-    { field: 'TotalPages', header: 'Total Pages' },
-    { field: 'TotalInvoices', header: 'Total Invoices' },
+    { dbColumnname: 'ServiceProviderName', columnName: 'Service Provider Name' },
+    { dbColumnname: 'EntityName', columnName: 'Entity Name' },
+    // { dbColumnname: 'status', columnName: 'Status' },
+    { dbColumnname: 'TotalPages', columnName: 'Total Pages' },
+    { dbColumnname: 'TotalInvoices', columnName: 'Total Invoices' },
   ];
   minDate: Date;
   maxDate: Date;
@@ -60,6 +60,9 @@ export class CustomerSummaryComponent implements OnInit {
   vendorInvoiceAccess: boolean;
   serviceInvoiceAccess: boolean;
   partyType:string;
+  searchText:string;
+  search_placeholder = 'Ex : By Vendor. By Entity, Select Date range from the Calendar icon';
+  tabName = 'vendor';
 
   constructor(
     private dateFilterService: DateFilterService,
@@ -69,11 +72,11 @@ export class CustomerSummaryComponent implements OnInit {
     private SpinnerService: NgxSpinnerService,
     private alertService: AlertService,
     private ImportExcelService: ImportExcelService,
-    private dataStoreService: DataService
+    private dataService: DataService
   ) {}
 
   ngOnInit(): void {
-    if(this.dataStoreService.ap_boolean){
+    if(this.dataService.ap_boolean){
       this.partyType = 'Vendor'
     } else {
       this.partyType = 'Customer'
@@ -82,22 +85,22 @@ export class CustomerSummaryComponent implements OnInit {
     this.readSummary('');
     this.findColumns();
     this.getEntitySummary();
-    this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
-    this.serviceInvoiceAccess = this.dataStoreService.configData.serviceInvoices;
+    this.vendorInvoiceAccess = this.dataService.configData.vendorInvoices;
+    this.serviceInvoiceAccess = this.dataService.configData.serviceInvoices;
   }
 
   // display columns
   findColumns() {
     this.summaryColumn.forEach((e) => {
-      if(!this.dataStoreService.ap_boolean && e.header == 'Vendor Name'){
-        e.header = 'Customer Name'
+      if(!this.dataService.ap_boolean && e.columnName == 'Vendor Name'){
+        e.columnName = 'Customer Name'
       }
-      this.summaryColumnHeader.push(e.header);
-      this.summaryColumnField.push(e.field);
+      this.summaryColumnHeader.push(e.columnName);
+      this.summaryColumnField.push(e.dbColumnname);
     });
     this.summaryColumnSP.forEach((e) => {
-      this.summaryColumnHeaderSP.push(e.header);
-      this.summaryColumnFieldSP.push(e.field);
+      this.summaryColumnHeaderSP.push(e.columnName);
+      this.summaryColumnFieldSP.push(e.dbColumnname);
     });
 
     this.ColumnLengthVendor = this.summaryColumn.length;
@@ -146,15 +149,14 @@ export class CustomerSummaryComponent implements OnInit {
   // to filter the summary data
   filterData(date) {
     this.selectedDateValue = '';
-    console.log(date,this.selectedEntityValue)
     let query = '';
     let date1: any;
     let date2: any
     if (date != '' && date != undefined) {
       date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
       date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
-      console.log(date1, date2);
-      this.selectedDateValue = date
+      this.selectedDateValue = date;
+      this.search_placeholder = `From "${date1}" to "${date2}"`;
     }
     if (
       this.selectedEntityValue != 'ALL' &&
@@ -188,6 +190,7 @@ export class CustomerSummaryComponent implements OnInit {
   // clearing the dates
   clearDates() {
     this.filterData('');
+    this.search_placeholder = 'Ex : By Vendor. By Entity, Select Date range from the Calendar icon';
   }
 
   getEntitySummary() {
@@ -202,5 +205,8 @@ export class CustomerSummaryComponent implements OnInit {
   downloadReport(){
     let combine = this.customerSummary.concat(this.customerSummarySP);
     this.ImportExcelService.exportExcel(combine);
+  }
+  onTabChange(tabName){
+    this.tabName = tabName
   }
 }

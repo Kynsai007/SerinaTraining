@@ -359,6 +359,12 @@
           role="tabpanel"
           aria-labelledby="header-tab"
         >
+        <span class="boxopen" *ngIf="advancedInvoice" >
+          <div class="button-container">
+            <button class="advSettingsButton" (click)="openBox()"> Pre Payment </button>
+          </div>
+        </span>
+        
           <div class="displayFlex">
             <div *ngFor="let value of inputData">
               <div style="position: relative">
@@ -373,6 +379,9 @@
                       aria-hidden="true"
                     ></i
                   ></span>
+                  <!-- <span class="boxopen" *ngIf="value.TagLabel == 'VendorName'">
+                    <i class="fa fa-cog" aria-hidden="true" (click)="openBox()"></i>
+                  </span> -->
                   <span
                   *ngIf="value.TagLabel == 'PurchaseOrder' && editable">
                     <i
@@ -420,6 +429,44 @@
               </div>
             </div>
           </div>
+        </div>
+        <div *ngIf="isBoxOpen" class="amount-box">
+          
+            <h6 class="headamtbox">Please Select</h6>
+            <div class="close-icon" (click)="closeBox()"><i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            
+              <ul class="tabs">
+                <span class="percentage" (click)="activeTab = 'percentage'" [class.active]="activeTab === 'percentage'">Percentage</span>
+                <span class="amount"(click)="activeTab = 'amount'" [class.active]="activeTab === 'amount'">Amount</span>
+              </ul>
+            <div class="tabContent">
+              <div *ngIf="activeTab === 'percentage'" class="tabBg">
+                <label for="percentageInput" class="boxHead">Add Percentage:</label>
+                <input type="text" id="percentageInput" [(ngModel)]="percentageData"  (ngModelChange)="updateButtonState('percentage')" pattern="[0-9]*">
+                <label>Amount: {{ resultAmount }}</label>
+                <!-- <input type="text" [value]="resultAmount" readonly> -->
+                <!-- <button (click)="savePercentage()">Submit Percentage</button> -->
+                <div class="subButton">
+                  <button class="submitButton"
+                  (click)="saveData('percentage')" [disabled]="isButtonDisabled"
+                  >Submit</button>
+                </div>
+              </div>
+            
+              <div *ngIf="activeTab === 'amount'" class="tabBg">
+                <label for="amountInput" class="boxHead">Add Amount:</label>
+                <input type="text" id="amountInput" [(ngModel)]="amountData" (input)="updateButtonState()" (input)="updateButtonState('amount')" pattern="[0-9]*">
+            
+                <!-- <button (click)="saveAmount()">Submit Amount</button> -->
+                <div class="subButton">
+                  <button class="submitButton"
+                  (click)="saveData('amount')" [disabled]="isButtonDisabled"
+                  >Submit</button>
+                </div>
+              </div>
+            </div>
+          
         </div>
 
         <!-- line -->
@@ -1120,7 +1167,7 @@
             </table>
           </div>
           <div
-            *ngIf="supportTabBoolean && editable && !approval_selection_boolean"
+            *ngIf="supportTabBoolean && !approval_selection_boolean"
           >
             <label
               for="img"

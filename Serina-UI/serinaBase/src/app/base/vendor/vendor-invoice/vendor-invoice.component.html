@@ -1,1 +1,473 @@
-<p>vendor-invoice works!</p>
+<div
+  *ngIf="dataService.masterSubTabName == 'invoice'"
+  class="card_container d-flex justify-content-between"
+>
+  <ng-container *ngFor="let invoice of invoiceList" >
+    <div class="card" (click)="onClickCard(invoice?.idDocument)">
+      <div class="status_btn f-12">{{ invoice?.docheaderID }}</div>
+      <div class="f-14">{{ invoice?.EntityName }}</div>
+      <hr />
+      <div class="f-12">{{ invoice?.PODocumentID }}</div>
+      <div
+        class="f-12"
+        *ngIf="dataService.masterTabName == 'service' && invoice?.Account"
+      >
+        Account: {{ invoice?.Account }}
+      </div>
+    </div>
+  </ng-container>
+  <div *ngIf="invoiceList.length <= 0" class="f-13 text-center p-3">
+    No Invoices are available.
+  </div>
+</div>
+<!-- Account numbers -->
+<div
+  *ngIf="dataService.masterSubTabName == 'account'"
+  class="card_container d-flex justify-content-between"
+>
+  <div class="card pointer" *ngFor="let account of accountList" (click)="updateSpAccount(account)">
+    <div class="status_btn f-12">A/c - {{ account?.Account }}</div>
+    <div class="f-14">{{ account?.EntityName }}</div>
+    <hr />
+    <div class="f-12">{{ account?.PODocumentID }}</div>
+  </div>
+  <div *ngIf="accountList.length <= 0" class="f-13 text-center p-3">
+    No Accounts are available.
+  </div>
+</div>
+
+
+<p-dialog [header]="header_Ac" [(visible)]="accountsSidebar" position="right" [modal]="true" [style]="{width: '55vw',height:'100vh'}" [baseZIndex]="10000"
+    [draggable]="false" [resizable]="false">
+  <!-- ADD/Edit SP Account -->
+    <form [formGroup]="SpAccountDetails" (ngSubmit)="toCreateNewSPAccount()">
+      <div class="acc_body">
+        <div class="d-flex justify-content-between">
+          <div class="f-14 mt-1 mb-1 header_design">Master Template</div>
+          <div style="margin-right: 13%">
+            <span class="f-12 mr-3">Account activate/deactivate toggle</span>
+            <span class="f-right">
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  formControlName="isActive"
+                  (change)="accontAtiveToggle($event.target.checked)"
+                />
+                <span class="slider round"></span>
+              </label>
+            </span>
+          </div>
+        </div>
+        <div class="master_div mt-0">
+          <div>
+            <label class="label-head"
+              >Select Entity <span class="req_clr">*</span></label
+            >
+            <select
+              class="form-control inputHeight w-250"
+              formControlName="entityID"
+              [ngClass]="{ 'is-invalid': submitted && f?.EntityName?.errors }"
+              (change)="selectedEntity($event.target.value)"
+            >
+              <option *ngFor="let entity of entityList" [value]="entity.idEntity">
+                {{ entity.EntityName }}
+              </option>
+            </select>
+            <div
+              *ngIf="submitted && f.EntityName.errors"
+              class="invalid-feedback"
+            >
+              <div class="f-12" *ngIf="f.EntityName.errors.required">
+                **Required field
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="label-head"
+              >Account <span class="req_clr">*</span></label
+            >
+            <input
+              type="text"
+              formControlName="Account"
+              class="form-control w-250 inputHeight"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+          <div>
+            <label class="label-head">Meter number</label>
+            <input
+              type="text"
+              formControlName="MeterNumber"
+              [readOnly]="readOnlyForm"
+              class="form-control w-250 inputHeight"
+            />
+          </div>
+          <div>
+            <label class="label-head"
+              >Select Service Provider <span class="req_clr">*</span></label
+            >
+            <input
+              type="text"
+              formControlName="serviceProviderNameAccount"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+          <div>
+            <label class="label-head"
+              >Service Provider Url <span class="req_clr">*</span></label
+            >
+            <input
+              type="text"
+              formControlName="URL"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+          <div>
+            <label class="label-head"
+              >SP UserName <span class="req_clr">*</span></label
+            >
+            <input
+              type="text"
+              formControlName="UserName"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+          <div>
+            <label class="label-head"
+              >SP Password <span class="req_clr">*</span></label
+            >
+            <input
+              type="password"
+              formControlName="LogSecret"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+  
+          <div>
+            <label class="label-head">Email-ID</label>
+            <input
+              type="email"
+              formControlName="Email"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+  
+          <div>
+            <label class="label-head">Address</label>
+            <input
+              type="text"
+              formControlName="Address"
+              class="form-control w-250 inputHeight"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+          <div>
+            <label class="label-head">Location </label><br />
+            <input
+              type="text"
+              formControlName="LocationCode"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+          <div>
+            <label class="label-head"
+              >Schedule Date <span class="req_clr">*</span></label
+            ><br />
+            <input
+              type="date"
+              formControlName="ScheduleDateTime"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+          <div>
+            <label class="label-head">Operating Unit </label><br />
+            <input
+              type="text"
+              list="op_units"
+              formControlName="operatingUnit"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+            <datalist id="op_units">
+              <option *ngFor="let data of OPUnits" [value]="data"></option>
+            </datalist>
+          </div>
+          <div>
+            <label class="label-head">Approver </label><br />
+            <select
+              formControlName="approver"
+              class="form-control inputHeight w-250"
+            >
+              <option *ngFor="let data of approverList" [value]="data.ApproverID">
+                {{ data.ApproverName }}
+              </option>
+            </select>
+          </div>
+        </div>
+  
+        <div class="add_cost">
+          <button class=" level_3_btn f-12" type="button" (click)="addcostDetails()">
+            Add Cost Allocation
+          </button>
+        </div>
+  
+        <div formArrayName="costDetails">
+          <div
+            *ngFor="let quantity of costDetails().controls; let i = index"
+            [formGroupName]="i"
+          >
+            <div class="f-14 mt-4 mb-1 header_design d-inline-block mr-4">
+              Cost category allocation - {{ i + 1 }}
+            </div>
+            <div class="d-inline-block b-active ml-4 mt-4 mb-1">
+              <span class="f-12 mr-3"> Activate/Deactivate</span>
+              <span>
+                <label class="switch" style="top: 4px">
+                  <input
+                    type="checkbox"
+                    formControlName="isActive_Alloc"
+                    [readOnly]="readOnlyForm"
+                  />
+                  <span class="slider round"></span>
+                </label>
+              </span>
+            </div>
+  
+            <div class="master_div">
+              <div>
+                <label class="label-head"
+                  >Select EntityBody <span class="req_clr">*</span></label
+                >
+                <select
+                  class="form-control w-250 inputHeight bg-cost"
+                  formControlName="entityBodyID"
+                  [readOnly]="readOnlyForm"
+                  [ngClass]="{
+                    'is-invalid': submitted && f?.EntityBodyName?.errors
+                  }"
+                  (change)="selectedEntityBody($event.target.value)"
+                >
+                  <option
+                    *ngFor="let entityBody of entityBodyList"
+                    [value]="entityBody.idEntityBody"
+                  >
+                    {{ entityBody.EntityBodyName }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="label-head"
+                  >Select Element <span class="req_clr">*</span>
+                </label>
+                <select
+                  class="form-control w-250 inputHeight bg-cost"
+                  formControlName="Element"
+                  [readOnly]="readOnlyForm"
+                >
+                  <option
+                    *ngFor="let element of elementList"
+                    [value]="element.name"
+                  >
+                    {{ element.name }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="label-head"
+                  >CostCenter <span class="req_clr">*</span>
+                </label>
+                <input
+                  type="text"
+                  formControlName="costCenter"
+                  class="form-control w-250 inputHeight bg-cost"
+                  data-mask="(999) 999-9999"
+                  placeholder=""
+                  [readOnly]="readOnlyForm"
+                />
+              </div>
+              <div>
+                <label class="label-head">Product</label>
+                <input
+                  type="text"
+                  formControlName="product"
+                  class="form-control w-250 inputHeight bg-cost"
+                  [readOnly]="readOnlyForm"
+                />
+              </div>
+              <div>
+                <label class="label-head">Project</label>
+                <input
+                  type="text"
+                  formControlName="project"
+                  [readOnly]="readOnlyForm"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+              <div>
+                <label class="label-head">Interco </label>
+                <input
+                  type="text"
+                  [readOnly]="readOnlyForm"
+                  formControlName="interco"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+              <div>
+                <label class="label-head">Segments </label>
+                <input
+                  type="text"
+                  formControlName="segments"
+                  [readOnly]="readOnlyForm"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+              <div>
+                <label class="label-head">BSMovements </label>
+                <input
+                  type="text"
+                  formControlName="bsMovements"
+                  [readOnly]="readOnlyForm"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+              <div>
+                <label class="label-head">FixedAssetDepartment </label>
+                <input
+                  type="text"
+                  formControlName="fixedAssetDepartment"
+                  [readOnly]="readOnlyForm"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+              <div>
+                <label class="label-head">FixedAssetGroup </label>
+                <input
+                  type="text"
+                  formControlName="fixedAssetGroup"
+                  [readOnly]="readOnlyForm"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+  
+              <div *ngIf="source != 'EBS'">
+                <label class="label-head"
+                  >Main Account <span class="req_clr">*</span></label
+                >
+                <input
+                  type="text"
+                  formControlName="mainAccount"
+                  [readOnly]="readOnlyForm"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+              <div *ngIf="source == 'EBS'">
+                <label class="label-head"
+                  >Main Account Electricity <span class="req_clr">*</span></label
+                >
+                <input
+                  type="text"
+                  [textMask]="{ mask: mask }"
+                  formControlName="mainAccount"
+                  [readOnly]="readOnlyForm"
+                  placeholder="11-1111-11-11-111111-00-000"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+              <div *ngIf="source == 'EBS'">
+                <label class="label-head"
+                  >Main Account Water <span class="req_clr">*</span></label
+                >
+                <input
+                  type="text"
+                  [textMask]="{ mask: mask }"
+                  formControlName="naturalAccountWater"
+                  placeholder="11-1111-11-11-111111-00-000"
+                  [readOnly]="readOnlyForm"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+              <div *ngIf="source == 'EBS'">
+                <label class="label-head"
+                  >Main Account Housing <span class="req_clr">*</span></label
+                >
+                <input
+                  type="text"
+                  [textMask]="{ mask: mask }"
+                  formControlName="naturalAccountHousing"
+                  placeholder="11-1111-11-11-111111-00-000"
+                  [readOnly]="readOnlyForm"
+                  class="form-control w-250 inputHeight bg-cost"
+                />
+              </div>
+  
+              <div>
+                <label class="label-head">Element Factor </label>
+                <input
+                  type="number"
+                  formControlName="elementFactor"
+                  class="form-control w-250 inputHeight bg-cost"
+                  min="1"
+                  max="100"
+                  [readOnly]="readOnlyForm"
+                  maxlength="3"
+                />
+              </div>
+              <div>
+                <button
+                  class="btnUpload addCost"
+                  type="button"
+                  (click)="removecostDetails(i)"
+                >
+                  <span class="addCostIcon"
+                    ><i class="fa fa-trash" aria-hidden="true"></i
+                  ></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer_ac">
+        <button
+          class="secondary_btn f-12 mr-3"
+          type="button"
+          (click)="onCancelAccount()"
+        >
+          Back
+        </button>
+        <button
+          class="primary_btn f-12"
+          type="submit"
+          [disabled]="SpAccountDetails.invalid"
+          [ngStyle]="{
+            cursor: SpAccountDetails.invalid ? 'not-allowed' : 'pointer'
+          }"
+          *ngIf="addSpAccountBoolean"
+        >
+          Save
+        </button>
+        <button
+          class="primary_btn f-12 m_r_93"
+          type="submit"
+          [disabled]="
+            !(
+              SpAccountDetails.touched &&
+              SpAccountDetails.valid &&
+              SpAccountDetails.dirty
+            )
+          "
+          *ngIf="EditSpAccountBoolean"
+        >
+          Update
+        </button>
+      </div>
+    </form>
+</p-dialog>
+  

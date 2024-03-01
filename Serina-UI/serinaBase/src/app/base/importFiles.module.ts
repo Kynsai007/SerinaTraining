@@ -29,7 +29,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 import { TextMaskModule } from 'angular2-text-mask';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-
+import {NgxPaginationModule} from 'ngx-pagination';
 
 
 @NgModule({ 
@@ -58,7 +58,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
         CalendarModule,
         TextMaskModule,
         InfiniteScrollModule,
-        PdfViewerModule
+        PdfViewerModule,
+        NgxPaginationModule
       ],
       exports:[
         CommonModule,
@@ -82,7 +83,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
         CalendarModule,
         TextMaskModule,
         InfiniteScrollModule,
-        PdfViewerModule
+        PdfViewerModule,
+        NgxPaginationModule
       ],
       providers:[DatePipe, MessageService ]
 })

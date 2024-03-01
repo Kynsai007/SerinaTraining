@@ -19,8 +19,8 @@ export class ExceptionsService {
   popupmsg = new BehaviorSubject<string>("sample");
   constructor(private http : HttpClient) { }
 
-  readBatchInvoicesData(param):Observable<any> {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/batchprocesssummary/${this.userId}${param}`).pipe(retry(3))
+  readBatchInvoicesData(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/batchprocesssummary/${this.userId}`).pipe(retry(3))
   }
 
   readApprovalPendingData():Observable<any> {
@@ -59,8 +59,8 @@ export class ExceptionsService {
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_mappeditem/${this.invoiceID}`).pipe(retry(3))
   }
 
-  getInvoiceInfo_map(docType):Observable<any> {
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/testlinedata/${this.userId}/invoiceid/${this.invoiceID}?doctype=${docType}`).pipe(retry(3))
+  getInvoiceInfo(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/testlinedata/${this.userId}/invoiceid/${this.invoiceID}`).pipe(retry(3))
   }
 
   getInvoicePOs():Observable<any> {
@@ -141,6 +141,13 @@ export class ExceptionsService {
 
   get_grn_data(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_GRNSelected_lines/${this.userId}/${this.invoiceID}`)
+  }
+  approve_grn(){
+    let data = {
+      "user_id": this.userId,
+      "grn_id": this.invoiceID
+    }
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/ApproveGRN`,data)
   }
   getMsg(){
     return this.popupmsg.asObservable();

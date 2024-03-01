@@ -13,8 +13,9 @@
 }
 .zoom_pos_pdf {
   position: absolute;
-  top: 74vh;
-  left: -240px;
+  // top: 74vh;
+  // left: -240px;
+  z-index: 12;
 }
 .zoom-out {
   display: inline-block;
@@ -44,37 +45,22 @@
 .canvasConatiner_height {
   max-height: 86vh;
 }
-.invoice-body {
-  // box-shadow: 1px 1px 5px rgb(0 0 0 / 10%);
-  margin: 10px 5px;
-  border-radius: 10px;
-  padding: 8px;
-  padding-left: 0;
-  height: 90vh;
-  overflow: auto;
-  margin-top: 0;
-}
+
 .vendor-body {
   padding: 20px 90px 30px 20px;
 }
 a {
   color: #272727 !important;
 }
-.btnFooter {
-  bottom: 15px;
-  // left: 24%;
-  left: 10px;
-  position: absolute;
-  display: flex;
-  justify-content: center;
-}
+
 .label-head {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 142px;
+  opacity: 0.7;
 }
 .noteCss {
   font-size: 10px;
@@ -112,27 +98,17 @@ a {
 // }
 .tabsDiv {
   position: relative;
-  max-height: 82svh;
-  min-height: 79svh;
-  margin-top: 5px;
-  z-index: 3;
-  overflow-y: auto;
+  height: 82vh;
+  background: #F1F1F1;
 }
 
-.tabDiv {
-  max-height: 70vh;
-  min-height: 62vh;
-  overflow-y: auto;
-  // background: white;
-  // border-radius: 0px 10px 10px 10px;
-  // border: 1px solid #efefef;
-  padding: 6px 10px;
-  // position: relative;
-}
+
 .form-control:disabled,
 .form-control[readonly] {
-  background-color: #fafafa;
-  opacity: 1;
+  opacity: 0.9;
+  cursor: not-allowed;
+  border: 0;
+  background: inherit;
 }
 .btnInvoiceType {
   border: 1.95px solid #f2be42;
@@ -158,9 +134,10 @@ a {
   font-size: 11px;
   font-weight: 600;
   color: black;
-  height: 30px;
+  height: 34px;
   margin-right: 5px;
   width: 142px;
+  text-overflow: ellipsis;
 }
 .showandVerify {
   background: #272727;
@@ -212,7 +189,7 @@ a {
   display: block;
   float: left;
   background-color: #f5f5f5;
-  border-bottom: 5px solid white;
+  // border-bottom: 5px solid white;
 }
 .invert_th_td {
   display: block;
@@ -234,7 +211,7 @@ a {
   min-width: 130px;
   // max-width: 130px;
   font-weight: 600;
-  background: #e3eef9;
+  background-color: #EBEBEB !important;
   position: sticky;
   left: 0px;
   white-space: nowrap;
@@ -242,7 +219,7 @@ a {
   text-overflow: ellipsis;
 }
 .linevalue {
-  padding: 5px 8px;
+  padding: 1px 10px;
   font-size: 12px;
 }
 .lcm_table_td {
@@ -295,9 +272,9 @@ a {
     text-overflow: ellipsis;
   }
   .ng2-pdf-viewer-container {
-    height: 82vh !important;
     background-color: white;
     border-radius: 10px;
+    height: calc(100vh - 180px) !important;
     max-height: 82vh;
   }
   .mat-expansion-panel:not([class*=mat-elevation-z]) {
@@ -312,7 +289,7 @@ a {
         background-color: #f5f5f5;
     }
     .mat-expansion-panel-header {
-        background-color: #f5f5f5; 
+        background-color: #f5f5f5 !important; 
     }
     .mat-expansion-indicator::after {
         position: relative;
@@ -321,34 +298,45 @@ a {
     .mat-expansion-panel-content {
       overflow: auto !important;
     }
-  .p-inputtext {
-    margin: 0;
-    height: 30px;
-    width: 142px !important;
-    border-color: #d3d3d3;
-    font-size: 12px;
-    font-weight: 600;
-    border-right: 0;
-  }
-  .p-button.p-button-icon-only {
-    background-color: #ffffff;
-  }
-  .mapping .p-autocomplete-dd .p-autocomplete-dropdown {
-    height: 28px;
-  }
-  .mapping .p-autocomplete-dd .p-autocomplete-input,
+    .p-dropdown-panel .p-dropdown-items .p-dropdown-empty-message {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .mapping .p-autocomplete-dd .p-autocomplete-dropdown {
+      height: 28px;
+    }
+   
+    .mapping .p-autocomplete {
+      height: auto;
+    }
+    .mapping .p-autocomplete-dd .p-autocomplete-input,
     .p-autocomplete-dd .p-autocomplete-multiple-container {
       border-bottom-right-radius: 0;
       border-top-right-radius: 0;
       color: #272727;
-      font-weight: 600;
-      height: 28px;
-      font-size: 11px;
-      font-family: "Segoe UI Regular", "Segoe UI", Arial;
+      font-weight: 500;
+      font-size: 12px;
       background: transparent;
       border: 0px solid lightgray;
       border-right: hidden;
+      padding: 0;
+      text-transform: lowercase;
+      width: 25vw !important;
     }
+    // .p-autocomplete {
+    //   width: 18vw;
+    // }
+    .p-autocomplete .p-autocomplete-panel {
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .p-autocomplete-loader {
+      display: none;
+    }
+}
+.bg-wt{
+  background: white
 }
 
 .radioBtn {
@@ -367,8 +355,8 @@ a {
   font-weight: 600;
   margin-right: 10px;
   position: absolute;
-  margin-top: -5px;
-  max-width: 90px;
+  margin-top: -1px;
+  max-width: 155px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -385,16 +373,7 @@ a {
   right: 10px;
   top: 6px;
 }
-.img-browse {
-  background-color: #f2be42;
-  color: #272727;
-  padding: 0.5rem;
-  border-radius: 0.3rem;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 1rem;
-}
+
 .file_table {
   // position: absolute;
   // bottom: 50px;
@@ -417,14 +396,15 @@ a {
   padding: 30px;
   text-align: center;
 }
-.thtable th, .thtable td {
+.table th, .table td {
   border:1px solid #dee2e6;
   padding: 5px;
 }
 .viewPdf {
   position: absolute;
-  right: 15px;
+  right: 25px;
   z-index: 12;
+  top: 8px;
 }
 
 .btnFooter-sm {
@@ -455,10 +435,10 @@ a {
   max-height: calc(60vh - 60px);
   overflow: auto;
 }
-.form-control:disabled, .form-control[readonly]{
-  background-color: #d9d0d0 !important;
-  opacity: 1;
-}
+// .form-control:disabled, .form-control[readonly]{
+//   background-color: #d9d0d0 !important;
+//   opacity: 1;
+// }
 .bg-1 {
   background-color: #ffe8e0 !important;
 }
@@ -486,6 +466,12 @@ a {
 }
 .p-r-t {
   position: relative;
+  top: 2px;
+}
+.refresh_btn {
+  position: absolute;
+  z-index: 12;
+  right: 10px;
   top: 6px;
 }
 .pos-r {
@@ -503,8 +489,9 @@ a {
   width: fit-content;
   background: white;
   padding: 5px;
-  top: 5px;
-  margin: auto;
+  top: -35px;
+  left: 0;
+  // margin: auto;
   border-radius: 5px;
   height: 40px;
 }
@@ -524,6 +511,21 @@ a {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+.vi_mb_btn {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  color: #e2be42;
+  z-index: 12;
+}
+.btnspdf {
+  transform: translate(33%,0%);
+  position: absolute;
+  z-index: 100;
+  display: flex;
+  gap: 10px;
+  width: 100%;
 }
 .btns_line {
   display: flex;
@@ -584,6 +586,9 @@ a {
   padding-bottom: 0px;
   display: flex;
   justify-content: space-around;
+  color: #14010180;
+  position: relative;
+  border-bottom: 1px solid lightgray !important;
 }
 .w-max{
   width: fit-content;
@@ -593,17 +598,19 @@ a {
   .nav-tabs .nav-link {
       background: #ffffff !important;
       border: none !important;
+      color: #14010180 !important;
+      height: auto;
   }
   .nav-tabs .nav-link.active,
   .nav-tabs .nav-item.show .nav-link {
-      color: black !important;
-      font-size: 13px;
+      color: #358DC0 !important;
+      font-size: 14px;
       background-color: white !important;
       font-weight: 600;
-      border-bottom: 5px solid #162f64 !important;
+      border-bottom: 2px solid #358DC0 !important;
       border-radius: 0 !important;
       position: relative;
-      top: 5px;
+      top: -1px;
   }
 }
 .line_mob{
@@ -639,6 +646,18 @@ a {
 .po_date {
   background: #e9ecef;
     padding: 4px 6px;
+}
+.processing-lines {
+  padding: 0;
+  animation: process-lines 10s infinite linear; /* Adjust the animation duration as needed */
+}
+@keyframes process-lines {
+  0% {
+      transform: translateY(0);
+  }
+  100% {
+      transform: translateY(-100%); /* Adjust this value to control the speed of scrolling */
+  }
 }
 :host ::ng-deep  {
   .p-datepicker .p-monthpicker .p-monthpicker-month {
@@ -719,7 +738,8 @@ a {
     padding: 0px 5px;
   }
   .maxPage {
-    max-height: 87vh !important;
+    max-height: 93vh !important;
+    overflow: auto;
   }
   .w-42 {
     width: 100%;
@@ -737,15 +757,195 @@ a {
   // .inputHeight {
   //   width: 120px;
   // }
-  .invert {
-    display: block;
-  }
-  .invert_tr {
-    background-color: inherit;
-    border-bottom: 0;
-  }
+  // .invert {
+  //   display: block;
+  // }
+  // .invert_tr {
+  //   background-color: inherit;
+  //   border-bottom: 0;
+  // }
   .lineName {
     padding: 0;
     background-color: inherit;
   }
+}
+.boxopen{
+  cursor: pointer;
+}
+.headamtbox{
+  font-weight: 700;
+  padding-left: 15px;
+  color: #140101;
+  font-size: 14px;
+  opacity: 100%;
+}
+.advSettingsButton{
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: 130px;
+  height: 34px;
+  background-color: #358DC0;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.amount-box {
+  position: absolute;
+  top: 10%; /* Adjust as needed */
+  left: 8%; /* Adjust as needed */
+  z-index: 1000; /* Ensure the box appears over other contents */
+  // border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  opacity: 100%;
+  border-radius: 5px;
+  width: 255px;
+  height: 210px;
+  display: flex;
+  flex-direction: column;
+}
+
+.amount-box label {
+  display: block;
+  margin-bottom: 5px;
+  padding-left: 20px;
+  color: #140101;
+  opacity: 60%;
+  font-weight: 700;
+  font-size: 12px;
+}
+.boxHead{
+  padding-top: 8px;
+}
+.amount-box input {
+  width: 100%;
+  height: 30px;
+  padding: 0px;
+  margin-bottom: 10px;
+  // box-sizing: border-box;
+  border: none;
+  outline: none;
+  padding-left: 20px;
+  color: #140101;
+  border-radius: 5px;
+}
+
+.amount-box button {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 34px;
+  padding-right: 33px;
+  width: 117px;
+  height: 34px;
+  background-color: #358DC0;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+button.submitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5; /* You can adjust the opacity as needed */
+}
+
+.amount-box button.cancel {
+  background-color: #ccc;
+}
+
+.tabs {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  display: flex;
+  // border-bottom: 2px solid grey;
+}
+
+.tabs span {
+  cursor: pointer;
+  // margin-right: 10px; /* Set the gap between tabs */
+  border-bottom: 1px solid #00000080;
+  padding-bottom: 5px;
+}
+
+.tabs span:last-child {
+  margin-right: 0; /* Remove margin for the last tab to avoid extra space */
+}
+
+.tabs span.active {
+  border-bottom: 2px solid #358DC0;
+  color: #358DC0;
+}
+.close-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+}
+.subButton{
+  margin-left: 100px; /* Push the button to the right side */
+  margin-top: auto; /* Align with the bottom */
+  padding-top: 0px; /* Optional: Add some top padding */
+  padding-right: 5px;
+}
+// .submitButton{
+//   background-color: #358DC0;
+//   padding: 10px;
+// }
+.percentage{
+  padding-left: 10px;
+  padding-right: 40px;
+  text-align: left;
+  font: normal normal normal 14px/21px;
+  font-size: 14px;
+}
+.amount{
+  padding-left: 40px;
+  padding-right: 20px;
+  text-align: left;
+  font: normal normal normal 14px/21px;
+  font-size: 14px;
+}
+.tabContent{
+  padding-top: 5px;
+  padding-left: 10px;
+
+  .tabBg {
+    background-color: #f0f0f0; /* Set your desired background color */
+    padding: 0px; /* Adjust padding as needed */
+    margin-bottom: 10px; /* Optional: Add margin between tabs */
+    display: inline-block;
+    border-radius: 5px;
+    width: 220px;
+    height: 54px;
+  }
+
+  .tabBg label {
+    display: block; /* Make the label a block element to occupy full width */
+    margin-bottom: 5px; /* Optional: Add margin between label and input */
+  }
+  .tabBg input{
+    background-color: #f0f0f0;;
+  }
+  
+}
+.button-container{
+  display: flex;
+  gap: 10px;
+}
+.accountSelect {
+  width: 15vw !important;
+  height: 35px;
+  font-size: 13px;
+}
+.cibutton{
+  padding-top: 10px;
 }

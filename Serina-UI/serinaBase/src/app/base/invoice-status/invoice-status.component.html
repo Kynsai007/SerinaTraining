@@ -1,20 +1,19 @@
 <div class="pos_rel">
-  <span class="goBackIn ml-3" (click)="backToInvoice()">
-    <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
-  </span>
-  <h6 class="headh6 pl-80">
-    Document Status history -
-    <span class="f-13">
-      Document Number : <span style="color: #2b96e2">{{ invoiceNumber }}</span>
-    </span>
+  
+  <h6 class="headh6 d-flex justify-content-between">
+    <div>
+      <span class="pointer mr-2" (click)="backToInvoice()">
+        <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
+      </span>
+      Invoice Status history -
+      <span class="f-13">
+        Invoice Number : <span style="color: #2b96e2">{{ invoiceNumber }}</span>
+      </span>
+    </div>
+    <button class="primary_btn f-12" (click)="download()">Download journey DOC</button>
   </h6>
 
   <div class="max-h">
-    <!-- <div class="f-13 mb-3">Invoice Number : <span style="color: #2b96e2;">{{invoiceNumber}}</span></div> -->
-    <div class="d-flex justify-content-end mb-2">
-      <button *ngIf="ds.subStatusId == 45" class="btnUpload btn_extra_bg mr-2" (click)="downloadJSON()">Download JSON</button>
-      <button class="btnUpload btn_extra_bg" (click)="download()">Download journey DOC</button>
-    </div>
     <div class="bg-design-all b-top-left p-2">
       <span *ngFor="let item of statusData; let i = index">
         <span
@@ -29,7 +28,7 @@
           "
         >
           <span *ngIf="item.DocumentHistoryLogs.CreatedOn">{{
-            item.DocumentHistoryLogs?.CreatedOn + "Z" | date: "medium"
+            item.DocumentHistoryLogs?.CreatedOn + "Z"  | date: "medium"
           }}</span>
         </span>
         <span
@@ -122,12 +121,3 @@
 </ng-template>
 
 <ng-template #popTitle let-language="language">Status Info</ng-template>
-<ngx-spinner
-  bdColor="rgba(251, 251, 251, 0.8)"
-  size="medium"
-  color="#070900"
-  [fullScreen]="false"
-  type="ball-spin-clockwise"
->
-  <p style="color: rgb(0, 0, 0)"></p>
-</ngx-spinner>

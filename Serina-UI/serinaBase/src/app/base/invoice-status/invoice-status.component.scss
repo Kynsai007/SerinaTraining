@@ -45,7 +45,7 @@ h3 {
   color: #000;
   background-color: #000;
   display: block;
-  margin-left: 170px;
+  margin-left: 180px;
 }
 
 .container-h {
@@ -54,10 +54,15 @@ h3 {
   // text-align: center;
 }
 .max-h {
-  max-height: 91vh;
+  max-height: 82vh;
   overflow: auto;
-  min-height: 91vh;
-  padding: 20px 20px 40px 20px;
+  min-height: 79vh;
+  // padding: 0px 20px 40px 20px;
+}
+.max-h .div1 {
+  position: absolute;
+    top: -10px;
+    right: 30px;
 }
 
 .status_text {
@@ -105,7 +110,7 @@ h3 {
 }
 
 .date_box {
-  width: 120px;
+  width: 130px;
   position: relative;
   left: 15px;
   top: 10px;
