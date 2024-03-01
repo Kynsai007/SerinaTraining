@@ -32,6 +32,16 @@ export class DataService {
   servicePaginationFirst = 0;
   servicePaginationRowLength = 10;
 
+  invTabPageNumber:number = 1;
+  poTabPageNumber:number = 1;
+  arcTabPageNumber:number = 1;
+  rejTabPageNumber:number = 1;  
+  grnTabPageNumber:number = 1;
+  serviceTabPageNumber:number = 1;
+  excTabPageNumber:number = 1;
+  crGRNTabPageNumber:number = 1;
+  aprTabPageNumber:number = 1;
+
   // Edited page pagination variables
   editInvoicesPaginationFisrt = 0;
   editInvoicesPaginationRowLength = 10;
@@ -58,25 +68,51 @@ export class DataService {
 
 
   bgColorCode = [
-    { id:0, name :'All', bgcolor: '#FEF9EC', textColor :'#F3BC45'},
-    { id:1, name :'System Check In - Progress', bgcolor: '#FEF9EC', textColor :'#F3BC45'},
-    { id:2, name :'Processing Document', bgcolor: '#F3F4FF', textColor :'#747BC8'},
-    { id:3, name :'Approval Pending', bgcolor: '#E0FFEF', textColor :'#1EAC60'},
-    { id:4, name :'Need To Review', bgcolor: '#FEFFD6', textColor :'#CDD100'},
-    { id:5, name :'Edit in Progress', bgcolor: '#FFE8FD', textColor :'#AE5BA7'},
-    { id:6, name :'Awaiting Edit Approval', bgcolor: '#F7FFC8', textColor :'#8EA01F'},
-    { id:7, name :'Sent to ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
-    { id:8, name :'Payment Cleared', bgcolor: '#ECF9ED', textColor :'#3EB948'},
-    { id:9, name :'Payment Partially Paid', bgcolor: '#F1EBFF', textColor :'#6A5894'},
-    { id:10, name :'Invoice Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C'},
-    { id:11, name :'Payment Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C'},
-    { id:12, name :'PO Open', bgcolor: '#ECF9ED', textColor :'#3EB948'},
-    { id:13, name :'PO Closed', bgcolor: '#E9E9E9', textColor :'#4D4A4A'},
-    { id:16, name :'ERP Exception', bgcolor: '#fff3e0', textColor :'#b7925b'},
-    { id:15, name :'Mismatch value/s', bgcolor: '#ddebc5', textColor :'#818549'},
-    { id:14, name :'Posted In ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
-    { id:24, name :'Set Approval', bgcolor: '#ECF9ED', textColor :'#3EB948'},
+    { id:0, sub_id:0, name :'All', bgcolor: '#FEF9EC', textColor :'#F3BC45'},
+    { id:1, sub_id:1, name :'System Check In - Progress', bgcolor: '#FEF9EC', textColor :'#F3BC45'},
+    { id:2, sub_id:2, name :'Processing Document', bgcolor: '#d2d5f4', textColor :'#000000'},
+    { id:3, sub_id:3, name :'Finance Approval Completed', bgcolor: '#E0FFEF', textColor :'#1EAC60'},
+    { id:4, sub_id:4, name :'Need To Review', bgcolor: '#FEDD58', textColor :'#000000'},
+    { id:4, sub_id:35, name :'Waiting for GRN creation ', bgcolor: '#FEFFD6', textColor :'#CDD160'},
+    { id:4, sub_id:39, name :'GRN Created in serina', bgcolor: '#8F00FF', textColor :'#000000'},
+    { id:5, sub_id:5, name :'Edit in Progress', bgcolor: '#FFE8FD', textColor :'#AE5BA7'},
+    { id:6, sub_id:6, name :'Awaiting Edit Approval', bgcolor: '#F7FFC8', textColor :'#8EA01F'},
+    { id:7, sub_id:7, name :'Sent to ERP', bgcolor: '#14BB12', textColor :'#ffffff'},
+    { id:8, sub_id:8, name :'Payment Cleared', bgcolor: '#ECF9ED', textColor :'#3EB948'},
+    { id:9, sub_id:9, name :'Payment Partially Paid', bgcolor: '#F1EBFF', textColor :'#6A5894'},
+    { id:10, sub_id:10, name :'Invoice Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C'},
+    { id:11, sub_id:11, name :'Payment Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C'},
+    { id:12, sub_id:12, name :'PO Open', bgcolor: '#ECF9ED', textColor :'#14bb12'},
+    { id:13, sub_id:13, name :'PO Closed', bgcolor: '#E9E9E9', textColor :'#B2B2B2'},
+    { id:16, sub_id:16, name :'ERP Exception', bgcolor: '#fff3e0', textColor :'#b7925b'},
+    { id:15, sub_id:15, name :'Mismatch value/s', bgcolor: '#ddebc5', textColor :'#818549'},
+    { id:14, sub_id:14, name :'Posted In ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:24, sub_id:70, name :'Set Approval', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:2, sub_id:37, name :'GRN successfully created in ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:3, sub_id:70, name :'Approval Pending', bgcolor: '#d0fbdd', textColor :'#14bb12'},
   ]
+
+  // bgColorCode = [
+  //   { id:0, sub_id:0, name :'All', bgcolor: '#FEF9EC', textColor :'#000000',icon:''},
+  //   { id:1,sub_id:1, name :'System Check In - Progress', bgcolor: '#EA4335', textColor :'#000000',icon:'assets/Serina Assets/Group 29.png'},
+  //   { id:2, sub_id:2,name :'Processing Document', bgcolor: '#F19B44', textColor :'#000000',icon:'assets/Serina Assets/Group 28.png'},
+  //   { id:3, sub_id:3,name :'Finance Approval Completed', bgcolor: '#E0FFEF', textColor :'#000000',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:4, sub_id:4, name :'Need To Review', bgcolor: '#FBBC05', textColor :'#000000',icon:'assets/Serina Assets/Group 27.png'},
+  //   { id:4, sub_id:35, name :'Ready for GRN creation', bgcolor: '#8EB719', textColor :'#000000',icon:'assets/Serina Assets/Group 69.png'},
+  //   { id:4, sub_id:39, name :'GRN Created in serina', bgcolor: '#8F00FF', textColor :'#000000',icon:'assets/Serina Assets/Group 62.png'},
+  //   { id:5, sub_id:5,name :'Edit in Progress', bgcolor: '#FFE8FD', textColor :'#AE5BA7',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:6,sub_id:6, name :'Awaiting Edit Approval', bgcolor: '#F7FFC8', textColor :'#8EA01F',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:7,sub_id:7, name :'Sent to ERP', bgcolor: '#5ABB74', textColor :'##000000',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:8, sub_id:8,name :'Payment Cleared', bgcolor: '#ECF9ED', textColor :'#3EB948',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:9, sub_id:9,name :'Payment Partially Paid', bgcolor: '#F1EBFF', textColor :'#6A5894',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:10, sub_id:10,name :'Invoice Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:11, sub_id:11,name :'Payment Rejected', bgcolor: '#FFE8E8', textColor :'#FF3C3C',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:12, sub_id:12,name :'PO Open', bgcolor: '#ffffff', textColor :'#000000',icon:'assets/Serina Assets/Group 43.png'},
+  //   { id:13, sub_id:13,name :'PO Closed', bgcolor: '#ffffff', textColor :'#000000',icon:'assets/Serina Assets/Group 51.png'},
+  //   { id:16, sub_id:16,name :'ERP Exception', bgcolor: '#fff3e0', textColor :'#b7925b',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:15, sub_id:15,name :'Mismatch value/s', bgcolor: '#ddebc5', textColor :'#818549',icon:'assets/Serina Assets/Group 26.png'},
+  //   { id:14, sub_id:14,name :'Posted In ERP', bgcolor: '#d0fbdd', textColor :'#14bb12',icon:'assets/Serina Assets/Group 26.png'},
+  // ]
   serviceinvoiceLoadedData = [];
   approvalServicePaginationRowLength = 10;
   approvalServicePaginationFirst = 0;
@@ -121,7 +157,8 @@ export class DataService {
     { id:5, reason: 'Uploaded under wrong Entity, please re-upload under correct entity'},
     { id:6, reason: 'Incorrect details on Invoice (LPO No, date, vendor name, TRN, etc..) , please correct invoice & re-upload'},
     { id:7, reason: 'Multiple invoices uploaded, please upload invoice separately'},
-    { id:8, reason: 'Others'}
+    { id:8, reason: 'PO is closed or fully booked.'},
+    { id:9, reason: 'Others'}
   ]
   invoiceGlobe = '';
   serviceGlobe = '';
@@ -166,6 +203,18 @@ export class DataService {
   poTabColumns: any;
   arcTabColumns: any;
   serTabColumns: any;
+  
+  exceptionService_G_S: string;
+  vendor_exc_status = {id: 0, name:'All'};
+  service_exc_status = {id: 0, name:'All'};
+  vendor_exc_uniSearch:string = '';
+  service_exc_uniSearch:string = '';
+  grn_exc_uniSearch: string = '';
+  masterTabName:string;
+  masterSubTabName = 'invoice';
+  grn_aprve_uniSearch: string = '';
+  snackBarRef: any;
+  isTableView = new BehaviorSubject<boolean>(false);
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
@@ -180,7 +229,32 @@ export class DataService {
     return this.VendorsReadData.asObservable();
   }
 
+  // displayMode(){
+  //   return this.isTableView.asObservable();
+  // }
+
   getVendorNamesData():Observable<any>{
     return this.vendorNameList.asObservable();
+  }
+  closeSnackbar():void {
+    if (this.snackBarRef) {
+      this.snackBarRef.dismiss();
+    }
+  }
+
+  searchFilter(searchTxt,filter_data){
+    return filter_data?.filter(item => {
+      // Iterate over object keys
+      for (const key in item) {
+        if (Object?.prototype?.hasOwnProperty?.call(item, key)) {
+          const value = item[key];
+          // Check if the field value contains the search term
+          if (value && typeof value === 'string' && value?.toLowerCase()?.includes(searchTxt?.toLowerCase())) {
+            return true;
+          }
+        }
+      }
+      return false;
+    });
   }
 }
