@@ -87,7 +87,7 @@ export function MSALInstanceFactory(): IPublicClientApplication{
   },{provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory},
     MsalService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
       provide: LocationStrategy,
       useClass: PathLocationStrategy

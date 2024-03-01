@@ -19,6 +19,7 @@ export interface User{
     lastName?: string;
     token?: string;
     user_type? : string;
+    refresh_token? :string
 }
 
 @Injectable({ providedIn: 'root' })
@@ -78,7 +79,7 @@ export class AuthenticationService {
         this.docService.userId = user.userdetails?.idUser;
         this.chartService.userId = user.userdetails?.idUser;
         this.currentUserSubject.next(user);
-        environment1.password = user.token;
+        environment1.password = this.currentUserValue.token;
     }
     async logout() {
         // remove user from local storage to log user out
@@ -102,5 +103,20 @@ export class AuthenticationService {
         setTimeout(() => {
             location.reload();
         }, 500);
+    }
+
+    refreshToken(){
+        let data = {
+            "grant_type": "refresh_token",
+            "refresh_token": this.currentUserValue.refresh_token
+          }
+          
+       return this.http.post(`${this.apiUrl}/${this.apiVersion}/token`,data).pipe(
+        map((data:any)=>{
+            const newAccessToken = data.token;
+            this.currentUserValue.token = newAccessToken;
+            sessionStorage.setItem('currentLoginUser', JSON.stringify(this.currentUserValue))
+        })
+       );
     }
 }

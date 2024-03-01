@@ -64,11 +64,16 @@ export class SharedService {
   isCustomerPortal: boolean;
   po_doc_id: any;
   po_num:string;
+  account_number: any;
   spAccountSub = new BehaviorSubject<any>([])
   docType: any;
   fileSrc: string;
-  
-  constructor(private http: HttpClient) { }
+  current_year:number;
+
+  constructor(private http: HttpClient) {
+    let today = new Date();
+    this.current_year = today.getFullYear();
+   }
 
   sendMessage(isLogin: boolean) {
     this.subject.next({ boolean: isLogin });
@@ -350,8 +355,8 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getDocid_PO/${this.userId}/PODocumentid/${id}`).pipe(retry(2));
   }
   
-  readReadyGRNData(param):Observable<any> {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceList/${this.userId}${param}`).pipe(retry(2))
+  readReadyGRNData(API_route,param):Observable<any> {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/${API_route}/${this.userId}${param}`).pipe(retry(2))
   }
   readReadyGRNInvData():Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readGRNReadyInvoiceData/${this.userId}?inv_id=${this.invoiceID}`).pipe(retry(2))
@@ -365,23 +370,32 @@ export class SharedService {
   getPO_Lines(po_num){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_Lines/${this.userId}/${po_num}`).pipe(retry(2))
   }
+  getPO_details(po_num){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_details/${this.userId}/${po_num}`).pipe(retry(2))
+  }
+  getGRN_Lines(grn_num){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getGRN_Lines/${this.userId}/${grn_num}`).pipe(retry(2))
+  }
   checkGRN_PO_duplicates(po_num){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/checkGRN_PO_availability/${this.userId}/${po_num}`)
   }
   checkGRN_PO_balance(bool){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POInvoiceBalanceCheckForGRN/${this.userId}?po_doc_id=${this.po_doc_id}&overbal=${bool}`)
   }
-  createGRNWithPO(value){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}`,value).pipe(retry(2))
+  createGRNWithPO(param,value){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNData/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value).pipe(retry(2))
   }
-  duplicateGRNCheck(value){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}`,value).pipe(retry(2))
+  duplicateGRNCheck(value,param){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/flipPOGRNDataDuplicateCheck/${this.userId}?po_doc_id=${this.po_doc_id}${param}`,value).pipe(retry(2))
   }
   validateUnitprice(data){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/validateInvPOUnitPrice/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))
   }
   updateGRNnumber(data){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/updateInvoiceGrn/${this.userId}?inv_id=${this.invoiceID}`,data).pipe(retry(2))
+  }
+  downloadGRN(api_param,data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/downloadGRNList/${this.userId}${api_param}`,data).pipe(retry(2))
   }
   // view Invoice
   getInvoiceInfo() {
@@ -428,6 +442,9 @@ export class SharedService {
   }
   vendorRejectInvoice(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectVendor/${this.userId}/idInvoice/${this.invoiceID}`, data)
+  }
+  rejectGRN(){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/rejectGRN/${this.invoiceID}/${this.userId}`)
   }
   vendorSubmit(query, uploadtime): Observable<any> {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/submitVendorInvoice/${this.userId}?re_upload=${query}&inv_id=${this.invoiceID}&uploadtime=${uploadtime}`)
@@ -585,6 +602,17 @@ export class SharedService {
   }
   getsavedLCMLineData() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readLcmData/${this.userId}?inv_id=${this.invoiceID}`)
+  }
+  uploadPercentageAndAmountDetails(data,invtype,tab){
+    if(tab === 'percentage'){
+      return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Createadvanceinv/${this.userId}?inv_id=${this.invoiceID}&adv_type=${invtype}&adv_perc=${data}`,data)
+    }
+    else{
+      return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Createadvanceinv/${this.userId}?inv_id=${this.invoiceID}&adv_type=${invtype}&adv_amt=${data}`,data)
+    }
+  }
+  getAmountofPercentage(data){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?u_id=${this.userId}&inv_id=${this.invoiceID}&adv_perc=${data}`,data)
   }
 
   // help document download
