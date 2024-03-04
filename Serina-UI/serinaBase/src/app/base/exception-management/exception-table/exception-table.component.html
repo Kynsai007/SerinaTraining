@@ -102,13 +102,13 @@
                 <span
                   class="statusType status_color"
                   *ngIf="
-                    e_data.documentStatusID == color.sub_id 
+                    e_data.docstatus.trim() == color.name.trim() 
                   "
                   [ngStyle]="{
                     'background-color':
-                      e_data.documentStatusID == color.id ? color.bgcolor : '',
+                      e_data.docstatus.trim() == color.name.trim() ? color.bgcolor : '',
                     color:
-                      e_data.documentStatusID == color.id ? color.textColor : ''
+                      e_data.docstatus.trim() == color.name.trim() ? color.textColor : ''
                   }"
                   >{{ e_data?.docstatus }}</span
                 >
@@ -405,15 +405,15 @@
                 <div
                   class="statusType"
                   *ngIf="
-                    invoiceData.documentStatusID == color.sub_id
+                    invoiceData.docstatus.trim() == color.name.trim()
                   "
                   [ngStyle]="{
                     'background-color':
-                      invoiceData.documentStatusID == color.id
+                      invoiceData.docstatus.trim() == color.name.trim()
                         ? color.bgcolor
                         : '',
                     color:
-                      invoiceData.documentStatusID == color.id
+                      invoiceData.docstatus.trim() == color.name.trim()
                         ? color.textColor
                         : ''
                   }"
@@ -428,7 +428,7 @@
                       tooltipPosition="top"
                       class="f-13 b-0"
                       style="color: red; font-weight: 800"
-                      (click)="triggerBatch(invoiceData.idDocument)"
+                      (click)="triggerBatch($event,invoiceData.idDocument)"
                       [disabled]="
                         triggerBoolean && invoiceID == invoiceData.idDocument
                       "
@@ -441,7 +441,7 @@
                       tooltipPosition="top"
                       class="f-13 b-0"
                       style="color: red; font-weight: 800"
-                      (click)="changeStatus(invoiceData.idDocument)"
+                      (click)="changeStatus($event, invoiceData.idDocument)"
                     >
                       <i class="fa fa-undo" aria-hidden="true"></i>
                     </button>

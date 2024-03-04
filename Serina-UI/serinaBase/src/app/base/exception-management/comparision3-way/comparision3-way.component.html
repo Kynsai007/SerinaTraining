@@ -1709,7 +1709,7 @@
             <button
               *ngIf="submitBtn_boolean && editable"
               class="primary_btn f-12"
-              (click)="approveChangesBatch()"
+              (click)="approval_selection_boolean && isLCMCompleted ? onSubmitApprovers():approveChangesBatch()"
             >
               Next
             </button>
@@ -1731,17 +1731,6 @@
             >
               Back
             </button>
-
-            <!--<button
-            *ngIf="!GRN_PO_Bool"
-            class="secondary_btn f-12 mr-3"
-            type="submit"
-            (click)="
-              confirm_pop(form.value, false, 'GRN data saved successfully')
-            "
-          >
-            Save
-          </button>-->
             <button
               class="primary_btn f-12 mr-3"
               type="submit"

@@ -205,7 +205,7 @@
         [showPaginatorAllInvoice]="showPaginatorAllInvoice"
         [ColumnLength]="allInColumnLength"
         (searchInvoiceData)="searchInvoiceDataV($event)"
-        [columnsData]="invoiceDispalyData"
+        [columnsData]="invoiceDisplayData"
         [searchText]="searchText"
         (systemCheckEmit)="refreshInvoice($event)"
         (paginationEvent) = "paginate($event)"
@@ -215,19 +215,6 @@
         *ngIf="route.url == invoiceTab"
       >
       </app-exception-table>
-      <!-- <app-all-invoices
-          [tableData]="invoiceDispalyData"
-          [invoiceColumns]="invoiceColumns"
-          [showPaginatorAllInvoice]="showPaginatorAllInvoice"
-          [columnsToDisplay]="columnstodisplayInvoice"
-          (searchInvoiceData)="searchInvoiceDataV($event)"
-          (sideBarBoolean)="showSidebar($event)"
-          (paginationEvent) = "paginate($event)"
-          (filterDataEmit) = "filterEmit($event)"
-          (systemCheckEmit)="refreshInvoice($event)"
-          [columnLength]="allInColumnLength"
-        >
-        </app-all-invoices>-->
         <app-exception-table
         [invoiceColumns]="poColumns"
         [columnsToDisplay]="columnstodisplayPO"
@@ -245,18 +232,6 @@
       >
       </app-exception-table>
 
-      <!-- <app-all-invoices
-        [tableData]="poDispalyData"
-        [invoiceColumns]="poColumns"
-        [columnsToDisplay]="columnstodisplayPO"
-        [showPaginatorAllInvoice]="showPaginatorPOTable"
-        (sideBarBoolean)="showSidebar($event)"
-        (paginationEvent)="paginate($event)"
-        [columnLength]="allPOColumnLength"
-        (searchInvoiceData)="searchInvoiceDataV($event)"
-        (filterDataEmit)="filterEmit($event)"
-        *ngIf="route.url == POTab"
-      ></app-all-invoices> -->
 
       <app-exception-table
         [invoiceColumns]="GRNColumns"
@@ -273,19 +248,6 @@
         *ngIf="route.url == GRNTab"
       >
       </app-exception-table>
-
-      <!-- <app-all-invoices
-        [tableData]="GRNDispalyData"
-        [invoiceColumns]="GRNColumns"
-        [columnsToDisplay]="columnstodisplayGRN"
-        [showPaginatorAllInvoice]="showPaginatorGRNTable"
-        (sideBarBoolean)="showSidebar($event)"
-        (paginationEvent)="paginate($event)"
-        [columnLength]="GRNColumnLength"
-        (searchInvoiceData)="searchInvoiceDataV($event)"
-        (filterDataEmit)="filterEmit($event)"
-        *ngIf="route.url == GRNTab"
-      ></app-all-invoices> -->
 
       <app-exception-table
       [invoiceColumns]="archivedColumns"

@@ -485,7 +485,7 @@ export class CreateGRNComponent implements OnInit {
 
   getPODetails(po_num,event:KeyboardEvent){
     if(!this.PO_GRN_Number_line){
-      if(po_num.length>7 && event.key === 'Enter') {
+      if(po_num.length>1 && event.key === 'Enter') {
         this.ngxSpinner.show();
         this.sharedService.getPO_details(po_num).subscribe((data:any)=>{
           if(data.message == 'success' && data.data.length == 1){

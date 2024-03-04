@@ -31,7 +31,7 @@ export class InvoiceComponent implements OnInit {
   displayInvoicePage: boolean = true;
   activeMenuName: string = 'invoice';
   showPaginator: boolean;
-  invoiceDispalyData = [];
+  invoiceDisplayData = [];
   allInvoiceLength: number;
   showPaginatorAllInvoice: boolean;
   createInvoice: boolean;
@@ -251,10 +251,10 @@ export class InvoiceComponent implements OnInit {
   }
 
   restoreData() {
-    this.invoiceDispalyData = this.ds.invoiceLoadedData;
+    this.invoiceDisplayData = this.ds.invoiceLoadedData;
     this.serviceinvoiceDispalyData = this.ds.serviceinvoiceLoadedData;
     this.filterDataService = this.serviceinvoiceDispalyData;
-    this.filterData = this.invoiceDispalyData;
+    this.filterData = this.invoiceDisplayData;
     this.allInvoiceLength = this.ds.invoiceLoadedData.length;
     if (this.allInvoiceLength > 10) {
       this.showPaginatorAllInvoice = true;
@@ -441,13 +441,13 @@ export class InvoiceComponent implements OnInit {
             }
             invoicePushedArray.push(invoiceData);
           });
-          this.invoiceDispalyData = invoicePushedArray;
-          this.filterData = this.invoiceDispalyData;
+          this.invoiceDisplayData = invoicePushedArray;
+          this.filterData = this.invoiceDisplayData;
           // this.filterForArchived();
           setTimeout(()=> {
             this.universalSearch(this.searchText);
           },1000)
-          this.allInvoiceLength = this.invoiceDispalyData.length;
+          this.allInvoiceLength = this.invoiceDisplayData.length;
           if (this.allInvoiceLength> 10 && this.isDesktop) {
             this.showPaginatorAllInvoice = true;
           }
@@ -848,9 +848,9 @@ export class InvoiceComponent implements OnInit {
       this.ds.doc_status_tab = this.serviceInvoiceTab;
       this.allSearchInvoiceString = [];
     } else if (value == 'archived') {
-      // if (!this.archivedColumns) {
-      //   this.getArchivedColumns();
-      // }
+      if (!this.archivedColumns) {
+        this.getArchivedColumns();
+      }
       this.route.navigate([this.archivedTab]);
       this.ds.doc_status_tab = this.archivedTab;
       this.allSearchInvoiceString = [];
@@ -890,7 +890,7 @@ export class InvoiceComponent implements OnInit {
       let exportData = [];
       if(!this.tableImportData){
         if (this.route.url == this.invoiceTab) {
-          exportData = this.invoiceDispalyData;
+          exportData = this.invoiceDisplayData;
         } else if (this.route.url == this.POTab) {
           exportData = this.poDispalyData;
         } else if (this.route.url == this.GRNTab) {
@@ -981,12 +981,12 @@ export class InvoiceComponent implements OnInit {
           this.datePicker.hideOverlay();
         }
         if (this.route.url == this.invoiceTab) {
-          this.invoiceDispalyData = this.filterData;
-          this.invoiceDispalyData = this.invoiceDispalyData.filter((element) => {
+          this.invoiceDisplayData = this.filterData;
+          this.invoiceDisplayData = this.invoiceDisplayData.filter((element) => {
             const dateF = this.datePipe.transform(element.CreatedOn, 'yyyy-MM-dd')
             return dateF >= frmDate && dateF <= toDate;
           });
-          this.allInvoiceLength = this.invoiceDispalyData?.length;
+          this.allInvoiceLength = this.invoiceDisplayData?.length;
         } else if (this.route.url == this.serviceInvoiceTab) {
           this.serviceinvoiceDispalyData = this.filterDataService;
           this.serviceinvoiceDispalyData = this.serviceinvoiceDispalyData.filter(
@@ -1008,8 +1008,8 @@ export class InvoiceComponent implements OnInit {
         }
       }
     } else {
-      this.invoiceDispalyData = this.filterData;
-      this.allInvoiceLength = this.invoiceDispalyData.length;
+      this.invoiceDisplayData = this.filterData;
+      this.allInvoiceLength = this.invoiceDisplayData.length;
       this.search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
     }
   }
@@ -1324,8 +1324,8 @@ export class InvoiceComponent implements OnInit {
         this.serviceinvoiceDispalyData = this.ds.searchFilter(txt,this.filterDataService);
       } else if(this.route.url == this.invoiceTab){
         this.ds.invoiceGlobe = txt;
-        this.invoiceDispalyData = this.filterData;
-        this.invoiceDispalyData = this.ds.searchFilter(txt,this.filterData);
+        this.invoiceDisplayData = this.filterData;
+        this.invoiceDisplayData = this.ds.searchFilter(txt,this.filterData);
       }
   }
   closeDialog(){
