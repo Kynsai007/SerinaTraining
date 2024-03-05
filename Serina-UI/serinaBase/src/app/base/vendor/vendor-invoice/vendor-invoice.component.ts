@@ -18,6 +18,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   accountList = [];
   @Input() supplier_data:any;
   @Input() supplier_id:any;
+  @Input() masterSubTabName:string;
   accountsSidebar:boolean = false;
   elementList: { id: number; name: string; }[];
   submitted: boolean;
@@ -50,32 +51,32 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
     private datePipe : DatePipe,
     private messageService : MessageService,
     private alertService : AlertService,
-    private router : Router) { }
+    public router : Router) { }
 
   ngOnInit(): void {
     this.SpAccountDetails = this.initialForm();
   }
 
   ngOnChanges(changes:SimpleChanges){
-    if(this.supplier_data){
-      if(this.dataService.masterTabName == 'vendor'){
+      if(this.dataService.masterTabName == 'vendor' && this.supplier_data?.idVendor){
         this.sharedService.vendorID = this.supplier_data?.idVendor;
         this.readVendorInvoiceData();
         this.DisplayVendorAccountDetails();
-      } else {
+      } else if(this.dataService.masterTabName == 'service' && this.supplier_data?.idServiceProvider) {
         this.sharedService.spID = this.supplier_data.idServiceProvider;
         this.spDetails = this.supplier_data;
-        this.DisplaySpInvoice();
-        this.SpAccountDetails = this.initialForm();
-        this.toGetEntity();
-        this.SPAccountDetails();
-
+        if(this.dataService.masterSubTabName == 'invoice'){
+          this.DisplaySpInvoice();
+        } else if(this.dataService.masterSubTabName == 'account'){
+          this.SpAccountDetails = this.initialForm();
+          this.toGetEntity();
+          this.SPAccountDetails();
+        }
         this.getOPunits();
         // this.getApprover();
         this.prepareCostData();
         this.getElementData(this.spDetails);
       }
-    }
   }
 
   readVendorInvoiceData() {
@@ -144,6 +145,32 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
         accountsPushedArray.push(mergedData);
       });
       this.accountList = accountsPushedArray;
+      this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+    });
+  }
+
+  accntSearch(val) {
+    this.SpinnerService.show();
+    let spAccount = []
+    this.sharedService.readserviceprovideraccount(`sp_acc_number=${val}`).subscribe((data: any) => {
+      data.forEach((element) => {
+        let mergedData = {
+          ...element.Credentials,
+          ...element.Entity,
+          ...element.EntityBody,
+          ...element.ServiceAccount,
+          ...element.ServiceProvider
+        };
+        spAccount.push(mergedData)
+      });
+      if (spAccount.length > 0) {
+        this.updateSpAccount(spAccount[0]);
+        this.sharedService.spAccountSub.next(spAccount);
+      } else {
+        this.alertService.error_alert(`${val} account is not exist in the Serina`)
+      }
       this.SpinnerService.hide();
     });
   }
@@ -589,5 +616,20 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
 
   error(msg) {
    this.alertService.error_alert(msg);
+  }
+
+  toCreateNewAccount() {
+    this.header_Ac = 'Add Service Provider Account';
+    this.accountsSidebar = true;
+    this.addSpAccountBoolean = true;
+    this.EditSpAccountBoolean = false;
+    this.SpAccountDetails.patchValue({
+      serviceProviderNameAccount: this.spDetails.ServiceProviderName,
+      serviceProviderID: this.sharedService.spID,
+      entityID: this.spDetails.idEntity,
+      isActive: true,
+      URL: this.spDetails.default_url
+    });
+    this.selectedEntity(this.spDetails.idEntity);
   }
 }

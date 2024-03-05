@@ -695,12 +695,20 @@
           Document Status
         </div>
         <div
+          *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess && approveBoolean"
+          class="nav_Link f-14"
+          routerLinkActive="active_cls"
+          [routerLink]="'approved'"
+        >
+          Approvals
+        </div>
+        <div
           class="nav_Link f-14"
           [routerLink]="'GRN_approvals'"
           routerLinkActive="active_cls"
           *ngIf="GRNApprovalAccess"
         >
-          Approvals
+          GRN Approvals
         </div>
         <div style="position: relative;" (clickOutside)="onClickedOutside($event,'more')">
           <div class="nav_Link f-14" (click)="more_routes()"

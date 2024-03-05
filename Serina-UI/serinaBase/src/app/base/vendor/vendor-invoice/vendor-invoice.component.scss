@@ -75,6 +75,26 @@
     right: 340px;
     z-index: 1;
 }
+.wild_search_all {
+    display: flex;
+    height: 46px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    width: 80% !important;
+  }
+  .wild_search_all input {
+    border: 0;
+    background-color: inherit;
+    width: 84%;
+  }
+  .wild_search_all input:focus {
+    outline: 0;
+  }
+  .add_account_btn {
+    width: 100%;
+    height: 46px;
+  }
 :host ::ng-deep {
     .p-dialog {
         width: 55vw;
@@ -82,7 +102,7 @@
         z-index: 11001;
         background-color: white;
         max-height: 100%;
-        margin: 0;
+        margin: 0 !important;
     }
     .p-dialog .p-dialog-content {
         padding: 0 18px 0px 21px;

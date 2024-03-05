@@ -1,11 +1,15 @@
 <div class="row m-0 head">
   <!-- main tabs -->
   <section class="col-md-3">
-    <ul class="nav nav-tabs d-flex justify-content-around" id="myTab" role="tablist">
+    <ul
+      class="nav nav-tabs d-flex justify-content-around"
+      id="myTab"
+      role="tablist"
+    >
       <li class="nav-item" *ngIf="vendorInvoiceAccess">
         <a
-          class="nav-link "
-          [ngClass]="tabName == 'vendor'? 'active':''"
+          class="nav-link"
+          [ngClass]="tabName == 'vendor' ? 'active' : ''"
           id="vendor-tab"
           data-toggle="tab"
           href="#vendor"
@@ -13,15 +17,16 @@
           aria-controls="vendor"
           aria-selected="true"
           (click)="onTabChange('vendor')"
-          > <span class="material-icons f-18 font_weight100">
-            person_outline
-            </span>Vendors</a
+        >
+          <span class="material-icons f-18 font_weight100">
+            person_outline </span
+          >Vendors</a
         >
       </li>
       <li class="nav-item" *ngIf="serviceInvoiceAccess">
         <a
           class="nav-link"
-          [ngClass]="tabName == 'service'? 'active':''"
+          [ngClass]="tabName == 'service' ? 'active' : ''"
           id="service-tab"
           data-toggle="tab"
           href="#service"
@@ -30,8 +35,8 @@
           aria-selected="true"
           (click)="onTabChange('service')"
           ><span class="material-icons f-18 font_weight100">
-            person_outline
-            </span>Service Providers</a
+            person_outline </span
+          >Service Providers</a
         >
       </li>
     </ul>
@@ -76,7 +81,7 @@
           aria-controls="tabs-vendorDetails"
           aria-selected="false"
           (click)="onSubTabChange('details')"
-          >{{sub_tab3}}</a
+          >{{ sub_tab3 }}</a
         >
       </li>
       <li class="nav-item" *ngIf="tabName == 'vendor'">
@@ -99,21 +104,36 @@
 <section class="row m-0 body">
   <!-- main tabs data starts -->
   <div class="tab-content body_height col-md-3" id="myTabContent">
-    <div class="tab-pane fade" [ngClass]="tabName == 'vendor'? 'show active':''" id="vendor">
+    <div
+      class="tab-pane fade"
+      [ngClass]="tabName == 'vendor' ? 'show active' : ''"
+      id="vendor"
+    >
       <div class="filter mt-2">
-        <label for="uni" class="f-12"> Search Universal <br>
-          <input [(ngModel)]="searchTextVendor" type="text" id="uni" class="textFilter f-13" placeholder="Ex: By Vendor, By Entity">
+        <label for="uni" class="f-12">
+          Search Universal <br />
+          <input
+            [(ngModel)]="searchTextVendor"
+            type="text"
+            id="uni"
+            class="textFilter f-13"
+            placeholder="Ex: By Vendor, By Entity"
+          />
         </label>
       </div>
-      <hr>
+      <hr />
 
       <!-- vendors -->
-      <div *ngIf="tabName == 'vendor'" class="card_container mt-2" >
-        <div 
-        class="card" 
-        *ngFor="let vendor of vendors_list | filter : searchTextVendor" 
-        (click)="onChange(vendor)" 
-        [ngStyle]="{ 'background-color':supplier_id == vendor.idVendor?'#EAF3F9':'#F7F6F2'}">
+      <div *ngIf="tabName == 'vendor'" class="card_container mt-2">
+        <div
+          class="card"
+          *ngFor="let vendor of vendors_list | filter : searchTextVendor"
+          (click)="onChange(vendor)"
+          [ngStyle]="{
+            'background-color':
+              supplier_id == vendor.idVendor ? '#EAF3F9' : '#F7F6F2'
+          }"
+        >
           <div class="f-12">{{ vendor.VendorName }}</div>
           <div class="d-flex justify-content-between f-12">
             <div class="shade_color">{{ vendor.EntityName }}</div>
@@ -123,16 +143,35 @@
       </div>
     </div>
 
-    <div class="tab-pane fade" [ngClass]="tabName == 'service'? 'show active':''" id="service">
+    <div
+      class="tab-pane fade"
+      [ngClass]="tabName == 'service' ? 'show active' : ''"
+      id="service"
+    >
       <div class="filter mt-2">
-        <label for="uni_ser" class="f-12"> Search Universal <br>
-          <input [(ngModel)]="searchTextSP" type="text" id="uni_ser" class="textFilter f-13" placeholder="Ex: By Service, By Entity">
+        <label for="uni_ser" class="f-12">
+          Search Universal <br />
+          <input
+            [(ngModel)]="searchTextSP"
+            type="text"
+            id="uni_ser"
+            class="textFilter f-13"
+            placeholder="Ex: By Service, By Entity"
+          />
         </label>
       </div>
-      <hr>
+      <hr />
       <!-- Services -->
-      <div *ngIf="tabName == 'service'" class="card_container mt-2" >
-        <div class="card" *ngFor="let service of SP_list | filter : searchTextSP" (click)="onChange(service)" [ngStyle]="{ 'background-color':supplier_id == service.idServiceProvider?'#EAF3F9':'#F7F6F2'}">
+      <div *ngIf="tabName == 'service'" class="card_container mt-2">
+        <div
+          class="card"
+          *ngFor="let service of SP_list | filter : searchTextSP"
+          (click)="onChange(service)"
+          [ngStyle]="{
+            'background-color':
+              supplier_id == service.idServiceProvider ? '#EAF3F9' : '#F7F6F2'
+          }"
+        >
           <div class="f-12">{{ service?.ServiceProviderName }}</div>
           <div class="d-flex justify-content-between f-12">
             <div class="shade_color">{{ service?.EntityName }}</div>
@@ -152,7 +191,7 @@
       role="tabpanel"
       aria-labelledby="tabs-InvoiceDetails-tab"
     >
-      <vendor-invoice [supplier_data]="supplier_data"></vendor-invoice>
+      <vendor-invoice [supplier_data]="supplier_data" [masterSubTabName]="masterSubTabName"></vendor-invoice>
     </div>
 
     <!-- vendor sites -->
@@ -162,7 +201,7 @@
       role="tabpanel"
       aria-labelledby="tabs-mails-tab"
     >
-    <vendor-invoice [supplier_data]="supplier_data"></vendor-invoice>
+      <vendor-invoice [supplier_data]="supplier_data" [masterSubTabName]="masterSubTabName"></vendor-invoice>
     </div>
 
     <!-- vendor Details -->
@@ -244,7 +283,6 @@
             Save
           </button>
         </div> -->
-        
       </div>
     </div>
 
@@ -272,7 +310,7 @@
             />
           </div>
           <div class="d-flex">
-             <input
+            <input
               type="text"
               class="form-control w-30 f-12"
               placeholder="item Code"
@@ -307,12 +345,12 @@
   </div>
 </section>
 <ngx-spinner
-          bdColor="rgba(251, 251, 251, 0.8)"
-          size="medium"
-          color="#070900"
-          [fullScreen]="false"
-          type="ball-spin-clockwise"
-        >
-          <p style="color: rgb(0, 0, 0)"></p>
-        </ngx-spinner>
+  bdColor="rgba(251, 251, 251, 0.8)"
+  size="medium"
+  color="#070900"
+  [fullScreen]="false"
+  type="ball-spin-clockwise"
+>
+  <p style="color: rgb(0, 0, 0)"></p>
+</ngx-spinner>
 <p-toast></p-toast>

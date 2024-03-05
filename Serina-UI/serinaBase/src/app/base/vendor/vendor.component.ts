@@ -73,6 +73,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
   supplier_data: any;
   vendorInvoiceAccess: boolean;
   serviceInvoiceAccess: boolean;
+  masterSubTabName: any;
 
   constructor(
     private route: Router,
@@ -88,10 +89,11 @@ export class VendorComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     if(this.permissionService.vendor_SP_PageAccess == true){
-      this.routerDetails();
       this.isDesktop = this.dataService.isDesktop;
       this.vendorInvoiceAccess = this.dataService.configData.vendorInvoices;
       this.serviceInvoiceAccess = this.dataService.configData.serviceInvoices;
+      this.routerDetails();
+
       if(this.dataService.ap_boolean){
         this.partyType = 'vendor';
       } else {
@@ -100,7 +102,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
       this.vendors_list = this.dataService?.vendorsListData;
       this.entityFilterData = this.dataService?.vendorsListData;
       if(this.vendors_list.length <= 10 && this.vendorInvoiceAccess){
-        this.tabName = 'vendor';
+        // this.tabName = 'vendor';
         this.APIParams = `?partyType=${this.partyType}&offset=1&limit=50`;
         this.DisplayVendorDetails(this.APIParams);
       }
@@ -109,9 +111,9 @@ export class VendorComponent implements OnInit, AfterViewInit {
       // } else {
       //   this.showPaginator = false;
       // }
-      if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess){
-        this.tabName = 'service';
-      }
+      // if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess){
+      //   this.tabName = 'service';
+      // }
       this.getServicesList();
       this.getEntitySummary();
       console.log(this.tabName)
@@ -127,9 +129,11 @@ export class VendorComponent implements OnInit, AfterViewInit {
     if(this.router.url.includes('vendorDetails') && this.vendorInvoiceAccess){
       this.tabName = 'vendor';
       this.vendorTabNames();
+      console.log(this.tabName)
     } else{
       this.tabName = 'service';
       this.serviceTabNames();
+      console.log(this.tabName)
     }
   }
   ngAfterViewInit() {
@@ -249,6 +253,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
   }
   onSubTabChange(str){
     this.dataService.masterSubTabName = str;
+    this.masterSubTabName = str;
   }
   readVendorMasterData(ven_acc_id) {
     this.sharedService.readItemListData(ven_acc_id).subscribe((data:any)=>{

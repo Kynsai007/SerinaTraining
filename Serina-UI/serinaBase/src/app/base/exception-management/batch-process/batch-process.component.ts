@@ -330,17 +330,14 @@ export class BatchProcessComponent implements OnInit {
             ...element.ServiceProvider,
             ...element.ServiceAccount,
           };
-          mergeData['substatus'] = element.substatus
+          mergeData['substatus'] = element.DocumentSubStatus.status
           invoiceArray.push(mergeData);
-          // this.vendorNameList.forEach(el=>{
-
-          // })
-          let status = element.DocumentSubStatus.status
+          let status_text = element.DocumentSubStatus.status;
           // vendorNameList.push(element.Vendor.VendorName)
-          if(element.Document.documentsubstatusID == 40 || element.Document.documentsubstatusID == 32){
-            status = element.substatus;
-          }
-          mergedStatus.push({id: element.Document.documentsubstatusID, name:status})
+          // if(element.Document.documentsubstatusID == 40 || element.Document.documentsubstatusID == 32){
+          //   status = element.substatus;
+          // }
+          mergedStatus.push({id: element.Document.documentsubstatusID, name:status_text})
         });
         let statusData = mergedStatus.filter((obj,index)=>{
           return index == mergedStatus.findIndex(o=> obj.name === o.name )

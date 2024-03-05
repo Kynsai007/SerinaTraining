@@ -23,16 +23,32 @@
 <!-- Account numbers -->
 <div
   *ngIf="dataService.masterSubTabName == 'account'"
-  class="card_container d-flex justify-content-between"
 >
-  <div class="card pointer" *ngFor="let account of accountList" (click)="updateSpAccount(account)">
-    <div class="status_btn f-12">A/c - {{ account?.Account }}</div>
-    <div class="f-14">{{ account?.EntityName }}</div>
-    <hr />
-    <div class="f-12">{{ account?.PODocumentID }}</div>
+<div class="card_container d-flex justify-content-between" *ngIf="router.url.includes('ServiceDetails')">
+  <div class="input-group  wild_search_all">
+    <input #serachStr type="text" class="f-14" placeholder="Universal search for account numbers">
+    <button class="secondary_btn mt-1" (click)="accntSearch(serachStr.value)">
+      <i class="fa fa-search" aria-hidden="true"></i>
+    </button>
   </div>
-  <div *ngIf="accountList.length <= 0" class="f-13 text-center p-3">
-    No Accounts are available.
+
+  <div style="width: 155px;">
+    <button class="primary_btn add_account_btn f-12" (click)="toCreateNewAccount()">
+      Add account +
+    </button>
+  </div>
+</div>
+
+  <div class="card_container d-flex justify-content-between mt-2">
+    <div class="card pointer" *ngFor="let account of accountList" (click)="updateSpAccount(account)">
+      <div class="status_btn f-12">A/c - {{ account?.Account }}</div>
+      <div class="f-14">{{ account?.EntityName }}</div>
+      <hr />
+      <div class="f-12">{{ account?.PODocumentID }}</div>
+    </div>
+    <div *ngIf="accountList.length <= 0" class="f-13 text-center p-3">
+      No Accounts are available.
+    </div>
   </div>
 </div>
 
@@ -471,3 +487,12 @@
     </form>
 </p-dialog>
   
+<ngx-spinner
+  bdColor="rgba(251, 251, 251, 0.8)"
+  size="medium"
+  color="#070900"
+  [fullScreen]="false"
+  type="ball-spin-clockwise"
+>
+  <p style="color: rgb(0, 0, 0)"></p>
+</ngx-spinner>

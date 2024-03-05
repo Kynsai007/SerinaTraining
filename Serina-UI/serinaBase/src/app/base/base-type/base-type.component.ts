@@ -76,6 +76,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   isTableView:boolean;
   DisplayMode : Subscription;
   isOpen: boolean;
+  approveBoolean: boolean;
 
   constructor(
     public router: Router,
@@ -313,7 +314,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.permissionService.editBoolean = accessPermissionTypeId >= 2;
       this.permissionService.changeApproveBoolean = accessPermissionTypeId >= 3;
       this.permissionService.financeApproveBoolean = accessPermissionTypeId === 4;
-
+      this.approveBoolean = this.permissionService.financeApproveBoolean;
     }
   }
 
