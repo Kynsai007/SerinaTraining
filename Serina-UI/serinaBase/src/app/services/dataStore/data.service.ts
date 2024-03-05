@@ -215,6 +215,8 @@ export class DataService {
   grn_aprve_uniSearch: string = '';
   snackBarRef: any;
   isTableView = new BehaviorSubject<boolean>(false);
+  approvalPageNumber: any;
+  approval_uniSearch: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

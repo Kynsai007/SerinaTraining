@@ -119,7 +119,7 @@ const routes: Routes = [
             component: Comparision3WayComponent,
           },
           {
-            path: 'approved',
+            path: 'approvals',
             component: ApproveComponent,
           },
           {
@@ -140,7 +140,7 @@ const routes: Routes = [
           },
           { path: 'payment-status', component:PipComponent},
           {
-            path: 'approved/InvoiceDetails/:id',
+            path: 'approvals/InvoiceDetails/:id',
             component: Comparision3WayComponent,
           },
           {

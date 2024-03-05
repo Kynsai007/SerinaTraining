@@ -102,6 +102,13 @@
 .filter_box input:focus {
   outline: 0;
 }
+.filters .export {
+  width: 56px;
+}
+.export button {
+  min-width: 38px;
+  margin-top: 6px;
+}
 // .calender_div {
 //   position: relative;
 //     top: 14px;

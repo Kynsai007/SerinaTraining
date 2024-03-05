@@ -1707,12 +1707,22 @@
             </button>
 
             <button
-              *ngIf="submitBtn_boolean && editable"
+              *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
               (click)="approval_selection_boolean && isLCMCompleted ? onSubmitApprovers():approveChangesBatch()"
             >
               Next
             </button>
+
+            <button
+            *ngIf="fin_boolean"
+            class="primary_btn f-12"
+            (click)="financeApprove()"
+          >
+            Approve
+          </button>
+
+
           </div>
 
           <div *ngIf="grnCreateBoolean && isGRNDataLoaded" class="m_r_80">

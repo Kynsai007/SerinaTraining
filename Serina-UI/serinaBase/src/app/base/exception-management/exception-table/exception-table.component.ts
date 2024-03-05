@@ -447,6 +447,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         `${this.portalName}/invoice/serviceDetails/${e.idDocument}`,
       ]);
     } else {
+      if(this.router.url.includes('approvals')){
+        this.tagService.financeApprovePermission = true;
+      }
       this.SpinnerService.show();
       let session = {
         "session_status": false,

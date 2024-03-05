@@ -94,7 +94,7 @@
           class="navLink"
           routerLinkActive="active"
           data-text="Approval"
-          [routerLink]="'approved'"
+          [routerLink]="'approvals'"
         >
           <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
             verified
@@ -432,7 +432,7 @@
             class="navLink"
             routerLinkActive="active"
             data-text="Approval"
-            [routerLink]="'approved'"
+            [routerLink]="'approvals'"
           >
             <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
               verified
@@ -698,7 +698,7 @@
           *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess && approveBoolean"
           class="nav_Link f-14"
           routerLinkActive="active_cls"
-          [routerLink]="'approved'"
+          [routerLink]="'approvals'"
         >
           Approvals
         </div>
@@ -761,18 +761,18 @@
     </div>
 
     <div class="d-flex align-items-center ">
-      <div class="user_d f-13">Card
+      <div class="user_d f-13" *ngIf="router.url.includes('ExceptionManagement') || router.url.includes('invoice') || router.url.includes('documentSummary') ||router.url.includes('GRN_approvals') ||router.url.includes('approvals')">Card
         <span class="portal">
-        <label class="switch">
-          <input
-            type="checkbox"
-            [checked]="isTableView"
-            (change)="onChangeUI($event.target.checked)"
-          />
-          <span class="slider round"></span>
-        </label>
-      </span> Table
-    </div>
+          <label class="switch">
+            <input
+              type="checkbox"
+              [checked]="isTableView"
+              (change)="onChangeUI($event.target.checked)"
+            />
+            <span class="slider round"></span>
+          </label>
+        </span> Table
+      </div>
       <div class="short_name f-12">{{name_short}}</div>
       <div class="f-12 mr-1">{{ userDetails.userdetails.firstName }}</div>
       <div  (clickOutside)="onClickedOutside($event,'logout')">

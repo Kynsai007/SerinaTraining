@@ -16,7 +16,6 @@ import { DataService } from 'src/app/services/dataStore/data.service';
   templateUrl: './approve.component.html',
   styleUrls: [
     './approve.component.scss',
-    './../invoice/all-invoices/all-invoices.component.scss',
   ],
 })
 export class ApproveComponent implements OnInit {
@@ -29,23 +28,23 @@ export class ApproveComponent implements OnInit {
   approvedData: any[];
   approvedDataSP: any[];
   ApprovedColumn = [
-    { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'VendorName', header: 'Vendor Name' },
-    { field: 'Account', header: 'Vendor A/C' },
-    // { field: 'documentdescription', header: 'Description' },
-    // { field: 'Approvaltype', header: 'Approval type' },
-    { field: 'documentDate', header: 'Invoice Date' },
-    { field: 'UpdatedOn', header: 'Last Modified' },
-    { field: 'totalAmount', header: 'Amount' },
+    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+    { dbColumnname: 'Account', columnName: 'Vendor A/C' },
+    // { dbColumnname: 'documentdescription', columnName: 'Description' },
+    // { dbColumnname: 'Approvaltype', columnName: 'Approval type' },
+    { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+    { dbColumnname: 'UpdatedOn', columnName: 'Last Modified' },
+    { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   ApprovedColumnSP = [
-    { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'ServiceProviderName', header: 'Service provider Name' },
-    { field: 'Account', header: 'Service provider A/C' },
-    { field: 'documentdescription', header: 'Description' },
-    { field: 'documentDate', header: 'Invoice Date' },
-    { field: 'UpdatedOn', header: 'Last Modified' },
-    { field: 'totalAmount', header: 'Amount' },
+    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'ServiceProviderName', columnName: 'Service provider Name' },
+    { dbColumnname: 'Account', columnName: 'Service provider A/C' },
+    { dbColumnname: 'documentdescription', columnName: 'Description' },
+    { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+    { dbColumnname: 'UpdatedOn', columnName: 'Last Modified' },
+    { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   approvedColumnHeader = [];
   approvedColumnField = [];
@@ -70,6 +69,10 @@ export class ApproveComponent implements OnInit {
   dashboardViewBoolean: boolean;
   ap_boolean: any;
   isDesktop: boolean;
+  searchText:string;
+  search_placeholder = 'Ex : By Vendor. By PO';
+  pageNumber: any;
+  filterData: any[];
 
   constructor(
     private tagService: TaggingService,
@@ -95,6 +98,7 @@ export class ApproveComponent implements OnInit {
     this.editPermissionBoolean = this.permissionService.editBoolean;
     this.ap_boolean = this.ds.ap_boolean;
     this.isDesktop = this.ds.isDesktop;
+    this.pageNumber = this.ds.approvalPageNumber;
     if(!this.isDesktop) {
       this.mob_columns();
     }
@@ -113,25 +117,25 @@ export class ApproveComponent implements OnInit {
 
   mob_columns(){
     this.ApprovedColumn = [
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'VendorName', header: 'Vendor Name' },
-      { field: 'EntityName', header: 'Entity' },
-      // { field: 'documentdescription', header: 'Description' },
-      // { field: 'Approvaltype', header: 'Approval type' },
-      { field: 'PODocumentID', header: 'PO Number' },
-      // { field: 'UpdatedOn', header: 'Last Modified' },
-      // { field: 'totalAmount', header: 'Amount' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'EntityName', columnName: 'Entity' },
+      // { dbColumnname: 'documentdescription', columnName: 'Description' },
+      // { dbColumnname: 'Approvaltype', columnName: 'Approval type' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      // { dbColumnname: 'UpdatedOn', columnName: 'Last Modified' },
+      // { dbColumnname: 'totalAmount', columnName: 'Amount' },
     ];
   }
 
   findColumns() {
     this.ApprovedColumn.forEach((e) => {
-      this.approvedColumnHeader.push(e.header);
-      this.approvedColumnField.push(e.field);
+      this.approvedColumnHeader.push(e.columnName);
+      this.approvedColumnField.push(e.dbColumnname);
     });
     this.ApprovedColumnSP.forEach((e) => {
-      this.approvedColumnHeaderSP.push(e.header);
-      this.approvedColumnFieldSP.push(e.field);
+      this.approvedColumnHeaderSP.push(e.columnName);
+      this.approvedColumnFieldSP.push(e.dbColumnname);
     });
     this.ColumnLengthVendor = this.ApprovedColumn.length + 1;
     this.ColumnLengthSP = this.ApprovedColumnSP.length + 1;
@@ -191,6 +195,11 @@ export class ApproveComponent implements OnInit {
         });
         this.approvedData = approvedArray;
         this.approvedDataLength = this.approvedData.length;
+        this.filterData = this.approvedData;
+        setTimeout(() => {
+          this.searchText = this.ds.grn_aprve_uniSearch;
+          this.universalSearch(this.searchText);
+      }, 1000);
         if (this.approvedData.length > 10) {
           this.showPaginatorApproved = true;
         }
@@ -231,7 +240,11 @@ export class ApproveComponent implements OnInit {
       }
     );
   }
-
+  universalSearch(txt){
+    this.ds.approval_uniSearch = txt;
+    this.approvedData = this.filterData;
+    this.approvedData = this.ds.searchFilter(txt,this.filterData);
+}
   paginateService(event) {
     this.first_service = event.first;
     this.ds.approvalServicePaginationFirst = this.first_service;
@@ -261,5 +274,10 @@ export class ApproveComponent implements OnInit {
     } else {
       alert('No Data to import');
     }
+  }
+
+  paginate(event){
+    this.pageNumber = event.pageNumber;
+    this.ds.approvalPageNumber = event.pageNumber;
   }
 }

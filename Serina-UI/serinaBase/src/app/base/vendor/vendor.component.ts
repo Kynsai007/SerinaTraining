@@ -116,7 +116,6 @@ export class VendorComponent implements OnInit, AfterViewInit {
       // }
       this.getServicesList();
       this.getEntitySummary();
-      console.log(this.tabName)
       this.dataService.masterTabName = this.tabName;
     } else{
       alert("Sorry!, you do not have access");
@@ -129,11 +128,9 @@ export class VendorComponent implements OnInit, AfterViewInit {
     if(this.router.url.includes('vendorDetails') && this.vendorInvoiceAccess){
       this.tabName = 'vendor';
       this.vendorTabNames();
-      console.log(this.tabName)
     } else{
       this.tabName = 'service';
       this.serviceTabNames();
-      console.log(this.tabName)
     }
   }
   ngAfterViewInit() {

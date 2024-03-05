@@ -1,50 +1,13 @@
-<h6 *ngIf="!dashboardViewBoolean" class="headh6">Approval</h6>
+<!-- <h6 *ngIf="!dashboardViewBoolean" class="headh6">Approval</h6> -->
 
 <div
   *ngIf="invoiceListBoolean"
   class="container-fluid"
   style="overflow: hidden; max-height: 100vh"
 >
-  <div>
-    <div *ngIf="!dashboardViewBoolean">
-      <ul class="nav nav-tabs">
-        <li class="nav-item mr-1">
-          <a
-            class="nav-link"
-            [class.active-tab]="viewType == 'vendorInvoice'"
-            (click)="chooseApprovalpageTab('vendorInvoice')"
-            >Vendor Invoices({{ approvedDataLength }})</a
-          >
-        </li>
-        <!-- <li class="nav-item">
-          <a
-            class="nav-link"
-            [class.active-tab]="viewType == 'serviceInvoice'"
-            (click)="chooseApprovalpageTab('serviceInvoice')"
-            >Service Invoices({{ approvedDataLengthSP }})</a
-          >
-        </li> -->
-      </ul>
-
-      <div class="positionCreateUpload">
-        <!-- <span (click)="filterData()"  class="filter mr-2">
-                      <i class="fa fa-sliders" style="transform: rotate(90deg);" aria-hidden="true"></i>
-                      <i class="fa fa-sort-desc ml-2" 
-                      style="position: relative;top: -3px;" aria-hidden="true"></i>
-                    </span> -->
-        <button class="btnUpload mr-2" (click)="exportExcel()">
-          <i class="fa fa-download" aria-hidden="true"></i>
-        </button>
-        <!-- <button class=" btnUpload mr-2" (click)="toCreateNew()"><span class="f-16">+</span> Create</button> -->
-      </div>
-      <!-- <div class="filter_input">
-        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [showIcon]="true" placeholder="Select dates to Filter" [readonlyInput]="true" inputId="range"></p-calendar>
-        <button class="btnUpload filter_btn_m "> Filter</button>
-    </div> -->
-    </div>
+  <!-- <div>
 
     <div class="tableDataDiv bg-design-all pt-1" [ngSwitch]="viewType">
-      <!-- vendor invoices Tab -->
       <div *ngSwitchCase="'vendorInvoice'">
         <div class="tableDataDiv">
           <div>
@@ -162,7 +125,6 @@
         </div>
       </div>
 
-      <!-- Service invoices Tab -->
       <div *ngSwitchCase="'serviceInvoice'">
         <div *ngIf="!dashboardViewBoolean" class="tableDataDiv">
           <div>
@@ -237,7 +199,6 @@
                     {{ invoiceData[col.field] }}
                   </td>
                   <td>
-                    <!-- <i class="pi pi-eye f-16 showEye mr-2" (click)="viewInvoice(invoiceData)"></i> -->
                     <button
                       class="b-0 actionsBtn"
                       [disabled]="!editPermissionBoolean"
@@ -273,5 +234,60 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
+    <div class="wild_search_all mt-2">
+      <div class="filter_box">
+        <label for="uni" class="f-12">
+          Search Universal <br />
+          <input
+            [(ngModel)]="searchText"
+            type="text"
+            id="uni"
+            class="textFilter f-13"
+            [placeholder]="search_placeholder"
+            (keyup)="universalSearch(searchText)"
+          />
+        </label>
+      </div>
+      <!-- <div class="calender_div">
+        <p-calendar
+          #datePicker
+          [(ngModel)]="rangeDates"
+          selectionMode="range"
+          [minDate]="minDate"
+          [maxDate]="maxDate"
+          placeholder=""
+          [readonlyInput]="true"
+          [showIcon]="true"
+          showButtonBar="true"
+          (onClearClick)="clearDates()"
+          (onSelect)="filterByDate(rangeDates)"
+          inputId="range"
+        ></p-calendar>
+      </div> -->
+    </div>
+  <div class="pt-1 mt-2">
+    <app-exception-table
+      [invoiceColumns]="ApprovedColumn"
+      [columnsToDisplay]="approvedColumnField"
+      [showPaginatorAllInvoice]="showPaginatorApproved"
+      [ColumnLength]="ColumnLengthVendor"
+      [columnsData]="approvedData"
+      [searchText]="searchText"
+      [pageId]="'apr_v'"
+      [pageNumber]="pageNumber"
+      (paginationEvent) = "paginate($event)"
+    >
+    </app-exception-table>
+
+  <ngx-spinner
+    bdColor="rgba(251, 251, 251, 0.8)"
+    size="medium"
+    color="#070900"
+    [fullScreen]="false"
+    type="ball-spin-clockwise"
+  >
+    <p style="color: rgb(0, 0, 0)"></p>
+  </ngx-spinner>
+</div>
 </div>
