@@ -1330,6 +1330,7 @@ export class UploadSectionComponent implements OnInit {
                 if (this.progressEvent.InvoiceID) {
                   this.success("OCR process completed successfully!");
                   this.spinnerService.show();
+                  this.dataService.editableInvoiceData = [];
                   setTimeout(() => {
                     if (this.isCustomerPortal == false) {
                     this.route.navigate([
@@ -1765,6 +1766,7 @@ export class UploadSectionComponent implements OnInit {
               //   detail: lastEvent,
               // });
               this.success(lastEvent);
+              this.dataService.editableInvoiceData = [];
               this.route.navigate([
                 `customer/invoice/serviceDetails/CustomerUpload/${doc_id}`,
               ]);

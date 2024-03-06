@@ -47,7 +47,6 @@ export class WebSocketService {
       let body = {
         file: fileContent
       }
-      console.log(body)
       this.socket.send(fileContent);
   }
 

@@ -32,6 +32,7 @@ export class JwtInterceptor implements HttpInterceptor {
             return this.authService.refreshToken().pipe(
               switchMap(() => {
                 request = this.addToken(request);
+                this.alert.success_alert("Dear User, token is refreshed.if your experiencing the high loading time please refresh the screen.")
                 return next.handle(request);
               }),
               catchError((err) => {

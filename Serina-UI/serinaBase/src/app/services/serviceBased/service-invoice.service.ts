@@ -30,11 +30,11 @@ export class ServiceInvoiceService {
     if (stringDate) {
       return this.http.get(
         `${environment.apiUrl}/apiv1.1/readServiceInvoiceList/${this.userId}/?p_date=${stringDate}`
-      );
+      ).pipe(retry(3));;
     } else {
       return this.http.get(
         `${environment.apiUrl}/apiv1.1/readServiceInvoiceList/${this.userId}`
-      );
+      ).pipe(retry(3));;
     }
     stringDate = null;
   }
@@ -50,7 +50,7 @@ export class ServiceInvoiceService {
     return this.http.post(
       `${environment.apiUrl}/apiv1.1/updateServiceInvoiceData/${this.userId}/idInvoice${this.invoiceId}`,
       data
-    );
+    ).pipe(retry(3));;
   }
   getSummaryData(stringDate: any) {
     // tslint:disable-next-line:triple-equals
@@ -106,7 +106,7 @@ export class ServiceInvoiceService {
     return this.http.get(
       `${environment.apiUrl}/apiv1.1/DownloadServiceInvoiceExcel/${this.userId}/idInvoice${this.invoiceId}`,
       { responseType: 'blob' }
-    );
+    ).pipe(retry(3));;
   }
 
   // bulk upload
@@ -115,14 +115,14 @@ export class ServiceInvoiceService {
       `${environment.apiUrl}/${environment.apiVersion}/SP/Downloadstemplate?temp=${data}`,
       '',
       { responseType: 'blob' }
-    );
+    ).pipe(retry(3));
   }
   downloadRejectRecords(): Observable<any> {
     return this.http.post(
       `${environment.apiUrl}/${environment.apiVersion}/SP/DownloadRejectedRecords`,
       '',
       { responseType: 'blob' }
-    );
+    ).pipe(retry(3));
   }
 
   // customer Summary
@@ -138,7 +138,7 @@ export class ServiceInvoiceService {
     return this.http.post(
       `${environment.apiUrl}/${environment.apiVersion}/ServiceProvider/triggerServiceBatch/${this.userId}`,
       data
-    );
+    ).pipe(retry(3));
   }
   triggerBatchHistory(): Observable<any> {
     return this.http

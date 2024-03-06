@@ -141,6 +141,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
           ...element.Entity,
           ...element.EntityBody,
           ...element.ServiceAccount,
+          ...element.ServiceProvider
         };
         accountsPushedArray.push(mergedData);
       });
@@ -518,7 +519,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
       this.SpAccountDetails.patchValue({
         Account: data.Account,
         entityID: data.entityID,
-        serviceProviderNameAccount: spName,
+        serviceProviderNameAccount: data.ServiceProviderName,
         serviceProviderID: data.serviceProviderID,
         Email: data.Email,
         URL: data.URL,
