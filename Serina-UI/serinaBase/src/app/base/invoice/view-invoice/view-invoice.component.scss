@@ -355,11 +355,12 @@ a {
   font-weight: 600;
   margin-right: 10px;
   position: absolute;
-  margin-top: -1px;
+  margin-top: -2px;
   max-width: 155px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  z-index: 1;
 }
 
 // .form-control:disabled, .form-control[readonly]{
@@ -556,10 +557,10 @@ a {
   border: 0;
 }
 
-.table {
-  border-collapse: separate;
-  border-spacing: 0 8px;
-}
+// .table {
+//   border-collapse: separate;
+//   border-spacing: 0 8px;
+// }
 .tHead {
   background: #f6f2f2 0% 0% no-repeat padding-box;
   border-radius: 5px;

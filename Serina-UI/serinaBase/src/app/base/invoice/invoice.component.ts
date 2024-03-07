@@ -1018,7 +1018,11 @@ export class InvoiceComponent implements OnInit {
   }
 
   paginate(event) {
-    this.first = event.first;
+    if(this.ds.isTableView){
+      this.first = event.first;
+    } else {
+      this.first = event.pageNumber;
+    }
     if (this.route.url == this.invoiceTab) {
       this.ds.allPaginationFirst = this.first;
       this.ds.allPaginationRowLength = event.rows;
@@ -1026,7 +1030,7 @@ export class InvoiceComponent implements OnInit {
       this.ds.poPaginationFirst = this.first;
       this.ds.poPaginationRowLength = event.rows;
       if (this.first >= this.ds.pageCountVariablePO) {
-        this.ds.pageCountVariablePO = event.first;
+        this.ds.pageCountVariablePO = this.first;
         if (this.ds.searchPOStr == '') {
           this.ds.offsetCountPO++;
           this.APIParams = `?offset=${this.ds.offsetCountPO}&limit=50`;
@@ -1041,7 +1045,7 @@ export class InvoiceComponent implements OnInit {
       this.ds.GRNPaginationFirst = this.first;
       this.ds.GRNPaginationRowLength = event.rows;
       if (this.first >= this.ds.pageCountVariableGRN) {
-        this.ds.pageCountVariableGRN = event.first;
+        this.ds.pageCountVariableGRN = this.first;
         if (this.ds.searchGRNStr == '') {
           this.ds.offsetCountGRN++;
           this.APIParams = `?offset=${this.ds.offsetCountGRN}&limit=50`;
@@ -1056,7 +1060,7 @@ export class InvoiceComponent implements OnInit {
       this.ds.archivedPaginationFirst = this.first;
       this.ds.archivedPaginationRowLength = event.rows;
       if (this.first >= this.ds.pageCountVariableArc) {
-        this.ds.pageCountVariableArc = event.first;
+        this.ds.pageCountVariableArc = this.first;
         if (this.ds.searchArcStr == '' && this.ds.posted_inv_type == '') {
           this.ds.offsetCountArc++;
           this.APIParams = `?offset=${this.ds.offsetCountArc}&limit=50`;
@@ -1079,7 +1083,7 @@ export class InvoiceComponent implements OnInit {
       this.ds.rejectedPaginationFirst = this.first;
       this.ds.rejectedPaginationRowLength = event.rows;
       if (this.first >= this.ds.pageCountVariableRej) {
-        this.ds.pageCountVariableRej = event.first;
+        this.ds.pageCountVariableRej = this.first;
         if (this.ds.searchRejStr == '') {
           this.ds.offsetCountRej++;
           this.APIParams = `?offset=${this.ds.offsetCountRej}&limit=50`;

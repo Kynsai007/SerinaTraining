@@ -1775,7 +1775,7 @@ export class Comparision3WayComponent
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-      if ([8, 16, 17, 18, 19, 33, 21, 27, 75].includes(sub_status)) {
+      if ([8, 16, 17, 18, 19, 33, 21, 27,51,54,70, 75].includes(sub_status)) {
         this.processAlert(sub_status);
       } else if (sub_status == 34) {
         this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
@@ -1792,7 +1792,24 @@ export class Comparision3WayComponent
       this.update("Invoice Total and 'Sub-Total+Tax' Mismatch Identified. Kindly check Entry");
     } else if (subStatus == 19) {
       this.update("Dear User, Sub total is not matching with the invoice lines total.");
-    } else {
+    } else if (subStatus == 51) {
+      this.update("Dear User, Invoice type is LCM, Please add the lines for the LCM invoice.");
+      this.currentTab = 'LCM';
+    } else if (subStatus == 54) {
+      this.update("Dear User, Invoice type is MultiPO,Please Check the invoice total is not matching with the lines.")
+      this.currentTab = 'line';
+    } else if (subStatus == 70) {
+      if (this.portalName == 'customer') {
+        this.readDepartment();
+        this.readCategoryData();
+        this.approval_selection_boolean = true;
+        this.isLCMCompleted = true;
+        this.update('Please add the approvers')
+        this.changeTab('approver_selection')
+      } else {
+        this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+      }
+    }else {
       this.getInvoiceFulldata('');
       this.update("Please check the values in invoice.");
     }
