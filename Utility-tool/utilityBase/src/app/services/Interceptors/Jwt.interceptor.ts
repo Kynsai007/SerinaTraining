@@ -1,28 +1,75 @@
-
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthenticationService } from '../auth/auth.service';
+import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 
 
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-    constructor(private authenticationService: AuthenticationService) { }
-
+    constructor(private authService: AuthenticationService) { }
+    private isRefreshing = false;
+    private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        // add authorization header with jwt token if available
-        let currentUser = this.authenticationService.currentUserValue;
-        if (currentUser && currentUser.token) {
-            request = request.clone({
-                setHeaders: {
-                    Authorization: `Bearer ${currentUser.token}`,
-                    "X-API-Key":`${currentUser['x_api_token']}`
-                }
-            });
+        request = this.addToken(request);
+    
+        return next.handle(request).pipe(
+          catchError(error => {
+            if (error.status === 401) {
+              if (!this.isRefreshing) {
+                this.isRefreshing = true;
+                this.refreshTokenSubject.next(null);
+    
+                return this.authService.refreshToken().pipe(
+                  switchMap(() => {
+                    request = this.addToken(request);
+                    // this.alert.success_alert("Dear User, token is refreshed.if your experiencing the high loading time please refresh the screen.")
+                    return next.handle(request);
+                  }),
+                  catchError((err) => {
+                    this.isRefreshing = false;
+                    return this.handleError(err);
+                  }),
+                  finalize(() => {
+                    this.isRefreshing = false;
+                  })
+                );
+              } else {
+                return this.refreshTokenSubject.pipe(
+                  filter(result => result !== null),
+                  take(1),
+                  switchMap(() => {
+                    request = this.addToken(request);
+                    return next.handle(request);
+                  })
+                );
+              }
+            }
+            return throwError(error);
+          })
+        );
+      }
+    
+      private addToken(request: HttpRequest<any>): HttpRequest<any> {
+        let user = this.authService.currentUserValue
+        const token = this.authService.currentUserValue?.token;
+        if (user && token) {
+          return request.clone({
+            setHeaders: {
+              Authorization: `Bearer ${token}`,
+              "X-API-Key":`${this.authService.currentUserValue['x_api_token']}`
+            }
+          });
         }
-
-        return next.handle(request);
-    }
+        return request;
+      }
+    
+      private handleError(error: any): Observable<never> {
+        this.authService.logout();
+        // this.alert.error_alert("Session has expired! Please re-login!");
+        alert('Session has expired! Please re-login!')
+        return EMPTY;
+      }
 }

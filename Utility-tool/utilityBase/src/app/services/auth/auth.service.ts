@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, retry } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { SharedService } from '../shared/shared.service';
 import jwt_decode from "jwt-decode";
 export interface User{
+    refresh_token: any;
     id?: number;
     username: string;
     password: string;
@@ -46,7 +47,7 @@ export class AuthenticationService {
             }));
     }
     resendOTP(username){
-        return this.http.post<any>(`${this.apiUrl}/${this.apiVersion}/resendOTP`,{'username':username},{headers:new HttpHeaders({'Content-Type':'application/json'})});
+        return this.http.post<any>(`${this.apiUrl}/${this.apiVersion}/resendOTP`,{'username':username},{headers:new HttpHeaders({'Content-Type':'application/json'})}).pipe(retry(3));
     }
     verifyOTP(otpObj){
         return this.http.post<any>(`${this.apiUrl}/${this.apiVersion}/verifyOTP`,otpObj,{headers:new HttpHeaders({'Content-Type':'application/json'})})
@@ -70,6 +71,20 @@ export class AuthenticationService {
             this.sharedService.userId = user.userdetails?.idUser;
             this.currentUserSubject.next(user);
         }
+    }
+    refreshToken(){
+        let data = {
+            "grant_type": "refresh_token",
+            "refresh_token": this.currentUserValue.refresh_token
+          }
+          
+       return this.http.post(`${this.apiUrl}/${this.apiVersion}/token`,data).pipe(
+        map((data:any)=>{
+            const newAccessToken = data.token;
+            this.currentUserValue.token = newAccessToken;
+            sessionStorage.setItem('currentLoginUser', JSON.stringify(this.currentUserValue))
+        })
+       );
     }
     logout() {
         // remove user from local storage to log user out
