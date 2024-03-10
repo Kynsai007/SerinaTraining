@@ -167,32 +167,34 @@ export class InvoiceComponent implements OnInit {
         if (this.ds.doc_status_tab == undefined) {
           this.route.navigate([`/${this.portal_name}/invoice/ServiceInvoices`])
         } else {
-          // this.route.navigate([`${this.ds.doc_status_tab}`]);
+          this.route.navigate([`${this.ds.doc_status_tab}`]);
         }
+      } else {
+        this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
       }
     } else if (this.userDetails.user_type == 'vendor_portal') {
       this.usertypeBoolean = false;
       this.portal_name = 'vendorPortal';
 
     }
-    if (this.vendorInvoiceAccess) {
-      if (this.ds.ap_boolean) {
-        this.partyType = 'Vendor';
-        this.invoceDoctype = true;
-        if (!this.ds.doc_status_tab) {
-          this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
-        } else {
-          // this.route.navigate([`${this.ds.doc_status_tab}`]);
-        }
-      } else {
-        if (!this.ds.doc_status_tab) {
-          this.route.navigate([`/${this.portal_name}/invoice/PO`]);
-        } else {
-          this.route.navigate([`${this.ds.doc_status_tab}`]);
-        }
-        this.partyType = 'Customer';
-      }
-    }
+    // if (this.vendorInvoiceAccess) {
+    //   if (this.ds.ap_boolean) {
+    //     this.partyType = 'Vendor';
+    //     this.invoceDoctype = true;
+    //     if (!this.ds.doc_status_tab) {
+    //       this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
+    //     } else {
+    //       // this.route.navigate([`${this.ds.doc_status_tab}`]);
+    //     }
+    //   } else {
+    //     if (!this.ds.doc_status_tab) {
+    //       this.route.navigate([`/${this.portal_name}/invoice/PO`]);
+    //     } else {
+    //       this.route.navigate([`${this.ds.doc_status_tab}`]);
+    //     }
+    //     this.partyType = 'Customer';
+    //   }
+    // }
     this.APIParams = `?offset=1&limit=50`;
 
     this.routeForTabs();
@@ -231,6 +233,7 @@ export class InvoiceComponent implements OnInit {
           this.archivedColumns = this.ds.arcTabColumns;
           this.allARCColumnLength = this.archivedColumns.length + 1;
           this.columnstodisplayArchived = this.pushColumnsField(this.archivedColumns);
+          console.log(this.allARCColumnLength)
         } else {
           this.getArchivedColumns();
         }

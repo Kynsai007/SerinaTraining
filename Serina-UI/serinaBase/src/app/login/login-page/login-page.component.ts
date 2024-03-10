@@ -11,6 +11,8 @@ import { SharedService } from 'src/app/services/shared.service';
 import { environment, environment1 } from 'src/environments/environment.prod';
 import { MsalService } from '@azure/msal-angular';
 import { AuthenticationResult } from '@azure/msal-browser';
+import { MatDialog } from '@angular/material/dialog';
+import { SignUpComponent } from 'src/app/registration-page/sign-up/sign-up.component';
 interface IPData {
   ip: string;
 }
@@ -91,6 +93,7 @@ export class LoginPageComponent implements OnInit {
     private route: ActivatedRoute,
     private settingService: SettingsService,
     private dataStoreService: DataService,
+    private matDialog: MatDialog,
     private authenticationService: AuthenticationService,private msalService: MsalService,private googleService: SocialAuthService) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
@@ -380,11 +383,7 @@ export class LoginPageComponent implements OnInit {
               if(data.permissioninfo.NewInvoice){
                 route = '/uploadInvoices'
               } else {
-                if(invoceDoctype){
-                  route = '/invoice/ServiceInvoices'
-                } else {
-                  route = '/invoice/PO'
-                }
+                  route = '/invoice/allInvoices';
               }
             } else if(data.userdetails?.landingPage == 'Document Status'){
               if(invoceDoctype){
@@ -417,7 +416,10 @@ export class LoginPageComponent implements OnInit {
 
   signUpLink(){
     if(this.vendorInvoiceAccess && this.isVendorPortalRequired){
-      this.router.navigate(['/registration-page/signUp'])
+      this.matDialog.open(SignUpComponent,{
+        width: '600px',
+        height:'90svh'
+      })
     } else {
       alert('Sorry! Vendor portal is not opted by the Admin, Please contact Service Admin to enable.');
     }
@@ -463,4 +465,5 @@ export class LoginPageComponent implements OnInit {
       makeAttempt();
     });
   }
+
 }
