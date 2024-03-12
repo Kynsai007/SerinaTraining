@@ -180,6 +180,7 @@
   // height: 60px;
   position: relative;
   top: -5px;
+  line-height: 1.2;
 }
 .card .po_number {
   max-width: 100px;
@@ -357,4 +358,9 @@
 .status_text  .statusType{
   padding: 4px 10px !important;
   border-radius: 4px;
+}
+.scroll{
+  max-height: 71vh;
+  overflow: auto;
+  min-height: 70vh;
 }

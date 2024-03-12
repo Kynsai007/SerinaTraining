@@ -349,6 +349,13 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     } else if (this.router.url.includes('Create_GRN_inv_list')) {
       this.ds.create_GRN_page_first = this.first;
       this.ds.create_GRN_page_row_length = event.rows;
+    } else if(this.router.url.includes('invoice')){
+      this.fst+10;
+      let evnt = {
+        first: this.fst,
+        rows : 50
+      }
+      this.paginate_doc(evnt);
     }
   }
 
