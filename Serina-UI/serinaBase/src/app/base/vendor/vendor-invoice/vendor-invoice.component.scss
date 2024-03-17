@@ -4,6 +4,7 @@
     border: 0;
     border-radius: 5px;
     transition: transform 0.3s ease-in-out;
+    height: fit-content;
 }
 .card:hover {
     background-color: #193B68;
@@ -111,4 +112,8 @@
         padding: 10px 21px !important;
         border-bottom: 1px solid #00000033;
     }
+}
+.scroll {
+    height: calc(100svh - 210px);
+    overflow: auto;
 }

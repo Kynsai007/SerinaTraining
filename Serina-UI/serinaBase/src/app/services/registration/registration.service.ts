@@ -13,19 +13,23 @@ export class RegistrationService {
   constructor(private http: HttpClient) { }
 
   savenewUserPassword(data):Observable<any>{
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/newUserActivation`,data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/newUserActivation`,data).pipe(retry(1));
   }
   resendVerificationLink(token,email){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetExpiredActivationLink/?activation_code=${token}&email=${email}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/resetExpiredActivationLink/?activation_code=${token}&email=${email}`).pipe(retry(1));
   }
 
   sendOTP_email(mail){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/newVendorUserOTP?email=${mail}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/newVendorUserOTP?email=${mail}`).pipe(retry(1));
   }
   verifyOTP(otp,data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/validateVendorUserOTP?otp_code=${otp}`,data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/validateVendorUserOTP?otp_code=${otp}`,data).pipe(retry(1));
   }
   signup_vendoruser(otp,data){
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/preApproved/newVendorAdminUser/?form_token=${otp}`,data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/preApproved/newVendorAdminUser/?form_token=${otp}`,data).pipe(retry(1));
+  }
+
+  vendorRegistration(data){
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/vendorUserRegistration`,data);
   }
 }

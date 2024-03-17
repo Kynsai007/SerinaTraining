@@ -186,11 +186,11 @@ const routes: Routes = [
             component: SummaryComponent
           },
           {
-            path: 'serviceProvider/UtilityInvokeBatch',
+            path: 'service_batch_trigger',
             component: InvokeBatchComponent,
           },
           {
-            path: "serviceProvider/bulk_upload",
+            path: "bulkUploadService",
             component: BulkUploadServiceComponent
           },
           {

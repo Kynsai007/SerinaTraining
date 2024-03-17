@@ -1,21 +1,28 @@
+// .tableDataDiv {
+//     box-shadow: none;
+//     max-height: 70vh !important;
+//     min-height: 70vh !important;
+//     overflow: auto;
+//     margin-top: -5px;
+// }
 
-.img-wrapper {
-  width: 46px;
-  height: 46px;
-  margin: 0 15px 0 0;
-  padding: 10px 13px 12px 12px;
-  border-radius: 28px;
-  text-align: center;
-  background-color: white;
-}
-.card-div {
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 14px 20px 13px 15px;
-  // background-color: #fffbf0;
-  min-width: 16vw;
-  color: white;
-}
+// .img-wrapper {
+//   width: 46px;
+//   height: 46px;
+//   margin: 0 15px 0 0;
+//   padding: 10px 13px 12px 12px;
+//   border-radius: 28px;
+//   text-align: center;
+//   background-color: white;
+// }
+// .card-div {
+//   border: 1px solid #eee;
+//   border-radius: 12px;
+//   padding: 14px 20px 13px 15px;
+//   // background-color: #fffbf0;
+//   min-width: 16vw;
+//   color: white;
+// }
 .f-15 {
   font-size: 15px;
   font-weight: 600;
@@ -84,20 +91,7 @@
     right: 255px;
     top: 83px;
   }
-  // .tableDatDiv {
-  //  margin-top: 27px;
-  // }
-}
-
-@media screen and(max-width: 800px){
-  .card-div{
-    text-align: center;
-    max-width: fit-content;
-    display: flex !important;
-    align-items: center;
-    flex-direction: column;
-  }
-  .f-wrap {
-    flex-wrap: wrap;
+  .tableDatDiv {
+   margin-top: 27px;
   }
 }

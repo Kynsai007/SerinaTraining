@@ -15,7 +15,6 @@ export class SupportpdfViewerComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.data)
     this.srcFile = this.data.file;
   }
 

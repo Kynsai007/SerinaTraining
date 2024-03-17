@@ -583,7 +583,7 @@ export class SpDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.spaccountreaddata = [];
     this.finalArray = [];
     this.SpinnerService.show();
-    this.sharedService.readserviceprovideraccount(`sp_id=${this.sharedService.spID}`).subscribe((data: any) => {
+    this.sharedService.readserviceprovideraccount(`sp_id=${this.sharedService.spID}`,'').subscribe((data: any) => {
       data.forEach((element) => {
         this.mergedData = {
           ...element.Credentials,

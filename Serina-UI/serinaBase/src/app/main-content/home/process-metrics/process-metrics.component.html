@@ -1,132 +1,57 @@
 <div class="tableDatDiv">
-    <div class="filter_inputDash">
-      <div class="filter_mob">
-        <p-calendar
-        [(ngModel)]="rangeDates"
-        selectionMode="range"
-        [minDate]="minDate"
-        [maxDate]="maxDate"
-        placeholder="Select dates to Filter"
-        [readonlyInput]="true"
-        [showIcon]="true"
-        showButtonBar="true"
-        inputId="range"
-        (onClearClick)="clearDates()"
-      ></p-calendar>
-      <button class="act_btn mr-2 ml-2" (click)="filterByDate(rangeDates)">
-        <i class="fa fa-filter"></i></button>
-      <button class="act_btn" (click)="downloadReport()"> <i class="fa fa-download"></i></button>
-      </div>
 
+    <div class="filter_icon" (click)="openFilterDialog($event)">
+      <mat-icon class="placement" svgIcon="filter_ic"></mat-icon>
     </div>
-    <div class="d-flex justify-content-between card_mob">
-      <div *ngFor="let card of cardArray;let i = index"
-        class="card-div d-flex"
-        [class.active_card]="tabName == card.tabName"
-        (click)="choosepageTab(card.tabName)"
-        [ngStyle]="{'borderColor': i+1 == card.id ? card.clr: ''}"
-      >
-        <div>
-          <mat-icon class="placement" [svgIcon]="card.icon"></mat-icon>
+    <div class="d-flex justify-content-around f-wrap bg-w tableDtDiv" >
+      <ng-container *ngFor="let obj of cardsArr">
+        <div class="card-div d-flex d_flx_row" (click)="choosepageTab(obj.name)">
+          <div class="img-wrapper">
+            <mat-icon class="placement" [svgIcon]="obj.image"></mat-icon>
+          </div>
+          <div>
+            <div class="f-15 primary_clr">{{ obj.count }}</div>
+            <div class="f-12">{{ obj.title}}</div>
+          </div>
         </div>
-          <div class="f-12">{{ card.heading }}</div>
-          <div class="f-15">{{ card.count }}</div>
-      </div>
-  
-      
-  
-      <!-- <div
-        class="card-div d-flex bg-3"
-        [class.active_card]="tabName == 'UnderProcess'"
-        (click)="choosepageTab('UnderProcess')"
-      >
-        <div class="img-wrapper">
-          <mat-icon class="placement" svgIcon="vendor_rm"></mat-icon>
-        </div>
-        <div>
-          <div class="f-12">Invoice Under Process </div>
-          <div class="f-15">{{ UnderProcessInv }}</div>
-        </div>
-      </div>
-
-      <div
-        class="card-div d-flex bg-2"
-        [class.active_card]="tabName == 'Posted'"
-        (click)="choosepageTab('Posted')"
-      >
-        <div class="img-wrapper">
-          <mat-icon class="placement" svgIcon="vendor_pr"></mat-icon>
-        </div>
-        <div>
-          <div class="f-12">Invoiced</div>
-          <div class="f-15">{{ PostedInv }}</div>
-        </div>
-      </div>
-
-      <div
-        class="card-div d-flex bg-2"
-        [class.active_card]="tabName == 'Collections'"
-        (click)="choosepageTab('Collections')"
-      >
-        <div class="img-wrapper">
-          <mat-icon class="placement" svgIcon="vendor_pr"></mat-icon>
-        </div>
-        <div>
-          <div class="f-12">Collections</div>
-          <div class="f-15">{{ CollectionsInv }}</div>
-        </div>
-      </div>
-  
-      <div
-        class="card-div d-flex bg-4"
-        [class.active_card]="tabName == 'Rejected'"
-        (click)="choosepageTab('Rejected')"
-      >
-        <div class="img-wrapper">
-          <mat-icon class="placement" svgIcon="vendor_rej"></mat-icon>
-        </div>
-        <div>
-          <div class="f-12">Rejected</div>
-          <div class="f-15">{{ RejectedInv }}</div>
-        </div>
-      </div> -->
+      </ng-container>
     </div>
   
-    <div class="pt-1 tabDiv bg-design-all" [ngSwitch]="tabName">
+    <div class="mt-2" [ngSwitch]="tabName">
       <!-- Total invoices Tab -->
       <div *ngSwitchCase="'Total'">
-        <app-table
-          [tableData]="totalTableData"
+        <app-exception-table
           [invoiceColumns]="columnsForTotal"
-          [showPaginator]="showPaginatortotal"
-          [columnsToFilter]="totalColumnField"
-          [columnLength]="ColumnLengthtotal"
+          [columnsToDisplay]="totalColumnField"
+          [showPaginatorAllInvoice]="showPaginatortotal"
+          [ColumnLength]="ColumnLengthtotal"
+          [columnsData]="totalTableData"
         >
-        </app-table>
+        </app-exception-table>
       </div>
   
       <!-- UnderProcess invoices Tab -->
       <div *ngSwitchCase="'UnderProcess'">
-        <app-table
-          [tableData]="UnderProcessTableData"
+        <app-exception-table
           [invoiceColumns]="columnsForUnderProcess"
-          [showPaginator]="showPaginatorUnderProcess"
-          [columnsToFilter]="UnderProcessColumnField"
-          [columnLength]="ColumnLengthUnderProcess"
+          [columnsToDisplay]="UnderProcessColumnField"
+          [showPaginatorAllInvoice]="showPaginatorUnderProcess"
+          [ColumnLength]="ColumnLengthUnderProcess"
+          [columnsData]="UnderProcessTableData"
         >
-        </app-table>
+        </app-exception-table>
       </div>
   
       <!-- Posted invoices Tab -->
       <div *ngSwitchCase="'Posted'">
-        <app-table
-          [tableData]="PostedTableData"
+        <app-exception-table
           [invoiceColumns]="columnsForPosted"
-          [showPaginator]="showPaginatorPosted"
-          [columnsToFilter]="PostedColumnField"
-          [columnLength]="ColumnLengthPosted"
+          [columnsToDisplay]="PostedColumnField"
+          [showPaginatorAllInvoice]="showPaginatorPosted"
+          [ColumnLength]="ColumnLengthPosted"
+          [columnsData]="PostedTableData"
         >
-        </app-table>
+        </app-exception-table>
         <!-- <app-table
             [tableData]="CollectionsTableData"
             [invoiceColumns]="columnsForCollections"
@@ -139,26 +64,27 @@
   
       <!-- Collections invoices Tab -->
       <div *ngSwitchCase="'Collections'">
-        <app-table
-          [tableData]="CollectionsTableData"
+        <app-exception-table
           [invoiceColumns]="columnsForCollections"
-          [showPaginator]="showPaginatorCollections"
-          [columnsToFilter]="CollectionsColumnField"
-          [columnLength]="ColumnLengthCollections"
+          [columnsToDisplay]="CollectionsColumnField"
+          [showPaginatorAllInvoice]="showPaginatorCollections"
+          [ColumnLength]="ColumnLengthCollections"
+          [columnsData]="CollectionsTableData"
         >
-        </app-table>
+        </app-exception-table>
       </div>
 
       <!-- Rejected invoices Tab -->
       <div *ngSwitchCase="'Rejected'">
-        <app-table
-          [tableData]="RejectedTableData"
+
+        <app-exception-table
           [invoiceColumns]="columnsForRejected"
-          [showPaginator]="showPaginatorRejected"
-          [columnsToFilter]="RejectedColumnField"
-          [columnLength]="ColumnLengthRejected"
+          [columnsToDisplay]="RejectedColumnField"
+          [showPaginatorAllInvoice]="showPaginatorRejected"
+          [ColumnLength]="ColumnLengthRejected"
+          [columnsData]="RejectedTableData"
         >
-        </app-table>
+        </app-exception-table>
       </div>
       <ngx-spinner
         bdColor="rgba(251, 251, 251, 0.8)"
@@ -170,4 +96,30 @@
         <p style="color: rgb(0, 0, 0)"></p>
       </ngx-spinner>
     </div>
+
+    <dialog #process_dialog>
+      <div class="d-flex justify-content-between mb-2">
+        <h6 class="f-14">Please select the option to filter</h6>
+        <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
+      </div>
+      <div class="inputBox">
+        <label class="f-12 shade_color">Start & End Date</label><br>
+        <p-calendar
+          [(ngModel)]="rangeDates"
+          selectionMode="range"
+          [minDate]="minDate"
+          [maxDate]="maxDate"
+          placeholder="Select dates to Filter"
+          [readonlyInput]="true"
+          [showIcon]="true"
+          showButtonBar="true"
+          inputId="range"
+          (onClearClick)="clearDates()"
+        ></p-calendar>
+      </div>
+      
+        <div class="d-flex justify-content-end footer mt-3">
+          <button class="btnUpload" (click)="filterByDate(rangeDates)">Filter</button>
+        </div>
+    </dialog>
   </div>

@@ -1,4 +1,3 @@
-import { DataService } from './../../../services/dataStore/data.service';
 import { ImportExcelService } from './../../../services/importExcel/import-excel.service';
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
@@ -42,14 +41,11 @@ export class VendorBasedChartsComponent implements OnInit {
   selectDate: Date;
   displayYear;
   lastYear: number;
-  partyType: string;
-  isDesktop: boolean;
 
   constructor(
     private chartsService: ChartsService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
-    private dataService : DataService,
     private ImportExcelService: ImportExcelService,
     private router : Router,
     private datePipe : DatePipe,
@@ -57,35 +53,25 @@ export class VendorBasedChartsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if(this.dataService.configData?.vendorInvoices){
-      this.viewType = this.chartsService.vendorTabs;
-      this.isDesktop = this.dataService.isDesktop;
-      if(this.dataService.ap_boolean){
-        this.partyType = 'Vendor';
-      } else {
-        this.partyType = 'Customer';
-      }
-      // this.readExceptionData();
-      this.prepareColumns();
+    this.viewType = this.chartsService.vendorTabs;
+    // this.readExceptionData();
+    this.prepareColumns();
+    this.dateRange();
+    if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
+      this.viewType = 'Process';
+    } else if(this.router.url == '/customer/home/vendorBasedReports/exceptionReports'){
+      this.viewType = 'Exception';
+    } else if(this.router.url == '/customer/home/vendorBasedReports/emailExceptionReports'){
+      this.viewType = 'emailException';
       this.readEmailExceptionData('');
+    }else {
+      this.viewType = 'onboarded';
       this.readOnboardedData('');
-      this.dateRange();
-      if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
-        this.viewType = 'Process';
-      } else if(this.router.url == '/customer/home/vendorBasedReports/exceptionReports'){
-        this.viewType = 'Exception';
-      } else if(this.router.url == '/customer/home/vendorBasedReports/emailExceptionReports'){
-        this.viewType = 'emailException';
-      }else {
-        this.viewType = 'onboarded';
-        this.getDate();
-      }
-    } else {
-      history.back();
+      this.getDate();
     }
-
   }
 
+  // changing tabs
   choosepageTab(value) {
     this.viewType = value;
     this.chartsService.vendorTabs = value;
@@ -94,9 +80,11 @@ export class VendorBasedChartsComponent implements OnInit {
     } else if(value == 'Exception') {
       this.router.navigate(['/customer/home/vendorBasedReports/exceptionReports']);
     } else if(value == 'emailException') {
+      this.readEmailExceptionData('');
       this.router.navigate(['/customer/home/vendorBasedReports/emailExceptionReports']);
     } else if(value == 'onboarded') {
       this.router.navigate(['/customer/home/vendorBasedReports/onboardedReports']);
+      this.readOnboardedData('');
     }
   }
 
@@ -110,7 +98,7 @@ export class VendorBasedChartsComponent implements OnInit {
     ];
 
     this.columnsForonboard = [
-      { field: 'VendorName', header: `${this.partyType} Name` },
+      { field: 'VendorName', header: 'Vendor Name' },
       { field: 'EntityName', header: 'Entity' },
       { field: 'CreatedOn', header: 'Onboarded Date' },
       { field: 'UpdatedOn', header: 'Last updated' },
@@ -152,11 +140,15 @@ export class VendorBasedChartsComponent implements OnInit {
   }
 
   readOnboardedData(filter){
+    this.SpinnerService.show();
     this.chartsService.getOnbordedData(filter).subscribe((data:any)=>{
       this.onboardTableData = data.data;
+      this.SpinnerService.hide();
       if(this.onboardTableData.length >10){
         this.showPaginatoronboard = true;
       }
+    },err=>{
+      this.SpinnerService.hide();
     })
   }
 

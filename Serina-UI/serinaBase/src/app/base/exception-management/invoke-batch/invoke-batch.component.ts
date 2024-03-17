@@ -19,12 +19,12 @@ import { PermissionService } from 'src/app/services/permission.service';
 })
 export class InvokeBatchComponent implements OnInit {
   ColumnsForInvokeBatch = [
-    { field: 'PODocumentID', header: 'PO Number' },
-    { field: 'docheaderID', header: 'Invoice Number' },
-    { field: 'VendorName', header: 'Vendor Name' },
-    { field: 'documentDate', header: 'Date' },
-    { field: 'prvBatch', header: 'Prev Batch' },
-    { field: 'Name', header: 'Selected rule' },
+    { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+    { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+    { dbColumnname: 'documentDate', columnName: 'Date' },
+    { dbColumnname: 'prvBatch', columnName: 'Prev Batch' },
+    { dbColumnname: 'Name', columnName: 'Selected rule' },
   ];
   columnsData = [];
   showPaginatorAllInvoice: boolean;
@@ -51,7 +51,6 @@ export class InvokeBatchComponent implements OnInit {
     private tagService: TaggingService,
     private exceptionService: ExceptionsService,
     private ngxSpinner: NgxSpinnerService,
-    private MessageService: MessageService,
     private alertService: AlertService,
     private router : Router,
     private ImportExcelService: ImportExcelService,
@@ -76,18 +75,18 @@ export class InvokeBatchComponent implements OnInit {
   // to prepare display columns array
   prepareColumns() {
     this.columnsForTotal = [
-      // { field: 'VendorName', header: 'Vendor Name' },
-      // { field: 'docheaderID', header: 'Invoice Number' },
-      // { field: 'PODocumentID', header: 'PO Number' },
-      { field: 'EntityName', header: 'Entity' },
-      { field: 'started_on', header: 'Started time' },
-      { field: 'compeleted_on', header: 'End time' },
-      { field: 'status', header: 'Status' },
+      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      // { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      // { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      { dbColumnname: 'EntityName', columnName: 'Entity' },
+      { dbColumnname: 'started_on', columnName: 'Started time' },
+      { dbColumnname: 'compeleted_on', columnName: 'End time' },
+      { dbColumnname: 'status', columnName: 'Batch Status' },
     ];
 
     this.columnsForTotal.forEach((e) => {
-      this.totalColumnHeader.push(e.header);
-      this.totalColumnField.push(e.field);
+      this.totalColumnHeader.push(e.columnName);
+      this.totalColumnField.push(e.dbColumnname);
     });
 
     this.ColumnLengthtotal = this.columnsForTotal.length;
@@ -137,8 +136,7 @@ export class InvokeBatchComponent implements OnInit {
       },
       (error) => {
         this.ngxSpinner.hide();
-        this.alertService.errorObject.detail = error.statusText;
-        this.MessageService.add(this.alertService.errorObject);
+        this.alertService.error_alert("Server error");
       }
     );
   }
@@ -162,11 +160,9 @@ export class InvokeBatchComponent implements OnInit {
       ]
     }
     this.serviceProviderService.triggerBatch(triggerData).subscribe(data=>{
-      this.alertService.addObject.detail = data.result;
-      this.MessageService.add(this.alertService.addObject);
+      this.alertService.success_alert(data.result);
     },err=>{
-      this.alertService.errorObject.detail = "Server error"
-      this.MessageService.add(this.alertService.errorObject);
+      this.alertService.error_alert("Server error");
     })
   }
 

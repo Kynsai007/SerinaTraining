@@ -274,8 +274,8 @@ export class SharedService {
   readserviceproviderbyid() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceprovider/` + this.spID).pipe(retry(3));
   }
-  readserviceprovideraccount(data) {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceprovideraccount/${this.userId}?${data}`).pipe(retry(3));
+  readserviceprovideraccount(data,apiParam) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceprovideraccount/${this.userId}?${data}${apiParam}`).pipe(retry(3));
   }
   createserviceprovideraccount(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/newSPAccount/${this.userId}/serviceId/` + this.spID, data).pipe(retry(3));

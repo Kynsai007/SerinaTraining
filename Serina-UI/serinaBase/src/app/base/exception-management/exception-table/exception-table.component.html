@@ -23,7 +23,7 @@
     <div
       class="card"
       (click)="
-        !router.url.includes('documentSummary') ? editInvoice(e_data) : ''
+        !router.url.includes('documentSummary') && !router.url.includes('home') && !router.url.includes('service_batch_trigger') ? editInvoice(e_data) : ''
       "
     >
       <div
@@ -296,7 +296,12 @@
         </th>
         <th
           class="action_Zindex"
-          *ngIf="isDesktop && !router.url.includes('documentSummary')"
+          *ngIf="
+            isDesktop &&
+            !router.url.includes('documentSummary') &&
+            !router.url.includes('home') && 
+            !router.url.includes('service_batch_trigger')
+          "
         >
           Actions
           <i
@@ -313,7 +318,10 @@
           ></i>
         </th>
         <th
-          *ngIf="!isDesktop"
+          *ngIf="!isDesktop &&
+          !router.url.includes('documentSummary') &&
+          !router.url.includes('home') && 
+          !router.url.includes('service_batch_trigger')"
           class="action_Zindex"
           [ngClass]="invoceDoctype ? 'ap_bgClor' : 'ar_bgClr'"
           style="width: 54px"
@@ -517,7 +525,8 @@
             </ng-container>
           </ng-container>
         </td>
-        <td>
+        <td *ngIf="!router.url.includes('home') && 
+        !router.url.includes('service_batch_trigger')">
           <i
             *ngIf="router.url.includes('invoice')"
             class="pi pi-eye f-13 showEye mr-2 font_weight_500"
@@ -585,17 +594,17 @@
               ></i>
             </span>
 
-            <span
+            <!-- <span
               style="visibility: hidden"
               class="ml-2 icon_style"
               *ngIf="invoiceData.sourcetype == 'RPA'"
-              title="Uploaded through Mail"
+              title="Uploaded through RPA"
             >
               <i
                 class="fa fa-envelope f-13 font_weight_500"
                 aria-hidden="true"
               ></i>
-            </span>
+            </span> -->
 
             <span
               class="ml-2 icon_style"
@@ -836,7 +845,7 @@
             alt="imageUrl"
           />
           <br />
-          No invoices found.
+          No records found.
         </td>
       </tr>
     </ng-template>

@@ -261,6 +261,9 @@
 </mat-drawer-container> -->
 
 <div class="layout">
+  <nav class="nav_disable" *ngIf="isNewVendorForERP">
+
+  </nav>
   <nav class="desktop d-flex justify-content-between">
     <div class="logo">
       <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" />
@@ -385,7 +388,12 @@
   </nav>
 
   <section>
-    <router-outlet></router-outlet>
+    <div *ngIf="!isNewVendorForERP">
+      <router-outlet></router-outlet>
+    </div>
+    <div *ngIf="isNewVendorForERP">
+      <app-profile-vendor></app-profile-vendor>
+    </div>
   </section>
 </div>
 

@@ -75,6 +75,10 @@ export class AppComponent {
       sanitizer.bypassSecurityTrustResourceUrl('assets/Serina Assets/Assets/Vendor/error_inv_ic.svg')
     );
     this.iconRegistry.addSvgIcon(
+      'filter_ic',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/Serina Assets/Assets/Vendor/filter (1).svg')
+    );
+    this.iconRegistry.addSvgIcon(
       'service_total',
       sanitizer.bypassSecurityTrustResourceUrl('assets/Serina Assets/Assets/Service/total_invoice_ic.svg')
     );

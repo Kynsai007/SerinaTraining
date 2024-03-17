@@ -43,13 +43,14 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   accounts: FormArray;
   costAllocation: FormArray;
   header_Ac = 'Add Service Provider Account';
+  offsetCount = 1;
+  accountsArray = [];
 
   constructor(private sharedService: SharedService,
     public dataService : DataService,
     private SpinnerService : NgxSpinnerService,
     private fb: FormBuilder,
     private datePipe : DatePipe,
-    private messageService : MessageService,
     private alertService : AlertService,
     public router : Router) { }
 
@@ -70,7 +71,9 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
         } else if(this.dataService.masterSubTabName == 'account'){
           this.SpAccountDetails = this.initialForm();
           this.toGetEntity();
-          this.SPAccountDetails();
+          this.accountList = [];
+          this.offsetCount = 1;
+          this.SPAccountDetails('&offset=1&limit=50');
         }
         this.getOPunits();
         // this.getApprover();
@@ -131,9 +134,9 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
     });
   }
 
-  SPAccountDetails() {
+  SPAccountDetails(apiParam) {
     this.SpinnerService.show();
-    this.sharedService.readserviceprovideraccount(`sp_id=${this.sharedService.spID}`).subscribe((data: any) => {
+    this.sharedService.readserviceprovideraccount(`sp_id=${this.sharedService.spID}`,apiParam).subscribe((data: any) => {
       const accountsPushedArray = [];
       data.forEach((element) => {
         let mergedData = {
@@ -145,7 +148,9 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
         };
         accountsPushedArray.push(mergedData);
       });
-      this.accountList = accountsPushedArray;
+      // this.accountList.push();
+      this.accountsArray = this.accountList.concat(accountsPushedArray);
+      this.accountList = this.accountsArray;
       this.SpinnerService.hide();
     },err=>{
       this.SpinnerService.hide();
@@ -155,7 +160,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   accntSearch(val) {
     this.SpinnerService.show();
     let spAccount = []
-    this.sharedService.readserviceprovideraccount(`sp_acc_number=${val}`).subscribe((data: any) => {
+    this.sharedService.readserviceprovideraccount(`sp_acc_number=${val}`,'').subscribe((data: any) => {
       data.forEach((element) => {
         let mergedData = {
           ...element.Credentials,
@@ -367,7 +372,9 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
           (data: any) => {
             this.alertService.success_alert("Created successfully")
             // this.createspAccount = false;
-            this.SPAccountDetails();
+            this.accountList = [];
+            this.offsetCount = 1;
+            this.SPAccountDetails('&offset=1&limit=50');
             this.SpAccountDetails = this.initialForm();
             this.accounts = new FormArray([]);
             this.costAllocation = new FormArray([]);
@@ -416,9 +423,12 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
         .updateSpAccount(JSON.stringify(spUpdateAcountdata))
         .subscribe(
           (data) => {
-            this.messageService.add(this.alertService.updateObject);
+            // this.messageService.add(this.alertService.updateObject);
+            this.alertService.success_alert("Successfully updated")
             // this.createspAccount = false;
-            this.SPAccountDetails();
+            this.accountList = [];
+            this.offsetCount = 1;
+            this.SPAccountDetails('&offset=1&limit=50');
             this.SpAccountDetails = this.initialForm();
             this.accounts = new FormArray([]);
             this.costAllocation = new FormArray([]);
@@ -632,5 +642,9 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
       URL: this.spDetails.default_url
     });
     this.selectedEntity(this.spDetails.idEntity);
+  }
+  onScroll(){
+    this.offsetCount++
+    this.SPAccountDetails(`&offset=${this.offsetCount}&limit=50`);
   }
 }

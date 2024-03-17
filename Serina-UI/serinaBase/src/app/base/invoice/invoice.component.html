@@ -121,23 +121,26 @@
         </li>
       </ul>
 
-      <div class="nav_sub mr-2 posted_filter" *ngIf="route.url == archivedTab" style="width: 23%;">
-        <label class="f-12 mb-0 z_index">Select</label>
-        <select
-          class="form-control selectFilter f-14"
-          (change)="selectinvType($event.target.value)"
-        >
-          <option value=" ">Both</option>
-          <option value="ven">Vendor</option>
-          <option value="ser">Service</option>
-        </select>
-      </div>
 
-      <div class="d-flex nav_sub" [ngStyle]="{'width': route.url == archivedTab ? '23%':'49%'}">
-        <div class="mr-2 wild_search_all" *ngIf="route.url == invoiceTab || route.url == serviceInvoiceTab">
+
+      <div class="d-flex filters">
+        <div class="filterDiv posted_filter" *ngIf="route.url == archivedTab">
+          <div class="filter_box">
+            <label class="f-12 z_index">Select</label>
+            <select
+              class="f-14"
+              (change)="selectinvType($event.target.value)"
+            >
+              <option value=" ">Both</option>
+              <option value="ven">Vendor</option>
+              <option value="ser">Service</option>
+            </select>
+          </div>
+        </div>
+        <div class="filterDiv" *ngIf="route.url == invoiceTab || route.url == serviceInvoiceTab">
           <div class="filter_box">
             <label for="uni" class="f-12">
-              Search Universal <br />
+              Search Universal </label>
               <input
                 [(ngModel)]="searchText"
                 type="text"
@@ -146,7 +149,6 @@
                 [placeholder]="search_placeholder"
                 (keyup)="universalSearch(searchText)"
               />
-            </label>
           </div>
           <p-calendar
             #datePicker
@@ -164,7 +166,7 @@
           ></p-calendar>
         </div>
         <div
-          class="input-group uni_dwn_btn1 left1_ser"
+          class="filterDiv "
           *ngIf="
             !(
               route.url.includes('allInvoices') ||
@@ -173,16 +175,17 @@
             )
           "
         >
-        <label class="f-12 mb-0 z_index">Search</label><br>
-          <input
-            #serachStr
-            type="text"
-            class="searchInput b-r-right-0 f-14"
-            [ngStyle]="{'width': route.url == archivedTab ? '17vw':'41vw'}"
-            placeholder="Ex: PO number, etc.."
-            (keyup)="keySearch(serachStr.value,$event)"
-            [(ngModel)]="searchStr"
-          />
+          <div class="filter_box">
+            <label class="f-12 z_index">Search</label>
+            <input
+              #serachStr
+              type="text"
+              class="textFilter f-14"
+              placeholder="Ex: PO number, etc.."
+              (keyup)="keySearch(serachStr.value,$event)"
+              [(ngModel)]="searchStr"
+            />
+          </div>
           <button
             class="secondary_btn b-r-left-0 click_search"
             (click)="filterString(serachStr.value)"
@@ -190,12 +193,11 @@
             <i class="fa fa-search" aria-hidden="true"></i>
           </button>
         </div>
-        <!-- <button
-          class="btnUpload mr-2"
-          (click)="exportExcel()"
-        >
-          <i class="fa fa-download" aria-hidden="true"></i>
-        </button> -->
+        <div class="filter_box status export">
+          <button class="secondary_btn f-18" (click)="exportExcel()">
+            <i class="fa fa-download"></i>
+          </button>
+        </div>
       </div>
     </div>
     <div class="pt-2">

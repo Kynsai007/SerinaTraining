@@ -11,14 +11,14 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 @Component({
   selector: 'app-exception-reports',
   templateUrl: './exception-reports.component.html',
-  styleUrls: ['./exception-reports.component.scss'],
+  styleUrls: ['./exception-reports.component.scss','../process-reports/process-reports.component.scss'],
 })
 export class ExceptionReportsComponent implements OnInit, OnChanges {
   exceptionData: any;
-  // totalInv: number;
-  // OcrInv: number;
-  // batchInv: number;
-  // ErpInv: number;
+  totalInv: number;
+  OcrInv: number;
+  batchInv: number;
+  ErpInv: number;
 
   tabName;
   totalTableData = [];
@@ -56,23 +56,21 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
   filterDataOCR: any[];
   filterDataBatch: any[];
   filterDataERP: any[];
-  partyType: string;
-
-  cardObj = [
-    { cls: 'bg-1', icon: 'vendor_up', heading: 'Total Exceptions', count: 0, tab : 'Total'},
-    { cls: 'bg-2', icon: 'vendor_pr', heading: 'OCR Queue', count: 0, tab : 'OCR'},
-    { cls: 'bg-3', icon: 'vendor_rm', heading: 'Batch Queue', count: 0, tab : 'Batch'},
-    { cls: 'bg-4', icon: 'vendor_rej', heading: 'ERP Queue', count: 0, tab : 'ERP'}
-  ]
   isDesktop: boolean;
+  cardsArr = [
+    { title: 'Total Exception Invoices' , count:0, image:'vendor_up',name:'Total' },
+    { title: 'OCR Queue' , count:0, image:'vendor_pr' ,name:'OCR'},
+    { title: 'Batch Queue' , count:0, image:'vendor_rm',name:'Batch' },
+    { title: 'ERP Queue' , count:0, image:'vendor_rej',name:'ERP' }]
   constructor(
-    private dataService: DataService,
+    private tagService: TaggingService,
     private chartsService: ChartsService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
+    private dataService: DataService,
   ) { }
   ngOnChanges(changes: SimpleChanges): void {
     // if (changes.exceptionData &&  changes.exceptionData.currentValue && changes.exceptionData.currentValue.data) {
@@ -86,11 +84,6 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
     // this.tagService.batchProcessTab = 'normal';
     this.tabName = this.chartsService.exceptionVendorTab;
     this.isDesktop = this.dataService.isDesktop;
-    if(this.dataService.ap_boolean){
-      this.partyType = 'Vendor';
-    } else {
-      this.partyType = 'Customer';
-    }
     this.dateRange();
     this.prepareColumns();
     this.readExceptionData('');
@@ -113,94 +106,93 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
 
   prepareColumns() {
     if(this.isDesktop){
-      this.columnsForTotal = [
-        { field: 'VendorName', header: `${this.partyType} Name`},
-        { field: 'docheaderID', header: 'Invoice Number' },
-        { field: 'PODocumentID', header: 'PO Number' },
-        { field: 'EntityName', header: 'Entity' },
-        { field: 'documentDate', header: 'Invoice Date' },
-        { field: 'totalAmount', header: 'Amount' },
-        { field: 'sourcetype', header: 'source' },
-      ];
-  
-      this.columnsForOCR = [
-        { field: 'VendorName', header: `${this.partyType} Name` },
-        { field: 'docheaderID', header: 'Invoice Number' },
-        { field: 'Account', header: `${this.partyType} Account` },
-        { field: 'documentdescription', header: 'Description' },
-        { field: 'documentDate', header: 'Invoice Date' },
-        // { field: 'UpdatedOn', header: 'Last Modified' },
-        { field: 'totalAmount', header: 'Amount' },
-      ];
-  
-      this.columnsForbatch = [
-        { field: 'VendorName', header: `${this.partyType} Name` },
-        { field: 'docheaderID', header: 'Invoice Number' },
-        { field: 'PODocumentID', header: 'PO Number' },
-        // { field: 'Name', header: 'Rule' },
-        { field: 'status', header: 'Status' },
-        { field: 'documentDate', header: 'Invoice Date' },
-        { field: 'totalAmount', header: 'Amount' },
-        // { field: 'Account', header: 'Actions' },
-      ];
-  
-      this.columnsForERP = [
-        { field: 'VendorName', header: `${this.partyType} Name` },
-        { field: 'docheaderID', header: 'Invoice Number' },
-        { field: 'Account', header: `${this.partyType} Account` },
-        // { field: 'Account', header: 'Approval Type' },
-        { field: 'documentDate', header: 'Invoice Date' },
-        // { field: 'UpdatedOn', header: 'Last Modified' },
-        { field: 'totalAmount', header: 'Amount' },
-      ];
-    } else {
-      this.columnsForTotal = [
-        { field: 'VendorName', header: `${this.partyType} Name`},
-        { field: 'docheaderID', header: 'Invoice Number' },
-        { field: 'PODocumentID', header: 'PO Number' },
-        { field: 'EntityName', header: 'Entity' },
-      ];
-  
-      this.columnsForOCR = [
-        { field: 'VendorName', header: `${this.partyType} Name` },
-        { field: 'docheaderID', header: 'Invoice Number' },
-        { field: 'Account', header: `${this.partyType} Account` },
-        { field: 'documentdescription', header: 'Description' },
-      ];
-  
-      this.columnsForbatch = [
-        { field: 'VendorName', header: `${this.partyType} Name` },
-        { field: 'docheaderID', header: 'Invoice Number' },
-        { field: 'PODocumentID', header: 'PO Number' },
-        // { field: 'Name', header: 'Rule' },
-        { field: 'status', header: 'Status' },
-        // { field: 'Account', header: 'Actions' },
-      ];
-  
-      this.columnsForERP = [
-        { field: 'VendorName', header: `${this.partyType} Name` },
-        { field: 'docheaderID', header: 'Invoice Number' },
-        { field: 'Account', header: `${this.partyType} Account` },
-      ];
-    }
+    this.columnsForTotal = [
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      { dbColumnname: 'EntityName', columnName: 'Entity' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
+      { dbColumnname: 'sourcetype', columnName: 'source' },
+    ];
 
+    this.columnsForOCR = [
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'Account', columnName: 'Vendor Account' },
+      { dbColumnname: 'documentdescription', columnName: 'Description' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      // { dbColumnname: 'UpdatedOn', columnName: 'Last Modified' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
+    ];
+
+    this.columnsForbatch = [
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      // { dbColumnname: 'Name', columnName: 'Rule' },
+      { dbColumnname: 'status', columnName: 'Status' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
+      // { dbColumnname: 'Account', columnName: 'Actions' },
+    ];
+
+    this.columnsForERP = [
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'Account', columnName: 'Vendor Account' },
+      // { dbColumnname: 'Account', columnName: 'Approval Type' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      // { dbColumnname: 'UpdatedOn', columnName: 'Last Modified' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
+    ];
+  } else {
+    this.columnsForTotal = [
+      { dbColumnname: 'VendorName', columnName: `Vendor Name`},
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      { dbColumnname: 'EntityName', columnName: 'Entity' },
+    ];
+
+    this.columnsForOCR = [
+      { dbColumnname: 'VendorName', columnName: `Vendor Name` },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'Account', columnName: `Vendor Account` },
+      { dbColumnname: 'documentdescription', columnName: 'Description' },
+    ];
+
+    this.columnsForbatch = [
+      { dbColumnname: 'VendorName', columnName: `Vendor Name` },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      // { dbColumnname: 'Name', columnName: 'Rule' },
+      { dbColumnname: 'status', columnName: 'Status' },
+      // { dbColumnname: 'Account', columnName: 'Actions' },
+    ];
+
+    this.columnsForERP = [
+      { dbColumnname: 'VendorName', columnName: `Vendor Name` },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'Account', columnName: `Vendor Account` },
+    ];
+  }
 
     this.columnsForTotal.forEach((e) => {
-      this.totalColumnHeader.push(e.header);
-      this.totalColumnField.push(e.field);
+      this.totalColumnHeader.push(e.columnName);
+      this.totalColumnField.push(e.dbColumnname);
     });
 
     this.columnsForOCR.forEach((e) => {
-      this.OCRColumnHeader.push(e.header);
-      this.OCRColumnField.push(e.field);
+      this.OCRColumnHeader.push(e.columnName);
+      this.OCRColumnField.push(e.dbColumnname);
     });
     this.columnsForbatch.forEach((e) => {
-      this.batchColumnHeader.push(e.header);
-      this.batchColumnField.push(e.field);
+      this.batchColumnHeader.push(e.columnName);
+      this.batchColumnField.push(e.dbColumnname);
     });
     this.columnsForERP.forEach((e) => {
-      this.ERPColumnHeader.push(e.header);
-      this.ERPColumnField.push(e.field);
+      this.ERPColumnHeader.push(e.columnName);
+      this.ERPColumnField.push(e.dbColumnname);
     });
 
     this.ColumnLengthtotal = this.columnsForTotal.length;
@@ -211,6 +203,7 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
   readExceptionData(query) {
     this.SpinnerService.show();
     this.chartsService.getvendorExceptionSummary(query).subscribe((data) => {
+      console.log(data);
       this.exceptionData = data;
       // this.totalInv = data.data.total[0].count;
       // this.OcrInv = data.data.ocrqueue[0].count;
@@ -236,7 +229,24 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
             this.batchTableData.push(element);
           } 
       });
-      this.cardObj[1].count = this.OCRTableData.length;
+      // (element.documentsubstatusID == 7 )&& 
+      // (element.documentsubstatusID == 8 )&& 
+      // (element.documentsubstatusID == 9 )&& 
+      // (element.documentsubstatusID == 14 )&& 
+      // (element.documentsubstatusID == 15 )&& 
+      // (element.documentsubstatusID == 16 )&& 
+      // (element.documentsubstatusID == 17 )&& 
+      // (element.documentsubstatusID == 19 )&& 
+      // (element.documentsubstatusID == 20) && 
+      // (element.documentsubstatusID == 21) && 
+      // (element.documentsubstatusID == 22) && 
+      // (element.documentsubstatusID == 27) && 
+      // (element.documentsubstatusID == 28) && 
+      // (element.documentsubstatusID == 33) && 
+      // (element.documentsubstatusID == 34)  
+      // if (element.documentStatusID == 4 && (element.documentsubstatusID != 4 && element.documentsubstatusID != 31 && element.documentsubstatusID != 35 && element.documentsubstatusID != 36 && element.documentsubstatusID != 38 && element.documentsubstatusID != 39))
+      this.OcrInv = this.OCRTableData.length;
+      this.cardsArr[1].count = this.OCRTableData.length;
       if (this.OCRTableData.length > 10) {
         this.showPaginatorOCR = true;
       } else {
@@ -247,8 +257,10 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
       } else {
         this.showPaginatorbatch = false;
       }
-      this.cardObj[2].count = this.batchTableData.length;
-      this.cardObj[3].count = this.ERPTableData.length;
+      this.cardsArr[2].count = this.batchTableData.length;
+      this.cardsArr[3].count = this.ERPTableData.length;
+      this.batchInv = this.batchTableData.length;
+      this.ErpInv = this.ERPTableData.length;
       if (this.ERPTableData.length > 10) {
         this.showPaginatorERP = true;
       } else {
@@ -258,8 +270,9 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
       //   this.SpinnerService.hide();
       // });
       this.totalTableData = this.OCRTableData.concat(this.batchTableData, this.ERPTableData);
-      this.cardObj[0].count = this.totalTableData.length;
-      if (this.cardObj[0].count > 10) {
+      this.totalInv = this.totalTableData.length;
+      this.cardsArr[0].count = this.totalTableData.length;
+      if (this.totalInv > 10) {
         this.showPaginatortotal = true;
       } else {
         this.showPaginatortotal = false;
@@ -273,7 +286,11 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
       this.SpinnerService.hide();
     });
   }
-  
+  // readExceptionData(data) {
+  //   // this.SpinnerService.show();
+  //   // this.chartsService.getvendorExceptionSummary().subscribe((data) => {
+
+  // }
   searchInvoiceDataV(evnt) {
 
   }
@@ -302,12 +319,12 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
 
     let dateFilter = '';
     if (date != '') {
-      console.log(date)
       const frmDate = this.datePipe.transform(date[0], 'yyyy-MM-dd');
       const toDate = this.datePipe.transform(date[1], 'yyyy-MM-dd');
       dateFilter = `?date=${frmDate}To${toDate}`;
     }
     this.readExceptionData(dateFilter);
+    this.closeDialog();
     // this.readInvoicedData(dateFilter);
     // this.readTotalInvoiceData(dateFilter);
     // this.readUnderProcessData(dateFilter);
@@ -363,5 +380,23 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
 
   clearDates() {
     this.filterByDate('');
+  }
+  openFilterDialog(event){
+    console.log(event)
+    let top = event.clientY + 10 + "px";
+    let left = "calc(55% + 100px)";
+    const dialog = document.querySelector('dialog');
+    dialog.style.top = top;
+    dialog.style.left = left;
+    if(dialog){
+      dialog.showModal();
+    }
+  }
+
+  closeDialog(){
+    const dialog = document.querySelector('dialog');
+    if(dialog){
+      dialog.close();
+    }
   }
 }

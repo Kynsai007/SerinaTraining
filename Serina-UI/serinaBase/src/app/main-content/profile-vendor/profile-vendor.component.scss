@@ -1,0 +1,94 @@
+.profile_main {
+    background-color: #fff;
+    height: calc(76svh + 15px);
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 5px;
+    display: flex;
+}
+.footer {
+    position: fixed;
+    bottom: 0;
+    height: 45px;
+    width: 100%;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 4px #00000029;
+    opacity: 1;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 20px;
+}
+.column1 {
+    width: 16%;
+    height: 100%;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000029;
+    border-right: 2px solid #00000029;
+}
+.column2 {
+    width: 84%;
+    height: 100%;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    padding: 26px 30px;
+
+}
+.nav-tabs .nav-link {
+    height: calc( 25.3svh + 5px);
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    position: relative;
+    img {
+        height: 16svh;
+    }
+    span {
+        opacity: 0.5;
+    }
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom: 0 !important;
+    border-right: 2px solid #358cd0 !important;
+    margin-right: -2px;
+    span {
+        opacity: 1;
+    }
+}
+.middle::after ,.middle::before {
+    content: "";
+    position: absolute;
+    left: 26px;
+    background-color: #00000029;
+    width: 80%;
+    height: 2px;
+}
+.middle::after {
+    bottom: 0;
+}
+.middle::before {
+    top: 0;
+}
+.box {
+    display: flex;
+    gap: 12px 20px;
+    flex-wrap: wrap;
+}
+.inputBox {
+    width: 300px;
+    height: 54px;
+    background: #F3F3F3 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 2px #00000029;
+    border-radius: 5px;
+    padding: 4px 16px;
+    input {
+        width: 100%;
+        border:0;
+        background-color: transparent;
+        position: relative;
+        top: -10px;
+    }
+    input:focus {
+        outline: 0;
+    }
+}

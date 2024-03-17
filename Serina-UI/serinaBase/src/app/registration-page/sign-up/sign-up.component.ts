@@ -1,7 +1,9 @@
+import { AlertService } from './../../services/alert/alert.service';
 import { RegistrationComponent } from './../registration/registration.component';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { RegistrationService } from 'src/app/services/registration/registration.service';
@@ -34,8 +36,8 @@ export class SignUpComponent implements OnInit {
     disableAutoFocus: false,
     placeholder: '',
     inputStyles: {
-      'width': '50px',
-      'height': '35px'
+      'width': '74px',
+      'height': '54px'
     }
   };
   timer:number;
@@ -44,18 +46,22 @@ export class SignUpComponent implements OnInit {
   usernameField: any;
   signupToken: any;
   activationBoolean = true;
+  tabName: string = 'verify';
+  accountType: any;
+  isEmailVerified: boolean;
 
   constructor(private fb:FormBuilder,
     private datePipe: DatePipe,
     private router:Router,
     private sharedService: SharedService,
-    private messageService : MessageService,
-    private registrationService : RegistrationService) { }
+    private dialogRef : MatDialogRef<SignUpComponent>,
+    private registrationService : RegistrationService,
+    private alert: AlertService) { }
 
   ngOnInit(): void {
     this.registrationForm = this.fb.group({
       userName : new FormControl('',[Validators.required,Validators.minLength(6)]),
-      vendorName : ['',Validators.required],
+      vendorName : [''],
       emailId :  new FormControl({value: '', disabled: true}, Validators.required),
       firstName : ['',Validators.required],
       lastName : ['',Validators.required],
@@ -83,35 +89,48 @@ export class SignUpComponent implements OnInit {
   // get user_name(){ return this.registrationForm.get('username');}
   savePasswordforNewuser(){
     let signup_value = this.registrationForm.getRawValue();
-    let Obj = {
-      "n_ven_user": {
-        "tempVendorName": signup_value.vendorName,
+    if(this.accountType == 'serina'){
+      let Obj = {
+        "n_ven_user": {
+          "tempVendorName": signup_value.vendorName,
+          "firstName": signup_value.firstName,
+          "lastName": signup_value.lastName,
+          "email": signup_value.emailId,
+          "role_id": 7
+        },
+        "n_cred": {
+          "LogName": signup_value.userName,
+          "LogSecret": signup_value.password
+        }
+      }
+  
+      if(signup_value.vendorName){
+        this.registrationService.signup_vendoruser( this.signupToken,JSON.stringify(Obj)).subscribe((data:any)=>{
+          this.alert.success_alert("Account created, sent for admin approval.")
+          this.dialogRef.close();
+      },error=>{
+        this.alert.error_alert("User already activated.")
+      })
+      } else {
+        this.alert.error_alert("Please add the Vendor name.")
+      }
+    } else {
+      let obj = {
+        "username": signup_value.userName,
         "firstName": signup_value.firstName,
         "lastName": signup_value.lastName,
         "email": signup_value.emailId,
-        "role_id": 7
-      },
-      "n_cred": {
-        "LogName": signup_value.userName,
-        "LogSecret": signup_value.password
+        "password": signup_value.password,
+        "account_type": this.accountType
       }
-    }
-
-    this.registrationService.signup_vendoruser( this.signupToken,JSON.stringify(Obj)).subscribe((data:any)=>{
-
-        this.messageService.add({
-          severity: "success",
-          summary: "Created",
-          detail: "Account created, sent for admin approval"
-        });
-        this.activationBoolean = false;
+      this.registrationService.vendorRegistration(JSON.stringify(obj)).subscribe((data:any)=>{
+        this.alert.success_alert("Account created, Please login and proceed the onboarding process.")
+        // this.activationBoolean = false;
+        this.dialogRef.close();
     },error=>{
-      this.messageService.add({
-        severity: "error",
-        summary: "error",
-        detail: "User already activated"
-      });
+      this.alert.error_alert("User already activated.")
     })
+    }
   }
 
   confirmPassword(value){
@@ -202,46 +221,49 @@ export class SignUpComponent implements OnInit {
   
       this.showOtpComponent = true;
       this.otpBool = true;
-      if(type == 'send'){
-        document.getElementById('signup').classList.add('slide');
-      }
+      // if(type == 'send'){
+      //   document.getElementById('signup').classList.add('slide');
+      // }
   }, err=>{
     if(err.status == 400){
-      this.messageService.add({
-        severity: "error",
-        summary: "error",
-        detail: "Email already present in the Serina."
-      });
+      this.alert.error_alert("Email already present in the Serina.")
     }
   })
 
   }
 
   verifyOTP(){
-    document.getElementById('signup').classList.remove('slide');
+    // document.getElementById('signup').classList.remove('slide');
     let obj= {
       "activation_code": this.otpToken,
       "password": "string"
     }
+
     this.registrationService.verifyOTP(this.otp,obj).subscribe((data:any)=>{
       this.registrationForm.patchValue({
         emailId: this.emailID
       });
-      this.signupToken = data.form_token
-      this.emailValidationBool = true;
-      document.getElementById('signup').classList.add('slide');
+      this.signupToken = data.form_token;
+      this.menuChange('create');
+      this.isEmailVerified = true;
+      // this.emailValidationBool = true;
+      // document.getElementById('signup').classList.add('slide');
     },err=>{
       if(err.status == 400){
-        this.messageService.add({
-          severity: "error",
-          summary: "error",
-          detail: "Please enter a valid OTP."
-        });
+        this.alert.error_alert("Please enter a valid OTP.")
       } else {
 
       }
     })
 
   }
-
+  menuChange(val:string){
+    this.tabName = val
+  }
+  onSelectType(val){
+    this.accountType = val;
+    // if(val == 'ERP'){
+      this.emailValidationBool = true;
+    // }
+  }
 }

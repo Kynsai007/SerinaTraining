@@ -1,12 +1,10 @@
-import { DataService } from './../../../services/dataStore/data.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { Component, OnInit } from '@angular/core';
 import { ChartsService } from 'src/app/services/dashboard/charts.service';
-
 @Component({
   selector: 'app-service-based-charts',
   templateUrl: './service-based-charts.component.html',
-  styleUrls: ['./service-based-charts.component.scss'],
+  styleUrls: ['./service-based-charts.component.scss','../vendor-based-charts/vendor-based-charts.component.scss'],
 })
 export class ServiceBasedChartsComponent implements OnInit {
   invoiceBysourceChartdata: any;
@@ -16,14 +14,9 @@ export class ServiceBasedChartsComponent implements OnInit {
   rangeDates: Date[];
 
   constructor(private chartsService: ChartsService,
-    private dateFilterService : DateFilterService,
-    private DataService: DataService) {}
+    private dateFilterService : DateFilterService) {}
 
-  ngOnInit(): void {
-    if(!this.DataService.configData.serviceInvoices){
-      history.back();
-    }
-  }
+  ngOnInit(): void {}
 
   choosepageTab(value) {
     this.viewType = value;

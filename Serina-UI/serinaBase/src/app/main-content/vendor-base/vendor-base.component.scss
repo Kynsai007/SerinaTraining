@@ -55,9 +55,10 @@
   .active_cls {
     opacity: 1 !important;
     border-bottom: 2px solid #358DC0;
+    color: #358DC0 !important;
   }
   .layout section {
-    padding: 0px 54px; 
+    padding: 0px 18px; 
     background: #f1f1f1 0% 0% no-repeat padding-box;
     position: relative;
     z-index: 1;
@@ -79,4 +80,10 @@
     justify-content: center;
     align-items: center;
     margin: 0px 10px;
+  }
+  .nav_disable {
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    background: #00000029 !important;
   }

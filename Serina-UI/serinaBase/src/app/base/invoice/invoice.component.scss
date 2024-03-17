@@ -200,16 +200,38 @@
   box-shadow: 0px 3px 6px #00000029;
   height: 100vh;
 }
-.wild_search_all {
+.filters {
+
+    border-radius: 5px;
+    opacity: 1;
+    padding: 4px 10px;
+    width: 49%;
+    border: 0;
+    gap: 20px;
+    height: 54px;
+}
+.filterDiv {
   display: flex;
   height: 54px;
   padding: 4px 23px;
   border-radius: 4px;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  width: 100%;
+  width: -webkit-fill-available;
+  align-items: center;
 }
-.filter_box input {
+.filter_box{
+  width: 100%;
+  width: -webkit-fill-available;
+}
+.filter_box input, select {
   border: 0;
   background-color: inherit;
-  width: 38vw;
+  width: 100%;
+  width: -webkit-fill-available;
+  position: relative;
+  top: -7px;
+  left: -2px;
 }
 .filter_box input:focus {
   outline: 0;
@@ -237,7 +259,7 @@
     z-index: 1;
 }
 .posted_filter {
-  width: 23%;
+  // width: 23%;
   padding: 6px 14px;
 }
 .input-group label {
@@ -338,4 +360,18 @@ dialog .footer {
     padding: 10px 21px !important;
     border-bottom: 1px solid #00000033;
   }
+}
+
+.export {
+  max-width: 60px;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 54px;
+  border-radius: 5px;
+}
+.export button {
+  min-width: 38px;
+  // margin-top: 6px;
 }

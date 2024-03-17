@@ -2834,6 +2834,7 @@ export class Comparision3WayComponent
             this.progress = null;
             this.success("Supporting Documents uploaded Successfully");
             this.uploadFileList = [];
+            this.support_doc_list = [];
             event.body?.result?.forEach(ele => {
               this.support_doc_list.push(ele);
             })

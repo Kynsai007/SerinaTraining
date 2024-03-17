@@ -1,70 +1,163 @@
-// .tableDataDiv {
-//     box-shadow: none;
-//     max-height: 70vh !important;
-//     min-height: 70vh !important;
-//     overflow: auto;
-//     margin-top: -5px;
-// }
-
 .img-wrapper {
-    width: 46px;
-    height: 46px;
-    margin: 0 15px 0 0;
-    padding: 10px 13px 12px 12px;
-    border-radius: 28px;
-    text-align: center;
-    background-color: white;
-  }
-  .card-div {
-    border-radius: 10px;
-    padding: 10px;
-    min-width: 13vw;
-    color: black;
-    background: white;
-    align-items: center;
-    flex-direction: column;
-    border-bottom: 8px solid;
-    box-shadow: 0px 3px 16px #00000014;
-  }
-  .f-15 {
-    font-size: 15px;
-    font-weight: 600;
-  }
-  .placement {
-    position: relative;
-    top: -1px;
-  }
-  
-  .bg-1 {
-    background: #4cbc9a;
-    color: white;
-  }
-  .bg-2 {
-    background-color: #5167b2;
-  }
-  .bg-3 {
-    background-color: #5dc5cc;
-  }
-  .bg-4 {
-    background-color: #fa8442;
-  }
-  .bg-5 {
-    background-color: #f15e5e;
-  }
-  .bg-6 {
-    background-color: #fb4953;
-  }
-  .bg-7 {
-    background-color: #faaf56;
-  }
-  
+  width: 40px;
+  height: 40px;
+  margin: 0 15px 0 0;
+  padding: 10px 13px 12px 12px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #358dc01a 0% 0% no-repeat padding-box;
+  box-shadow: 0px 2px 3px #00000029;
+  border-radius: 5px;
+}
+.card-div {
+  // border: 1px solid #eee;
+  // border-radius: 12px;
+  padding: 14px 20px 13px 15px;
+  // background-color: #fffbf0;
+  // min-width: 13vw;
+  // max-width: 16vw;
+  color: #b2b2b2;
+  position: relative;
+}
+.card-div::before,
+.card-div::after {
+  content: "";
+  position: absolute;
+  top: 17px;
+  bottom: 18px;
+  width: 2px;
+  left: -17px;
+  background: #dedede;
+}
+// .card-div::before {
+//   left: 0;
+// }
+// .card-div::after {
+//   right: 0;
+// }
+.ent_card {
+  width: 125px;
+  border: 1px solid #d3d3d35c;
+  padding: 5px 10px;
+  position: relative;
+  left: -1px;
+  top: -2px;
+}
+.placement {
+  position: relative;
+  top: -1px;
+}
+.ent_count:nth-child(1) {
+  border-left: 0px;
+  border-top: 0px;
+}
+.center-card-text {
+  text-align: center;
+  position: absolute;
+  top: 100px;
+  left: 0px;
+  width: 100%;
+}
+.countSb_div {
+  height: 60px;
+}
+.count_div {
+  position: absolute;
+  bottom: 0;
+  gap: 5px;
+}
+.count_div div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.line::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 15px;
+  width: 2px;
+  left: 41px;
+  background: #d3d3d3;
+}
+.line {
+  color: #358dc0;
+}
+.line_text {
+  color: #140101;
+  position: relative;
+  top: -10px;
+}
+
+.bg-w {
+  background: #ffffff 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  border-radius: 6px;
+}
+.filter_icon {
+  position: absolute;
+  top: 12px;
+  right: 22px;
+  cursor: pointer;
+}
+dialog {
+  z-index: 10;
+  margin-top: 10px;
+  background: #ffffff;
+  box-shadow: 0px 6px 12px #00000029;
+  border: none;
+  border-radius: 5px;
+  // height: 310px;
+  width: 450px;
+  position: absolute;
+  // transform: translatey(50%);
+  overflow: visible;
+}
+dialog::backdrop {
+  background-color: hsla(240, 2%, 10%, 0.651);
+  opacity: 0.3;
+}
+dialog .inputBox {
+  width: 100%;
+  background: #f3f3f3;
+  border-radius: 5px;
+  padding: 0px 10px;
+  margin-bottom: 10px;
+  height: 54px;
+}
+.inputBox select {
+  border: 0;
+  background: transparent;
+  position: relative;
+  top: -15px;
+  left: -15px;
+}
+.footer button {
+  width: 117px;
+}
   .active_card {
-    // border: 2px solid #2c2c2c;
+    border: 2px solid #2c2c2c;
   }
   
   :host ::ng-deep {
     .p-datatable table {
       background-color: white;
+    }
+    .inputBox .p-calendar {
+      width: -webkit-fill-available !important;
+      position: relative;
+      top: -12px;
+      left: -8px;
+    }
+    .inputBox .p-calendar .p-inputtext {
+      width: -webkit-fill-available !important;
+      background-color: transparent;
+    }
+    .p-calendar .p-datepicker {
+      left: 0 !important;
     }
   }
   
@@ -77,13 +170,6 @@
     position: absolute;
     top: 57px;
     right: 320px;
-  }
-
-
-  .act_icon {
-    font-size: 13px;
-    position: relative;
-    left: -5px;
   }
   @media screen and (max-width:1300px) {
     .filter_inputDash {
@@ -99,16 +185,16 @@
       top: 86px;
     }
     .tableDatDiv {
-     margin-top: 27px;
+     margin-top: 0px;
     }
   }
 
   @media screen and (max-width:576px){
     .filter_inputDash {
       position: relative;
-      top: -37px;
+      top: -12px;
       left: -11px;
-      background: black;
+      // background: black;
       width: 107%;
       padding: 5px;
     }

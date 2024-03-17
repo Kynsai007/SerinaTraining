@@ -58,6 +58,7 @@ import { FeatureComponent } from './feature/feature.component';
 import { SupportpdfViewerComponent } from './exception-management/supportpdf-viewer/supportpdf-viewer.component';
 import { FunFactsComponent } from './fun-facts/fun-facts.component';
 import { AppNotificationComponent } from './app-notification/app-notification.component';
+import { ServiceSummaryComponent } from './home/service-based-charts/service-summary/service-summary.component';
 
 @NgModule({
   declarations: [
@@ -106,7 +107,9 @@ import { AppNotificationComponent } from './app-notification/app-notification.co
     PDFviewComponent,
     FeatureComponent,
     FunFactsComponent,
-    AppNotificationComponent
+    AppNotificationComponent,
+    ServiceSummaryComponent,
+    SupportpdfViewerComponent
   ],
   imports: [
     CommonModule,
@@ -139,6 +142,7 @@ import { AppNotificationComponent } from './app-notification/app-notification.co
     FeatureComponent,
     FunFactsComponent,
     FilterPipe,
+    ExceptionTableComponent
   ],
   providers: [
     DatePipe,

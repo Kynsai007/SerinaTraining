@@ -3,11 +3,10 @@ import { ChartsService } from 'src/app/services/dashboard/charts.service';
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
-
 @Component({
   selector: 'detailed-reports',
   templateUrl: './detailed-reports.component.html',
-  styleUrls: ['./detailed-reports.component.scss']
+  styleUrls: ['./detailed-reports.component.scss','../process-metrics/process-metrics.component.scss']
 })
 export class DetailedReportsComponent implements OnInit {
   noDataSourceboolean: boolean;
@@ -30,7 +29,7 @@ export class DetailedReportsComponent implements OnInit {
 
     setTimeout(()=>{
       this.setConatinerForCharts();
-    },500)
+    },1500)
   }
 
   setConatinerForCharts() {
@@ -55,7 +54,7 @@ export class DetailedReportsComponent implements OnInit {
       this.noDataAgeboolean = false;
       this.chartsService.drawColumnChart(
         'vendor_clm_chart1_v',
-        '#F4D47C',
+        '#8F98B1',
         'Ageing Report',
         this.invoiceAgechartData
       );
@@ -167,7 +166,7 @@ export class DetailedReportsComponent implements OnInit {
     }
     this.getAgingReportData(dateFilter);
     this.getMostOrderedData(dateFilter);
-
+    this.closeDialog();
     setTimeout(() => {
       this.setConatinerForCharts();
     }, 500);
@@ -175,5 +174,23 @@ export class DetailedReportsComponent implements OnInit {
 
   clearDates(){
     this.filterByDate('');
+  }
+  openFilterDialog(event){
+    console.log(event)
+    let top = event.clientY + 10 + "px";
+    let left = "calc(55% + 100px)";
+    const dialog = document.querySelector('dialog');
+    dialog.style.top = top;
+    dialog.style.left = left;
+    if(dialog){
+      dialog.showModal();
+    }
+  }
+
+  closeDialog(){
+    const dialog = document.querySelector('dialog');
+    if(dialog){
+      dialog.close();
+    }
   }
 }

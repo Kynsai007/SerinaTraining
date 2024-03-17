@@ -1,22 +1,6 @@
-
-    <div class="filter_inputDash">
-        <div class="filter_mob">
-          <p-calendar
-          [(ngModel)]="rangeDates"
-          selectionMode="range"
-          [minDate]="minDate"
-          [maxDate]="maxDate"
-          placeholder="Select dates to Filter"
-          [readonlyInput]="true"
-          [showIcon]="true"
-          showButtonBar="true"
-          inputId="range"
-          (onClearClick)="clearDates()"
-        ></p-calendar>
-        <button class="act_btn mr-2 ml-2" (click)="filterByDate(rangeDates)">
-          <i class="fa fa-filter"></i></button>
-        </div>
-      </div>
+<div class="filter_icon" (click)="openFilterDialog($event)">
+  <mat-icon class="placement" svgIcon="filter_ic"></mat-icon>
+</div>
     <div class="charts_height">
         <!-- <div class="d-flex justify-content-between mt-2" style="position: relative">
           <div class="chart_title f-12">Invoice Pending by Amount</div>
@@ -80,3 +64,29 @@
           <p style="color: rgb(0, 0, 0)"></p>
         </ngx-spinner>
     </div>
+
+    <dialog #process_dialog>
+      <div class="d-flex justify-content-between mb-2">
+        <h6 class="f-14">Please select the option to filter</h6>
+        <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
+      </div>
+      <div class="inputBox">
+        <label class="f-12 shade_color">Start & End Date</label><br>
+        <p-calendar
+          [(ngModel)]="rangeDates"
+          selectionMode="range"
+          [minDate]="minDate"
+          [maxDate]="maxDate"
+          placeholder="Select dates to Filter"
+          [readonlyInput]="true"
+          [showIcon]="true"
+          showButtonBar="true"
+          inputId="range"
+          (onClearClick)="clearDates()"
+        ></p-calendar>
+      </div>
+      
+        <div class="d-flex justify-content-end footer mt-3">
+          <button class="btnUpload" (click)="filterByDate(rangeDates)">Filter</button>
+        </div>
+    </dialog>

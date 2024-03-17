@@ -713,7 +713,12 @@
         <div style="position: relative;" (clickOutside)="onClickedOutside($event,'more')">
           <div class="nav_Link f-14" (click)="more_routes()"
           [ngClass]="{
-            'active_cls': router.url.includes('vendor') || router.url.includes('serviceProvider') || router.url.includes('documentSummary') || router.url.includes('roles')
+            'active_cls': router.url.includes('/customer/vendor/') 
+            || router.url.includes('serviceProvider') 
+            || router.url.includes('documentSummary') 
+            || router.url.includes('roles')
+            || router.url.includes('service_batch_trigger')
+            || router.url.includes('bulkUploadService')
           }"
           >
             {{more_text}} <span class="material-icons more_pos" >
@@ -728,6 +733,8 @@
               <a [routerLink]="'documentSummary'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Summary')">Summary</a>
               <a [routerLink]="supplier_route" routerLinkActive="active_sub_cls" (click)="onMenuChange(supplier_names)" *ngIf="vendor_SP_PageAccess">{{supplier_names}}</a>
               <a [routerLink]="'roles'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Roles')" *ngIf="addUsersBoolean">Roles</a>
+              <a [routerLink]="'bulkUploadService'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Bulk upload')" *ngIf="serviceInvoiceAccess">Bulk upload</a>
+              <a [routerLink]="'service_batch_trigger'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Service batch trigger')" *ngIf="serviceInvoiceAccess">Service batch trigger</a>
             </div>
         </div>
         
@@ -761,7 +768,7 @@
     </div>
 
     <div class="d-flex align-items-center ">
-      <div class="user_d f-13" *ngIf="router.url.includes('ExceptionManagement') || router.url.includes('invoice') || router.url.includes('documentSummary') ||router.url.includes('GRN_approvals') ||router.url.includes('approvals')">Card
+      <div class="user_d f-13" *ngIf="router.url.includes('ExceptionManagement') || router.url.includes('invoice') || router.url.includes('documentSummary') ||router.url.includes('GRN_approvals') ||router.url.includes('approvals') ||router.url.includes('Create_GRN_inv_list')">Card
         <span class="portal">
           <label class="switch">
             <input

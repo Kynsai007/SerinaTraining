@@ -24,15 +24,10 @@ export class ChartsService {
       let data = google.visualization.arrayToDataTable(data1);
 
       let options1 = {
-        title: 'Processed vs Downloaded per Service Provider',
         titlePosition: 'none',
-        titleTextStyle: {
-          color: 'red',
-          fontSize: 13 ,
-          marginLeft:'10'
-        },
-        legend: { position: 'bottom', maxLines: 3 },
-        bar: { groupWidth: '40%' },
+        legend: { position: 'top', alignment: 'end', textStyle: { fontSize: 12 },maxLines:3 },
+        chartArea: { width: '85%', padding: '0', margin:0},
+        bar: { groupWidth: '20%' },
         isStacked: true,
         annotations: {
           alwaysOutside: true,
@@ -44,7 +39,7 @@ export class ChartsService {
           //   },
           // },
         },
-        colors: ['#F4D47C', '#7F86B5'],
+        colors: ['#F1932F','#22728B'],
         animation: {
           duration: 500,
           startup: true,
@@ -54,17 +49,28 @@ export class ChartsService {
             color: 'transparent',
             count: 0,
           },
-          baselineColor: '#ffffff',
-          slantedText: true,
-          slantedTextAngle: 10,
-          maxTextLines: 5,
-          minTextSpacing: 5,
+          baselineColor: '#d3d3d3',
+          // slantedText: true,
+          // slantedTextAngle: 30,
+          showTextEvery : 1,
+          // // maxAlternation: 2,
+          // maxTextLines: 6,
+          // // minTextSpacing: 3,
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
+            overflow : 'visible'
           },
+          // labels: {
+          //   useHTML: true,
+          //   formatter() {
+          //     let label = this.value;
+          //     let style = `text-overflow: none; overflow: visible;`; // YOUR OWN STYLE
+          //     return `<div style="${style}" title="${label}">${label}</div>`;
+          //   }
+          // },
         },
         vAxis: {
           title: '',
@@ -75,7 +81,7 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
           // ticks: [0,10,20,30,40,50,60,70,80,100]
@@ -98,10 +104,6 @@ export class ChartsService {
 
       let options = {
         title: 'Pending Invoices',
-        textStyle: {
-          color: '#272727',
-          fontSize: 13 
-        },
         legend: { position: 'bottom', maxLines: 3 },
         bar: { groupWidth: '40%' },
         annotations: {
@@ -132,7 +134,7 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
         },
@@ -145,7 +147,7 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
         },
@@ -168,16 +170,13 @@ export class ChartsService {
       let options = {
         title: tittle,
         titlePosition: 'none',
-        textStyle: {
-          color: '#272727',
-          fontSize: 13 
-        },
-        pieHole: 0.4,
+        pieHole: 0.8,
         chartArea: { left: 20, width: '80%', height: '75%' },
         slices: {
-          0: { color: '#89D390' },
-          1: { color: '#FB4953' },
-          2: { color: '#5167B2' },
+          0: { color: '#CCCDC8' },
+          1: { color: '#59A0F0' },
+          2: { color: '#8C96B1' },
+          3: { color: '#2F3D74' }
         },
       };
 
@@ -200,18 +199,18 @@ export class ChartsService {
     }
     function drawBasic() {
 
-      let yaxisVa = []
-      chartData.forEach((el, i) => {
-        if (i != 0) {
-          yaxisVa.push(el[1])
-        }
-      });
-      let maxVal = Math.max.apply(null, yaxisVa);
-      let tickInterval = getTickInterval(maxVal);
-      let tickValues = [];
-      for (let i = 0; i <= 5; i++) {
-        tickValues.push(Math.round(maxVal / 5 * i / tickInterval) * tickInterval);
-      }
+      // let yaxisVa = []
+      // chartData.forEach((el, i) => {
+      //   if (i != 0) {
+      //     yaxisVa.push(el[1])
+      //   }
+      // });
+      // let maxVal = Math.max.apply(null, yaxisVa);
+      // let tickInterval = getTickInterval(maxVal);
+      // let tickValues = [];
+      // for (let i = 0; i <= 5; i++) {
+      //   tickValues.push(Math.round(maxVal / 5 * i / tickInterval) * tickInterval);
+      // }
       let data = google.visualization.arrayToDataTable(chartData);
 
       let options = {
@@ -219,10 +218,6 @@ export class ChartsService {
         // width: 500,
         // height: 250,
         titlePosition: 'none',
-        textStyle: {
-          color: '#272727',
-          fontSize: 13 
-        },
         legend: { position: 'bottom', maxLines: 3 },
         bar: { groupWidth: '25%' },
         annotations: {
@@ -239,7 +234,7 @@ export class ChartsService {
             color: 'transparent',
             count: 0,
           },
-          baselineColor: '#ffffff',
+          baselineColor: '#d3d3d3',
           slantedText: true,
           slantedTextAngle: 10,
           maxTextLines: 5,
@@ -247,7 +242,7 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
         },
@@ -260,11 +255,11 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
-          ticks: tickValues,
-          interval: tickInterval
+          // ticks: tickValues,
+          // interval: tickInterval
         },
       };
 
@@ -306,10 +301,6 @@ export class ChartsService {
         // width: 500,
         // height: 250,
         titlePosition: 'none',
-        textStyle: {
-          color: '#272727',
-          fontSize: 13
-        },
         legend: { position: 'bottom' },
         bar: { groupWidth: '25%' },
         annotations: {
@@ -326,7 +317,7 @@ export class ChartsService {
             color: 'transparent',
             count: 0,
           },
-          baselineColor: '#ffffff',
+          baselineColor: '#d3d3d3',
           slantedText: true,
           slantedTextAngle: 10,
           maxTextLines: 5,
@@ -334,7 +325,7 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
         },
@@ -349,7 +340,7 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
           // ticks: tickValues,
@@ -379,10 +370,6 @@ export class ChartsService {
       let options = {
         title: 'Invoice Count by Vendor',
         titlePosition: 'none',
-        textStyle: {
-          color: '#272727',
-          fontSize: 13 
-        },
         legend: { position: 'bottom', maxLines: 3 },
         bar: { groupWidth: '50%' },
         
@@ -404,7 +391,7 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
         },
@@ -417,7 +404,7 @@ export class ChartsService {
           textStyle: {
             color: '#0D0B3C',
             fontSize: 10, // 12, 18 whatever you want (don't specify px)
-            bold: true, // true or false
+            bold: false, // true or false
             italic: false, // true of false
           },
           // ticks: [0,10,20,30,40,50,60,70,80,100]
@@ -454,10 +441,6 @@ export class ChartsService {
             title: 'Invoice Count by Vendor',
             titlePosition: 'none',
             isStacked: true,
-            textStyle: {
-              color: '#272727',
-              fontSize: 13 
-            },
             legend: { position: 'bottom', maxLines: 3 },
             bar: { groupWidth: '50%' },
             annotations: {
@@ -484,7 +467,7 @@ export class ChartsService {
               textStyle: {
                 color: '#0D0B3C',
                 fontSize: 10, // 12, 18 whatever you want (don't specify px)
-                bold: true, // true or false
+                bold: false, // true or false
                 italic: false, // true of false
               },
             },
@@ -494,10 +477,14 @@ export class ChartsService {
                 color: '#f3f3f3',
               },
               baselineColor: '#d3d3d3',
+              slantedText: true,
+              slantedTextAngle: 10,
+              maxTextLines: 5,
+              minTextSpacing: 5,
               textStyle: {
                 color: '#0D0B3C',
                 fontSize: 10, // 12, 18 whatever you want (don't specify px)
-                bold: true, // true or false
+                bold: false, // true or false
                 italic: false, // true of false
               },
               // ticks: [0,10,20,30,40,50,60,70,80,100]
@@ -506,6 +493,59 @@ export class ChartsService {
           let chart = new google.visualization.BarChart(document.getElementById(id));
           chart.draw(data, options);
         }
+  }
+  drawLineChart(id,chartData){
+    google.charts.load('current', { packages: ['corechart', 'line'] });
+    google.charts.setOnLoadCallback(drawBasic);
+    function drawBasic() {
+      let data = google.visualization.arrayToDataTable(chartData);
+
+      let options = {
+        titlePosition: 'none',
+        pointSize:5,
+        pointShape: {},
+        legend:'none',
+        colors: ['#D3d3d3'],
+        animation: {
+          duration: 500,
+          startup: true,
+        },
+        chartArea: { width: '85%', padding: '0', margin:0},
+        vAxis: {
+          gridlines: {
+            color: 'transparent',
+            // count: 0,
+          },
+          baselineColor: '#d3d3d3',
+          textStyle: {
+            color: '#0D0B3C',
+            fontSize: 10, // 12, 18 whatever you want (don't specify px)
+            bold: false, // true or false
+            italic: false, // true of false
+          },
+        },
+        hAxis: {
+          title: '',
+          gridlines: {
+            color: '#f3f3f3',
+          },
+          baselineColor: '#d3d3d3',
+          textStyle: {
+            color: '#0D0B3C',
+            fontSize: 10, // 12, 18 whatever you want (don't specify px)
+            bold: false, // true or false
+            italic: false, // true of false
+          },
+          // ticks: [0,10,20,30,40,50,60,70,80,100]
+        },
+      };
+
+      var chart = new google.visualization.LineChart(
+        document.getElementById(id)
+      );
+
+      chart.draw(data, options);
+    }
   }
 
   drawProgress(id,data) {

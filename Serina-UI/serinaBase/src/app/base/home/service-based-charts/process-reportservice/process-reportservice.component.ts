@@ -31,10 +31,6 @@ export class ProcessReportserviceComponent implements OnInit {
   noDataOverallboolean: boolean;
   noDataProcessboolean: boolean;
   noDataCountboolean: boolean;
-  // totolDownloadCount: number;
-  // totalProcessCount: number;
-  // totalPendingCount: number;
-  // system_check : number;
 
   selectedEntityValue = 'ALL';
   selectedDateValue = '';
@@ -51,12 +47,12 @@ export class ProcessReportserviceComponent implements OnInit {
   totalColumnField = [];
   ColumnLengthtotal: any;
   showPaginatortotal: boolean;
-  cardObj = [
-    { cls: 'bg-1', icon: 'service_total', heading: 'Total Invoices Downloaded', count: 0},
-    { cls: 'bg-2', icon: 'service_dwn', heading: 'Processed to ERP', count: 0},
-    { cls: 'bg-3', icon: 'service_pr', heading: 'Pending Invoices', count: 0},
-    { cls: 'bg-7', icon: 'service_scn', heading: 'System check', count: 0}
-  ]
+
+  cardsArr = [
+    { title: 'Total Invoices Downloaded' , count:0, image:'vendor_up' },
+    { title: 'Processed to ERP' , count:0, image:'vendor_pr' },
+    { title: 'Pending Invoices' , count:0, image:'vendor_rm' }]
+
   constructor(
     private sharedService: SharedService,
     private chartsService: ChartsService,
@@ -72,11 +68,12 @@ export class ProcessReportserviceComponent implements OnInit {
     this.chartsData();
     this.dateRange();
     this.getEntitySummary();
-    this.readInvCountByEntity(this.datequery)
-    this.readProcessVsDownloadData(this.datequery);
-    this.readProcessAmtData(this.datequery);
-    this.readPendingAmountData(this.datequery);
-    this.readOverallChartData(this.datequery);
+    this.readProcessVsDownloadData('');
+    this.readInvCountByEntity('');
+    // this.readPageCountByEntity('');
+    this.readProcessAmtData('');
+    this.readPendingAmountData('');
+    this.readOverallChartData('');
     this.prepareColumns();
     setTimeout(() => {
       this.setContainers();
@@ -86,10 +83,8 @@ export class ProcessReportserviceComponent implements OnInit {
   setContainers(){
     if(this.totalProcessedvalueChart.length > 1){
       this.noDataProcessboolean = false;
-      this.chartsService.drawColumnChart(
+      this.chartsService.drawLineChart(
         'column_chart',
-        '#A3B8C5',
-        'Total Processed Value',
         this.totalProcessedvalueChart
       );
     } else {
@@ -105,7 +100,7 @@ export class ProcessReportserviceComponent implements OnInit {
 
     if(this.pendingInvoiceChartData.length>1){
       this.noDataPendingboolean = false;
-      this.chartsService.drawColumnChart_dual(
+      this.chartsService.drawColumnChart(
         'column_chart1',
         '#DCCAA6',
         'Pending Invoices by Amount',
@@ -230,16 +225,12 @@ export class ProcessReportserviceComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getProcessVsTotalSP(filter).subscribe((data:any)=>{
       data?.data?.processed.forEach((ele)=>{
-        if(ele.ServiceProviderName == 'Emirates Integrated Telecommunication Co'){
-          ele.ServiceProviderName = 'DU'
-        }
+        this.nameShort(ele);
         this.stackedChartData.push([ele.ServiceProviderName, ele.count,ele.count]);
       })
-      data.data.downloaded.forEach((ele1)=>{
+      data.data?.downloaded?.forEach((ele1)=>{
         this.stackedChartData.forEach((val,index)=>{
-          if(ele1.ServiceProviderName == 'Emirates Integrated Telecommunication Co'){
-            ele1.ServiceProviderName = 'DU'
-          }
+          this.nameShort(ele1);
           if(ele1.ServiceProviderName == val[0]){
             this.stackedChartData[index].splice(3,0,ele1.count,ele1.count);
           }
@@ -255,9 +246,7 @@ export class ProcessReportserviceComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getProcessByAmountSP(filter).subscribe((data:any)=>{
       data.data.forEach(ele=>{
-        if(ele.ServiceProviderName == 'Emirates Integrated Telecommunication Co'){
-        ele.ServiceProviderName = 'DU'
-      }
+        this.nameShort(ele);
       let amount = this.convertToKM(ele.amount)
         this.totalProcessedvalueChart.push([ele.ServiceProviderName,ele.amount,amount])
       });
@@ -271,9 +260,7 @@ export class ProcessReportserviceComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getPendingInvByAmountSP(filter).subscribe((data:any)=>{
       data.data.forEach(ele=>{
-        if(ele.ServiceProviderName == 'Emirates Integrated Telecommunication Co'){
-          ele.ServiceProviderName = 'DU'
-        }
+        this.nameShort(ele);
         let amount = this.convertToKM(ele.amount)
         this.pendingInvoiceChartData.push([ele.ServiceProviderName,ele.amount])
       });
@@ -286,15 +273,12 @@ export class ProcessReportserviceComponent implements OnInit {
   readOverallChartData(filter){
     this.SpinnerService.show();
     this.chartsService.getProcessVsTotal_OverallSP(filter).subscribe((data:any)=>{
-      this.invoiceBysourceChartdata[1] = [`Processed - ${data.data.processed}`,data.data.processed];
-      // this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
-      this.invoiceBysourceChartdata[2] = [`Exceptions - ${data.data.exceptions}`,data.data.exceptions];
-      this.invoiceBysourceChartdata[3] = [`System check - ${data.data.systemcheck}`,data.data.systemcheck];
-      this.invoiceBysourceChartdata[4] = [`Downloaded - ${data.data.downloaded}`,data.data.downloaded]
-      this.cardObj[0].count = data.data.downloaded;
-      this.cardObj[1].count = data.data.processed;
-      this.cardObj[2].count = data.data.exceptions;
-      this.cardObj[3].count = data.data.systemcheck;
+      this.invoiceBysourceChartdata[1] = ['Processed',data.data.processed];
+      this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
+
+      this.cardsArr[0].count = data?.data?.downloaded;
+      this.cardsArr[1].count = data?.data?.processed;
+      this.cardsArr[2].count = data?.data?.downloaded - data?.data?.processed;
       this.SpinnerService.hide();
     },err=>{
       this.SpinnerService.hide();
@@ -317,16 +301,6 @@ export class ProcessReportserviceComponent implements OnInit {
     this.dateFilterService.dateRange();
     this.minDate = this.dateFilterService.minDate;
     this.maxDate = this.dateFilterService.maxDate;
-    let date = this.datePipe.transform(this.maxDate, 'yyyy-MM-dd');
-    let monthArr = date.split('-')
-    let month = monthArr[1];
-    let year = monthArr[0];
-    let day = monthArr[2];
-    let date1 = `${year}-${month}-01`
-    let date2 = `${year}-${month}-${day}`
-    let date3 = this.dateFilterService.satrtDate;
-    this.datequery = `?date=${date1}To${date2}`;
-    this.rangeDates = [date3,this.maxDate];
   }
 
   filterByDate(date) {
@@ -394,6 +368,7 @@ export class ProcessReportserviceComponent implements OnInit {
     this.readProcessAmtData(query);
     this.readPendingAmountData(query);
     this.readOverallChartData(query);
+    this.closeDialog();
     setTimeout(() => {
       this.setContainers();
     },2000);
@@ -414,5 +389,32 @@ export class ProcessReportserviceComponent implements OnInit {
   }
   downloadReport(){
     this.ImportExcelService.exportExcel(this.invoiceByEntityChartdata);
+}
+
+nameShort(ele){
+  if(ele.ServiceProviderName == 'EMIRATES INTEGRATED TELECOMMUNICATIONS PJSC(DU)'){
+    ele.ServiceProviderName = 'DU'
+  } else if(ele.ServiceProviderName == 'THE EMIRATES TELECOMMUNICATION CORPORATION ( ETISALAT)'){
+    ele.ServiceProviderName = 'ETISALAT';
+  } else if(ele.ServiceProviderName == 'DUBAI ELECTRICITY AND WATER AUTHORITY'){
+    ele.ServiceProviderName = 'DEWA';
+  }
+}
+openFilterDialog(event){
+  let top = event.clientY + 10 + "px";
+  let left = "calc(55% + 100px)";
+  const dialog = document.querySelector('dialog');
+  dialog.style.top = top;
+  dialog.style.left = left;
+  if(dialog){
+    dialog.showModal();
+  }
+}
+
+closeDialog(){
+  const dialog = document.querySelector('dialog');
+  if(dialog){
+    dialog.close();
+  }
 }
 }

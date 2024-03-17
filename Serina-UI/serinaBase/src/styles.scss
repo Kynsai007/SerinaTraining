@@ -32,9 +32,17 @@ $secondary_color: var(--secondary1-color);
 .font_weight100 {
     font-weight: 500 !important;
 }
+.f-10 {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+}
 .f-11 {
     font-size: 11px !important;
     font-weight: 500 !important;
+}
+.f-15 {
+  font-size: 15px !important;
+  font-weight: 600 !important;
 }
 .f-14 {
     font-size: 14px !important;
@@ -441,6 +449,9 @@ $secondary_color: var(--secondary1-color);
 }
 .text_color {
     color: #358DC0;
+}
+.cdk-overlay-dark-backdrop {
+  background: rgb(255 255 255 / 89%);
 }
 @media screen and (max-width: 800px) and (min-width: 575px) {
     // .p-datatable .p-datatable-thead > tr > th {
@@ -1102,12 +1113,22 @@ option:hover {
 }
 
 .chart_div{
-    width: 49%;
-    height: 230px;
-    border-radius: 10px !important;
-    padding: 10px;
-    background: white;
-    position: relative;
+  width: 49%;
+  height: 230px;
+  border-radius: 10px !important;
+  padding: 10px;
+  background: white;
+  position: relative;
+}
+.charts_box{
+width: 430px;
+height: 230px;
+border-radius: 6px !important;
+padding: 10px;
+position: relative;
+overflow: auto;
+background: #FFFFFF 0% 0% no-repeat padding-box;
+box-shadow: 0px 3px 6px #00000029;
 }
 
 

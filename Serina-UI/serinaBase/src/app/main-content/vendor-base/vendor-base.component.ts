@@ -39,7 +39,8 @@ export class VendorBaseComponent implements OnInit {
   timezone: string;
   name_short: string;
   isTableView: boolean;
-
+  isNewVendorForERP:boolean;
+  
   constructor(private router:Router,
     private settingService : SettingsService,
     private SharedService:SharedService,
@@ -77,6 +78,7 @@ export class VendorBaseComponent implements OnInit {
     }
     this.userDetails = this.authService.currentUserValue;
     this.docService.userId = this.userDetails.userdetails.idUser;
+    this.isNewVendorForERP = this.userDetails?.registration_required;
     if (this.userDetails.user_type == 'vendor_portal') {
       this.DS.portalName = 'vendorPortal';
     } else {

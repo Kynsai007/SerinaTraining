@@ -1,23 +1,40 @@
 .nav-pills .nav-link {
-  border-radius: 10px;
+  border-radius: 0px;
   background: white;
-  color: #313971;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border: 1px solid #efefef;
+  color: #140101;
+  opacity: 0.5;
+  height: 50px;
+  display: flex;
+  align-items: center;
   cursor: pointer;
+  position: relative;
 }
 
 .active-pill {
-  background-color: #f2be42 !important;
-  border: 1px solid #f2be42 !important;
-  color: #ffffff !important;
+  border-bottom: 2px solid #358dc0 !important;
+  color: #358dc0 !important;
+  opacity: 1 !important;
 }
 .tableDataDiv {
   max-height: 86vh;
 }
-
+.inv_nav_container {
+  width: 100%;
+  background-color: #FFFFFF;
+  height: 51px;
+}
+.nav_sub {
+  background-color: #FFFFFF;
+  height: 51px;
+  // width: 49%;
+  // border-radius: 5px;
+  align-items: center;
+  justify-content: space-between;
+}
+.inv_nav_container ul {
+  border-bottom: 1px solid #00000080 !important;
+  padding: 0px 15px;
+}
 @media screen and (max-width:1300px) {
   // .tableDataDiv {
   //   margin-top: 30px;
@@ -28,5 +45,4 @@
     max-height: 82vh;
     overflow: auto;
   }
-
 }

@@ -25,19 +25,16 @@ export class TableComponent implements OnInit {
   downloadBoolean: boolean;
   etisalatBoolean: boolean;
   itemMasterBoolean: boolean;
-  ap_boolean: any;
   constructor(
     private router: Router,
     private serviceProviderService: ServiceInvoiceService,
     private alertService: AlertService,
-    private sharedService : SharedService,
+    private sharedService: SharedService,
     private messageService: MessageService,
-    private ds : DataService
-  ) {}
+    private ds: DataService
+  ) { }
 
   ngOnInit(): void {
-    this.ap_boolean = this.ds.ap_boolean;
-
     this.findRutesForDownloadOption();
     if (this.router.url.includes('home')) {
       this.dashboardViewBoolean = true;
@@ -46,23 +43,23 @@ export class TableComponent implements OnInit {
     }
   }
 
-  ngOnChanges(changes:SimpleChanges) {
-    if(!this.ds.isDesktop){
+  ngOnChanges(changes: SimpleChanges) {
+    if (!this.ds.isDesktop) {
       this.showPaginator = false;
     }
   }
 
-  paginateVendor(event) {}
+  paginateVendor(event) { }
 
   downloadFile(data) {
-    if(this.etisalatBoolean == true){
+    if (this.etisalatBoolean == true) {
       this.downloadCostFile(data);
-    } else if(this.itemMasterBoolean == true){
+    } else if (this.itemMasterBoolean == true) {
       this.downloadItemFile(data);
     }
   }
 
-  downloadCostFile(data){
+  downloadCostFile(data) {
     this.serviceProviderService.downloadFileAllocation(data.filename).subscribe(
       (response: any) => {
         let blob: any = new Blob([response], {
@@ -98,15 +95,36 @@ export class TableComponent implements OnInit {
       }
     );
   }
-  findRutesForDownloadOption(){
-    if(this.router.url.includes('EtisalatCostAllocation')) {
+  findRutesForDownloadOption() {
+    if (this.router.url.includes('EtisalatCostAllocation')) {
       this.downloadBoolean = true;
       this.etisalatBoolean = true;
-    } else if( this.router.url.includes('item_master')){
+    } else if (this.router.url.includes('item_master')) {
       this.downloadBoolean = true;
       this.itemMasterBoolean = true;
     } else {
       this.downloadBoolean = false;
+    }
+  }
+
+  routeToDocpage(v_name) {
+    if (this.router.url.includes('vendorBasedReports/processReports')) {
+      // this.ds.invoiceGlobe = v_name;
+      let value: any = {
+        "first": 0,
+        "rows": 10,
+        "filters": {
+          "global": {
+            "value": v_name,
+            "matchMode": "contains"
+          }
+        }
+      };
+      
+      setTimeout(() => {
+        sessionStorage?.setItem('allInvoices', JSON.stringify(value));
+        this.router.navigate([`${this.ds.portalName}/invoice/allInvoices`]);
+      }, 1000);
     }
   }
 }

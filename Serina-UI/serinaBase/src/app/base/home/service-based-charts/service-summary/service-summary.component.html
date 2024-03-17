@@ -1,0 +1,183 @@
+<div class="filter_icon" (click)="openFilterDialog($event)">
+    <mat-icon class="placement" svgIcon="filter_ic"></mat-icon>
+  </div>
+  <div class="d-flex justify-content-around f-wrap bg-w tableDtDiv" >
+    <ng-container *ngFor="let obj of cardsArr">
+      <div class="card-div d-flex d_flx_row">
+        <div class="img-wrapper">
+          <mat-icon class="placement" [svgIcon]="obj.image"></mat-icon>
+        </div>
+        <div>
+          <div class="f-15 primary_clr">{{ obj.count }}</div>
+          <div class="f-12">{{ obj.title}}</div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="f-13 btn_type">Selected Month for data displaying - {{selectedMonth}}</div>
+
+  <div class="mt-2"  *ngIf="isTableView">
+    <p-table #allInvoice [value]="summaryData" [paginator]="showPaginator" [rows]="10" [showCurrentPageReport]="true"
+      [globalFilterFields]="['Count','ServiceProviderName','ocr_status','voucher_status','EntityName']"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [rowsPerPageOptions]="[10,25,50]" styleClass="p-datatable-striped">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="ServiceProviderName">Service Provider Name</th>
+          <th pSortableColumn="EntityName">Entity Name</th>
+          <th pSortableColumn="Count">Count</th>
+          <th pSortableColumn="ocr_status">Ocr Status</th>
+          <th pSortableColumn="voucher_status">Voucher Status</th>
+        </tr>
+        <tr>
+
+          <td>
+            <input pInputText type="text"
+              (input)="allInvoice.filter($event.target.value, 'ServiceProviderName', 'contains')"
+              [value]="allInvoice.filters['ServiceProviderName']?.value" placeholder="Search"
+              class="p-column-filter tableSearchInput">
+          </td>
+          <td>
+            <input pInputText type="text"
+              (input)="allInvoice.filter($event.target.value, 'EntityName', 'contains')"
+              [value]="allInvoice.filters['EntityName']?.value" placeholder="Search"
+              class="p-column-filter tableSearchInput">
+          </td>
+          <td>
+            <input pInputText type="text" (input)="allInvoice.filter($event.target.value, 'Count', 'contains')"
+              [value]="allInvoice.filters['Count']?.value" placeholder="Search"
+              class="p-column-filter tableSearchInput">
+          </td>
+
+          <td>
+            <input pInputText type="text" (input)="allInvoice.filter($event.target.value, 'ocr_status', 'contains')"
+              [value]="allInvoice.filters['ocr_status']?.value" placeholder="Search"
+              class="p-column-filter tableSearchInput">
+          </td>
+          <td>
+            <input pInputText type="text"
+              (input)="allInvoice.filter($event.target.value, 'voucher_status', 'contains')"
+              [value]="allInvoice.filters['voucher_status']?.value" placeholder="Search"
+              class="p-column-filter tableSearchInput">
+
+          </td>
+
+
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-invoiceData>
+        <tr>
+
+          <td [title]="invoiceData['ServiceProviderName']">{{invoiceData['ServiceProviderName']}}</td>
+          <td [title]="invoiceData['EntityName']">{{invoiceData['EntityName']}}</td>
+          <td [title]="invoiceData.Count">{{invoiceData.Count}}</td>
+
+          <td [title]="invoiceData['ocr_status']"> {{invoiceData['ocr_status']}}</td>
+         
+          <td title="Voucher Created">{{invoiceData['voucher_status']}}</td>
+
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="p-t-30 text-center">
+            <img src="assets/Group 2691.png" width="260" alt="imageUrl"> <br>
+            No Data found.</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="paginatorleft">
+      </ng-template>
+      <ng-template pTemplate="paginatorright">
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div *ngIf="!isTableView" class="card_container d-flex flex-wrap mt-2">
+   <ng-container *ngFor="let e_data of summaryData ">
+     <div class="card">
+       <div class="d-flex justify-content-between">
+         <div
+           class="f-12 status_btn"
+           style="background-color: #358dc01a;"
+         >
+           {{ e_data?.ocr_status }}
+         </div>
+       </div>
+       <div class="headings" style="height: 70px;">
+         <div class="f-14 capitalized_text"> {{e_data?.ServiceProviderName?.toLowerCase()}}</div>
+         <div class="f-14 shade_color">{{ e_data?.EntityName }}</div>
+       </div>
+         <div class="grn_src f-12" [ngStyle]="{ backgroundColor:e_data?.voucher_status.includes('PENDING') ? '#F1932F':'#14BB12'}">
+           {{e_data?.voucher_status}}
+         </div>
+       
+ 
+       <div
+         class="card_footer d-flex justify-content-end align-items-center"
+       >
+         <div class="f-12 text_color">Count - {{ e_data?.Count }}</div>
+       </div>
+     </div>
+   </ng-container>
+   <div *ngIf="!(columnsData?.length > 0)" class="f-12">No data found.</div>
+ </div>
+ <!-- <div class="paginator_div" *ngIf="showPaginator && !isTableView">
+
+  <pagination-template
+    #p="paginationApi"
+    id="summary"
+    maxSize="5"
+    (pageChange)="onPageChange($event)"
+  >
+    <div class="custom-pagination">
+      <div class="customCount" [class.disabled]="p.isFirstPage()">
+        <a (click)="p.previous()" class="prev">
+          <img src="assets/Serina Assets/new_theme/next.svg" alt="next" />
+        </a>
+      </div>
+
+      <div
+        *ngFor="let page of p.pages"
+        [class.active_count]="p.getCurrent() === page.value"
+        class="customCount"
+      >
+        <a
+          (click)="p.setCurrent(page.value)"
+          *ngIf="p.getCurrent() !== page.value"
+        >
+          <span>{{ page.label }}</span>
+        </a>
+        <div *ngIf="p.getCurrent() === page.value">
+          <span>{{ page.label }}</span>
+        </div>
+      </div>
+
+      <div class="customCount" [class.disabled]="p.isLastPage()">
+        <a (click)="p.next()" class="next"
+          ><img src="assets/Serina Assets/new_theme/next.svg" alt="next" />
+        </a>
+      </div>
+    </div>
+  </pagination-template>
+</div> -->
+  <ngx-spinner bdColor="rgba(251, 251, 251, 0.8)" size="medium" color = "#070900" [fullScreen]="false" type="ball-spin-clockwise">
+    <p style="color: rgb(0, 0, 0)"> </p>
+  </ngx-spinner>
+
+  <dialog #summary>
+    <div class="d-flex justify-content-between mb-2">
+      <h6 class="f-14">Please select the option to filter</h6>
+      <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
+    </div>
+    <div class="inputBox">
+      <label class="f-12 shade_color">Select month</label><br>
+      <p-calendar [(ngModel)]="selectDate" view="month" dateFormat="mm/yy" [showIcon]="true" [yearNavigator]="true" [minDate]="minDate" 
+      [maxDate]="maxDate" [yearRange]='displayYear' placeholder="Select dates to filter.." [readonlyInput]="false"
+      inputId="monthpicker"></p-calendar>
+    </div>
+
+      <div class="d-flex justify-content-end footer mt-3">
+        <button class="btnUpload" (click)="applyDatefilter()">Filter</button>
+      </div>
+  </dialog>

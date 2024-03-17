@@ -383,7 +383,11 @@ export class LoginPageComponent implements OnInit {
               if(data.permissioninfo.NewInvoice){
                 route = '/uploadInvoices'
               } else {
+                if(this.vendorInvoiceAccess){
                   route = '/invoice/allInvoices';
+                } else {
+                  route = '/invoice/ServiceInvoices';
+                }
               }
             } else if(data.userdetails?.landingPage == 'Document Status'){
               if(invoceDoctype){

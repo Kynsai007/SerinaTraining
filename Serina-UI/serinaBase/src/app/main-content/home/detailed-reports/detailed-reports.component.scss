@@ -1,11 +1,10 @@
 .chart_title {
-    position: absolute;
-    top: 5px;
-    left: 10px;
-    padding: 4px 10px;
-    border-radius: 3px;
-    background-color: #fde0d0;
-    z-index: 12;
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  z-index: 12;
   }
   .charts_height {
     max-height: 74vh;
@@ -41,7 +40,7 @@
     .filter_inputDash {
       position: absolute;
       top: 88px;
-      background: black;
+      // background: black;
       width: 100%;
       padding: 5px;
       box-sizing: border-box;

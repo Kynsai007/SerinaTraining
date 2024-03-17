@@ -1,9 +1,10 @@
-<div>
-
+<div
+class="nav_pane_width1 d-flex justify-content-between flex-wrap inv_nav_container"
+>
   <ul class="nav nav-pills">
     <li class="nav-item mr-1">
       <a
-        class="nav-link"
+        class="nav-link f-14"
         [class.active-pill]="viewType == 'Process'"
         (click)="choosepageTab('Process')"
       >
@@ -21,7 +22,7 @@
     </li> -->
     <li class="nav-item">
       <a
-        class="nav-link"
+        class="nav-link f-14"
         [class.active-pill]="viewType == 'Summary'"
         (click)="choosepageTab('Summary')"
       >
@@ -29,8 +30,9 @@
       >
     </li>
   </ul>
+  </div>
 
-  <div class="tableDataDiv pt-12" [ngSwitch]="viewType">
+  <div class="tableDaDiv" [ngSwitch]="viewType" style="padding-top: 8px">
     <!-- Process invoices Tab -->
     <div *ngSwitchCase="'Process'">
       <app-process-reportservice></app-process-reportservice>
@@ -43,7 +45,6 @@
 
     <!-- Summary invoices Tab -->
     <div *ngSwitchCase="'Summary'">
-      <app-summary></app-summary>
+      <app-service-summary></app-service-summary>
     </div>
   </div>
-</div>

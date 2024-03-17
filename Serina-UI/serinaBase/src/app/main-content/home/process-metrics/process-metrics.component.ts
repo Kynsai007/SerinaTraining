@@ -61,14 +61,12 @@ export class ProcessMetricsComponent implements OnInit {
   filterDataPosted: any[];
   filterDataCollections: any[];
   filterDataRejected: any[];
-
-  cardArray = [
-    { id: 1, icon:'vendor_up', heading:'Total Invoices', tabName : 'Total' ,  count:0, clr:'#AEBDF7'},
-    { id: 2, icon:'vendor_rm', heading:'Invoices Under Process', tabName : 'UnderProcess', count:0, clr:'#E6AFFA'},
-    { id: 3, icon:'vendor_pr', heading:'Invoiced', tabName : 'Posted', count:0, clr:'#78DFF0'},
-    { id: 4, icon:'vendor_pr', heading:'Collections', tabName : 'Collections', count:0, clr:'#FFC9A5'},
-    { id: 5, icon:'vendor_rej', heading:'Rejected', tabName : 'Rejected', count:0, clr:'#FEBABA'},
-  ]
+  cardsArr = [
+    { title: 'Total Invoices' , count:0, image:'vendor_up',name:'Total' },
+    { title: 'Invoice Under Process' , count:0, image:'vendor_rm' ,name:'UnderProcess'},
+    { title: 'Invoiced' , count:0, image:'vendor_pr',name:'Posted' },
+    { title: 'Collections' , count:0, image:'vendor_pr',name:'Collections' },
+    { title: 'Rejected' , count:0, image:'vendor_rej',name:'Rejected' }]
   constructor(
     private chartsService: ChartsService,
     private SpinnerService: NgxSpinnerService,
@@ -116,78 +114,78 @@ export class ProcessMetricsComponent implements OnInit {
 
   prepareColumns() {
     this.columnsForTotal = [
-      // { field: 'VendorName', header: 'Vendor Name' },
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'PODocumentID', header: 'PO Number' },
-      { field: 'EntityName', header: 'Entity' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      { field: 'totalAmount', header: 'Amount' },
-      // { field: 'sourcetype', header: 'source' },
+      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      { dbColumnname: 'EntityName', columnName: 'Entity' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
+      // { dbColumnname: 'sourcetype', columnName: 'source' },
     ];
 
     this.columnsForUnderProcess = [
-      // { field: 'VendorName', header: 'Vendor Name' },
-      { field: 'docheaderID', header: 'Invoice Number' },
-      // { field: 'Account', header: 'Vendor Account' },
-      { field: 'documentdescription', header: 'Description' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      { field: 'docStatus', header: 'Status' },
-      { field: 'totalAmount', header: 'Amount' },
+      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      // { dbColumnname: 'Account', columnName: 'Vendor Account' },
+      { dbColumnname: 'documentdescription', columnName: 'Description' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      { dbColumnname: 'docStatus', columnName: 'Status' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
     ];
 
     this.columnsForPosted = [
-      // { field: 'VendorName', header: 'Vendor Name' },
-      { field: 'docheaderID', header: 'Invoice Number' },
-      // { field: 'PODocumentID', header: 'PO Number' },
-      // { field: 'Name', header: 'Rule' },
-      { field: 'docStatus', header: 'Status' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      { field: 'documentDate', header: 'Posted Date' },
-      { field: 'totalAmount', header: 'Amount' },
-      // { field: 'Account', header: 'Actions' },
+      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      // { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      // { dbColumnname: 'Name', columnName: 'Rule' },
+      { dbColumnname: 'docStatus', columnName: 'Status' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      { dbColumnname: 'documentDate', columnName: 'Posted Date' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
+      // { dbColumnname: 'Account', columnName: 'Actions' },
     ];
 
     this.columnsForCollections = [
-      // { field: 'VendorName', header: 'Vendor Name' },
-      { field: 'docheaderID', header: 'Invoice Number' },
-      // { field: 'Account', header: 'Vendor Account' },
-      // { field: 'Account', header: 'Approval Type' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      { field: 'documentDate', header: 'Posted Date' },
-      { field: 'documentDate', header: 'Payment Date' },
-      // { field: 'UpdatedOn', header: 'Last Modified' },
-      { field: 'totalAmount', header: 'Amount' },
+      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      // { dbColumnname: 'Account', columnName: 'Vendor Account' },
+      // { dbColumnname: 'Account', columnName: 'Approval Type' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      { dbColumnname: 'documentDate', columnName: 'Posted Date' },
+      { dbColumnname: 'documentDate', columnName: 'Payment Date' },
+      // { dbColumnname: 'UpdatedOn', columnName: 'Last Modified' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
     ];
 
     this.columnsForRejected = [
-      // { field: 'VendorName', header: 'Vendor Name' },
-      { field: 'docheaderID', header: 'Invoice Number' },
-      { field: 'PODocumentID', header: 'PO Number' },
-      { field: 'EntityName', header: 'Entity' },
-      { field: 'documentDate', header: 'Invoice Date' },
-      { field: 'documentdescription', header: 'Description' },
-      { field: 'totalAmount', header: 'Amount' },
+      // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+      { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+      { dbColumnname: 'EntityName', columnName: 'Entity' },
+      { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
+      { dbColumnname: 'documentdescription', columnName: 'Description' },
+      { dbColumnname: 'totalAmount', columnName: 'Amount' },
     ];
     this.columnsForTotal.forEach((e) => {
-      this.totalColumnHeader.push(e.header);
-      this.totalColumnField.push(e.field);
+      this.totalColumnHeader.push(e.columnName);
+      this.totalColumnField.push(e.dbColumnname);
     });
 
     this.columnsForUnderProcess.forEach((e) => {
-      this.UnderProcessColumnHeader.push(e.header);
-      this.UnderProcessColumnField.push(e.field);
+      this.UnderProcessColumnHeader.push(e.columnName);
+      this.UnderProcessColumnField.push(e.dbColumnname);
     });
     this.columnsForPosted.forEach((e) => {
-      this.PostedColumnHeader.push(e.header);
-      this.PostedColumnField.push(e.field);
+      this.PostedColumnHeader.push(e.columnName);
+      this.PostedColumnField.push(e.dbColumnname);
     });
     this.columnsForCollections.forEach((e) => {
-      this.CollectionsColumnHeader.push(e.header);
-      this.CollectionsColumnField.push(e.field);
+      this.CollectionsColumnHeader.push(e.columnName);
+      this.CollectionsColumnField.push(e.dbColumnname);
     });
     this.columnsForRejected.forEach((e) => {
-      this.RejectedColumnHeader.push(e.header);
-      this.RejectedColumnField.push(e.field);
+      this.RejectedColumnHeader.push(e.columnName);
+      this.RejectedColumnField.push(e.dbColumnname);
     });
 
     this.ColumnLengthtotal = this.columnsForTotal.length;
@@ -199,75 +197,45 @@ export class ProcessMetricsComponent implements OnInit {
 
   readTotalInvoiceData(filter){
     this.chartsService.getTotalInvoiceData(filter).subscribe((data:any)=>{
-      // let mergedArr = [];
-      // data.data.forEach(ele=>{
-      //   let arr = {...ele.Document,...ele.Entity};
-      //   mergedArr.push(arr);
-      // });
       this.totalTableData = data.data;
-      // this.totalInv = this.totalTableData.length;
-      this.cardArray[0].count = this.totalTableData.length;
-      if(this.cardArray[0].count>10){
+      this.cardsArr[0].count = this.totalTableData.length;
+      if(this.totalTableData.length>10){
         this.showPaginatortotal = true;
       }
     })
   }
   readUnderProcessData(filter){
     this.chartsService.getUnderprocessInvoiceData(filter).subscribe((data:any)=>{
-      // let mergedArr = [];
-      // data.data.forEach(ele=>{
-      //   let arr = {...ele.Document,...ele.Entity};
-      //   mergedArr.push(arr);
-      // });
       this.UnderProcessTableData = data.data;
-      // this.UnderProcessInv = this.UnderProcessTableData.length;
-      this.cardArray[1].count = this.UnderProcessTableData.length;
-      if(this.cardArray[1].count>10){
+      this.cardsArr[1].count  = this.UnderProcessTableData.length;
+      if(this.cardsArr[1].count>10){
         this.showPaginatorUnderProcess = true;
       }
     })
   }
   readInvoicedData(filter){
     this.chartsService.getInvoicedData(filter).subscribe((data:any)=>{
-      // let mergedArr = [];
-      // data.data.forEach(ele=>{
-      //   let arr = {...ele.Document,...ele.Entity};
-      //   mergedArr.push(arr);
-      // });
       this.PostedTableData = data.data;
-      // this.PostedInv = this.PostedTableData.length;
-      this.cardArray[2].count = this.PostedTableData.length;
-      if(this.cardArray[2].count>10){
+      this.cardsArr[2].count = this.PostedTableData.length;
+      if(this.cardsArr[2].count>10){
         this.showPaginatorPosted = true;
       }
     })
   }
   readCollectionsData(filter){
     this.chartsService.getCollectionData(filter).subscribe((data:any)=>{
-      // let mergedArr = [];
-      // data.data.forEach(ele=>{
-      //   let arr = {...ele.Document,...ele.Entity};
-      //   mergedArr.push(arr);
-      // });
       this.CollectionsTableData = data.data;
-      // this.CollectionsInv = this.CollectionsTableData.length;
-      this.cardArray[3].count = this.CollectionsTableData.length;
-      if(this.cardArray[3].count>10){
+      this.cardsArr[3].count = this.CollectionsTableData.length;
+      if(this.cardsArr[3].count>10){
         this.showPaginatorCollections = true;
       }
     })
   }
   readRejectedData(filter){
     this.chartsService.getRejectedData(filter).subscribe((data:any)=>{
-      // let mergedArr = [];
-      // data.data.forEach(ele=>{
-      //   let arr = {...ele.Document,...ele.Entity};
-      //   mergedArr.push(arr);
-      // });
       this.RejectedTableData = data.data;
-      // this.RejectedInv = this.RejectedTableData.length;
-      this.cardArray[4].count = this.RejectedTableData.length;
-      if(this.cardArray[4].count>10){
+      this.cardsArr[4].count = this.RejectedTableData.length;
+      if(this.cardsArr[4].count>10){
         this.showPaginatorCollections = true;
       }
     })
@@ -310,9 +278,27 @@ export class ProcessMetricsComponent implements OnInit {
     this.readUnderProcessData(dateFilter);
     this.readCollectionsData(dateFilter);
     this.readRejectedData(dateFilter);
+    this.closeDialog();
   }
 
   clearDates(){
     this.filterByDate('');
+  }
+  openFilterDialog(event){
+    let top = event.clientY + 10 + "px";
+    let left = "calc(55% + 100px)";
+    const dialog = document.querySelector('dialog');
+    dialog.style.top = top;
+    dialog.style.left = left;
+    if(dialog){
+      dialog.showModal();
+    }
+  }
+
+  closeDialog(){
+    const dialog = document.querySelector('dialog');
+    if(dialog){
+      dialog.close();
+    }
   }
 }

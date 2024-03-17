@@ -8,6 +8,7 @@ import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-inv
 import { environment } from 'src/environments/environment.prod';
 import * as XLSX from 'xlsx';
 import * as fileSaver from 'file-saver';
+import { AlertService } from 'src/app/services/alert/alert.service';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class BulkUploadServiceComponent implements OnInit {
   constructor(private http: HttpClient,
     private router: Router,
     private spService: ServiceInvoiceService,
-    private messageService: MessageService) { }
+    private alert: AlertService) { }
 
 
   onChange(evt) {
@@ -114,17 +115,9 @@ export class BulkUploadServiceComponent implements OnInit {
       this.uploadSectionBoolean = true;
       this.displayErpBoolean = false;
       this.spService.displayErpBoolean = false;
-      this.messageService.add({
-        severity: "success",
-        summary: "File Downloaded",
-        detail: "File Downloaded Successfully"
-      });
+      this.alert.success_alert('File Downloaded Successfully.');
     }, error => {
-      this.messageService.add({
-        severity: "error",
-        summary: "error",
-        detail: "Download failed, please try again"
-      });
+      this.alert.error_alert('Download failed, please try again.');
     })
   }
   excelDownload(data,type){
@@ -154,11 +147,7 @@ export class BulkUploadServiceComponent implements OnInit {
             this.progress = null;
             let result = event.body.Result.result.split(" ");
             if(result[0] != "0"){
-              this.messageService.add({
-                severity: "success",
-                summary: "File Uploaded",
-                detail: event.body.Result.result
-              });
+              this.alert.success_alert(event.body.Result.result);
               this.spService.downloadRejectRecords().subscribe(data => {
                 this.excelDownload(data,'Rejected_accounts_serina');
               })
@@ -166,11 +155,7 @@ export class BulkUploadServiceComponent implements OnInit {
                 this.router.navigate([`/customer/serviceProvider`]);
               }, 4000);
             } else if(result[0] == result[result.length-1]){
-              this.messageService.add({
-                severity: "success",
-                summary: "File Uploaded",
-                detail: event.body.Result.result
-              });
+              this.alert.success_alert(event.body.Result.result);
               setTimeout(() => {
                 this.router.navigate([`/customer/serviceProvider`]);
               }, 4000);
@@ -178,28 +163,117 @@ export class BulkUploadServiceComponent implements OnInit {
               this.spService.downloadRejectRecords().subscribe(data => {
                 this.excelDownload(data,'Rejected_accounts_serina');
               })
-              this.messageService.add({
-                severity: "error",
-                summary: "error",
-                detail: "Accounts having some issue, please try again"
-              });
+              this.alert.error_alert("Accounts having some issue, please try again");
             }
-
           }
 
         }),
         catchError((err: any) => {
           this.progress = null;
-          this.messageService.add({
-            severity: "error",
-            summary: "error",
-            detail: "Upload failed, please try again"
-          });
+          this.alert.error_alert("Upload failed, please try again");
           return throwError(err.message);
         })
       )
       .toPromise();
   }
+
+  // uploadFile(e: any, filetype: any,type:string) {
+  //   let data = e;
+  //   if( type != 'drag'){
+  //     data = e.target.files[0];
+  //   }
+  //   if (filetype == 'sa')
+  //     this.uploadProgress = 0;
+  //   else if (filetype == 'ca')
+  //     this.uploadProgress1 = 0;
+  //   else
+  //     this.uploadProgress2 = 0;
+  //   const formData = new FormData();
+  //   formData.append('file', data);
+  //   if (filetype == 'sa') {
+  //     this.uploading = true;
+  //   } else if (filetype == 'ca') {
+  //     this.uploading1 = true;
+  //   } else if(filetype == 'va') {
+  //     this.uploading2 = true;
+  //   } else{
+  //     this.uploading3 = true;
+  //   }
+  //   this.http.post(
+  //     `${environment.apiURL}/${environment.apiVersion}/util/uploadTemplate/${this.active_user}/${filetype}`,
+  //     formData,
+  //     {
+  //       reportProgress: true,
+  //       observe: 'events',
+  //     }
+  //   )
+  //     .pipe(
+  //       map((event: any) => {
+  //         if (event.type == HttpEventType.UploadProgress) {
+  //           if (filetype == 'sa') {
+  //             this.uploadProgress = Math.round((100 / event.total) * event.loaded);
+  //           } else if (filetype == 'ca') {
+  //             this.uploadProgress1 = Math.round((100 / event.total) * event.loaded);
+  //           } else if (filetype == 'va') {
+  //             this.uploadProgress2 = Math.round((100 / event.total) * event.loaded);
+  //           }
+  //         } else if (event.type == HttpEventType.Response) {
+  //           if (filetype == 'sa') {
+  //             this.safilepath = event.body["filepath"];
+  //             this.uploading = false;
+  //           } else if (filetype == 'ca') {
+  //             this.cafilepath = event.body["filepath"];
+  //             this.uploading1 = false;
+  //           } else if(filetype == 'va') {
+  //             this.vafilepath = event.body["filepath"];
+  //             this.uploading2 = false;
+  //           } else if(filetype == 'ct'){
+  //             this.ctfilepath = event.body["filepath"];
+  //           }
+  //           if (this.templates[0].selected && !this.templates[1].selected) {
+  //             if (this.safilepath != '' && this.cafilepath != '') {
+  //               this.filesuploaded = true;
+  //             }
+  //           }
+  //           if (this.templates[1].selected && !this.templates[0].selected) {
+  //             if (this.vafilepath != '') {
+  //               this.filesuploaded = true;
+  //             }
+  //           }
+  //           if (this.templates[1].selected && !this.templates[0].selected && this.doctypes[0].selected && this.doctypes[1].selected) {
+  //             if (this.vafilepath != '' && this.ctfilepath != '') {
+  //               this.filesuploaded = true;
+  //             }
+  //           }
+  //           if (this.templates[1].selected && !this.templates[0].selected && !this.doctypes[0].selected && this.doctypes[1].selected) {
+  //             if (this.ctfilepath != '') {
+  //               this.filesuploaded = true;
+  //             }
+  //           }
+  //           if (this.templates[0].selected && this.templates[1].selected && this.doctypes[1].selected) {
+  //             if (this.safilepath != '' && this.cafilepath != '' && this.vafilepath != '' && this.ctfilepath != "") {
+  //               this.filesuploaded = true;
+  //             }
+  //           }
+  //           if (this.templates[0].selected && this.templates[1].selected && !this.doctypes[1].selected) {
+  //             if (this.safilepath != '' && this.cafilepath != '' && this.vafilepath != '') {
+  //               this.filesuploaded = true;
+  //             }
+  //           }
+  //           if(this.filesuploaded){
+  //             this.showcomplete = true;
+  //           }
+  //         }
+  //       }),
+  //       catchError((err: any) => {
+  //         this.uploading = false;
+  //         this.uploading1 = false;
+  //         this.uploading2 = false;
+  //         return throwError(err.message);
+  //       })
+  //     )
+  //     .toPromise();
+  // }
   ngOnInit(): void {
     this.displayErpBoolean = this.spService.displayErpBoolean;
   }

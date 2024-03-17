@@ -1,178 +1,135 @@
-<div class="filter_inputDash">
-  <p-calendar
-    [(ngModel)]="rangeDates"
-    selectionMode="range"
-    [minDate]="minDate"
-    [maxDate]="maxDate"
-    placeholder="Select dates to Filter"
-    [readonlyInput]="true"
-    [showIcon]="true"
-    showButtonBar="true"
-    inputId="range"
-    (onClearClick)="clearDates()"
-  ></p-calendar>
-  <button class="btnUpload filter_btn_m" (click)="filterByDate(rangeDates)">Filter</button>
-</div>
-<div class="d-flex filters_div">
-  <div class="selectFilter mr-2">
-    <!-- <select class="f-12 form-control font_weight">
-      <option value="">Select Vendor</option>
-      <option value="ALL">ALL</option>
-      <option *ngFor="let vendor of vendorsData">
-        {{ vendor.VendorName }}
-      </option>
-    </select> -->
-    <p-autoComplete
-      [placeholder]="partyType"
-      (onSelect)="selectVendor($event)"
-      [group]="false"
-      [(ngModel)]="selectedVendorValue"
-      [suggestions]="filteredVendors"
-      (completeMethod)="filterVendor($event)"
-      field="VendorName"
-      [dropdown]="true"
-    >
-      <ng-template let-group pTemplate="group">
-        <div class="flex align-items-center">
-          <span class="f-12">{{ group.VendorName }}</span>
-        </div>
-      </ng-template>
-    </p-autoComplete>
-  </div>
 
-  <div class="selectFilter mr-2">
-    <select
-      class="f-12 form-control font_weight"
-      (change)="selectEntityFilter($event.target.value)"
-    >
-      <option value="">Select Entity</option>
-      <option value="ALL">ALL</option>
-      <option *ngFor="let entity of entity" [value]="entity.idEntity">
-        {{ entity.EntityName }}
-      </option>
-    </select>
-  </div>
-
-  <div class="selectFilter">
-    <select
-      class="f-12 form-control font_weight"
-      (change)="selectedSource($event.target.value)"
-    >
-      <option value="" disabled selected>Select Source type</option>
-      <option value="ALL">ALL</option>
-      <option *ngFor="let source of sourceData" [value]="source.sourceType">
-        {{ source.sourceType }}
-      </option>
-    </select>
-  </div>
+<div class="filter_icon" (click)="openFilterDialog($event)">
+    <mat-icon class="placement" svgIcon="filter_ic"></mat-icon>
 </div>
-<div class="tableDtDiv">
-  <div class="d-flex justify-content-between f-wrap">
-    <div *ngFor="let obj of cardObj" class="card-div d-flex d_flx_row" [class]="obj.cls">
+<div class="d-flex justify-content-between f-wrap bg-w tableDtDiv" >
+  <ng-container *ngFor="let obj of cardsArr">
+    <div class="card-div d-flex d_flx_row">
       <div class="img-wrapper">
-        <mat-icon class="placement" [svgIcon]="obj.icon"></mat-icon>
+        <!-- <i class="fa fa-check"></i> -->
+        <mat-icon class="placement" [svgIcon]="obj.image"></mat-icon>
       </div>
       <div>
-        <div class="f-12">{{ obj.heading }}</div>
-        <div class="f-15">{{ obj.count }}</div>
+        <div class="f-15 primary_clr">{{ obj.count }}</div>
+        <div class="f-12">{{ obj.title}}</div>
       </div>
     </div>
-  </div>
+  </ng-container>
 </div>
 
 <div class="charts_height">
-  <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
-    <div class="chart_title f-12">Invoice Count by Entity</div>
-    <button *ngIf="invoiceByEntityChartdata?.length>0" class="btnUpload dwnload_btn" (click)="downloadReport(invoiceByEntityChartdata)">
-      <i class="fa fa-download" aria-hidden="true"></i>
-    </button>
-    <div class="chart_div">
-      <!-- <div [ngStyle]="{'visibility': !noDataSourceEntityboolean ? 'visible':'hidden'}" id="column_chart_entity"></div>
-      <div [ngStyle]="{'visibility': noDataSourceEntityboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
-        No Data Available
-      </div> -->
-      <div class="mt-4 tableD">
-        <app-table
-          [tableData]="invoiceByEntityChartdata"
-          [invoiceColumns]="columnsForTotal"
-          [showPaginator]="showPaginatortotal"
-          [columnsToFilter]="totalColumnField"
-          [columnLength]="ColumnLengthtotal"
-        >
-        </app-table>
+  <div class="d-flex justify-content-between flex-wrap" style="position: relative; gap: 10px;">
+    <div class="charts_box w-400">
+      <div class="chart_title f-12">Invoice Count by Entity</div>
+      <button *ngIf="invoiceByEntityChartdata?.length>0" class="btnUpload btnD  pos_ab_20" (click)="downloadReport(invoiceByEntityChartdata)">
+        <i class="fa fa-download" aria-hidden="true"></i>
+      </button>
+      <div class="chart_div1 d-flex ent_count">
+        <ng-container *ngFor="let data of invoiceByEntityChartdata">
+          <div class="ent_card">
+            <div class="f-12 shade_color">{{ data.EntityName }}</div>
+            <div class="countSb_div">
+              <div class="d-flex count_div">
+                <div class="f-18">{{ data.count }} <span class="f-10 line_text shade_color">invoice</span></div>
+                <div class="f-18 shade_color" >|</div>
+                <div class="f-18">{{ data.pagecount }}  <span class="f-10 line_text shade_color">Pages</span></div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="hidden">
+        
       </div>
     </div>
 
-    <div class="chart_title f-12 l-52">PO info</div>
-    <button *ngIf="poinfoTabledata?.length>0" class="btnUpload pos_ab_20" (click)="downloadReport(poinfoTabledata)">
-      <i class="fa fa-download" aria-hidden="true"></i>
-    </button>
-    <div class="chart_div">
-      <!-- <div [ngStyle]="{'visibility': !noDataSourceEntityboolean ? 'visible':'hidden'}" id="column_chart_entity"></div>
-      <div [ngStyle]="{'visibility': noDataSourceEntityboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
-        No Data Available
-      </div> -->
-      <div class="mt-4 tableD">
-        <app-table
-          [tableData]="poinfoTabledata"
-          [invoiceColumns]="columnsForPoInfo"
-          [showPaginator]="showPaginatorPOinfo"
-          [columnsToFilter]="poInfoColumnField"
-          [columnLength]="ColumnLengthPoInfo"
-        >
-        </app-table>
+    <div class="charts_box w-400">
+      <div class="chart_title f-12 ">PO info</div>
+      <button *ngIf="poinfoTabledata?.length>0" class="btnUpload btnD pos_ab_20" (click)="downloadReport(poinfoTabledata)">
+        <i class="fa fa-download" aria-hidden="true"></i>
+      </button>
+      <div class="chart_div1">
+        <!-- <div [ngStyle]="{'visibility': !noDataSourceEntityboolean ? 'visible':'hidden'}" id="column_chart_entity"></div>
+        <div [ngStyle]="{'visibility': noDataSourceEntityboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
+          No Data Available
+        </div> -->
+        <div class="mt-4 tableD">
+          <app-table
+            [tableData]="poinfoTabledata"
+            [invoiceColumns]="columnsForPoInfo"
+            [showPaginator]="showPaginatorPOinfo"
+            [columnsToFilter]="poInfoColumnField"
+            [columnLength]="ColumnLengthPoInfo"
+          >
+          </app-table>
+        </div>
       </div>
     </div>
+
+    <div class="charts_box w-500">
+      <div class="chart_title f-12">Invoice Pending by Amount</div>
+      <div  class="chart_div1">
+        <div [ngStyle]="{'visibility':!noDataPAboolean ? 'visible':'hidden'}" id="vendor_line_chart" >
+        </div>
+        <div [ngStyle]="{'visibility':noDataPAboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
+          No Data Available
+        </div>
+      </div>
+    </div>
+
+    <div class="charts_box w-500">
+      <div class="chart_title f-12 ">
+        Invoice Count by Vendor
+      </div>
+      <div class="chart_div1">
+        <div [ngStyle]="{'visibility':!noDataVndrCountboolean ? 'visible':'hidden'}" id="stack_chart"></div>
+        <div [ngStyle]="{'visibility': noDataVndrCountboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
+          No Data Available
+        </div>
+      </div>
+    </div>
+
+    <div class="charts_box w-400">
+      <div class="chart_title f-12">
+        Invoice Count by Source Type
+      </div>
+      <div class="chart_div1">
+        <div [ngStyle]="{'visibility': !noDataSourceboolean ? 'visible':'hidden'}" id="pie_chart" ></div>
+        <div [ngStyle]="{'visibility': noDataSourceboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
+          No Data Available
+        </div>
+      </div>
+    </div>
+
+    <div class="charts_box w-400">
+      <div class="chart_title f-12 ">Aging in Serina</div>
+      <div class="chart_div1">
+        <div [ngStyle]="{'visibility': !noDataAgeboolean ? 'visible':'hidden'}" id="vendor_clm_chart1" ></div>
+        <div [ngStyle]="{'visibility': noDataAgeboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
+          No Data Available
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <!-- <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
+
 
     
   </div>
   <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
-    <div class="chart_title f-12">Invoice Pending by Amount</div>
-    <div  class="chart_div">
-      <div [ngStyle]="{'visibility':!noDataPAboolean ? 'visible':'hidden'}" id="vendor_clm_chart" >
-      </div>
-      <div [ngStyle]="{'visibility':noDataPAboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
-        No Data Available
-      </div>
-    </div>
-    <div class="chart_title f-12 l-52">
-      Invoice Count by {{partyType}}
-    </div>
-    <div class="chart_div">
-      <div [ngStyle]="{'visibility':!noDataVndrCountboolean ? 'visible':'hidden'}" id="bar_chart"></div>
-      <div [ngStyle]="{'visibility': noDataVndrCountboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
-        No Data Available
-      </div>
-    </div>
-    
-  </div>
-  <div class="d-flex justify-content-between d-column mt-2" style="position: relative">
 
     
-    <div class="chart_title f-12">
-      Invoice Count by Source Type
-    </div>
-    <div class="chart_div">
-      <div [ngStyle]="{'visibility': !noDataSourceboolean ? 'visible':'hidden'}" id="pie_chart" ></div>
-      <div [ngStyle]="{'visibility': noDataSourceboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
-        No Data Available
-      </div>
-    </div>
 
-    <div class="chart_title f-12 l-52">Aging in Serina</div>
-    <div class="chart_div">
-      <div [ngStyle]="{'visibility': !noDataAgeboolean ? 'visible':'hidden'}" id="vendor_clm_chart1" ></div>
-      <div [ngStyle]="{'visibility': noDataAgeboolean ? 'visible':'hidden'}" class="f-13 center-card-text">
-        No Data Available
-      </div>
-    </div>
+
+
     
-  </div>
+  </div> -->
   <!-- <div class="d-flex justify-content-between mt-2" style="position: relative">
     <div class="chart_title f-12">
       Invoice Count by Entity
     </div>
-    <div class="chart_div">
+    <div class="chart_div1">
       <div [ngStyle]="{'visibility': !noDataSourceEntityboolean ? 'visible':'hidden'}" id="pie_chart_entity"></div>
       <div [ngStyle]="{'visibility': noDataSourceEntityboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
         No Data Available
@@ -190,3 +147,78 @@
     <p style="color: rgb(0, 0, 0)"></p>
   </ngx-spinner>
 </div>
+
+
+<dialog #process_dialog>
+  <div class="d-flex justify-content-between mb-2">
+    <h6 class="f-14">Please select the option to filter</h6>
+    <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
+  </div>
+  <div class="inputBox">
+    <label class="f-12 shade_color">Start & End Date</label><br>
+    <p-calendar
+      [(ngModel)]="rangeDates"
+      selectionMode="range"
+      [minDate]="minDate"
+      [maxDate]="maxDate"
+      placeholder="Select dates to Filter"
+      [readonlyInput]="true"
+      [showIcon]="true"
+      showButtonBar="true"
+      inputId="range"
+      (onClearClick)="clearDates()"
+    ></p-calendar>
+  </div>
+    <div class="inputBox">
+      <label class="f-12 shade_color">Select Vendor</label><br>
+      <p-autoComplete
+        placeholder="Select"
+        (onSelect)="selectVendor($event)"
+        [group]="false"
+        [(ngModel)]="selectedVendorValue"
+        [suggestions]="filteredVendors"
+        (completeMethod)="filterVendor($event)"
+        field="VendorName"
+        [dropdown]="true"
+      >
+        <ng-template let-group pTemplate="group">
+          <div class="flex align-items-center">
+            <span class="f-12">{{ group.VendorName }}</span>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+    </div>
+  
+    <div class="inputBox">
+      <label class="f-12 shade_color">Select Entity</label><br>
+      <select
+        class="f-12 form-control font_weight"
+        (change)="selectEntityFilter($event.target.value)"
+      >
+        <option value="">Select</option>
+        <option value="ALL">ALL</option>
+        <option *ngFor="let entity of entity" [value]="entity.idEntity">
+          {{ entity.EntityName }}
+        </option>
+      </select>
+    </div>
+  
+    <div class="inputBox">
+      <label class="f-12 shade_color">Select Source type</label><br>
+      <select
+        class="f-12 form-control font_weight"
+        (change)="selectedSource($event.target.value)"
+      >
+        <option value="" disabled selected>Select </option>
+        <option value="ALL">ALL</option>
+        <option *ngFor="let source of sourceData" [value]="source.sourceType">
+          {{ source.sourceType }}
+        </option>
+      </select>
+    </div>
+
+
+    <div class="d-flex justify-content-end footer mt-3">
+      <button class="btnUpload" (click)="filterByDate(rangeDates)">Filter</button>
+    </div>
+</dialog>

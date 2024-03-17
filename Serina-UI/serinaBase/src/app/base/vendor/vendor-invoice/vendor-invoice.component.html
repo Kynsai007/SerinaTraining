@@ -39,14 +39,19 @@
   </div>
 </div>
 
-  <div class="card_container d-flex justify-content-between mt-2">
-    <div class="card pointer" *ngFor="let account of accountList" (click)="updateSpAccount(account)">
+  <div class="card_container d-flex justify-content-between scroll mt-2"
+  
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [scrollWindow]="false"
+    (scrolled)="onScroll()">
+    <div class="card pointer" *ngFor="let account of accountsArray" (click)="updateSpAccount(account)">
       <div class="status_btn f-12">A/c - {{ account?.Account }}</div>
       <div class="f-14">{{ account?.EntityName }}</div>
       <hr />
       <div class="f-12">{{ account?.PODocumentID }}</div>
     </div>
-    <div *ngIf="accountList.length <= 0" class="f-13 text-center p-3">
+    <div *ngIf="accountsArray.length <= 0" class="f-13 text-center p-3">
       No Accounts are available.
     </div>
   </div>

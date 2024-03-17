@@ -1,11 +1,4 @@
 <div>
-  <!-- <div class="searchBar">
-      <input class="searchInput" pInputText type="text" (keyup)="searchImport($event.target.value)"
-        placeholder="Search..." (input)="approve.filterGlobal($event.target.value, 'contains')" />
-      <span class="material-icons searchIcon">
-        search
-      </span>
-    </div> -->
   <p-table
     #approve
     [value]="tableData"
@@ -27,14 +20,14 @@
           [pSortableColumn]="col.field"
           [pTooltip]="col.header"
           tooltipPosition="top"
-          [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
+          [ngStyle]="{width:!col.header.includes('Vendor')? '62px':'auto'}"
         >
           {{ col.header }}
         </th>
-        <th *ngIf="downloadBoolean" class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'">Actions</th>
+        <th *ngIf="downloadBoolean" class="action_Zindex">Actions</th>
       </tr>
       <tr *ngIf="!(router.url.includes('processReports') ||router.url.includes('serviceBasedReports'))">
-        <td *ngFor="let col of columns">
+        <td *ngFor="let col of columns" [ngStyle]="{textAlign:!col.header.includes('Vendor')? 'right':'left'}">
           <input
             pInputText
             type="text"
@@ -53,12 +46,15 @@
       <tr>
         <td *ngFor="let col of columns" [title]="invoiceData[col.field]">
           <span *ngIf=" col.field == 'CreatedOn' || col.field == 'documentDate'">
-                <span *ngIf="invoiceData[col?.field] && col.field == 'CreatedOn'">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yy, h:mm a' }}</span> 
-                <span *ngIf="invoiceData[col?.field] && col.field == 'documentDate' ">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yyyy' }}</span>  
-              </span>
-              <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate'">{{
-                invoiceData[col.field]
-              }}</span>
+            <span *ngIf="invoiceData[col?.field] && col.field == 'CreatedOn'">{{ invoiceData[col?.field] + "Z" | date:'yyyy-MM-dd, h:mm a' }}</span> 
+            <span *ngIf="invoiceData[col?.field] && col.field == 'documentDate' ">{{ invoiceData[col?.field] + "Z" | date:'yyyy-MM-dd' }}</span>  
+          </span>
+          <span *ngIf="col.field == 'VendorName'" (click)="routeToDocpage(invoiceData['VendorName'])">
+            {{ invoiceData[col.field] }}
+          </span>
+          <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate' && col.field != 'VendorName'">
+            {{ invoiceData[col.field] }}
+          </span>
         </td>
         <td *ngIf="etisalatBoolean">
             <button class="b-0 actionsBtn" (click)="downloadFile(invoiceData)"

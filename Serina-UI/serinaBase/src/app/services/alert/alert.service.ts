@@ -51,13 +51,13 @@ openCustomSnackbar(img:string,t_head:string,t_foot:string,bg_clr:string) {
 }
 
 success_alert(msg){
-  this.openCustomSnackbar('/assets/Serina Assets/new_theme/Group 933.svg','Hurray!',msg,'#14BB12');
+  this.openCustomSnackbar('/assets/Serina Assets/new_theme/Group 1391.svg','Hurray!',msg,'#14BB12');
 }
 error_alert(msg){
-  this.openCustomSnackbar('/assets/Serina Assets/new_theme/Group 933.svg',"Don't worry!",msg,'#FF5858');
+  this.openCustomSnackbar('/assets/Serina Assets/new_theme/Group 1599.svg',"Oops!",msg,'#FF5858');
 }
 update_alert(msg){
-  this.openCustomSnackbar('/assets/Serina Assets/new_theme/Group 933.svg',"Suggestion",msg,'#B2B2B2');
+  this.openCustomSnackbar('/assets/Serina Assets/new_theme/Group 1599.svg',"Suggestion",msg,'#B2B2B2');
 }
 
 }

@@ -1,44 +1,40 @@
-<h6 class="headh6 mb-0">Business Reports</h6>
+<!-- <h6 class="headh6 mb-0">Business Reports</h6> -->
 
 <div
-  class="container-fluid"
-  style="overflow: hidden; min-height: 85vh; background-color: #e5e5e5"
+  style="overflow: hidden; min-height: 85vh;"
 >
-  <div>
-    <div>
-      <ul class="nav nav-pills centerClass">
-        <li class="nav-item mr-1" *ngIf="vendorInvoicesAccess">
-          <a
-            class="nav-link"
-            [class.active-pill]="viewType == 'vendor'"
-            (click)="choosepageTab('vendor')"
-          >
-            {{partyType}} Based</a
-          >
-        </li>
-        <li class="nav-item" *ngIf="serviceInvoicesAccess">
-          <a
-            class="nav-link"
-            [class.active-pill]="viewType == 'service'"
-            (click)="choosepageTab('service')"
-          >
-            Service Based</a
-          >
-        </li>
-      </ul>
-      
-    </div>
+  <ul class="nav nav-pills centerClass">
+    <div class="m-200 pipe">|</div>
+    <li class="nav-item mr-1">
+      <a
+        class="nav-link f-14"
+        [class.active-pill]="viewType == 'vendor'"
+        (click)="choosepageTab('vendor')"
+      >
+        Vendor Based</a
+      >
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link f-14"
+        [class.active-pill]="viewType == 'service'"
+        (click)="choosepageTab('service')"
+      >
+        Service Based</a
+      >
+    </li>
+    <div class="pipe" style="left: 0;">|</div>
+  </ul>
 
-    <div class="pt-1" [ngSwitch]="viewType">
+    <ng-container [ngSwitch]="viewType">
       <!-- vendor invoices Tab -->
-      <div *ngSwitchCase="'vendor'">
+      <ng-container *ngSwitchCase="'vendor'">
         <app-vendor-based-charts></app-vendor-based-charts>
-      </div>
+      </ng-container>
 
       <!-- Service invoices Tab -->
-      <div *ngSwitchCase="'service'">
+      <ng-container *ngSwitchCase="'service'">
         <app-service-based-charts></app-service-based-charts>
-      </div>
-    </div>
-  </div>
+      </ng-container>
+    </ng-container>
 </div>

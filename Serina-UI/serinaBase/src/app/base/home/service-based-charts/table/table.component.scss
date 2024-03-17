@@ -1,11 +1,22 @@
 :host ::ng-deep {
   .p-datatable .p-datatable-tbody > tr > td {
-    text-align: center !important;
-    padding: 8px;
+    background-color: #ffffff !important;
+    text-align: left;
+    background-color: #ffffff !important;
+    font-weight: 500 !important;
+    color: #000000;
   }
   .p-datatable .p-datatable-thead > tr > th {
-    text-align: center !important;
+    text-align: left !important;
     width: 100%;
+    background: #358dc01a !important;
+    color: #000000 !important;
+  }
+  .p-datatable .p-datatable-thead > tr > th:first-child {
+    border-top-left-radius: 0px !important;
+  }
+  .p-datatable .p-datatable-thead > tr > th:last-child {
+    border-top-right-radius: 0px !important;
   }
   .p-datatable table {
     background-color: white;

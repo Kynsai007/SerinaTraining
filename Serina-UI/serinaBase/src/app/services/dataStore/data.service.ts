@@ -214,7 +214,7 @@ export class DataService {
   masterSubTabName = 'invoice';
   grn_aprve_uniSearch: string = '';
   snackBarRef: any;
-  isTableView = new BehaviorSubject<boolean>(false);
+  isTableView = new BehaviorSubject<boolean>(true);
   approvalPageNumber: any;
   approval_uniSearch: any;
   constructor(

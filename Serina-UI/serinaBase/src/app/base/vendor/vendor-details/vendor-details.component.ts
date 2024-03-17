@@ -172,35 +172,7 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
   }
 
   get f() { return this.vendorDetailsForm.controls; }
-  onSubmit() {
-    this.submitted = true;
-    // stop here if form is invalid
-    // if (this.vendorDetailsForm.invalid) {
-    //     return;
-    // }
 
-    // display form values on success
-    this.sharedService.createvendor(JSON.stringify(this.vendorDetailsForm.value)).subscribe((data) => {
-      if (data.result == 'Updated') {
-        this.messageService.add({
-          severity: "info",
-          summary: "added",
-          detail: "Created Successfully"
-        });
-        this.vendorList = true;
-        // this.DisplayVendorDetails();
-        this.DisplayVendorDetailsById();
-        this.DisplayVendorAccountDetails();
-        // this.vendorDetailsForm.reset();
-      } else {
-        this.messageService.add({
-          severity: "error",
-          summary: "error",
-          detail: "Something went wrong"
-        });
-      }
-    });
-  }
   onCancel() {
     // this.initialViewVendor = true;
     // this.vendorList = true;
