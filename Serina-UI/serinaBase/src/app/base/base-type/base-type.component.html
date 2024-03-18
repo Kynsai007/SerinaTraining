@@ -554,9 +554,9 @@
               </li>
             <li class="navLink" id="sp_sub" [routerLink]="'serviceProvider/summary'"
                           [ngClass]="router.url == '/customer/serviceProvider/summary'?'active':'navLink'">Summary </li> -->
-              <!-- <li class="navLink" id="sp_sub" [routerLink]="'serviceProvider/invoices'"
+<!-- <li class="navLink" id="sp_sub" [routerLink]="'serviceProvider/invoices'"
                           [ngClass]="router.url == '/customer/serviceProvider/invoices'?'active':'navLink'">invoices</li> -->
-              <!-- <li
+<!-- <li
                 class="navLink"
                 id="sp_sub"
                 [routerLink]="'serviceProvider/bulk_upload'"
@@ -631,7 +631,7 @@
 
 <div class="layout">
   <nav class="desktop d-flex justify-content-between">
-    <div class="d-flex" style="gap: 64px;">
+    <div class="d-flex" style="gap: 64px">
       <div class="logo">
         <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" />
       </div>
@@ -640,6 +640,7 @@
           class="nav_Link f-14"
           [routerLink]="'home'"
           routerLinkActive="active_cls"
+          (click)="navClick()"
         >
           Dashboard
         </div>
@@ -648,33 +649,50 @@
           [routerLink]="'uploadInvoices'"
           routerLinkActive="active_cls"
           *ngIf="uploadPermissionBoolean"
+          (click)="navClick()"
         >
           Upload
         </div>
 
-        <div style="position: relative;">
+        <div style="position: relative">
           <div
-            class="nav_Link f-14"
+            class="nav_Link f-14 z_index"
             [ngClass]="{
-              'active_cls': router.url.includes('ExceptionManagement')
+              active_cls: router.url.includes('ExceptionManagement')
             }"
             (click)="exceptionDrop()"
             *ngIf="excpetionPageAccess"
           >
             Exceptions
-            <span class="material-icons more_pos" *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && !isOpen" >
+            <span
+              class="material-icons more_pos"
+              *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && !isOpen"
+            >
               expand_more
-              </span>
-              <span class="material-icons more_pos" *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && isOpen" >
-                expand_less
-                </span>
+            </span>
+            <span
+              class="material-icons more_pos"
+              *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && isOpen"
+            >
+              expand_less
+            </span>
           </div>
           <div
             [ngStyle]="{ display: isOpen ? 'block' : 'none' }"
             class="dropdown-content"
           >
-            <a [routerLink]="'ExceptionManagement'" routerLinkActive="active_sub_cls" (click)="exceptionMenu('vendor')">Vendor</a>
-            <a [routerLink]="'ExceptionManagement/Service_ExceptionManagement'" routerLinkActive="active_sub_cls" (click)="exceptionMenu('service')">Service</a>
+            <a
+              [routerLink]="'ExceptionManagement'"
+              routerLinkActive="active_sub_cls"
+              (click)="exceptionMenu('vendor','exc')"
+              >Vendor</a
+            >
+            <a
+              [routerLink]="'ExceptionManagement/Service_ExceptionManagement'"
+              routerLinkActive="active_sub_cls"
+              (click)="exceptionMenu('service','exc')"
+              >Service</a
+            >
           </div>
         </div>
         <div
@@ -682,6 +700,7 @@
           [routerLink]="'Create_GRN_inv_list'"
           routerLinkActive="active_cls"
           *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
+          (click)="navClick()"
         >
           Create GRN
         </div>
@@ -689,55 +708,132 @@
           class="nav_Link f-14"
           [routerLink]="'invoice'"
           (click)="doc_status_route()"
-          [ngClass]="router.url.includes('invoice')?'active_cls':''"
+          [ngClass]="router.url.includes('invoice') ? 'active_cls' : ''"
           routerLinkActive="active_cls"
+          (click)="navClick()"
         >
           Document Status
         </div>
-        <div
-          *ngIf="financeapproveDisplayBoolean && vendorInvoiceAccess && approveBoolean"
-          class="nav_Link f-14"
-          routerLinkActive="active_cls"
-          [routerLink]="'approvals'"
-        >
-          Approvals
+        <div style="position: relative">
+          <div
+            *ngIf="
+              financeapproveDisplayBoolean &&
+              vendorInvoiceAccess &&
+              approveBoolean
+            "
+            class="nav_Link f-14 "
+            (click)="approvalDropdown()"
+            [ngClass]="{
+              active_cls: router.url.includes('approvals')
+            }"
+          >
+            Approvals
+            <span
+                class="material-icons more_pos"
+                *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && !isOpen_apr && serviceApprovalsEnabled"
+              >
+                expand_more
+              </span>
+              <span
+                class="material-icons more_pos"
+                *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && isOpen_apr && serviceApprovalsEnabled"
+              >
+                expand_less
+              </span>
+          </div>
+          <div
+            [ngStyle]="{ display: isOpen_apr ? 'block' : 'none' }"
+            class="dropdown-content"
+          >
+            <a
+              [routerLink]="'approvals'"
+              routerLinkActive="active_sub_cls"
+              (click)="exceptionMenu('vendor','apr')"
+              >Vendor</a
+            >
+            <a
+              [routerLink]="'approvals/serviceInvoices'"
+              routerLinkActive="active_sub_cls"
+              (click)="exceptionMenu('service','apr')"
+              >Service</a
+            >
+          </div>
         </div>
+
         <div
           class="nav_Link f-14"
           [routerLink]="'GRN_approvals'"
           routerLinkActive="active_cls"
           *ngIf="GRNApprovalAccess"
+          (click)="navClick()"
         >
           GRN Approvals
         </div>
-        <div style="position: relative;" (clickOutside)="onClickedOutside($event,'more')">
-          <div class="nav_Link f-14" (click)="more_routes()"
-          [ngClass]="{
-            'active_cls': router.url.includes('/customer/vendor/') 
-            || router.url.includes('serviceProvider') 
-            || router.url.includes('documentSummary') 
-            || router.url.includes('roles')
-            || router.url.includes('service_batch_trigger')
-            || router.url.includes('bulkUploadService')
-          }"
+        <div
+          style="position: relative"
+          (clickOutside)="onClickedOutside($event, 'more')"
+        >
+          <div
+            class="nav_Link f-14"
+            (click)="more_routes()"
+            [ngClass]="{
+              active_cls:
+                router.url.includes('/customer/vendor/') ||
+                router.url.includes('serviceProvider') ||
+                router.url.includes('documentSummary') ||
+                router.url.includes('roles') ||
+                router.url.includes('service_batch_trigger') ||
+                router.url.includes('bulkUploadService')
+            }"
           >
-            {{more_text}} <span class="material-icons more_pos" >
-              {{ more_icon}}
-              </span>
-              
+            {{ more_text }}
+            <span class="material-icons more_pos">
+              {{ more_icon }}
+            </span>
           </div>
           <div
-              [ngStyle]="{ display: more_icon == 'expand_less' ? 'block' : 'none' }"
-              class="dropdown-content"
+            [ngStyle]="{
+              display: more_icon == 'expand_less' ? 'block' : 'none'
+            }"
+            class="dropdown-content"
+          >
+            <a
+              [routerLink]="'documentSummary'"
+              routerLinkActive="active_sub_cls"
+              (click)="onMenuChange('Summary')"
+              >Summary</a
             >
-              <a [routerLink]="'documentSummary'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Summary')">Summary</a>
-              <a [routerLink]="supplier_route" routerLinkActive="active_sub_cls" (click)="onMenuChange(supplier_names)" *ngIf="vendor_SP_PageAccess">{{supplier_names}}</a>
-              <a [routerLink]="'roles'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Roles')" *ngIf="addUsersBoolean">Roles</a>
-              <a [routerLink]="'bulkUploadService'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Bulk upload')" *ngIf="serviceInvoiceAccess">Bulk upload</a>
-              <a [routerLink]="'service_batch_trigger'" routerLinkActive="active_sub_cls" (click)="onMenuChange('Service batch trigger')" *ngIf="serviceInvoiceAccess">Service batch trigger</a>
-            </div>
+            <a
+              [routerLink]="supplier_route"
+              routerLinkActive="active_sub_cls"
+              (click)="onMenuChange(supplier_names)"
+              *ngIf="vendor_SP_PageAccess"
+              >{{ supplier_names }}</a
+            >
+            <a
+              [routerLink]="'roles'"
+              routerLinkActive="active_sub_cls"
+              (click)="onMenuChange('Roles')"
+              *ngIf="addUsersBoolean"
+              >Roles</a
+            >
+            <a
+              [routerLink]="'bulkUploadService'"
+              routerLinkActive="active_sub_cls"
+              (click)="onMenuChange('Bulk upload')"
+              *ngIf="serviceInvoiceAccess"
+              >Bulk upload</a
+            >
+            <a
+              [routerLink]="'service_batch_trigger'"
+              routerLinkActive="active_sub_cls"
+              (click)="onMenuChange('Service batch trigger')"
+              *ngIf="serviceInvoiceAccess"
+              >Service batch trigger</a
+            >
+          </div>
         </div>
-        
+
         <!-- <div >
           <div
           class="nav_Link f-14"
@@ -767,8 +863,19 @@
       </div>
     </div>
 
-    <div class="d-flex align-items-center ">
-      <div class="user_d f-13" *ngIf="router.url.includes('ExceptionManagement') || router.url.includes('invoice') || router.url.includes('documentSummary') ||router.url.includes('GRN_approvals') ||router.url.includes('approvals') ||router.url.includes('Create_GRN_inv_list')">Card
+    <div class="d-flex align-items-center">
+      <div
+        class="user_d f-13"
+        *ngIf="
+          router.url.includes('ExceptionManagement') ||
+          router.url.includes('invoice') ||
+          router.url.includes('documentSummary') ||
+          router.url.includes('GRN_approvals') ||
+          router.url.includes('approvals') ||
+          router.url.includes('Create_GRN_inv_list')
+        "
+      >
+        Card
         <span class="portal">
           <label class="switch">
             <input
@@ -778,11 +885,12 @@
             />
             <span class="slider round"></span>
           </label>
-        </span> Table
+        </span>
+        Table
       </div>
-      <div class="short_name f-12">{{name_short}}</div>
+      <div class="short_name f-12">{{ name_short }}</div>
       <div class="f-12 mr-1">{{ userDetails.userdetails.firstName }}</div>
-      <div  (clickOutside)="onClickedOutside($event,'logout')">
+      <div (clickOutside)="onClickedOutside($event, 'logout')">
         <mat-icon
           class="sign_out dropdown"
           svgIcon="logout"
@@ -796,9 +904,8 @@
           <a (click)="openDialog()">Change Password</a>
           <a (click)="confirm_pop()">Logout</a>
         </div>
+      </div>
     </div>
-    </div>
-    
   </nav>
 
   <section id="body_content">

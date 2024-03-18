@@ -217,6 +217,8 @@ export class DataService {
   isTableView = new BehaviorSubject<boolean>(true);
   approvalPageNumber: any;
   approval_uniSearch: any;
+  approvalPageNumberSP: any;
+  SP_aprve_uniSearch: string;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

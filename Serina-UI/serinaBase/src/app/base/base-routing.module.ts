@@ -122,6 +122,9 @@ const routes: Routes = [
             path: 'approvals',
             component: ApproveComponent,
           },
+          { path: 'approvals/serviceInvoices',
+            component: ApproveComponent
+          },
           {
             path: 'Create_GRN_inv_list',
             component: CreateGRNComponent,

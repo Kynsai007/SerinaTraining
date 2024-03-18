@@ -4,8 +4,8 @@
   style="overflow: hidden; min-height: 85vh;"
 >
   <ul class="nav nav-pills centerClass">
-    <div class="m-200 pipe">|</div>
-    <li class="nav-item mr-1">
+    <div class=" pipe">|</div>
+    <li class="nav-item mr-1" *ngIf="vendorInvoicesAccess">
       <a
         class="nav-link f-14"
         [class.active-pill]="viewType == 'vendor'"
@@ -14,7 +14,7 @@
         Vendor Based</a
       >
     </li>
-    <li class="nav-item">
+    <li class="nav-item" *ngIf="serviceInvoicesAccess">
       <a
         class="nav-link f-14"
         [class.active-pill]="viewType == 'service'"

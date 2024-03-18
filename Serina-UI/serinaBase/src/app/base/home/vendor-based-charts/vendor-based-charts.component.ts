@@ -6,6 +6,7 @@ import { SharedService } from 'src/app/services/shared.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DatePipe } from '@angular/common';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
+import { DataService } from 'src/app/services/dataStore/data.service';
 
 @Component({
   selector: 'app-vendor-based-charts',
@@ -41,10 +42,11 @@ export class VendorBasedChartsComponent implements OnInit {
   selectDate: Date;
   displayYear;
   lastYear: number;
+  isDesktop: boolean;
 
   constructor(
     private chartsService: ChartsService,
-    private sharedService: SharedService,
+    private dataService: DataService,
     private SpinnerService: NgxSpinnerService,
     private ImportExcelService: ImportExcelService,
     private router : Router,
@@ -53,21 +55,26 @@ export class VendorBasedChartsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.viewType = this.chartsService.vendorTabs;
-    // this.readExceptionData();
-    this.prepareColumns();
-    this.dateRange();
-    if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
-      this.viewType = 'Process';
-    } else if(this.router.url == '/customer/home/vendorBasedReports/exceptionReports'){
-      this.viewType = 'Exception';
-    } else if(this.router.url == '/customer/home/vendorBasedReports/emailExceptionReports'){
-      this.viewType = 'emailException';
-      this.readEmailExceptionData('');
-    }else {
-      this.viewType = 'onboarded';
-      this.readOnboardedData('');
-      this.getDate();
+    if(this.dataService.configData?.vendorInvoices){
+      this.viewType = this.chartsService.vendorTabs;
+      this.isDesktop = this.dataService.isDesktop;
+      // this.readExceptionData();
+      this.prepareColumns();
+      this.dateRange();
+      if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
+        this.viewType = 'Process';
+      } else if(this.router.url == '/customer/home/vendorBasedReports/exceptionReports'){
+        this.viewType = 'Exception';
+      } else if(this.router.url == '/customer/home/vendorBasedReports/emailExceptionReports'){
+        this.viewType = 'emailException';
+        this.readEmailExceptionData('');
+      }else {
+        this.viewType = 'onboarded';
+        this.readOnboardedData('');
+        this.getDate();
+      }
+    } else {
+      history.back();
     }
   }
 

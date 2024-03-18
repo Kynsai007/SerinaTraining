@@ -273,12 +273,15 @@ export class ProcessReportserviceComponent implements OnInit {
   readOverallChartData(filter){
     this.SpinnerService.show();
     this.chartsService.getProcessVsTotal_OverallSP(filter).subscribe((data:any)=>{
-      this.invoiceBysourceChartdata[1] = ['Processed',data.data.processed];
-      this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
-
-      this.cardsArr[0].count = data?.data?.downloaded;
-      this.cardsArr[1].count = data?.data?.processed;
-      this.cardsArr[2].count = data?.data?.downloaded - data?.data?.processed;
+      this.invoiceBysourceChartdata[1] = [`Processed - ${data.data.processed}`,data.data.processed];
+      // this.invoiceBysourceChartdata[2] = ['Downloaded',data.data.downloaded];
+      this.invoiceBysourceChartdata[2] = [`Exceptions - ${data.data.exceptions}`,data.data.exceptions];
+      this.invoiceBysourceChartdata[3] = [`System check - ${data.data.systemcheck}`,data.data.systemcheck];
+      this.invoiceBysourceChartdata[4] = [`Downloaded - ${data.data.downloaded}`,data.data.downloaded]
+      this.cardsArr[0].count = data.data.downloaded;
+      this.cardsArr[1].count = data.data.processed;
+      this.cardsArr[2].count = data.data.exceptions;
+      this.cardsArr[3].count = data.data.systemcheck;
       this.SpinnerService.hide();
     },err=>{
       this.SpinnerService.hide();
@@ -301,6 +304,16 @@ export class ProcessReportserviceComponent implements OnInit {
     this.dateFilterService.dateRange();
     this.minDate = this.dateFilterService.minDate;
     this.maxDate = this.dateFilterService.maxDate;
+    let date = this.datePipe.transform(this.maxDate, 'yyyy-MM-dd');
+    let monthArr = date.split('-')
+    let month = monthArr[1];
+    let year = monthArr[0];
+    let day = monthArr[2];
+    let date1 = `${year}-${month}-01`
+    let date2 = `${year}-${month}-${day}`
+    let date3 = this.dateFilterService.satrtDate;
+    this.datequery = `?date=${date1}To${date2}`;
+    this.rangeDates = [date3,this.maxDate];
   }
 
   filterByDate(date) {

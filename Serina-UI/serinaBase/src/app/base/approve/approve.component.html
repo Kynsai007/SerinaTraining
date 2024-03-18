@@ -267,18 +267,34 @@
       </div> -->
     </div>
   <div class="pt-1 mt-2">
-    <app-exception-table
-      [invoiceColumns]="ApprovedColumn"
-      [columnsToDisplay]="approvedColumnField"
-      [showPaginatorAllInvoice]="showPaginatorApproved"
-      [ColumnLength]="ColumnLengthVendor"
-      [columnsData]="approvedData"
-      [searchText]="searchText"
-      [pageId]="'apr_v'"
-      [pageNumber]="pageNumber"
-      (paginationEvent) = "paginate($event)"
-    >
-    </app-exception-table>
+    <div *ngIf="!router.url.includes('serviceInvoices')">
+      <app-exception-table
+        [invoiceColumns]="ApprovedColumn"
+        [columnsToDisplay]="approvedColumnField"
+        [showPaginatorAllInvoice]="showPaginatorApproved"
+        [ColumnLength]="ColumnLengthVendor"
+        [columnsData]="approvedData"
+        [searchText]="searchText"
+        [pageId]="'apr_v'"
+        [pageNumber]="pageNumber"
+        (paginationEvent) = "paginate($event)"
+      >
+      </app-exception-table>
+    </div>
+    <div *ngIf="router.url.includes('serviceInvoices')">
+      <app-exception-table
+        [invoiceColumns]="ApprovedColumnSP"
+        [columnsToDisplay]="approvedColumnFieldSP"
+        [showPaginatorAllInvoice]="showPaginatorApprovedSP"
+        [ColumnLength]="ColumnLengthSP"
+        [columnsData]="approvedDataSP"
+        [searchText]="searchText"
+        [pageId]="'apr_s'"
+        [pageNumber]="pageNumber"
+        (paginationEvent) = "paginate($event)"
+      >
+      </app-exception-table>
+    </div>
 
   <ngx-spinner
     bdColor="rgba(251, 251, 251, 0.8)"

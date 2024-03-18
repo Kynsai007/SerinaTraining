@@ -76,7 +76,9 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   isTableView:boolean;
   DisplayMode : Subscription;
   isOpen: boolean;
+  isOpen_apr:boolean;
   approveBoolean: boolean;
+  serviceApprovalsEnabled:boolean = true;
 
   constructor(
     public router: Router,
@@ -390,6 +392,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     }
   }
 
+  navClick(){
+      this.isOpen_apr = false;
+      this.isOpen = false;
+  }
+
   // logout
   logout() {
     this.authService.logout();
@@ -499,14 +506,37 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     }
   }
   exceptionDrop(){
-    this.isOpen = !this.isOpen;
-    if(this.isOpen){
+    this.isOpen_apr = false;
+    if(this.vendorInvoiceAccess && this.serviceInvoiceAccess){
+      this.isOpen = !this.isOpen;
+      if(this.isOpen){
+        document.getElementById('body_content').style.opacity = '0.2';
+      } else {
+        document.getElementById('body_content').style.opacity = '1';
+      }
+    } else if(this.vendorInvoiceAccess && !this.serviceInvoiceAccess ) {
+      this.router.navigate([`${this.portalName}/ExceptionManagement`])
+    } else if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess ) {
+      this.router.navigate([`${this.portalName}/ExceptionManagement/Service_ExceptionManagement`])
+    }
+  }
+  approvalDropdown(){
+    this.isOpen = false;
+    if(this.vendorInvoiceAccess && this.serviceInvoiceAccess){
+    this.isOpen_apr = !this.isOpen_apr;
+    if(this.isOpen_apr){
       document.getElementById('body_content').style.opacity = '0.2';
     } else {
       document.getElementById('body_content').style.opacity = '1';
     }
+  } else if(this.vendorInvoiceAccess && !this.serviceInvoiceAccess ) {
+    this.router.navigate([`${this.portalName}/approvals`])
+  } else if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess ) {
+    this.router.navigate([`${this.portalName}/approvals/serviceInvoices`])
+  }
   }
   more_routes(){
+    this.navClick();
     if(this.more_icon == 'expand_more'){
       this.more_icon = 'expand_less';
       document.getElementById('body_content').style.opacity = '0.2';
@@ -521,10 +551,14 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.more_text = str;
     
   }
-  exceptionMenu(str){
+  exceptionMenu(str,type){
     document.getElementById('body_content').style.opacity = '1';
     this.more_icon = 'expand_more';
-    this.isOpen = false;
+    if(type == 'exc'){
+      this.isOpen = false;
+    } else {
+      this.isOpen_apr = false;
+    }
   }
   confirm_pop(){
     const drf:MatDialogRef<ConfirmationComponent> = this.dialog.open(ConfirmationComponent,{ 

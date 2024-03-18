@@ -73,10 +73,13 @@ export class ApproveComponent implements OnInit {
   search_placeholder = 'Ex : By Vendor. By PO';
   pageNumber: any;
   filterData: any[];
+  pageNumberSP: any;
+  searchTextSP: string;
+  filterDataSP: any[];
 
   constructor(
     private tagService: TaggingService,
-    private router: Router,
+    public router: Router,
     private sharedService: SharedService,
     private dateFilterService: DateFilterService,
     private SpinnerService: NgxSpinnerService,
@@ -87,6 +90,11 @@ export class ApproveComponent implements OnInit {
 
   ngOnInit(): void {
     this.init();
+    if (this.router.url.includes('serviceInvoices')) {
+      this.search_placeholder = 'Ex : By Service. By Entity';
+    } else {
+      this.search_placeholder = 'Ex : By Vendor. By PO';
+    }
     this.readInvoiceApprovedData();
     this.readServiceInvoiceData();
     this.findColumns();
@@ -99,6 +107,7 @@ export class ApproveComponent implements OnInit {
     this.ap_boolean = this.ds.ap_boolean;
     this.isDesktop = this.ds.isDesktop;
     this.pageNumber = this.ds.approvalPageNumber;
+    this.pageNumberSP = this.ds.approvalPageNumberSP;
     if(!this.isDesktop) {
       this.mob_columns();
     }
@@ -108,11 +117,11 @@ export class ApproveComponent implements OnInit {
     this.rows = this.ds.approvalVendorPaginationRowLength;
     this.first_service = this.ds.approvalServicePaginationFirst;
     this.rows_service = this.ds.approvalServicePaginationRowLength;
-    if (this.router.url.includes('home')) {
-      this.dashboardViewBoolean = true;
-    } else {
-      this.dashboardViewBoolean = false;
-    }
+    // if (this.router.url.includes('serviceInvoices')) {
+    //   this.dashboardViewBoolean = true;
+    // } else {
+    //   this.dashboardViewBoolean = false;
+    // }
   }
 
   mob_columns(){
@@ -230,6 +239,11 @@ export class ApproveComponent implements OnInit {
         });
         this.approvedDataSP = approvedArray;
         this.approvedDataLengthSP = this.approvedDataSP.length;
+        this.filterDataSP = this.approvedDataSP;
+        setTimeout(() => {
+          this.searchTextSP = this.ds.SP_aprve_uniSearch;
+          this.universalSearch(this.searchTextSP);
+      }, 1000);
         if (this.approvedDataLengthSP > 10) {
           this.showPaginatorApprovedSP = true;
         }
@@ -241,9 +255,16 @@ export class ApproveComponent implements OnInit {
     );
   }
   universalSearch(txt){
-    this.ds.approval_uniSearch = txt;
-    this.approvedData = this.filterData;
-    this.approvedData = this.ds.searchFilter(txt,this.filterData);
+    if (this.router.url.includes('serviceInvoices')) {
+      this.ds.SP_aprve_uniSearch = txt;
+      this.approvedDataSP = this.filterDataSP;
+      this.approvedDataSP = this.ds.searchFilter(txt,this.filterDataSP);
+    } else {
+      this.ds.grn_aprve_uniSearch = txt;
+      this.approvedData = this.filterData;
+      this.approvedData = this.ds.searchFilter(txt,this.filterData);
+    }
+
 }
   paginateService(event) {
     this.first_service = event.first;
@@ -262,7 +283,7 @@ export class ApproveComponent implements OnInit {
   }
   exportExcel() {
     let exportData = [];
-    if (this.tagService.aprrovalPageTab == 'vendorInvoice') {
+    if (this.router.url.includes('serviceInvoices')) {
       exportData = this.approvedData;
     } else {
       exportData = this.approvedDataSP;
@@ -277,7 +298,12 @@ export class ApproveComponent implements OnInit {
   }
 
   paginate(event){
-    this.pageNumber = event.pageNumber;
-    this.ds.approvalPageNumber = event.pageNumber;
+    if(this.router.url.includes('serviceInvoices')){
+      this.pageNumberSP = event.pageNumber;
+      this.ds.approvalPageNumberSP = event.pageNumber;
+    } else {
+      this.pageNumber = event.pageNumber;
+      this.ds.approvalPageNumber = event.pageNumber;
+    }
   }
 }
