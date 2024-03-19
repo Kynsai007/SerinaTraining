@@ -92,11 +92,13 @@ export class ApproveComponent implements OnInit {
     this.init();
     if (this.router.url.includes('serviceInvoices')) {
       this.search_placeholder = 'Ex : By Service. By Entity';
+      this.readServiceInvoiceData();
     } else {
       this.search_placeholder = 'Ex : By Vendor. By PO';
+      this.readInvoiceApprovedData();
     }
-    this.readInvoiceApprovedData();
-    this.readServiceInvoiceData();
+    
+    // 
     this.findColumns();
     this.dateRange();
 
