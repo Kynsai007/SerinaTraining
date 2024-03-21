@@ -265,93 +265,95 @@
 
   </nav>
   <nav class="desktop d-flex justify-content-between">
-    <div class="logo">
-      <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" />
-    </div>
-    <div class="navLinks d-flex justify-content-between">
-        <div
+    <div class="d-flex" style="gap: 60px;">
+      <div class="logo">
+        <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" />
+      </div>
+      <div class="navLinks d-flex justify-content-between">
+          <div
+            class="nav_Link f-14"
+            routerLinkActive="active_cls"
+            data-text="Dashboard"
+            [routerLink]="'home'"
+          >
+            Dashboard
+          </div>
+  
+          <div
+            class="nav_Link f-14"
+            routerLinkActive="active_cls"
+            data-text="Upload"
+            [routerLink]="'uploadInvoices'"
+          >
+            Upload
+          </div>
+  
+          <div
           class="nav_Link f-14"
-          routerLinkActive="active_cls"
-          data-text="Dashboard"
-          [routerLink]="'home'"
-        >
-          Dashboard
-        </div>
-
-        <div
+            routerLinkActive="active_cls"
+            data-text="Document Status"
+            [routerLink]="'invoice'"
+          >
+            Document Status
+          </div>
+  
+          <div
           class="nav_Link f-14"
-          routerLinkActive="active_cls"
-          data-text="Upload"
-          [routerLink]="'uploadInvoices'"
-        >
-          Upload
-        </div>
-
-        <div
-        class="nav_Link f-14"
-          routerLinkActive="active_cls"
-          data-text="Document Status"
-          [routerLink]="'invoice'"
-        >
-          Document Status
-        </div>
-
-        <div
-        class="nav_Link f-14"
-          routerLinkActive="active_cls"
-          data-text="Exceptions"
-          [routerLink]="'ExceptionManagement'"
-        >
-          Exceptions
-        </div>
-
-        <!-- <div
-          class="navLink"
-          routerLinkActive="active_cls"
-          data-text="Payment Status"
-          [routerLink]="'payment-details-vendor'"
-        >
-          Payment Status
-        </div> -->
-
-        <!-- <div *ngIf="addUsersBoolean" class="navLink" data-text="Roles" routerLinkActive="active_cls" [routerLink]="'vendorUsers'">
-                    <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
-                        manage_accounts
-                        </span>
-                        Roles
-                </div> -->
-
-        <div
-          *ngIf="addUsersBoolean"
-          class="nav_Link f-14"
-          data-text="Contact Details"
-          routerLinkActive="active_cls"
-          [routerLink]="'vendorContacts'"
-        >
-          Contact Details
-        </div>
-        <div *ngIf="!isDesktop" class="navLink" data-text="Change Password" (click)="openDialog()">
-          <i
-            class="fa fa-lock f-18 ml-r-12"
-            aria-hidden="true"
-            routerLinkActive="ml-9"
-          ></i>
-          Change Password
-        </div>
-
-        <div
-          *ngIf="!isDesktop"
-          class="navLink"
-          data-text="Logout"
-          (click)="confirm_pop()"
-        >
-          <i
-            class="fa fa-sign-out f-18 ml-r-12"
-            aria-hidden="true"
-            routerLinkActive="ml-9"
-          ></i>
-          Logout
-        </div>
+            routerLinkActive="active_cls"
+            data-text="Exceptions"
+            [routerLink]="'ExceptionManagement'"
+          >
+            Exceptions
+          </div>
+  
+          <!-- <div
+            class="navLink"
+            routerLinkActive="active_cls"
+            data-text="Payment Status"
+            [routerLink]="'payment-details-vendor'"
+          >
+            Payment Status
+          </div> -->
+  
+          <!-- <div *ngIf="addUsersBoolean" class="navLink" data-text="Roles" routerLinkActive="active_cls" [routerLink]="'vendorUsers'">
+                      <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
+                          manage_accounts
+                          </span>
+                          Roles
+                  </div> -->
+  
+          <div
+            *ngIf="addUsersBoolean"
+            class="nav_Link f-14"
+            data-text="Contact Details"
+            routerLinkActive="active_cls"
+            [routerLink]="'vendorContacts'"
+          >
+            Contact Details
+          </div>
+          <div *ngIf="!isDesktop" class="navLink" data-text="Change Password" (click)="openDialog()">
+            <i
+              class="fa fa-lock f-18 ml-r-12"
+              aria-hidden="true"
+              routerLinkActive="ml-9"
+            ></i>
+            Change Password
+          </div>
+  
+          <div
+            *ngIf="!isDesktop"
+            class="navLink"
+            data-text="Logout"
+            (click)="confirm_pop()"
+          >
+            <i
+              class="fa fa-sign-out f-18 ml-r-12"
+              aria-hidden="true"
+              routerLinkActive="ml-9"
+            ></i>
+            Logout
+          </div>
+      </div>
     </div>
  
     <div class="d-flex align-items-center " >

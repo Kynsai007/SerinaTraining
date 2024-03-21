@@ -28,7 +28,38 @@
                 <div class="box mt-2">
                     <div *ngFor="let box of userDetails" class="inputBox">
                         <label class="f-12 shade_color">{{ box.label }}</label>
+                        <ng-container *ngIf="!box?.options">
+                            <input type="text" [name]="box.name" [(ngModel)]="box.value" class="f-14"> 
+                        </ng-container>
+                        <ng-container *ngIf="box?.options">
+                            <select [name]="box.name" id="docType" [(ngModel)]="box.value" class="f-14">
+                                <option *ngFor="let opt of box?.options" [value]="opt.name">{{opt.name}}</option>
+                            </select>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="f-16 mt-3">Contact Details</div>
+                <div class="box mt-1">
+                    <div *ngFor="let box of contactDetails" class="inputBox">
+                        <label class="f-12 shade_color">{{ box.label }}</label>
                         <input type="text" [name]="box.name" [(ngModel)]="box.value" class="f-14"> 
+                    </div>
+                </div>
+                <div class="mt-3 d-flex justify-content-between">
+                    <div class="f-16">Primary Address Details</div>
+                    <div class="f-14 text_color pointer mr-3" (click)="addSecondary()">+ Secondary Address</div>
+                </div>
+                <div class="box mt-1">
+                    <div *ngFor="let box of addressDetails" class="inputBox" [ngStyle]="{width:box?.label?.includes('Address')?'620px':'300px'}">
+                        <label class="f-12 shade_color">{{ box.label }}</label>
+                        <ng-container *ngIf="!box?.options">
+                            <input type="text" [name]="box.name" [(ngModel)]="box.value" class="f-14"> 
+                        </ng-container>
+                        <ng-container *ngIf="box?.options">
+                            <select [name]="box.name" id="docType" [(ngModel)]="box.value" class="f-14">
+                                <option *ngFor="let opt of box?.options" [value]="opt.name">{{opt.name}}</option>
+                            </select>
+                        </ng-container>
                     </div>
                 </div>
                 <div class="footer">
@@ -56,11 +87,56 @@
             <div class="tab-pane fade" 
                 [ngClass]="currentTab == 'docs' ? 'show active':''"
                 id="v-tabs-messages" role="tabpanel" aria-labelledby="v-tabs-messages-tab">
-                upload docs
-                <div class="footer">
-                    <button class="secondary_btn f-12 mr-3" (click)="changeTab('bank')">Back</button>
-                    <button class="primary_btn f-12">Submit</button>
-                </div>
+                <h6 class="f-18 mb-0">Awesome! Please upload the below documents</h6>
+                <div class="f-14 shade_color">Please fill these details to use our product.</div>
+
+                <form #docUpload = "ngForm" (ngSubmit)="uploadDocs(docUpload.value)">
+                    <ng-container *ngFor="let item of uploadDocDetails;let i = index">
+                        <div class="mt-2 main_box">
+                            <div class="up_main">
+                                <div> 
+                                    <div  *ngIf="item.value == ''" class="checkPlaceholder"></div>
+                                    <i  *ngIf="item.value != ''" class="fa fa-check-circle f-18" style="color: #0fca0f;" aria-hidden="true"></i>
+                                 </div>
+                                <div style="width: 200px;">
+                                    <div class="f-12 shade_color">Document {{i+1}}</div>
+                                    <div class="f-14">{{ item.label}}</div>
+                                    <label
+                                    for="{{ item.id}}"
+                                    class="f-14 mt-3"
+                                    [ngClass]="item.value != '' ? 'primary_btn' : 'secondary_btn'"
+                                    >
+                                        <span *ngIf="item.value == ''">Upload</span>
+                                        <span *ngIf="item.value != ''">Re-Upload</span>
+                                    </label>
+                                    <input
+                                    accept=".png, .jpg, .pdf"
+                                    (change)="onSelectFile($event, i)"
+                                    type="file"
+                                    [id]="item.id"
+                                    hidden
+                                    [name]="item.name"
+                                    ngModel
+                                    />
+                                    <!-- <button class="secondary_btn f-14 mt-3"> Upload</button>
+                                    <button class="primary_btn f-14 mt-3" *ngIf="false"> </button> -->
+                                </div>
+                                <div class="f-12">{{ item.size }}</div>
+                            </div>
+                            <div class="box upload">
+                                <div *ngFor="let box of item.insideObj" class="inputBox">
+                                    <label class="f-12 shade_color">{{ box.label1 }}</label>
+                                    <input *ngIf="!box.label1.includes('Date')" type="text" [name]="box.name" [(ngModel)]="box.value" class="f-14">
+                                    <input *ngIf="box.label1.includes('Date')" type="date" [name]="box.name" [(ngModel)]="box.value" class="f-14"> 
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="footer">
+                        <button class="secondary_btn f-12 mr-3" (click)="changeTab('bank')">Back</button>
+                        <button class="primary_btn f-12">Submit</button>
+                    </div>
+                </form>
             </div>
           </div>
     </div>
