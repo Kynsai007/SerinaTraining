@@ -1,27 +1,27 @@
 <h6 class="headh6 text_color f-14">Bulk Upload for service accounts</h6>
 
-<div class="d-i-block" [ngClass]="btnEnabled? 'mt-0':'di-ceter'">
-    <div class="d-i-block" [ngClass]="btnEnabled? 'mt-0':'bg-clr'">
-        <div class="d-flex bulk" *ngIf="displayErpBoolean">
+<div class="d-i-block di-ceter" [ngClass]="btnEnabled? 'mt-0':'di-ceter'">
+    <div class="d-i-block bg-clr" [ngClass]="btnEnabled? 'mt-0':'bg-clr'">
+        <div class="d-flex bulk">
             <div class="erpSelectionBox">
-                <label class="f-13">Select ERP to download Template</label> <br>
+                <label class="f-13">Select allocation type</label> <br>
                 <select class="form-control w-250 inputHeight mr-4" (change)="selectedErp($event.target.value)">
-                    <option value="" selected disabled>Please Select ERP</option>
+                    <option value="" selected disabled>Please Select Template</option>
                     <option *ngFor="let erp of ERPList" [value]="erp.erp">
                         {{erp.erp}}</option>
                 </select>
             </div>
             <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate()">
-                Master template
+                Download template
                 <div><i class="fa fa-download"></i></div>
             </button>
-            <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate()">Cost allocation
+            <!-- <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate('ca')">Cost allocation
                 <div><i class="fa fa-download"></i></div>
-            </button>
+            </button> -->
         </div>
         <div class="uploadBox mt-3">
             <div class="d-i-block uploadDiv">
-                <label class="f-13">Master template upload</label><br>
+                <label class="f-13">Template upload</label><br>
                 <input type="file" id="custom-upload" (change)="onChange($event)" hidden [disabled]="btnEnabled" #inputFile>
                 <label for="custom-upload" class="custom-btn f-12 mr-2">Choose file</label>
     
@@ -29,25 +29,41 @@
                 <span class="f-12">{{fileChoosen}}</span>
             </div>
     
-            <div class="d-i-block uploadDiv">
+            <!-- <div class="d-i-block uploadDiv">
                 <label class="f-13">Cost allocation template upload</label><br>
-                <input type="file" id="custom-upload" (change)="onChange($event)" hidden [disabled]="btnEnabled" #inputFile>
+                <input type="file" id="custom-upload" (change)="onChange($event,'ca')" hidden [disabled]="btnEnabled" #inputFile>
                 <label for="custom-upload" class="custom-btn f-12 mr-2">Choose file</label>
     
-                <!-- name of file chosen -->
                 <span class="f-12">{{fileChoosen}}</span>
+            </div> -->
+
+
+        </div>
+        <div *ngIf="btnEnabled" class="mt-2" style="text-align: right;">
+            <!-- <button  class="btnUpload mr-3 ml-3" (click)="removeData()">Remove Data</button> -->
+            <button [disabled]="progress" class="btnUpload" (click)="uploadFiles()">
+                <span *ngIf="progress" class="spinner-border spinner-border-sm mr-1"></span>
+                Upload
+            </button>
+        </div>
+        <div>
+            <div class="f-12" *ngIf="progress">Upload progressbar</div>
+            <div class="progress mb-2" *ngIf="progress">
+                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" [style.width]="progress + '%'">
+                    {{progress}}%</div>
             </div>
         </div>
+        <div class="f-13 text-danger" *ngIf="isExcelFile === false">
+            This is not an Excel file
+        </div>
     </div>
-    <div class="f-13 text-danger" *ngIf="isExcelFile === false">
-        This is not an Excel file
-    </div>
+
 </div>
 
-<div class="d-inline">
+<!-- <div class="d-inline">
 
     <button *ngIf="btnEnabled" class="btnUpload mr-3 ml-3" (click)="removeData()">Remove Data</button>
-    <button [disabled]="progress" *ngIf="btnEnabled" class="btnUpload" (click)="uploadXlFile()">
+    <button [disabled]="progress" *ngIf="btnEnabled" class="btnUpload" (click)="uploadFiles()">
         <span *ngIf="progress" class="spinner-border spinner-border-sm mr-1"></span>
         Upload
     </button>
@@ -58,13 +74,9 @@
     <div class="f-14 mt-2" *ngIf="btnEnabled">
         Data Preview
     </div>
-</div>
-<div class="f-12" *ngIf="progress">Upload progressbar</div>
-<div class="progress mb-2" *ngIf="progress">
-    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" [style.width]="progress + '%'">
-        {{progress}}%</div>
-</div>
-<div class="max_height">
+</div> -->
+
+<!-- <div class="max_height">
     <div class="f-14 mt-2 template_head_bg" *ngIf="btnEnabled">
         Master Template
     </div>
@@ -91,6 +103,6 @@
             </td>
         </tr>
     </table>
-</div>
+</div> -->
 
 <p-toast></p-toast>

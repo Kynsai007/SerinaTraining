@@ -33,6 +33,7 @@ import { BusinessChartsComponent } from './home/business-charts/business-charts.
 import { SalesOrderMappingComponent } from './exception-management/sales-order-mapping/sales-order-mapping.component';
 import { UnsavedChangesGuard } from './exception-management/UnsavedChanges.guard';
 import { ExceptionTableComponent } from './exception-management/exception-table/exception-table.component';
+import { EditUserComponent } from './roles/edit-user/edit-user.component';
 
 const routes: Routes = [
   { 
@@ -226,6 +227,10 @@ const routes: Routes = [
           {
             path: 'roles/:someParam',
             component: RolesComponent,
+          },
+          {
+            path: 'ERP_approvals',
+            component: EditUserComponent,
           },
           // {
           //   path: 'roles/create_Edit_Roles',

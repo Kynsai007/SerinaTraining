@@ -110,10 +110,9 @@ export class ServiceInvoiceService {
   }
 
   // bulk upload
-  downloadTemplate(data): Observable<any> {
-    return this.http.post(
-      `${environment.apiUrl}/${environment.apiVersion}/SP/Downloadstemplate?temp=${data}`,
-      '',
+  downloadTemplate(erp,type): Observable<any> {
+    return this.http.get(
+      `${environment.apiUrl}/${environment.apiVersion}/SP/downloadTemplate/${erp}/${type}`,
       { responseType: 'blob' }
     ).pipe(retry(3));
   }
@@ -123,6 +122,10 @@ export class ServiceInvoiceService {
       '',
       { responseType: 'blob' }
     ).pipe(retry(3));
+  }
+
+  saveTemplate(data,type){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/SP/savetemplate/${type}/${this.userId}`,data)
   }
 
   // customer Summary

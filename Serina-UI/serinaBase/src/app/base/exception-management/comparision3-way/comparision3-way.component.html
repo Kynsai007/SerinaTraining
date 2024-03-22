@@ -1538,7 +1538,7 @@
             style="position: relative"
           >
             <div *ngIf="selectionTabBoolean" class="selection_Div">
-              <div class="d-flex justify-content-between flex-wrap f-12">
+              <div class="d-flex justify-content-between flex-wrap f-12" style="gap: 10px;">
                 <div class="input_box">
                   <label class="mb-0">Select Entity</label>
                   <select
@@ -2270,6 +2270,22 @@
   [resizable]="false"
 >
   <div>
+    <div 
+      class="input_box mb-2"
+      *ngIf="rejectModalHeader == 'ADD Rejection Comments' && fin_boolean">
+      <label class="f-12 mb-0">Please select the user to reject</label>
+      <select
+        name="reject_user"
+        id="reason_user"
+        class="form-control f-14 p-2 input_box_field"
+        (change)="selectUserForReject($event.target.value)"
+      >
+        <option value="" disabled>Select User</option>
+        <option *ngFor="let x of userList_approved" [value]="x.idUser">
+          {{ x.firstName }} {{ x.lastName }}
+        </option>
+      </select>
+    </div>
     <div
       class="input_box"
       *ngIf="rejectModalHeader == 'ADD Rejection Comments'"

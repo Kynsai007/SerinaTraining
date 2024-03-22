@@ -141,6 +141,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.more_text = 'Service batch trigger';
     } else if(this.router.url.includes('bulkUploadService')){
       this.more_text = 'Bulk Upload';
+    } else if(this.router.url.includes('ERP_approvals')){
+      this.more_text = 'ERP Approvals';
     } else {
       this.more_text = "More"
     }
@@ -217,6 +219,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.GRNCreationAccess = this.dataStoreService.configData?.enableGRN;
     this.vendorInvoiceAccess = this.dataStoreService.configData.vendorInvoices;
     this.serviceInvoiceAccess = this.dataStoreService.configData.serviceInvoices;
+    this.GRNApprovalAccess =  this.dataStoreService.configData.enablegrnapprovals;
     if(this.vendorInvoiceAccess && this.serviceInvoiceAccess) this.supplier_names = 'Vendors & Service Providers';
     if(this.vendorInvoiceAccess && !this.serviceInvoiceAccess) this.supplier_names = 'Vendors';
     if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess){
@@ -283,8 +286,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       if(this.userDetails.userdetails.show_updates){
         this.releaseDocs();
       }
-      this.name_short = this.userDetails.userdetails.firstName[0] + this.userDetails.userdetails?.lastName[0]
-
+      this.name_short = this.userDetails?.userdetails?.firstName[0] + this.userDetails?.userdetails?.lastName[0]
+      console.log(this.name_short)
   }
 
 

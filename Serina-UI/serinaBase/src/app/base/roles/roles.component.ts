@@ -245,6 +245,12 @@ export class RolesComponent implements OnInit {
   is_fpa = false;
   isDesktop: boolean;
   thCount: number;
+  entities: { idEntity: number, EntityName: string }[] = [];
+  // newEntities: any;
+  // selEntity: string;
+  fullList: any;
+  flipPO_approval_bool: boolean;
+
   constructor(
     private dataService: DataService,
     private messageService: MessageService,
@@ -266,6 +272,7 @@ export class RolesComponent implements OnInit {
   ngOnInit(): void {
     this.isDesktop = this.dataService.isDesktop;
     this.vendorInvoiceAccess = this.dataService.configData.vendorInvoices;
+    this.flipPO_approval_bool = this.dataService.configData.enableflippoapprovals;
     if(this.isDesktop){
       this.thCount = 6;
     } else {
@@ -624,8 +631,10 @@ export class RolesComponent implements OnInit {
 
   toGetEntity() {
     this.entityList = [];
+    this.fullList = [];
     this.sharedService.getEntityDept().subscribe((data: any) => {
       this.entityList = data;
+      this.fullList = data;
     });
   }
 
@@ -669,6 +678,9 @@ export class RolesComponent implements OnInit {
     }
   }
   onSelectEntity(value) {
+    delete this.skip_approval_boolean;
+    // this.newEntities = value;
+    this.entities.push({ idEntity: value.idEntity, EntityName: value.EntityName })
     if (this.selectedEntitys?.length > 0 && this.AccessPermissionTypeId == 4 && this.entityBaseApproveBoolean) {
       if (
         this.selectedEntitys[this.selectedEntitys?.length - 1]?.entity &&
@@ -719,6 +731,7 @@ export class RolesComponent implements OnInit {
     }
     this.subRole = '';
     this.getSkipList();
+    this.checkEntity();
   }
 
   readDeparment(){
@@ -908,6 +921,7 @@ export class RolesComponent implements OnInit {
   //   this.sharedService.checkPriority(JSON.stringify(obj)).subscribe()
   // }
   onRemove(index, value) {
+    this.removeItem(value.EntityID);
     if (this.selectedEntitys.length > 1) {
       if (value.idUserAccess) {
         this.updateUsersEntityInfo.push({
@@ -974,7 +988,7 @@ export class RolesComponent implements OnInit {
     if (value && value.MaxAmount) {
       this.Flevel = value.MaxAmount;
     }
-
+    this.entities = [];
     this.sharedService
       .readEntityUserData(value.idUser)
       .subscribe((data: any) => {
@@ -988,6 +1002,10 @@ export class RolesComponent implements OnInit {
           //   this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.DepartmentName });
           // }
           // else {
+            if (element.Entity) {
+              // Push the Entity object into the entities array
+              this.entities.push({ idEntity: element.Entity.idEntity, EntityName: element.Entity.EntityName }); 
+            }
             let preApproveBool = false;
             if(element.UserAccess?.preApprove == 1){
               preApproveBool = true;
@@ -1020,6 +1038,7 @@ export class RolesComponent implements OnInit {
           });
           // }
         });
+        this.checkEntity()
       });
   }
 
@@ -1032,6 +1051,7 @@ export class RolesComponent implements OnInit {
     this.updateUsersEntityInfo = [];
     this.userNotBoolean = false;
     this.userBoolean = false;
+    this.toGetEntity();
   }
   UpdateUser() {
     let editUser = {
@@ -1665,5 +1685,23 @@ export class RolesComponent implements OnInit {
     this.Alert.addObject.severity = 'success';
     this.Alert.addObject.detail = txt;
     this.messageService.add(this.Alert.addObject);
+  }
+  // entityChange(){
+  //   this.selEntity = '';
+  // }
+  removeItem(idEntity: number){
+    const index = this.entities.findIndex(item => item.idEntity === idEntity);
+    if (index !== -1 && this.entities.length > 1) {
+      this.entities.splice(index, 1);
+    }
+    this.entityList = this.fullList;
+    this.checkEntity()
+  }
+  checkEntity(){
+    this.entities.forEach(selectedEntity => {
+      this.entityList = this.entityList.filter(entity => {
+          return !(entity.idEntity === selectedEntity.idEntity);
+      });
+    });
   }
 }

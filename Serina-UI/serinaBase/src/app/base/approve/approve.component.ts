@@ -34,7 +34,7 @@ export class ApproveComponent implements OnInit {
     // { dbColumnname: 'documentdescription', columnName: 'Description' },
     // { dbColumnname: 'Approvaltype', columnName: 'Approval type' },
     { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
-    { dbColumnname: 'UpdatedOn', columnName: 'Last Modified' },
+    { dbColumnname: 'documentdescription', columnName: 'Description' },
     { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   ApprovedColumnSP = [
@@ -43,7 +43,7 @@ export class ApproveComponent implements OnInit {
     { dbColumnname: 'Account', columnName: 'Service provider A/C' },
     { dbColumnname: 'documentdescription', columnName: 'Description' },
     { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
-    { dbColumnname: 'UpdatedOn', columnName: 'Last Modified' },
+    { dbColumnname: 'documentdescription', columnName: 'Description' },
     { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];
   approvedColumnHeader = [];

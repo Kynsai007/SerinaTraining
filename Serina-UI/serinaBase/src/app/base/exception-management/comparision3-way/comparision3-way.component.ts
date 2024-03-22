@@ -333,6 +333,9 @@ export class Comparision3WayComponent
   commentsBool: boolean = true;
   selected_GRN_total: number;
 
+  userList_approved:any;
+  rejectionUserId: number = 0;
+
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -1817,6 +1820,7 @@ export class Comparision3WayComponent
   }
 
   financeApprove() {
+    this.SpinnerService.show();
     let desc = {
       "desp": this.rejectionComments
     }
@@ -1825,12 +1829,15 @@ export class Comparision3WayComponent
         this.dataService.invoiceLoadedData = [];
         this.success(data.result);
         this.displayrejectDialog = false;
+
         setTimeout(() => {
+          this.SpinnerService.hide();
           this._location.back();
         }, 1000);
       },
       (error) => {
         this.error(error.statusText);
+        this.SpinnerService.hide();
         this.displayrejectDialog = false;
       }
     );
@@ -2083,22 +2090,41 @@ export class Comparision3WayComponent
         documentdescription: this.rejectionComments,
         userAmount: 0,
       };
-      this.uploadCompleted = true
-      this.SharedService.vendorRejectInvoice(
-        JSON.stringify(rejectionData)
-      ).subscribe(
-        (data: any) => {
+      this.uploadCompleted = true;
+      this.SpinnerService.show();
+      if(this.fin_boolean && this.rejectionUserId != 0){
+        this.exceptionService.rejectApprove(rejectionData,this.rejectionUserId).subscribe((data:any)=>{
           this.dataService.invoiceLoadedData = [];
-          this.success("Rejection Notification sent to Vendor")
+          this.success(data.result);
           this.displayrejectDialog = false;
           setTimeout(() => {
+            this.SpinnerService.hide();
             this.router.navigate([`${this.portalName}/ExceptionManagement`]);
           }, 1000);
-        },
-        (error) => {
+        },err=>{
           this.error("Server error");
-        }
-      );
+          this.SpinnerService.hide();
+        })
+      } else {
+        this.SharedService.vendorRejectInvoice(
+          JSON.stringify(rejectionData)
+        ).subscribe(
+          (data: any) => {
+            this.dataService.invoiceLoadedData = [];
+            this.success("Rejection Notification sent to Vendor")
+            this.displayrejectDialog = false;
+            setTimeout(() => {
+              this.SpinnerService.hide();
+              this.router.navigate([`${this.portalName}/ExceptionManagement`]);
+            }, 1000);
+          },
+          (error) => {
+            this.error("Server error");
+            this.SpinnerService.hide();
+          }
+        );
+      }
+
     } else {
       this.SharedService.rejectGRN().subscribe((data: any) => {
         if (data?.status == 'success') {
@@ -2114,6 +2140,18 @@ export class Comparision3WayComponent
     }
   }
 
+  getApprovedUserList(){
+    this.exceptionService.getApprovedUsers().subscribe((data:any)=>{
+      this.userList_approved = data.result;
+      this.userList_approved.unshift({firstName: "Vendor",idUser: 0,lastName: ""})
+      console.log(data);
+    })
+  }
+  selectUserForReject(event){
+    console.log(event)
+    this.rejectionUserId = event;
+    console.log(this.rejectionUserId)
+  }
   onChangeGrn(lineItem, val) {
     if (this.GRN_PO_Bool) {
       this.updateAmountExcTax(lineItem, val, 'UnitPrice', 'AmountExcTax', 'idDocumentLineItems');
@@ -2456,6 +2494,7 @@ export class Comparision3WayComponent
   open_dialog(str) {
     if (str == 'reject') {
       this.rejectModalHeader = 'ADD Rejection Comments';
+      this.getApprovedUserList();
     } else if (str == 'approve') {
       this.rejectModalHeader = 'Add Pre-approval Comments';
       if (this.preApproveBoolean == false) {

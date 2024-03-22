@@ -59,6 +59,7 @@ import { SupportpdfViewerComponent } from './exception-management/supportpdf-vie
 import { FunFactsComponent } from './fun-facts/fun-facts.component';
 import { AppNotificationComponent } from './app-notification/app-notification.component';
 import { ServiceSummaryComponent } from './home/service-based-charts/service-summary/service-summary.component';
+import { EditUserComponent } from './roles/edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -109,7 +110,8 @@ import { ServiceSummaryComponent } from './home/service-based-charts/service-sum
     FunFactsComponent,
     AppNotificationComponent,
     ServiceSummaryComponent,
-    SupportpdfViewerComponent
+    SupportpdfViewerComponent,
+    EditUserComponent
   ],
   imports: [
     CommonModule,

@@ -162,4 +162,12 @@ export class ExceptionsService {
   updateSOmap(so_id,v_a_id,data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/update_line_mapping_so/${so_id}/${v_a_id}/${this.userId}`,data)
   }
+
+
+  getApprovedUsers(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getApprovedUsers/${this.userId}/idInvoice/${this.invoiceID}`);
+  }
+  rejectApprove(data,ap_id){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/rejectApprover/${this.userId}/idInvoice/${this.invoiceID}?approver_id=${ap_id}`,data);
+  }
 }
