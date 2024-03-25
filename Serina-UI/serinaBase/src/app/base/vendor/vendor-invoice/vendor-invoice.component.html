@@ -300,7 +300,7 @@
                   </option>
                 </select>
               </div>
-              <div>
+              <div *ngIf="ERPname != 'Oracle'">
                 <label class="label-head"
                   >CostCenter <span class="req_clr">*</span>
                 </label>
@@ -313,7 +313,7 @@
                   [readOnly]="readOnlyForm"
                 />
               </div>
-              <div>
+              <div *ngIf="ERPname != 'Oracle'">
                 <label class="label-head">Product</label>
                 <input
                   type="text"
@@ -322,7 +322,7 @@
                   [readOnly]="readOnlyForm"
                 />
               </div>
-              <div>
+              <div *ngIf="ERPname != 'Oracle'">
                 <label class="label-head">Project</label>
                 <input
                   type="text"
@@ -331,7 +331,7 @@
                   class="form-control w-250 inputHeight bg-cost"
                 />
               </div>
-              <div>
+              <div *ngIf="ERPname != 'Oracle'">
                 <label class="label-head">Interco </label>
                 <input
                   type="text"
@@ -340,7 +340,7 @@
                   class="form-control w-250 inputHeight bg-cost"
                 />
               </div>
-              <div>
+              <div *ngIf="ERPname != 'Oracle'">
                 <label class="label-head">Segments </label>
                 <input
                   type="text"
@@ -349,7 +349,7 @@
                   class="form-control w-250 inputHeight bg-cost"
                 />
               </div>
-              <div>
+              <div *ngIf="ERPname != 'Oracle'">
                 <label class="label-head">BSMovements </label>
                 <input
                   type="text"
@@ -358,7 +358,7 @@
                   class="form-control w-250 inputHeight bg-cost"
                 />
               </div>
-              <div>
+              <div *ngIf="ERPname != 'Oracle'">
                 <label class="label-head">FixedAssetDepartment </label>
                 <input
                   type="text"
@@ -367,7 +367,7 @@
                   class="form-control w-250 inputHeight bg-cost"
                 />
               </div>
-              <div>
+              <div *ngIf="ERPname != 'Oracle'">
                 <label class="label-head">FixedAssetGroup </label>
                 <input
                   type="text"
@@ -379,7 +379,7 @@
   
               <div *ngIf="source != 'EBS'">
                 <label class="label-head"
-                  >Main Account <span class="req_clr">*</span></label
+                  >{{ERPname != 'Oracle'? 'Main Account':'Distribution Combination'}}  <span class="req_clr">*</span></label
                 >
                 <input
                   type="text"

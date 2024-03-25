@@ -45,6 +45,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   header_Ac = 'Add Service Provider Account';
   offsetCount = 1;
   accountsArray = [];
+  ERPname:string;
 
   constructor(private sharedService: SharedService,
     public dataService : DataService,
@@ -56,6 +57,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
 
   ngOnInit(): void {
     this.SpAccountDetails = this.initialForm();
+    this.ERPname = this.dataService.configData.erpname;
   }
 
   ngOnChanges(changes:SimpleChanges){
