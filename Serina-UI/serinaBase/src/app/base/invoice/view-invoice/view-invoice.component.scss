@@ -423,14 +423,15 @@ a {
   top: -2px;
 }
 .selection_Div {
-    padding: 10px;
-    border: 1px solid lightgray;
-    border-radius: 6px;
-    width: 70%;
-    margin: auto;
-    margin-top: 20px;
-    background: #fafafa;
-    min-height: 30vh;
+  padding: 10px;
+  border: 0;
+  border-radius: 6px;
+  width: 70%;
+  margin: auto;
+  margin-top: 20px;
+  background: #ffffff;
+  min-height: 30vh;
+  box-shadow: 0px 2px 6px #00000029;
 }
 .lcm_table_ht {
   max-height: calc(60vh - 60px);

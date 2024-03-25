@@ -170,4 +170,8 @@ export class ExceptionsService {
   rejectApprove(data,ap_id){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/rejectApprover/${this.userId}/idInvoice/${this.invoiceID}?approver_id=${ap_id}`,data);
   }
+
+  rejectCommentsList(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getRejectedRecord_approval/${this.invoiceID}`);
+  }
 }

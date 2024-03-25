@@ -238,6 +238,25 @@
       </li>
 
       <li
+        class="nav-item ml-2"
+        pTooltip="history"
+        tooltipPosition="top"
+        *ngIf="approvalRejectRecord.length>0 && fin_boolean"
+        (click)="changeTab('history')"
+      >
+        <a
+          class="nav-link"
+          id="history-tab"
+          data-toggle="tab"
+          href="#history"
+          role="tab"
+          aria-controls="history"
+          aria-selected="false"
+          [ngClass]="currentTab == 'history' ? 'active' : ''"
+          ><span class="fa fa-columns f-16 font_weight100"></span>History
+         </a>
+      </li>
+      <li
         *ngIf="!isServiceData && approval_selection_boolean && isLCMCompleted"
         class="nav-item ml-2"
         pTooltip="Approver Selection"
@@ -281,6 +300,7 @@
           <ng-container *ngTemplateOutlet="poline"></ng-container>
           <ng-container *ngTemplateOutlet="grn"></ng-container>
           <ng-container *ngTemplateOutlet="support"></ng-container>
+          <ng-container *ngTemplateOutlet="history"></ng-container>
           <ng-container *ngTemplateOutlet="approver_selection"></ng-container>
         </div>
 
@@ -1519,6 +1539,66 @@
               </button>
             </div>
           </div>
+        </ng-template>
+
+        <ng-template #history>
+            <div
+              class="tab-pane fade reject_comment"
+              [ngClass]="currentTab == 'history' ? 'show active' : ''"
+              id="support"
+              style="position: relative"
+            >
+              <!-- <table class="reject_comment"> 
+                <tr><th>S.No</th><th>Rejected By</th><th>Comments</th></tr>
+                <tr *ngFor="let item of approvalRejectRecord;let i = index;">
+                  <td>{{i+1}}</td>
+                  <td>{{item.firstName}}{{item.lastName}}</td>
+                  <td>{{item.DocumentHistoryLogs.documentdescription}}</td>
+                </tr>
+              </table> -->
+              <span *ngFor="let item of approvalRejectRecord; let i = index">
+                <span
+                  [ngStyle]="{
+                    visibility: item.DocumentHistoryLogs.CreatedOn
+                      ? 'visible'
+                      : 'hidden'
+                  }"
+                  class="date_box"
+                >
+                  <span *ngIf="item.DocumentHistoryLogs.CreatedOn">{{
+                    item.DocumentHistoryLogs?.CreatedOn + "Z"  | date: "medium"
+                  }}</span>
+                </span>
+                <span
+                  class="circles"
+                ></span>
+                <!-- <span class="material-icons circles" [class.active]="((orderStatus == item.dochistorystatus) && (i == statusData.length-1))">
+                            check_circle
+                        </span> -->
+        
+                <div
+                  class="circle-desc"
+                >
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div>
+                        <span class="f-12">Done by</span> :
+                        <span style="font-weight: 500"
+                          >{{ item.firstName }} {{ item.lastName }}</span
+                        >
+                      </div>
+                      <div *ngIf="item.DocumentHistoryLogs.documentdescription">
+                        <span class="f-12">Description</span> :
+                        <span style="font-weight: 500">{{
+                          item.DocumentHistoryLogs.documentdescription
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <span class="bar" *ngIf="i != approvalRejectRecord.length - 1"></span>
+              </span>
+            </div>
         </ng-template>
 
         <!--Approval Selection-->

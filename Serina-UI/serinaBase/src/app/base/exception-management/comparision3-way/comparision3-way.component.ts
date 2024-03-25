@@ -335,6 +335,7 @@ export class Comparision3WayComponent
 
   userList_approved:any;
   rejectionUserId: number = 0;
+  approvalRejectRecord = [];
 
   constructor(
     fb: FormBuilder,
@@ -508,6 +509,9 @@ export class Comparision3WayComponent
       this.settingService.finaceApproveBoolean;
     this.subStatusId = this.dataService.subStatusId;
     this.routeOptions();
+    if(this.fin_boolean){
+      this.getRejectionComments();
+    }
     // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
   }
 
@@ -1822,7 +1826,7 @@ export class Comparision3WayComponent
   financeApprove() {
     this.SpinnerService.show();
     let desc = {
-      "desp": this.rejectionComments
+      "desp": `Document approved by ${this.userDetails['userdetails'].firstName}`
     }
     this.SharedService.financeApprovalPermission(JSON.stringify(desc)).subscribe(
       (data: any) => {
@@ -3313,6 +3317,13 @@ export class Comparision3WayComponent
       this.SpinnerService.hide();
     })
 
+  }
+
+  getRejectionComments(){
+    this.exceptionService.rejectCommentsList().subscribe((data:any)=>{
+      this.approvalRejectRecord = data;
+      console.log(this.approvalRejectRecord)
+    })
   }
   success(msg) {
     this.AlertService.success_alert(msg);
