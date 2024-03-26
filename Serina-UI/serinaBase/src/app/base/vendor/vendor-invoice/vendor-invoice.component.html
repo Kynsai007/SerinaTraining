@@ -208,7 +208,7 @@
             />
           </div>
           <div>
-            <label class="label-head">Operating Unit </label><br />
+            <label class="label-head">{{ERPname != 'Oracle'?'Operating':'Business'}} Unit </label><br />
             <input
               type="text"
               list="op_units"
@@ -300,7 +300,7 @@
                   </option>
                 </select>
               </div>
-              <div *ngIf="ERPname != 'Oracle'">
+              <div>
                 <label class="label-head"
                   >CostCenter <span class="req_clr">*</span>
                 </label>

@@ -439,6 +439,7 @@ export class UploadSectionComponent implements OnInit {
   getVendorAccountsData(ent_id) {
     this.docService.readVendorAccountsData(ent_id).subscribe((data: any) => {
       this.vendorAccount = data.result;
+      this.selectVendorAccount_vdr(this.vendorAccount[0].idVendorAccount)
     });
   }
   selectType(value) {
@@ -625,7 +626,7 @@ export class UploadSectionComponent implements OnInit {
     this.selectedPONumber = '';
     delete this.PONumber;
     this.displayUploadOpt();
-    this.uploadForm?.controls['PONumber'].reset();
+    this.uploadForm?.controls['PONumber']?.reset();
     this.getPONumbers(this.vendorAccountId,this.selectedEntityId);
     // if (value) {
     //   this.displaySelectPdfBoolean = true;

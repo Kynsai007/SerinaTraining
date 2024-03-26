@@ -714,13 +714,13 @@
         >
           Document Status
         </div>
-        <div style="position: relative">
+        <div style="position: relative"             
+          *ngIf="
+          financeapproveDisplayBoolean &&
+          vendorInvoiceAccess &&
+          approveBoolean
+        ">
           <div
-            *ngIf="
-              financeapproveDisplayBoolean &&
-              vendorInvoiceAccess &&
-              approveBoolean
-            "
             class="nav_Link f-14 "
             (click)="approvalDropdown()"
             [ngClass]="{
@@ -783,7 +783,8 @@
                 router.url.includes('documentSummary') ||
                 router.url.includes('roles') ||
                 router.url.includes('service_batch_trigger') ||
-                router.url.includes('bulkUploadService')
+                router.url.includes('bulkUploadService') ||
+                router.url.includes('ERP_approvals')
             }"
           >
             {{ more_text }}
@@ -816,6 +817,13 @@
               (click)="onMenuChange('Roles')"
               *ngIf="addUsersBoolean"
               >Roles</a
+            >
+            <a
+              [routerLink]="'ERP_approvals'"
+              routerLinkActive="active_sub_cls"
+              (click)="onMenuChange('ERP Approvals')"
+              *ngIf="addUsersBoolean"
+              >ERP Approvals</a
             >
             <a
               [routerLink]="'bulkUploadService'"

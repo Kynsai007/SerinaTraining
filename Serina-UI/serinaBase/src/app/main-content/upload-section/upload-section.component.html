@@ -122,7 +122,7 @@
             >
             </p-autoComplete>
           </div>
-          <div *ngIf="!isCustomerPortal" class="selectFilter">
+          <!-- <div *ngIf="!isCustomerPortal" class="selectFilter">
             <label class="f-12 mb-0 z_index">Select Vendor Account</label>
             <select
               placeholder="Search or select from dropdown"
@@ -139,7 +139,7 @@
                 {{ vendorA.Account }}
               </option>
             </select>
-          </div>
+          </div> -->
           <!-- <div class="selectFilter">
             <label class="f-12 mb-0">Select PO Number</label>
             <p-autoComplete
@@ -238,7 +238,7 @@
             </p-autoComplete>
           </div>
           <div
-            *ngIf="portal_name == 'customer' && selectedOption != 'Service'"
+            *ngIf="selectedOption != 'Service'"
             class="selectFilter"
           >
             <label class="f-13 mb-0">Invoice Type </label><br />
@@ -257,7 +257,6 @@
           </div>
           <div
             *ngIf="
-              portal_name == 'customer' &&
               viewType == 'ideal' &&
               selectedInvoiceType == 'singlePO'
             "
@@ -286,8 +285,8 @@
           </div>
 
           <div
-            *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO'"
-            class="selectFilter"
+            *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO' && portal_name == 'customer'"
+            class="selectFilter ideal"
           >
             <label class="f-13 mb-0">Select GRN</label>
             <p-multiSelect

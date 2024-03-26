@@ -205,9 +205,19 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
         { id: 2, name: 'International_Calls'},
         { id: 3, name: 'Others'}
       ]
+    } else if(e.EntityName.includes('Cenomi')){
+      this.elementList = [
+        { id: 1, name: 'Electricity'},
+        { id: 2, name: 'Water'},
+        { id: 3, name: 'GAS'},
+        { id: 4, name: 'Government (GOSI)'},
+        { id: 5, name: 'Government (With holding tax)'},
+        { id: 6, name: 'Legal'},
+        { id: 7, name: 'Others'},
+      ]
     } else {
       this.elementList = [
-        { id: 1, name: 'Others'}
+        { id: 1, name: 'Others'},
       ]
     }
   }
