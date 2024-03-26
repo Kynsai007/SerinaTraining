@@ -303,7 +303,7 @@
                                     <select name="GrnCreationType" id="GRN_TYPE" ngModel #GrnCreationType="ngModel" class="form-control max_width f-13" [(ngModel)]="selectedGRNType" (change)="onSelectGRNType(selectedGRNType)"
                                          required>
                                         <option value="" selected disabled>Select GRN type</option>
-                                        <option *ngFor="let rule of GRN_TYPE" [value]="rule.id">{{rule.value}}</option>
+                                        <option *ngFor="let rule of GRN_TYPE" [value]="rule.id" [disabled]="rule.disabled" [selected]="rule.selected">{{rule.value}}</option>
                                     </select>
                                 </td>
                             </tr>
@@ -312,8 +312,8 @@
                                 <td class="tdRight">
                                     <select name="ruleID" id="ruleID" ngModel #ruleID="ngModel" class="form-control max_width f-13" [(ngModel)]="selectedRuleId" required
                                          >
-                                        <option value=""  selected >Select Rule</option>
-                                        <option *ngFor="let rule of rulesData" [value]="rule.idDocumentRules" [disabled]="rule.IsActive == 0" [ngClass]="rule.IsActive == 0 ? 'opaque' : 'clearopaque'">{{rule.Name}}</option>
+                                        <option value="" disabled>Select Rule</option>
+                                        <option *ngFor="let rule of rulesData" [value]="rule.idDocumentRules" [disabled]="rule.IsActive == 0" [ngClass]="rule.IsActive == 0 ? 'opaque' : 'clearopaque'" [selected]="rule.idDocumentRules == 8">{{rule.Name}}</option>
                                     </select>
                                 </td>
                             </tr>

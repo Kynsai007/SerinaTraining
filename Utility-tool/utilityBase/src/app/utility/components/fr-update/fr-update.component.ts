@@ -81,8 +81,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     {value :'Non-PO based', id:2},
   ];
   GRN_TYPE = [
-    {value :'Manual', id:1},
-    {value :'ERP', id:2},
+    {value :'Manual', id:1, disabled: false, selected: true},
+    {value :'ERP', id:2, disabled: true, selected: false},
   ]
   selectedRuleId:any;
   fieldscount:number = 0;
@@ -107,6 +107,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     private _location: Location) { }
 
   ngOnInit(): void {
+    this.selectedGRNType = 1;
+    this.selectedRuleId = 8;
     this.msg = "Drag and drop an HTML File";
     this.selectedDocFormat = "pdf,jpg,png,jpeg";
     if(sessionStorage.getItem("currentFolder")){
@@ -360,8 +362,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         }else{
           this.headerArray = [];
           this.headerTags.forEach((el)=>{
-            //this.headerArray.push(el['Name']);
             if(el['Ismendatory'] == 1){
+              this.headerArray.push(el['Name']);
               this.headerMandetory.push(el['Name']);
             } else {
               this.headerOptionalArray.push(el['Name'])
@@ -381,8 +383,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         }else{
           this.LineArray = [];
           this.LineTags.forEach((el)=>{
-            //this.LineArray.push(el['Name']);
             if(el['Ismendatory'] == 1){
+              this.LineArray.push(el['Name']);
               this.lineMandetory.push(el['Name']);
             } else {
               this.LineArrayOptinal.push(el['Name'])
