@@ -302,8 +302,8 @@
                                 <td class="tdRight">
                                     <select name="GrnCreationType" id="GRN_TYPE" ngModel #GrnCreationType="ngModel" class="form-control max_width f-13" [(ngModel)]="selectedGRNType" (change)="onSelectGRNType(selectedGRNType)"
                                          required>
-                                        <option value="" selected disabled>Select GRN type</option>
-                                        <option *ngFor="let rule of GRN_TYPE" [value]="rule.id" [disabled]="rule.disabled" [selected]="rule.selected">{{rule.value}}</option>
+                                        <option value="" disabled>Select GRN type</option>
+                                        <option *ngFor="let rule of GRN_TYPE" [value]="rule.id" [disabled]="rule.disabled" [selected]="rule.selected" [ngClass]="rule.disabled ? 'opaque' : 'clearopaque'">{{rule.value}}</option>
                                     </select>
                                 </td>
                             </tr>

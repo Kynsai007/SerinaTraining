@@ -82,7 +82,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   ];
   GRN_TYPE = [
     {value :'Manual', id:1, disabled: false, selected: true},
-    {value :'ERP', id:2, disabled: true, selected: false},
+    {value :'ERP', id:2, disabled: false, selected: false},
   ]
   selectedRuleId:any;
   fieldscount:number = 0;
@@ -99,6 +99,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   showRule:boolean=true;
   @ViewChild('updateMetaData')
   updateMetaData:NgForm;
+  instanceData:any;
 
   constructor(private sharedService: SharedService,
     private messageService : MessageService,
@@ -107,8 +108,15 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     private _location: Location) { }
 
   ngOnInit(): void {
+    this.instanceData = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel;
     this.selectedGRNType = 1;
     this.selectedRuleId = 8;
+    if(this.instanceData.idinstance == 3){
+      this.selectedGRNType = 2;
+      this.GRN_TYPE[0].disabled = true;
+      this.GRN_TYPE[0].selected = false;
+      this.GRN_TYPE[1].selected = true;
+    }
     this.msg = "Drag and drop an HTML File";
     this.selectedDocFormat = "pdf,jpg,png,jpeg";
     if(sessionStorage.getItem("currentFolder")){
@@ -447,9 +455,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
             }
           }
           if(!this.FRMetaData['GrnCreationType']){
-            this.selectedGRNType = '';
+            this.selectedGRNType = 1;
           } else {
             this.selectedGRNType = this.FRMetaData['GrnCreationType'];
+            if(this.instanceData.idinstance == 3){
+              this.selectedGRNType = 2;
+            }
             this.onSelectGRNType(this.selectedGRNType);
           }
         

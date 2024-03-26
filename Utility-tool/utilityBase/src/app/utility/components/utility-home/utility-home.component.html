@@ -9,6 +9,8 @@
           <div class="center">
             <ul>
               <li routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/home">Home</a></li>
+              <li *ngIf="showVendorsTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/vendors">Vendors</a></li>
+              <li *ngIf="showServiceTab" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/service-providers">Service Providers</a></li>
               <li *ngIf="isAdmin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/IT_Utility/settings">Settings</a></li>
               <li><a routerLink="/IT_Utility/guide" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Guide</a></li>
               <li title="Sign Out"  data-toggle="modal" data-target="#exampleModal"><a style="cursor: pointer;">
