@@ -110,6 +110,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   ngOnInit(): void {
     this.instanceData = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel;
     this.selectedGRNType = 1;
+    this.selectErpRule = 1;
     this.selectedRuleId = 8;
     if(this.instanceData.idinstance == 3){
       this.selectedGRNType = 2;
@@ -438,7 +439,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
           this.selectedRuleId= this.FRMetaData['ruleID'];
 
           if(!this.FRMetaData['erprule']){
-            this.selectErpRule = '';
+            this.selectErpRule = 1;
           } else {
             this.selectErpRule = this.FRMetaData['erprule'];
           }
