@@ -436,7 +436,7 @@ export class LoginPageComponent implements OnInit {
     let ara = Math.floor(Math.random() * 1000).toString()
     let ip = i.concat(ara)
     sessionStorage.setItem('userIp', JSON.stringify(ip))
-    this.fetchWithRetry('https://ip.seeip.org/jsonip?')
+    this.fetchWithRetry('https://api.seeip.org/jsonip?')
       .then((response: Response) => response.json() as Promise<IPData>)
       .then(data => sessionStorage.setItem('userIp', JSON.stringify(data.ip)))
       .catch(error => console.error(error));
