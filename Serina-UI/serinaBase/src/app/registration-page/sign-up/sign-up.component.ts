@@ -49,6 +49,7 @@ export class SignUpComponent implements OnInit {
   tabName: string = 'verify';
   accountType: any;
   isEmailVerified: boolean;
+  isAccountSuccess: boolean;
 
   constructor(private fb:FormBuilder,
     private datePipe: DatePipe,
@@ -126,11 +127,15 @@ export class SignUpComponent implements OnInit {
       this.registrationService.vendorRegistration(JSON.stringify(obj)).subscribe((data:any)=>{
         this.alert.success_alert("Account created, Please login and proceed the onboarding process.")
         // this.activationBoolean = false;
-        this.dialogRef.close();
+        this.isAccountSuccess =  true;
+        // 
     },error=>{
       this.alert.error_alert("User already activated.")
     })
     }
+  }
+  closeDialog(){
+    this.dialogRef.close();
   }
 
   confirmPassword(value){

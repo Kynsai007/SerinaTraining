@@ -290,7 +290,8 @@ export class UploadSectionComponent implements OnInit {
   po_number_floating = false;
   EntityName: any;
   errorMsg: string;
-
+  displayTablebool: boolean;
+  spinMsg = 'Please wait...';
   constructor(
     private http: HttpClient,
     public route: Router,
@@ -754,8 +755,7 @@ export class UploadSectionComponent implements OnInit {
     this.sharedService.readInvLines(event.docheaderID).subscribe(data=>{
       this.popupFun('flip returns',data,'');
     }, err=>{
-      this.alertService.errorObject.detail = "Server error";
-      this.messageService.add(this.alertService.errorObject);
+      this.error("Server error");
     })
   }
 
@@ -844,8 +844,7 @@ export class UploadSectionComponent implements OnInit {
       this.poNumbersList = data;
       this.spinnerService.hide();
     }, err => {
-      this.alertService.errorObject.detail = "Server error";
-      this.messageService.add(this.alertService.errorObject);
+      this.error("Server error");
       this.spinnerService.hide();
     })
   }
@@ -861,8 +860,7 @@ export class UploadSectionComponent implements OnInit {
 
       this.po_grn_list = data?.GRNDATA.filter((val1, index, arr) => arr.findIndex(v2 => ['PackingSlip'].every(k => v2[k] === val1[k])) === index);
     }, err => {
-      this.alertService.errorObject.detail = "Server error";
-      this.messageService.add(this.alertService.errorObject);
+      this.error("Server error");
     })
   }
   addGrnLine(val) {
@@ -1021,18 +1019,15 @@ export class UploadSectionComponent implements OnInit {
         json_data.forEach(ele => {
           this.mutliplePOTableData.push(ele);
         });
-        this.alertService.addObject.detail = data.Result.status_msg;
-        this.messageService.add(this.alertService.addObject);
+        this.success(data.Result.status_msg)
       } else {
-        this.alertService.errorObject.detail = data.Result.status_msg;
-        this.messageService.add(this.alertService.errorObject);
+        this.error(data.Result.status_msg);
       }
       // this.mutliPODailog = false;
       // this.poTypeBoolean = true;
       this.spinnerService.hide();
     }, err => {
-      this.alertService.errorObject.detail = "Server error"
-      this.messageService.add(this.alertService.errorObject);
+      this.error("Server error");
     })
     // delete this.uploadExcelValue;
   }
@@ -1076,11 +1071,9 @@ export class UploadSectionComponent implements OnInit {
       if (this.viewType == 'ideal') {
         this.poTypeBoolean = true;
       }
-      this.alertService.addObject.detail = "Line details data saved."
-      this.messageService.add(this.alertService.addObject)
+      this.success("Line details data saved.")
     }, err => {
-      this.alertService.errorObject.detail = "Server error"
-      this.messageService.add(this.alertService.errorObject);
+      this.error("Server error");
     })
   }
 
@@ -1124,8 +1117,7 @@ export class UploadSectionComponent implements OnInit {
       }
       this.size = this.size / 1024 / 1024;
     } else {
-      this.alertService.errorObject.detail = "Please Upload mentioned file type only";
-      this.messageService.add(this.alertService.errorObject);
+      this.error("Please Upload mentioned file type only");
     }
   }
 
@@ -1333,6 +1325,7 @@ export class UploadSectionComponent implements OnInit {
                   this.success("OCR process completed successfully!");
                   this.spinnerService.show();
                   this.dataService.editableInvoiceData = [];
+                  this.spinMsg="Hey, please wait we are moving into invoice details page..."
                   setTimeout(() => {
                     if (this.isCustomerPortal == false) {
                     this.route.navigate([
@@ -1451,11 +1444,10 @@ export class UploadSectionComponent implements OnInit {
     }, err => {
       this.spinnerService.hide();
       if (err.status == 403) {
-        this.alertService.errorObject.detail = 'Approvers are not available for this combination';
+        this.error('Approvers are not available for this combination');
       } else {
-        this.alertService.errorObject.detail = 'Server error';
+        this.error("Server error");
       }
-      this.messageService.add(this.alertService.errorObject);
 
     })
 
@@ -1556,22 +1548,21 @@ export class UploadSectionComponent implements OnInit {
     }
   }
   addInvoiceDetailsToQueue(val) {
+    
     if (this.approvalBoolean) {
       if (this.touchedApproveBoolean || this.approverNameListFinal.length > 0) {
         if (val.invoiceType == 'multiPO') {
           if (this.multiPO_filepath != '') {
             this.addFunction(val)
           } else {
-            this.alertService.errorObject.detail = "Please add multiple PO lines.";
-            this.messageService.add(this.alertService.errorObject);
+            this.error("Please add multiple PO lines.")
           }
         } else {
           this.addFunction(val)
         }
 
       } else {
-        this.alertService.errorObject.detail = "Please select pre-approve or approver names.";
-        this.messageService.add(this.alertService.errorObject);
+        this.error("Please select pre-approve or approver names.");
       }
     } else {
       this.addFunction(val)
@@ -1579,6 +1570,7 @@ export class UploadSectionComponent implements OnInit {
 
   }
   addFunction(val) {
+    this.displayTablebool = true;
     let Approver;
     let po_grn_data = [];
     let pre_approved = false;
@@ -1598,11 +1590,11 @@ export class UploadSectionComponent implements OnInit {
       VendorName: val.vendor?.VendorName,
       PONumber: val.PONumber?.PODocumentID,
       invoiceType: val.invoiceType,
-      attchedInvoice: this.invoiceFilename,
-      attchedSupport: this.supportFileNamelist,
-      departmentName: val.departmentName,
+      // attchedInvoice: this.invoiceFilename,
+      // attchedSupport: this.supportFileNamelist,
+      // departmentName: val.departmentName,
       approvers: Approver,
-      po_grn_data: po_grn_data
+      // po_grn_data: po_grn_data
     }
     let APIObj = {
       "ven_acc_id": this.vendorAccountId,
@@ -1656,7 +1648,7 @@ export class UploadSectionComponent implements OnInit {
     }
 
   }
-  uploadSigle(val) {
+  uploadSingle(val) {
     this.addInvoiceDetailsToQueue(val);
     setTimeout(() => {
       if (this.APIPostData.length > 0) {
@@ -1673,19 +1665,18 @@ export class UploadSectionComponent implements OnInit {
       inv_formData.append('supporting_docs', file, file.name);
     }
     inv_formData.append('data', JSON.stringify(this.APIPostData))
-
+    this.spinMsg = 'Please wait..'
     this.spinnerService.show();
     this.sharedService.mutliUpload(inv_formData).subscribe((data: any) => {
-      this.alertService.addObject.detail = "Files Uploading process started, please check after some time.";
-      this.messageService.add(this.alertService.addObject);
+      this.success("Files Uploading process started, please check after some time.");
+      this.displayTablebool = false;
       this.APIPostData = [];
       this.uploadInvoicesListData = [];
       this.invoiceDocList = [];
       this.supportDocList = [];
       this.spinnerService.hide();
     }, err => {
-      this.alertService.errorObject.detail = "Server error";
-      this.messageService.add(this.alertService.errorObject);
+      this.error("Server error");
       this.spinnerService.hide();
     })
   }
@@ -1706,8 +1697,7 @@ export class UploadSectionComponent implements OnInit {
       this.popupFun(str,data.Po_line_details,this.PO_GRN_Number_line);
       this.spinnerService.hide();
     }, err => {
-      this.alertService.errorObject.detail = "Server error";
-      this.messageService.add(this.alertService.errorObject);
+      this.error("Server error");
       this.spinnerService.hide();
     })
   }
@@ -1768,6 +1758,7 @@ export class UploadSectionComponent implements OnInit {
               //   detail: lastEvent,
               // });
               this.success(lastEvent);
+              this.spinMsg ="Hey, please wait we are moving into invoice details page..."
               this.dataService.editableInvoiceData = [];
               this.route.navigate([
                 `customer/invoice/serviceDetails/CustomerUpload/${doc_id}`,
@@ -1892,16 +1883,15 @@ export class UploadSectionComponent implements OnInit {
   changeValue(){
     if (this.isButtonDisabled) {
       if (!this.upperValCheck) {
-        this.alertService.errorObject.detail = "Higher value must be greater than lower value";
+        this.error("Higher value must be greater than lower value");
       } else if (!this.totalPageValdation) {
-        this.alertService.errorObject.detail = "The page limit must be inside the total pages of the invoice (Total Pages: " + this.totalPages + ")";
+        this.error(`The page limit must be inside the total pages of the invoice (Total Pages: " + ${this.totalPages} + ")`);
       } else if (!this.patternValidation) {
-        this.alertService.errorObject.detail = "Enter value in valid pattern (Eg:1-5, 7, 11-15)";
+        this.error("Enter value in valid pattern (Eg:1-5, 7, 11-15)");
       } else {
         // If none of the conditions are met
         return;
       }
-      this.messageService.add(this.alertService.errorObject);
     }
 }
 checkSupportFile(){
@@ -1917,7 +1907,7 @@ checkSupportFile(){
 uploadCheck(event){
   if( this.lowerLimit === 1 && this.upperLimit === this.totalPages){
     if (confirm('No supporting document found, are you sure to proceed without supporting document')){
-      this.uploadSigle(event);
+      this.uploadSingle(event);
       this.isButtonDisabled = false;
     }
     else{
@@ -1925,7 +1915,7 @@ uploadCheck(event){
     }
   }
   else{
-    this.uploadSigle(event);
+    this.uploadSingle(event);
   }
 
 }

@@ -1,21 +1,32 @@
 <!-- upload Invoice -->
 <!-- <h6 class="headh6">Upload Section</h6> -->
-<div class="row pt-3 m-0">
-  <div class="col-md-4 pl-0 pr-0">
-    <div class="imgPlaceholder">
-      <!-- <img src="../../../assets/Serina Assets/new_theme/Group 933.svg" alt=""> -->
+<div class="row m-0">
+  <div class="column1">
+    <div *ngIf="!displayTablebool">
+      <div class="imgPlaceholder">
+      </div>
+      <div class="welcomtext">
+        <h6 class="f-16 mt-4 text-center">Welcome. Let's get you settled in.</h6>
+      </div>
+      <div class="f-14 shade_color wlcom_bdy">
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industry's standard dummy text ever since the
+        1500s, when an unknown printer took a galley of type and scrambled it to
+        make a type specimen book.
+      </div>
     </div>
-    <div class="welcomtext">
-      <h6 class="f-16 mt-4 text-center">Welcome. Let's get you settled in.</h6>
-    </div>
-    <div class="f-14 shade_color wlcom_bdy">
-      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-      Lorem Ipsum has been the industry's standard dummy text ever since the
-      1500s, when an unknown printer took a galley of type and scrambled it to
-      make a type specimen book.
+
+    <div *ngIf="displayTablebool" class="p-2">
+      <div class="f-14">Recently Added Details</div>
+      <div *ngFor="let obj of uploadInvoicesListData" class="addDetails">
+        <div *ngFor="let item of obj|keyvalue">
+          <label class="f-12 shade_color mb-0">{{item.key}}</label>
+          <div class="f-12" [ngStyle]="{'width':item?.key?.includes('Name')? '160px':'110px'}">{{item.value}}</div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="col-md-8 p-0" style="padding-left: 30px !important">
+  <div class="column2">
     <div class="f-18 d-flex">
       Hey User,<img
         src="../../../assets/Serina Assets/new_theme/wave.png"
@@ -91,7 +102,7 @@
               serviceInvoiceAccess && vendorAccess && portal_name == 'customer'
             "
           >
-            <label class="f-13 mb-0">Select Invoice Type</label><br />
+            <label class="f-12 mb-0">Select Type</label><br />
             <select
               class="form-control accountSelect f-12"
               [(ngModel)]="selectedOption"
@@ -220,7 +231,7 @@
             class="selectFilter"
             *ngIf="portal_name == 'customer' && selectedOption === 'Service'"
           >
-            <label class="f-13 mb-0">Select Account </label><br />
+            <label class="f-12 mb-0">Select Account </label><br />
             <p-autoComplete
               placeholder="Search or select from dropdown"
               (onSelect)="selectServiceAccount($event)"
@@ -241,7 +252,7 @@
             *ngIf="selectedOption != 'Service'"
             class="selectFilter"
           >
-            <label class="f-13 mb-0">Invoice Type </label><br />
+            <label class="f-12 mb-0">Invoice Type </label><br />
             <select
               class="form-control accountSelect f-12"
               (change)="onSelectPOType($event.target.value, 'ideal')"
@@ -262,7 +273,7 @@
             "
             class="selectFilter"
           >
-            <label class="f-13 mb-0">Select PO Number</label>
+            <label class="f-12 mb-0">Select PO Number</label>
             <p-autoComplete
               placeholder="Search or select from dropdown"
               (onSelect)="selectedPO($event)"
@@ -288,7 +299,7 @@
             *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO' && portal_name == 'customer'"
             class="selectFilter ideal"
           >
-            <label class="f-13 mb-0">Select GRN</label>
+            <label class="f-12 mb-0">Select GRN</label>
             <p-multiSelect
               class="accountSelect"
               [options]="po_grn_list"
@@ -405,7 +416,7 @@
           >
             <div style="margin: 8px" *ngIf="isuploadable">
               <!-- <span class="material-icons f-80"> filter_none </span> -->
-              <div class="f-13">
+              <div class="f-12">
                 Drag and Drop an Document to fetch the details
               </div>
               <small class="f-12">File type must be in .jpeg .png .pdf</small>
@@ -448,7 +459,7 @@
               </div>
             </div>
             <!-- <div class="pagerange" *ngIf="selectPageRange">
-              <label class="text-center f-13 mb-0"
+              <label class="text-center f-12 mb-0"
                 >Select Page Of Invoice</label
               >
               <input
@@ -474,7 +485,7 @@
             </div>
           </div>
 
-          <!-- <div class="f-13 mt-2 mb-2">
+          <!-- <div class="f-12 mt-2 mb-2">
               {{ processStage }} Step - 1/2 Completed.
             </div> -->
           <!-- </div> -->
@@ -603,7 +614,7 @@
          
         >
           <div class="selectFilter">
-            <label class="f-13 mb-0">Select Entity</label><br />
+            <label class="f-12 mb-0">Select Entity</label><br />
             <p-autoComplete
               placeholder="Select Entity"
               (onSelect)="selectEntity($event)"
@@ -628,7 +639,7 @@
 
           <!--Vendor Selection-->
           <div class="selectFilter">
-            <label class="f-13 mb-0">Select Vendor</label><br />
+            <label class="f-12 mb-0">Select Vendor</label><br />
             <p-autoComplete
               placeholder="Select vendor"
               (onSelect)="selectVendorAccount($event)"
@@ -659,7 +670,7 @@
 
           <!--Select PO type-->
           <div class="selectFilter">
-            <label class="f-13 mb-0"
+            <label class="f-12 mb-0"
               >Invoice Type
               <i
                 *ngIf="this.multiPO_filepath != ''"
@@ -683,7 +694,7 @@
           </div>
 
           <div class="selectFilter" *ngIf="LCMBoolean !== 'No'">
-            <label class="f-13 mb-0">Select Currency</label>
+            <label class="f-12 mb-0">Select Currency</label>
             <select
               class="form-control accountSelect f-12"
               [(ngModel)]="selectedCurrency"
@@ -704,7 +715,7 @@
                 selectedInvoiceType == 'nonPO')
             "
           >
-            <label class="f-13 mb-0">Select Category</label>
+            <label class="f-12 mb-0">Select Category</label>
             <select
               class="form-control accountSelect f-12"
               [(ngModel)]="selectedCategory"
@@ -723,7 +734,7 @@
             class="selectFilter"
             *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO'"
           >
-            <label class="f-13 mb-0">Select PO Number</label><br />
+            <label class="f-12 mb-0">Select PO Number</label><br />
             <p-autoComplete
               placeholder="Select PO Number"
               (onSelect)="selectedPO($event)"
@@ -754,7 +765,7 @@
               selectedCategory == 'returns'
             "
           >
-            <label class="f-13 mb-0">Select Invoice Number</label><br />
+            <label class="f-12 mb-0">Select Invoice Number</label><br />
             <p-autoComplete
               placeholder="Select Invoice Number"
               (onSelect)="selectedInv($event)"
@@ -785,7 +796,7 @@
               selectedCategory == 'credit'
             "
           >
-            <label class="f-13 mb-0">Select GRN</label>
+            <label class="f-12 mb-0">Select GRN</label>
             <p-multiSelect
               [options]="po_grn_list"
               placeholder="Number"
@@ -810,7 +821,7 @@
               selectedCategory == 'credit'
             "
           >
-            <label class="f-13 mb-0">Select GRN Line</label>
+            <label class="f-12 mb-0">Select GRN Line</label>
             <p-multiSelect
               [options]="po_grn_line_list"
               placeholder="Number-line-description"
@@ -832,10 +843,10 @@
               selectedInvoiceType == 'singlePO' &&
               selectedCategory != 'returns'
             "
+            class="selectFilter w-value"
           >
-            <div style="visibility: hidden">visible</div>
             <button
-              class="img-browse b-0 mt-0 bg-gray"
+              class="secondary_btn f-12"
               type="button"
               [disabled]="!flipBool"
               [ngClass]="{
@@ -844,7 +855,7 @@
               }"
               (click)="open_dialog_comp('flip')"
             >
-              <span *ngIf="!isPOFlipped">Flip PO</span>
+              <span class="mr-3">Flip PO</span>
               <span
                 *ngIf="isPOFlipped"
                 class="material-icons d-flex justify-content-center"
@@ -855,7 +866,7 @@
           </div>
 
           <div class="selectFilter">
-            <label class="f-13 mb-0">Select Department</label>
+            <label class="f-12 mb-0">Select Department</label>
             <select
               class="form-control accountSelect f-12"
               [(ngModel)]="selectedDepartment"
@@ -871,32 +882,7 @@
               </option>
             </select>
           </div>
-          <div>
-            <div class="f-13 mb-1">Invoice</div>
-            <label
-              for="img1"
-              class="img-browse mt-0"
-              [ngClass]="invoiceFilename == '' ? 'bg-gray' : 'b-success'"
-            >
-              <span *ngIf="invoiceFilename == ''">Attach Invoice</span>
-              <span
-                *ngIf="invoiceFilename != ''"
-                class="material-icons d-flex justify-content-center"
-              >
-                check_circle
-              </span>
-            </label>
-            <input
-              accept=".png, .jpg, .pdf, .html, .htm"
-              (change)="onSelectFile_quick($event, 'invoice')"
-              type="file"
-              id="img1"
-              hidden
-              name="attchedInvoice"
-              ngModel
-              required
-            />
-          </div>
+
           <!--hiding pdf not to view-->
           <!-- <div #hiddenContainer style="position: absolute; left: -9999px; top: -9999px;">
                 <div  *ngIf="attachedBoolean">
@@ -916,8 +902,8 @@
               </div> -->
 
           <!-- select page limit -->
-          <div class="selectFilter" *ngIf="slctinvoicelimit">
-            <label class="f-13 mb-0">Select Pages Of Invoice </label>
+          <!-- <div class="selectFilter" *ngIf="slctinvoicelimit">
+            <label class="f-12 mb-0">Select Pages Of Invoice </label>
 
             <input
               type="text"
@@ -932,42 +918,10 @@
               placeholder="Eg:1-5, 7, 11-15"
               [pattern]="allowedPattern"
             />
-          </div>
-          <div>
-            <div class="f-13 mb-1">Support Document</div>
-            <label
-              for="img11"
-              class="img-browse mt-0"
-              [ngClass]="
-                !(supportFileNamelist?.length > 0) ? 'bg-gray' : 'b-success'
-              "
-            >
-              <span *ngIf="!(supportFileNamelist?.length > 0)"
-                >Attach Support</span
-              >
-              <span
-                *ngIf="supportFileNamelist?.length > 0"
-                class="material-icons d-flex justify-content-center"
-              >
-                check_circle
-              </span>
-            </label>
-            <input
-              accept=".doc, .pdf"
-              (change)="onSelectFile_quick($event, 'support')"
-              type="file"
-              id="img11"
-              hidden
-              name="attchedSupport"
-              multiple
-              ngModel
-            />
-          </div>
+          </div> -->
 
-          <div *ngIf="approvalBoolean">
-            <label class="f-13 mb-0" style="visibility: hidden"
-              >Is LCM Type</label
-            ><br />
+
+          <div *ngIf="approvalBoolean" class="selectFilter" style="width: 200px;">
             <label class="check_div">
               <input
                 type="checkbox"
@@ -976,13 +930,12 @@
                 ngModel
                 (change)="onSelectPreaprve(preAproveBool)"
               />
-              <span class="f-13">Pre Approved</span>
+              <span class="f-12">Pre Approved</span>
             </label>
           </div>
-          <div *ngIf="approvalBoolean">
-            <div style="visibility: hidden">visible</div>
+          <div *ngIf="approvalBoolean" class="selectFilter w-value">
             <button
-              class="img-browse b-0 mt-0 bg-gray"
+              class="secondary_btn f-12"
               type="button"
               [disabled]="preAproveBool"
               [ngClass]="{
@@ -992,7 +945,7 @@
               (click)="approverDialog = true"
             >
               <span *ngIf="!(approverNameListFinal?.length > 0)"
-                >Add Approvers</span
+                >+  Add Approvers</span
               >
               <span
                 *ngIf="approverNameListFinal?.length > 0"
@@ -1003,33 +956,77 @@
             </button>
           </div>
 
-          <div>
-            <div style="visibility: hidden">visible</div>
-            <button
-              class="img-browse b-0 mt-0 bg-blue"
-              [disabled]="isButtonDisabled || quickUploadForm.invalid"
-              [ngClass]="
-                isButtonDisabled || quickUploadForm.invalid ? 'disable' : ''
-              "
-              (click)="checkSupportFile()"
-            >
-              + Add
-            </button>
+          <div class="attachments">
+            <div class="selectFilter">
+              <div class="f-12 mb-1">Invoice</div>
+              <label
+                for="img1"
+                class="f-14 d-flex justify-content-between"
+              >
+                <div>Attach Invoice</div>
+                <span
+                  class="material-icons d-block"
+                  [ngClass]="invoiceFilename != ''? 'color_green':''"
+                >
+                  {{invoiceFilename != ''? 'check_circle' :'upload_file'}}
+                </span>
+              </label>
+              <input
+                accept=".png, .jpg, .pdf, .html, .htm"
+                (change)="onSelectFile_quick($event, 'invoice')"
+                type="file"
+                id="img1"
+                hidden
+                name="attchedInvoice"
+                ngModel
+                required
+              />
+            </div>
+
+            <div class="selectFilter">
+              <div class="f-12 mb-1">Support Documents</div>
+              <label
+                for="img11"
+                class="f-14 d-flex justify-content-between"
+              >
+                <div>Attach Support</div>
+                <span
+                  class="material-icons d-block"
+                  [ngClass]="supportFileNamelist?.length > 0 ? 'color_green':''"
+                >
+                {{supportFileNamelist?.length > 0? 'check_circle' :'upload_file'}}
+                </span>
+              </label>
+              <input
+                accept=".doc, .pdf"
+                (change)="onSelectFile_quick($event, 'support')"
+                type="file"
+                id="img11"
+                hidden
+                name="attchedSupport"
+                multiple
+                ngModel
+              />
+            </div>
           </div>
-          <div *ngIf="uploadInvoicesListData?.length < 1">
-            <div style="visibility: hidden">visible</div>
-            <button
-              class="img-browse b-0 mt-0 bg-btn-success"
-              style="background: #89d390 !important"
-              [disabled]="isButtonDisabled || quickUploadForm.invalid"
-              [ngClass]="
-                isButtonDisabled || quickUploadForm.invalid ? 'disable' : ''
-              "
-              type="button"
-              (click)="uploadCheck(quickUploadForm.value)"
-            >
-              Upload
-            </button>
+
+          <div class="footer">
+              <button
+                class="secondary_btn f-12"
+                [disabled]="quickUploadForm.invalid"
+                [ngClass]=" quickUploadForm.invalid ? 'disable' : '' "
+              >
+                 Add Details
+              </button>
+              <button
+                class="primary_btn f-12"
+                [disabled]="quickUploadForm.invalid"
+                [ngClass]=" quickUploadForm.invalid ? 'disable' : ''"
+                type="button"
+                (click)="uploadInvoicesListData?.length > 1 ? uploadAllFiles(): uploadSingle(quickUploadForm.value)"
+              >
+                Upload
+              </button>
           </div>
         </form>
         <!-- <table
@@ -1073,7 +1070,7 @@
                 </tr>
               </div>
             </table> -->
-        <p-table
+        <!-- <p-table
           *ngIf="uploadInvoicesListData?.length > 0"
           [value]="uploadInvoicesListData"
           [paginator]="false"
@@ -1115,19 +1112,18 @@
           <ng-template pTemplate="emptymessage"> </ng-template>
           <ng-template pTemplate="paginatorleft"> </ng-template>
           <ng-template pTemplate="paginatorright"> </ng-template>
-        </p-table>
-        <footer *ngIf="uploadInvoicesListData?.length > 0">
+        </p-table> -->
+        <!-- <footer *ngIf="uploadInvoicesListData?.length > 0">
           <div class="d-flex">
-            <!-- <button class="btn bg-btn-cancel mr-2 f-14">Cancel</button> -->
             <button
-              class="btn bg-btn-success f-13"
+              class="btn bg-btn-success f-12"
               style="background: #89d390 !important; width: 150px"
               (click)="uploadAllFiles()"
             >
               Upload
             </button>
           </div>
-        </footer>
+        </footer> -->
       </div>
 
       <div
@@ -1455,21 +1451,22 @@
   header="Add Approvers"
   [(visible)]="approverDialog"
   [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ minWidth: '50vw' }"
+  [style]="{ width: '450px' }"
   [baseZIndex]="10"
   [draggable]="false"
   [resizable]="false"
+  [modal]="true"
 >
   <div
     *ngIf="approverNameList?.length != 0; else noapprovers"
-    class="d-flex justify-content-center"
+    class="d-flex flex-wrap justify-content-center pt-2"
     style="gap: 5px"
   >
-    <div *ngFor="let item of approverList | keyvalue; let i = index">
-      <label class="f-13 mb-0">Select Approver {{ i + 1 }}</label>
+    <div class="selectFilter" *ngFor="let item of approverList | keyvalue; let i = index">
+      <label class="f-12 mb-0">Select Approver {{ i + 1 }}</label>
       <!-- <div>{{item.value | json}}</div> -->
       <select
-        class="form-control accountSelect f-12"
+        class="form-control accountSelect f-14"
         [disabled]="preApproveBoolean"
         (change)="onSelectApprovers($event.target.value, i)"
       >
@@ -1483,25 +1480,25 @@
     </div>
   </div>
   <ng-template #noapprovers>
-    <div class="p-t-30 f-13 text-center">
+    <div class="p-t-30 f-12 text-center">
       Approvers are not available please select the pre-approved option.
     </div>
   </ng-template>
   <ng-template pTemplate="footer">
-    <div class="d-flex justify-content-center">
-      <button
+    <div class="d-flex justify-content-end">
+      <!-- <button
         type="button"
         class="btn btnVender bg-btn-cancel"
         (click)="approverDialog = false"
       >
         Cancel
-      </button>
+      </button> -->
       <button
         type="button"
-        class="btn btnVender bg-btn-success"
+        class="primary_btn f-12"
         (click)="addApprovers()"
       >
-        Ok
+        Add
       </button>
     </div>
   </ng-template>
@@ -1515,6 +1512,6 @@
   type="ball-spin-clockwise"
 >
   <div class="loader_text">
-    Hey, please wait we are moving into invoice details page...
+    {{ spinMsg }}
   </div>
 </ngx-spinner>

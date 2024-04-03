@@ -1,4 +1,4 @@
-<div style="position: relative;height: 100%;">
+<div style="position: relative;height: 100%;" *ngIf="!isAccountSuccess">
   <div
   class="nav_container"
 >
@@ -320,6 +320,21 @@
         Thank you for signup with us, please contact the admin to approve your account in the Serina.
         </div>
     </div> -->
+</div>
+
+<div *ngIf="isAccountSuccess" class="successDiv">
+  <div class="d-flex justify-content-center mt-2 mb-2">
+    <img src="assets/Serina Assets/new_theme/Group 2763.svg" alt="otp" width="420" height="220" >
+  </div>
+  <div class="f-20">Congratulation!! </div>
+  <div class="f-16">You've made it. Let's celebrate</div>
+  <div class="f-14 shade_color mt-2" *ngIf="accountType == 'serina'">
+    Please wait until the admin approve you request. we will notify you once done.
+  </div>
+  <div class="f-14 shade_color mt-2" *ngIf="accountType == 'ERP'">
+    Please login to your account and add the details.
+  </div>
+  <button class="f-12 primary_btn mt-4" (click)="closeDialog()">Login</button>
 </div>
 
 <p-toast></p-toast>

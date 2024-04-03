@@ -60,6 +60,10 @@ $secondary_color: var(--secondary1-color);
     font-size: 18px;
     font-weight: 600;
 }
+.f-20 {
+  font-size: 20px;
+  font-weight: 600;
+}
 .f-22 {
     font-size: 22px;
     font-weight: 600;
@@ -1308,7 +1312,11 @@ box-shadow: 0px 3px 6px #00000029;
     padding-top: 12px;
   }
   .p-dialog-mask.p-component-overlay {
-    background-color: #00000099 !important;
+    background-color: #ffffffab !important;
+}
+dialog::backdrop {
+  background-color: hsla(240, 2%, 89%, 0.651);
+  opacity: 0.9;
 }
 .mat-dialog-container {
     padding: 0px 0px 20px 0px !important;
