@@ -261,15 +261,12 @@
 </mat-drawer-container> -->
 
 <div class="layout">
-  <nav class="nav_disable" *ngIf="isNewVendorForERP">
-
-  </nav>
   <nav class="desktop d-flex justify-content-between">
     <div class="d-flex" style="gap: 60px;">
       <div class="logo">
         <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" />
       </div>
-      <div class="navLinks d-flex justify-content-between">
+      <div class="navLinks d-flex justify-content-between" *ngIf="!isNewVendorForERP">
           <div
             class="nav_Link f-14"
             routerLinkActive="active_cls"
@@ -357,7 +354,7 @@
     </div>
  
     <div class="d-flex align-items-center " >
-      <div class="user_d f-13">Card
+      <div class="user_d f-13" *ngIf="!isNewVendorForERP">Card
         <span class="portal">
           <label class="switch">
             <input

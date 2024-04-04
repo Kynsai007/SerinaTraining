@@ -281,6 +281,23 @@
           >Approver Selection</a
         >
       </li>
+      <li
+        class="nav-item ml-2"
+        pTooltip="Cost allocation"
+        tooltipPosition="top"
+        (click)="changeTab('cost')"
+      >
+        <a
+          class="nav-link"
+          id="cost-tab"
+          data-toggle="tab"
+          href="#cost"
+          role="tab"
+          aria-controls="cost"
+          aria-selected="true"
+          [ngClass]="currentTab == 'cost'? 'active': ''"
+          >Allocation</a>
+      </li>
       <!-- <button class="raiseAlert" pTooltip="raise an alert" tooltipPosition="top"><i class="fa fa-exclamation-triangle"
             aria-hidden="true"></i></button> -->
     </ul>
@@ -1398,6 +1415,136 @@
           </div>
         </ng-template>
 
+        <!-- Cost -->
+        <ng-template #cost>
+          <div
+          class="tab-pane fade"
+          id="cost"
+          role="tabpanel"
+          aria-labelledby="cost-tab">
+          <div *ngIf="reqServiceprovider" class="displayFlex" style="display: flex; flex-direction: column;">
+            <div *ngIf="editable">
+              <div *ngFor="let row of rows; let i = index" style="display: flex; flex-direction: row;" class="head-box">
+                <div style="position: relative">
+                  <label class="label-head" >Driver Name</label>
+                  <input
+                    id="d_name_{{i}}"
+                    type="text"
+                    class="form-control mb-1 inputHeight"
+                    [(ngModel)]="row.driver_name"
+                    (input)="reqDataValidation()"
+          
+                  />
+                </div>
+                <div style="position: relative; margin-left: 20px;">
+                  <label class="label-head" >Company Name</label>
+                  <!-- <input
+                    id="c_name"
+                    type="text"
+                    class="form-control mb-1 inputHeight"
+                    [(ngModel)]="companyName"
+                    (input)="reqDataValidation()"
+                  /> -->
+                  <select
+                    class="form-control mb-1 inputHeight"
+                    [(ngModel)]="row.company_name"
+                    required
+                    (change)="reqDataValidation()"
+                    >
+                    <option value=""></option>
+                    <option value="FASTLINK">FAST LINK</option>
+                    <option value="AMGLOBAL">AM GLOBAL</option>
+                    <option value="ONTIME">ONTIME</option>
+                    <option value="INNOVATION">INNOVATION</option>
+                  </select>
+                  <!-- <button class="btn btnVender bg-btn-cancel mr-3" (click)="removeRow(i)">Remove</button> -->
+                </div>
+                <div class="buttonposition">
+                  <button class="addbtn btn  btn-add" (click)="addRow(i)">
+                    <mat-icon class="addicon">add_circle_outline</mat-icon>
+                  </button>
+                  <button class="addbtn btn   bg-btn-cancel" (click)="removeRow(i)" [disabled]="rows.length === 1"><mat-icon class="addicon">delete_sweep</mat-icon></button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!editable && !normalCostAllocation">
+              <div *ngFor="let dynamic of dynamicdata; let i = index">
+                <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
+                <div class="displayFlex">
+                  <div *ngFor="let item of dynamicAllocationFileds">
+                    <div style="position: relative">
+                      <label class="label-head" style="margin-bottom: -5px"
+                            >{{ item.header }}             
+                      </label>
+                          <input
+                            type="text"
+                            [value]="dynamic[item.field]"
+                            [title]="dynamic[item.field]"
+                            (input)="updateEditedValue(dynamic.iddynamiccostallocation, item.field, $event.target.value)"
+                            class="form-control mb-1 inputHeight"
+                            [readonly]="item.field === 'iddynamiccostallocation' || item.field === 'documentID'" 
+                          />
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="!reqServiceprovider">
+            <div *ngIf="normalCostAllocation">
+              <div *ngFor="let a of costAllocation; let i = index">
+                <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
+                <div class="displayFlex">
+                  <div *ngFor="let b of allocationFileds" >
+                  
+                    <div style="position: relative">
+                      <label class="label-head" style="margin-bottom: -5px"
+                        >{{ b.header }}             </label>
+                      <input
+                        #inputv
+                        type="text"
+                        [value]="a[b.field]"
+                        [title]="a[b.field]"
+                        disabled
+                        class="form-control mb-1 inputHeight"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            <div *ngIf="!normalCostAllocation">
+              <div *ngFor="let dynamic of dynamicdata; let i = index">
+                <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
+                <div class="displayFlex">
+                  <div *ngFor="let item of dynamicAllocationFileds">
+                    <div style="position: relative">
+                      <label class="label-head" style="margin-bottom: -5px"
+                            >{{ item.header }}             
+                      </label>
+                          <input
+                            type="text"
+                            [value]="dynamic[item.field]"
+                            [title]="dynamic[item.field]"
+                            (input)="updateEditedValue(dynamic.iddynamiccostallocation, item.field, $event.target.value)"
+                            class="form-control mb-1 inputHeight"
+                            [readonly]="item.field === 'iddynamiccostallocation' || item.field === 'documentID'" 
+                          />
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+            
+            <ngx-json-viewer [json]="JsonData" [depth]="3"></ngx-json-viewer>
+          </div>
+        </div>
+        </ng-template>
+
         <!--PO lines-->
         <ng-template #poline>
           <div
@@ -1582,7 +1729,7 @@
                   <div class="row">
                     <div class="col-sm-6">
                       <div>
-                        <span class="f-12">Done by</span> :
+                        <span class="f-12"><span *ngIf="item.DocumentHistoryLogs?.documentSubStatusID == 82" style="color:red">Rejection </span>Done by</span> :
                         <span style="font-weight: 500"
                           >{{ item.firstName }} {{ item.lastName }}</span
                         >

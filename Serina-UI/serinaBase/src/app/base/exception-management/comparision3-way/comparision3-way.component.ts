@@ -333,10 +333,44 @@ export class Comparision3WayComponent
   commentsBool: boolean = true;
   selected_GRN_total: number;
 
-  userList_approved:any;
+  userList_approved = [{firstName: "Vendor",idUser: 0,lastName: ""}]
   rejectionUserId: number = 0;
   approvalRejectRecord = [];
+  message: any;
 
+  serviceProvidercode: any;
+  reqServiceprovider: boolean = false;
+  // companyName: string = '';
+  // driverName: string = '';
+  isFormValid: boolean = true;
+  dynamicdata = [];
+  normalCostAllocation: boolean;
+  costTabBoolean: boolean = false;
+  isEditMode = false;
+  dynamicAllocationFileds = [
+    { header: 'Amount', field: 'amount' },
+    { header: 'Business Unit Code', field: 'bu_code' },
+    { header: 'Company Code', field: 'company_code' },
+    { header: 'Created On', field: 'created_on' },
+    { header: 'Document ID', field: 'documentID' },
+    { header: 'Driver Name', field: 'driver_name' },
+    { header: 'Employ Code', field: 'emp_code' },
+    { header: 'Employ Name', field: 'emp_name' },
+    { header: 'Entity Name', field: 'entity_name' },
+    { header: 'G L Code', field: 'gl_code' },
+    // { header: 'Allocation ID', field: 'iddynamiccostallocation' },
+    { header: 'Item Number', field: 'item_number' },
+    { header: 'Object Account', field: 'object_account' },
+    { header: 'Period Month ', field: 'period_month' },
+    { header: 'Sub Ledger', field: 'subledger' },
+  ]
+  // editedValues: { [key: string]: any } = {};
+  // editedValues: { [iddynamiccostallocation: string]: { [key: string]: any } } = {};
+  // editedValues: { [idAndKey: string]: any } = {};
+  editedValues: { [key: string]: any } = {};
+
+  editedData: any = {};
+  rows: any[] = [this.getNewRow()];
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -639,6 +673,11 @@ export class Comparision3WayComponent
     if (this.currentTab == 'LCM') {
       this.isLCMTab = true;
     }
+    if (val == 'cost'){
+      this.costTabBoolean = true;
+    } else {
+      this.costTabBoolean = false;
+    }
     // if (val == 'line') {
     //   this.lineTabBoolean = true;
     // } else {
@@ -766,6 +805,25 @@ export class Comparision3WayComponent
 
         this.po_total = response.po_total;
         const pushedArrayHeader = [];
+        if(data.ok.cost_alloc != null){
+          this.normalCostAllocation = true;
+          data?.ok?.cost_alloc.forEach(cost => {
+            let merge = { ...cost.AccountCostAllocation }
+            this.costAllocation.push(merge);
+            // console.log(merge)
+            })
+            // console.log(data)
+            // console.log(this.costAllocation)
+            
+        }
+        else{
+          this.normalCostAllocation = false;
+          data?.ok?.dynamic_cost_alloc.forEach(dynamic =>{
+              this.dynamicdata.push(dynamic)
+              // console.log(dynamic)
+            })
+          // console.log(this.dynamicdata)
+        }
         response.headerdata.forEach((element) => {
           this.mergedArray = {
             ...element.DocumentData,
@@ -917,6 +975,16 @@ export class Comparision3WayComponent
             ...response.servicedata[0].ServiceProvider,
           };
           this.vendorName = this.vendorData['ServiceProviderName'];
+          this.serviceProvidercode = this.vendorData['ServiceProviderCode'];
+            if(this.vendorName == 'SANAM'){
+              this.isFormValid = false;
+              this.reqServiceprovider = true;
+              // this.costTabBoolean = false;
+              // this.reqDataValidation();
+            }
+            else{
+              this.reqServiceprovider = false;
+            }
         }
         this.support_doc_list = response?.support_doc?.files;
         if (this.support_doc_list == null) {
@@ -1719,6 +1787,70 @@ export class Comparision3WayComponent
     );
   }
   serviceSubmit() {
+    if(!this.normalCostAllocation){
+      if(this.reqServiceprovider){
+        // console.log(this.rows)
+        // let dataToApi = {
+        //   driver_name: this.driverName,
+        //   company_name: this.companyName,
+        // }
+        // console.log(dataToApi)
+        this.exceptionService.submitAllocationDetails(JSON.stringify(this.rows))
+        .subscribe((data: any) => {
+        //   this.AlertService.addObject.detail = 'submitted successfully';
+        //   this.AlertService.addObject.summary = 'sent';
+        //   this.messageService.add(this.AlertService.addObject);
+        //   setTimeout(() => {
+        //     this._location.back();
+        //   }, 1000);
+        // }, err => {
+        //   this.messageService.add({
+        //     severity: 'error',
+        //     summary: 'error',
+        //     detail: "Server error",
+        //   });
+        })
+      }
+      
+     
+      
+      else{
+        // console.log('Edited Value:', this.editedValues);
+        const group: { iddynamiccostallocation: string, [key: string]: string }[] = [];
+        // console.log(group)
+        const groupedValues: { [key: string]: { [key: string]: string; iddynamiccostallocation: string } } = {};
+          for (const key in this.editedValues) {
+            const [iddynamiccostallocation, property] = key.split(',');
+
+            
+            if (!groupedValues[iddynamiccostallocation]) {
+              groupedValues[iddynamiccostallocation] = {
+                iddynamiccostallocation: iddynamiccostallocation, 
+              };
+            }
+            groupedValues[iddynamiccostallocation][property] = this.editedValues[key];
+          }
+
+          // console.log(groupedValues);
+          this.exceptionService.editedDynamicAllocationDetails(JSON.stringify(groupedValues))
+          .subscribe((data: any) => {
+          //   this.AlertService.addObject.detail = 'submitted successfully';
+          //   this.AlertService.addObject.summary = 'sent';
+          //   this.messageService.add(this.AlertService.addObject);
+          //   setTimeout(() => {
+          //     this._location.back();
+          //   }, 1000);
+          // }, err => {
+          //   this.messageService.add({
+          //     severity: 'error',
+          //     summary: 'error',
+          //     detail: "Server error",
+          //   });
+          })
+        }
+          
+      }
+    else{
     this.SharedService.serviceSubmit().subscribe((data: any) => {
       this.success("Sent to Batch Successfully!");
       setTimeout(() => {
@@ -1731,6 +1863,7 @@ export class Comparision3WayComponent
     }, err => {
       this.error("Server error");
     })
+    }
   }
   syncBatch() {
     this.SpinnerService.show();
@@ -1776,13 +1909,13 @@ export class Comparision3WayComponent
     this.subStatusId = sub_status;
     this.dataService.subStatusId = sub_status;
     if (this.portalName == 'vendorPortal') {
-      if ([8, 16, 18, 19, 33, 21, 27].includes(sub_status)) {
+      if ([8, 16, 18, 19, 33, 21, 27,29].includes(sub_status)) {
         this.processAlert(sub_status);
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-      if ([8, 16, 17, 18, 19, 33, 21, 27,51,54,70, 75].includes(sub_status)) {
+      if ([8, 16, 17, 18, 19, 33, 21, 27,29,51,54,70, 75].includes(sub_status)) {
         this.processAlert(sub_status);
       } else if (sub_status == 34) {
         this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
@@ -1799,6 +1932,8 @@ export class Comparision3WayComponent
       this.update("Invoice Total and 'Sub-Total+Tax' Mismatch Identified. Kindly check Entry");
     } else if (subStatus == 19) {
       this.update("Dear User, Sub total is not matching with the invoice lines total.");
+    } else if (subStatus == 29) {
+      this.update("Dear User, OCR error found. please check");
     } else if (subStatus == 51) {
       this.update("Dear User, Invoice type is LCM, Please add the lines for the LCM invoice.");
       this.currentTab = 'LCM';
@@ -2146,15 +2281,13 @@ export class Comparision3WayComponent
 
   getApprovedUserList(){
     this.exceptionService.getApprovedUsers().subscribe((data:any)=>{
-      this.userList_approved = data.result;
-      this.userList_approved.unshift({firstName: "Vendor",idUser: 0,lastName: ""})
-      console.log(data);
+      data?.result?.forEach(el=>{
+        this.userList_approved.push(el);
+      });
     })
   }
   selectUserForReject(event){
-    console.log(event)
     this.rejectionUserId = event;
-    console.log(this.rejectionUserId)
   }
   onChangeGrn(lineItem, val) {
     if (this.GRN_PO_Bool) {
@@ -2469,6 +2602,7 @@ export class Comparision3WayComponent
       h = '40vh';
     } else if (str == 'flip line') {
       try {
+        // let query = `/${this.invoiceID}`;
         const data: any = await this.exceptionService.getPOLines('').toPromise();
         response = { podata: data.Po_line_details, sub_total: this.invoice_subTotal };
       } catch (error) {
@@ -3322,7 +3456,6 @@ export class Comparision3WayComponent
   getRejectionComments(){
     this.exceptionService.rejectCommentsList().subscribe((data:any)=>{
       this.approvalRejectRecord = data;
-      console.log(this.approvalRejectRecord)
     })
   }
   success(msg) {
@@ -3351,5 +3484,32 @@ export class Comparision3WayComponent
     this.dataService.poLineData = [];
     delete this.SharedService.fileSrc;
     this.mat_dlg.closeAll();
+  }
+  reqDataValidation(){
+    for (const row of this.rows) {
+      if (!row.driver_name || !row.company_name) {
+        this.isFormValid = true;
+        break;
+      }
+    }
+  }
+   updateEditedValue(iddynamiccostallocation: any, key: string, value: any) {
+  //   this.editedValues[key] = value;
+  //   this.editedValues[iddynamiccostallocation] = this.editedValues[iddynamiccostallocation] || {};
+  //   this.editedValues[iddynamiccostallocation][key] = value;
+    this.editedValues[iddynamiccostallocation + ',' + key] = value;
+    
+  }
+  addRow(index: number){
+    this.isFormValid = false;
+    this.rows.push(this.getNewRow());
+    // console.log(this.rows)
+  }
+  getNewRow() {
+    return { driver_name: '', company_name: '' };
+  }
+  removeRow(index: number) {
+    // Remove the row at the specified index
+    this.rows.splice(index, 1);
   }
 }

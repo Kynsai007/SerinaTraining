@@ -162,7 +162,13 @@ export class ExceptionsService {
   updateSOmap(so_id,v_a_id,data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/update_line_mapping_so/${so_id}/${v_a_id}/${this.userId}`,data)
   }
+  submitAllocationDetails(data: any): Observable<any> {
 
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/save_values_into_db/${this.userId}?documentID=${this.invoiceID}`,data)
+  }
+  editedDynamicAllocationDetails(data: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/updateDynamicCostAllocation/${this.userId}?documentID=${this.invoiceID}`,data)
+  }
 
   getApprovedUsers(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getApprovedUsers/${this.userId}/idInvoice/${this.invoiceID}`);
