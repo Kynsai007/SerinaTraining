@@ -708,3 +708,49 @@
   }
 
 }
+.label-head {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 142px;
+}
+
+.inputHeight {
+  font-size: 12px;
+  height: 30px;
+  margin-right: 5px;
+  width: 142px;
+}
+.addbtn{
+  font-size: 12px;
+  height: 30px;
+  margin-right: 5px;
+  width: 60px;
+  position: relative;
+  font-weight: 700 !important;
+  align-items: center;
+}
+// .addbtn:hover{
+//   cursor: pointer;
+// }
+.buttonposition{
+  padding-top: 20px;
+}
+.btn-add{
+  background-color: #89D390 !important;
+  color: #ffffff !important;
+}
+.btn-cancel{
+  background-color: #f0b66b !important;
+  color: #ffffff !important;
+}
+.addicon{
+  color: #fafafa;
+  line-height: .7 !important;
+}
+.head-box{
+  position: relative; 
+  line-height: 1 !important;
+}

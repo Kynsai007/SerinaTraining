@@ -371,6 +371,10 @@ export class Comparision3WayComponent
 
   editedData: any = {};
   rows: any[] = [this.getNewRow()];
+  lineData: any;
+  priceData: any;
+  totalPoCost: any;
+  totalInvCost: number;
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -792,6 +796,7 @@ export class Comparision3WayComponent
     serviceName?.getInvoiceInfo().subscribe(
       (data: any) => {
         let response;
+        this.lineData = data.linedata;
         if (serviceName == this.SharedService) {
           response = data.ok
         } else {
@@ -802,27 +807,22 @@ export class Comparision3WayComponent
         }
 
         // this.lineDataConversion();
-
-        this.po_total = response.po_total;
+        this.calculateCost();
+        // this.po_total = response.po_total;
         const pushedArrayHeader = [];
-        if(data.ok.cost_alloc != null){
+        if(data?.ok?.cost_alloc != null){
           this.normalCostAllocation = true;
           data?.ok?.cost_alloc.forEach(cost => {
             let merge = { ...cost.AccountCostAllocation }
             this.costAllocation.push(merge);
-            // console.log(merge)
             })
-            // console.log(data)
-            // console.log(this.costAllocation)
             
         }
         else{
           this.normalCostAllocation = false;
           data?.ok?.dynamic_cost_alloc.forEach(dynamic =>{
-              this.dynamicdata.push(dynamic)
-              // console.log(dynamic)
+              this.dynamicdata.push(dynamic);
             })
-          // console.log(this.dynamicdata)
         }
         response.headerdata.forEach((element) => {
           this.mergedArray = {
@@ -1496,48 +1496,7 @@ export class Comparision3WayComponent
       // this.errorTriger('Strings are not allowed in the amount and quantity fields.');
     }
   }
-  onSubmitData() {
-    // this.SpinnerService.show();
-    // this.SharedService.updateInvoiceDetails(JSON.stringify(this.updateInvoiceData)).subscribe((data: any) => {
-    //   console.log(data);
-    //   if (data.result == 'success') {
-    //     this.messageService.add({
-    //       severity: "info",
-    //       summary: "Updated",
-    //       detail: "Updated Successfully"
-    //     });
-    //     this.getInvoiceFulldata();
-    //   } else {
-    //     this.messageService.add({
-    //       severity: "error",
-    //       summary: "error",
-    //       detail: "Something went wrong"
-    //     });
-    //   }
-    //   this.updateInvoiceData = [];
-    //   this.SpinnerService.hide();
-    // })
-  }
 
-  drawrectangleonHighlight(index) {
-    // var rect = new fabric.Rect({
-    //   left: 100,
-    //   top: 50,
-    //   fill: 'rgba(255,0,0,0.5)',
-    //   width: 100,
-    //   height: 30,
-    //   selectable: false,
-    //   lockMovementX: true,
-    //   lockMovementY: true,
-    //   lockRotation: true,
-    //   transparentCorners: true,
-    //   hasControls: false,
-    // });
-
-    // this.canvas[index].add(rect);
-    // this.canvas[index].setActiveObject(rect);
-    // document.getElementById(index + 1).scrollIntoView();
-  }
 
   zoomin() {
     this.zoomVal = this.zoomVal + 0.2;
@@ -1558,103 +1517,6 @@ export class Comparision3WayComponent
     }
     (<HTMLDivElement>document.getElementById('canvas1')).style.transform = `scale(${this.zoomX},${this.zoomVal})`;
   }
-
-  // removeEvents(index) {
-  //   this.canvas[index].off('mouse:down');
-  //   this.canvas[index].off('mouse:up');
-  //   this.canvas[index].off('mouse:move');
-  // }
-
-  panning(index) {
-    // this.removeEvents(index);
-    // let panning = false;
-    // let selectable;
-    // this.canvas[index].on('mouse:up', (e) => {
-    //   panning = false;
-    // });
-
-    // this.canvas[index].on('mouse:down', (e) => {
-    //   panning = true;
-    //   selectable = false;
-    // });
-    // this.canvas[index].on('mouse:move', (e) => {
-    //   if (panning && e && e.e) {
-    //     selectable = false;
-    //     var units = 10;
-    //     var delta = new fabric.Point(e.e.movementX, e.e.movementY);
-    //     this.canvas[index].relativePan(delta);
-    //   }
-    // });
-  }
-
-  addVendorDetails() {
-  }
-  onVerify(e) {
-  }
-  submitChanges() {
-    // if (this.userDetails.user_type == 'customer_portal') {
-    //   let submitData = {
-    //     "documentdescription": " "
-    //   }
-    //   this.SpinnerService.show();
-    //   this.SharedService.submitChangesInvoice(JSON.stringify(submitData)).subscribe((data: any) => {
-    //     this.dataService.invoiceLoadedData = [];
-    //     if (data.result) {
-    //       this.messageService.add({
-    //         severity: "success",
-    //         summary: "Updated",
-    //         detail: "Updated Successfully"
-    //       });
-    //       this.SpinnerService.hide();
-    //       setTimeout(() => {
-    //         this._location.back()
-    //       }, 1000);
-    //     }
-    //   }, error => {
-    //     this.messageService.add({
-    //       severity: "error",
-    //       summary: "error",
-    //       detail: error.error
-    //     });
-    //     this.SpinnerService.hide();
-    //   })
-    // } else if (this.userDetails.user_type == 'vendor_portal') {
-    //   this.SharedService.vendorSubmit().subscribe((data: any) => {
-    //     console.log(data);
-    //     this.messageService.add({
-    //       severity: "success",
-    //       summary: "Uploaded",
-    //       detail: "Uploaded to serina successfully"
-    //     });
-    //     setTimeout(() => {
-    //       this.router.navigate(['vendorPortal/invoice/allInvoices']);
-    //     }, 1000);
-    //   }, error => {
-    //     this.messageService.add({
-    //       severity: "error",
-    //       summary: "error",
-    //       detail: error.statusText
-    //     });
-    //   })
-    // }
-  }
-
-  // approveChangesManual() {
-  //   this.exceptionService.send_manual_approval().subscribe(
-  //     (data: any) => {
-  //       this.AlertService.addObject.detail =
-  //         'Send to Manual approval successfully';
-  //       this.messageService.add(this.AlertService.addObject);
-  //       this.success("")
-  //       setTimeout(() => {
-  //         this._location.back();
-  //       }, 2000);
-  //     },
-  //     (error) => {
-  //       this.error("Server error");
-  //     }
-  //   );
-  // }
 
   approveChangesBatch() {
     this.getInvoiceFulldata('batch');
@@ -1789,40 +1651,21 @@ export class Comparision3WayComponent
   serviceSubmit() {
     if(!this.normalCostAllocation){
       if(this.reqServiceprovider){
-        // console.log(this.rows)
-        // let dataToApi = {
-        //   driver_name: this.driverName,
-        //   company_name: this.companyName,
-        // }
-        // console.log(dataToApi)
         this.exceptionService.submitAllocationDetails(JSON.stringify(this.rows))
         .subscribe((data: any) => {
-        //   this.AlertService.addObject.detail = 'submitted successfully';
-        //   this.AlertService.addObject.summary = 'sent';
-        //   this.messageService.add(this.AlertService.addObject);
-        //   setTimeout(() => {
-        //     this._location.back();
-        //   }, 1000);
-        // }, err => {
-        //   this.messageService.add({
-        //     severity: 'error',
-        //     summary: 'error',
-        //     detail: "Server error",
-        //   });
+          this.success("submitted successfully.")
+          setTimeout(() => {
+            this._location.back();
+          }, 1000);
+        }, err => {
+          this.error("Server error");
         })
-      }
-      
-     
-      
-      else{
-        // console.log('Edited Value:', this.editedValues);
+      } else {
         const group: { iddynamiccostallocation: string, [key: string]: string }[] = [];
-        // console.log(group)
         const groupedValues: { [key: string]: { [key: string]: string; iddynamiccostallocation: string } } = {};
           for (const key in this.editedValues) {
             const [iddynamiccostallocation, property] = key.split(',');
 
-            
             if (!groupedValues[iddynamiccostallocation]) {
               groupedValues[iddynamiccostallocation] = {
                 iddynamiccostallocation: iddynamiccostallocation, 
@@ -1831,24 +1674,16 @@ export class Comparision3WayComponent
             groupedValues[iddynamiccostallocation][property] = this.editedValues[key];
           }
 
-          // console.log(groupedValues);
           this.exceptionService.editedDynamicAllocationDetails(JSON.stringify(groupedValues))
           .subscribe((data: any) => {
-          //   this.AlertService.addObject.detail = 'submitted successfully';
-          //   this.AlertService.addObject.summary = 'sent';
-          //   this.messageService.add(this.AlertService.addObject);
-          //   setTimeout(() => {
-          //     this._location.back();
-          //   }, 1000);
-          // }, err => {
-          //   this.messageService.add({
-          //     severity: 'error',
-          //     summary: 'error',
-          //     detail: "Server error",
-          //   });
+            this.success("submitted successfully")
+            setTimeout(() => {
+              this._location.back();
+            }, 1000);
+          }, err => {
+            this.error("Server error");
           })
         }
-          
       }
     else{
     this.SharedService.serviceSubmit().subscribe((data: any) => {
@@ -3452,7 +3287,39 @@ export class Comparision3WayComponent
     })
 
   }
+  calculateCost() {
+    
+    const unitPriceObject = this.lineData?.Result?.find(obj => obj?.tagname === "UnitPrice");
+    const quantityObject = this.lineData?.Result?.find(obj => obj?.tagname === "Quantity");
+    // console.log(unitPriceObject)
+    if (unitPriceObject && quantityObject) {
+        
+        const unitPriceData = unitPriceObject?.items;
+        const quantityData = quantityObject?.items;
 
+        let totalpoCost = 0;
+        let totalinvCost = 0;
+        for (let i = 0; i < unitPriceData?.length; i++) {
+            const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
+            const poquantity = parseInt(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
+
+            const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+            const invquantity = parseInt(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+            
+            if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
+                totalpoCost += pounitPrice * poquantity;
+            }
+            if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
+              totalinvCost += invunitPrice * invquantity;
+          }
+        }
+        this.po_total = totalpoCost;
+        this.totalInvCost = totalinvCost;
+        // console.log("Total Cost:", totalpoCost);
+    } else {
+        console.log("UnitPrice or Quantity data not found.");
+    }
+  }
   getRejectionComments(){
     this.exceptionService.rejectCommentsList().subscribe((data:any)=>{
       this.approvalRejectRecord = data;

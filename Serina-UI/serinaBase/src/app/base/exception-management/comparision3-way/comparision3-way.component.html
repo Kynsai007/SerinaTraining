@@ -286,6 +286,7 @@
         pTooltip="Cost allocation"
         tooltipPosition="top"
         (click)="changeTab('cost')"
+        *ngIf="isServiceData"
       >
         <a
           class="nav-link"
