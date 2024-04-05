@@ -1,3 +1,4 @@
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Router } from '@angular/router';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
@@ -40,9 +41,10 @@ export class BulkUploadServiceComponent implements OnInit {
   fileChoosen = "No file chosen";
   sa_template_path:string;
   ca_template_path:string;
+  uploadBool: boolean;
 
   constructor(private http: HttpClient,
-    private router: Router,
+    private spinner: NgxSpinnerService,
     private spService: ServiceInvoiceService,
     private alert: AlertService,
     private dataService: DataService) { }
@@ -137,6 +139,7 @@ export class BulkUploadServiceComponent implements OnInit {
     fileSaver.saveAs(blob, `${type}-${this.selectedFileType}-(${datestring})`);
   }
   uploadXlFile() {
+    this.spinner.show();
     this.progress = 1;
     const formData = new FormData();
     formData.append("file", this.UploadDetails);
@@ -155,6 +158,7 @@ export class BulkUploadServiceComponent implements OnInit {
             this.progress = null;
             this.sa_template_path = event.body.filepath;
             this.btnEnabled = true;
+            this.uploadBool = true;
 
             // let result = event.body.Result.result.split(" ");
             // if(result[0] != "0"){
@@ -177,10 +181,12 @@ export class BulkUploadServiceComponent implements OnInit {
             //   this.alert.error_alert("Accounts having some issue, please try again");
             // }
           }
+          this.spinner.hide();
 
         }),
         catchError((err: any) => {
           this.progress = null;
+          this.spinner.hide();
           this.alert.error_alert("Upload failed, please try again");
           return throwError(err.message);
         })
@@ -189,6 +195,8 @@ export class BulkUploadServiceComponent implements OnInit {
   }
 
   uploadFiles(){
+    this.spinner.show();
+    this.uploadBool = false;
     let obj = {
       "sa_template_path": this.sa_template_path
     }
@@ -198,6 +206,9 @@ export class BulkUploadServiceComponent implements OnInit {
       } else {
         this.alert.error_alert(data.message); 
       }
+      this.uploadBool = true;
+      this.spinner.hide();
+
     })
   }
 

@@ -19,7 +19,7 @@
                 <div><i class="fa fa-download"></i></div>
             </button> -->
         </div>
-        <div class="uploadBox mt-3">
+        <div class="uploadBox mt-3" *ngIf="selectedFileType">
             <div class="d-i-block uploadDiv">
                 <label class="f-13">Template upload</label><br>
                 <input type="file" id="custom-upload" (change)="onChange($event)" hidden [disabled]="btnEnabled" #inputFile>
@@ -41,7 +41,7 @@
         </div>
         <div *ngIf="btnEnabled" class="mt-2" style="text-align: right;">
             <!-- <button  class="btnUpload mr-3 ml-3" (click)="removeData()">Remove Data</button> -->
-            <button [disabled]="progress" class="btnUpload" (click)="uploadFiles()">
+            <button [disabled]="progress && !uploadBool" class="btnUpload" (click)="uploadFiles()">
                 <span *ngIf="progress" class="spinner-border spinner-border-sm mr-1"></span>
                 Upload
             </button>
@@ -106,3 +106,14 @@
 </div> -->
 
 <p-toast></p-toast>
+<ngx-spinner
+bdColor="rgba(251, 251, 251, 0.8)"
+size="medium"
+color="#070900"
+[fullScreen]="false"
+type="ball-spin-clockwise"
+>
+<div class="loader_text">
+  Hey, please wait...
+</div>
+</ngx-spinner>
