@@ -315,6 +315,7 @@
         <div class="tab-content">
           <ng-container *ngTemplateOutlet="header"></ng-container>
           <ng-container *ngTemplateOutlet="line"></ng-container>
+          <ng-container *ngTemplateOutlet="cost"></ng-container>
           <ng-container *ngTemplateOutlet="poline"></ng-container>
           <ng-container *ngTemplateOutlet="grn"></ng-container>
           <ng-container *ngTemplateOutlet="support"></ng-container>
@@ -1419,7 +1420,8 @@
         <!-- Cost -->
         <ng-template #cost>
           <div
-          class="tab-pane fade"
+          class="tab-pane fade header_container"
+          [ngClass]="currentTab == 'cost' ? 'show active' : ''"
           id="cost"
           role="tabpanel"
           aria-labelledby="cost-tab">
@@ -1499,8 +1501,7 @@
                 <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
                 <div class="displayFlex">
                   <div *ngFor="let b of allocationFileds" >
-                  
-                    <div style="position: relative">
+                    <div style="position: relative" class="input_container">
                       <label class="label-head" style="margin-bottom: -5px"
                         >{{ b.header }}             </label>
                       <input
@@ -1509,7 +1510,7 @@
                         [value]="a[b.field]"
                         [title]="a[b.field]"
                         disabled
-                        class="form-control mb-1 inputHeight"
+                        class="form-control inv_inp_cls"
                       />
                     </div>
                   </div>
@@ -1522,7 +1523,7 @@
                 <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
                 <div class="displayFlex">
                   <div *ngFor="let item of dynamicAllocationFileds">
-                    <div style="position: relative">
+                    <div style="position: relative" class="input_container">
                       <label class="label-head" style="margin-bottom: -5px"
                             >{{ item.header }}             
                       </label>
@@ -1531,7 +1532,7 @@
                             [value]="dynamic[item.field]"
                             [title]="dynamic[item.field]"
                             (input)="updateEditedValue(dynamic.iddynamiccostallocation, item.field, $event.target.value)"
-                            class="form-control mb-1 inputHeight"
+                            class="form-control inv_inp_cls"
                             [readonly]="item.field === 'iddynamiccostallocation' || item.field === 'documentID'" 
                           />
                     </div>

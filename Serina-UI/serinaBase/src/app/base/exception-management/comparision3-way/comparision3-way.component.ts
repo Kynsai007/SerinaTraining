@@ -401,6 +401,7 @@ export class Comparision3WayComponent
   }
 
   ngOnInit(): void {
+    this.ERP = this.dataService?.configData?.erpname;
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
@@ -608,7 +609,7 @@ export class Comparision3WayComponent
         { header: 'Project', field: 'project' },
         { header: 'Interco', field: 'interco' },
         { header: 'Segments', field: 'segments' },
-        { header: 'BSMovements', field: 'bsmovements' },
+        { header: 'BSMovements', field: 'bsMovements' },
         { header: 'fixedAssetDepartment', field: 'fixedAssetDepartment' },
         { header: 'fixedAssetGroup', field: 'fixedAssetGroup' },
         { header: 'Main Account', field: 'mainAccount' },
@@ -622,7 +623,7 @@ export class Comparision3WayComponent
         { header: 'Project', field: 'project' },
         { header: 'Interco', field: 'interco' },
         { header: 'Segments', field: 'segments' },
-        { header: 'BSMovements', field: 'bsmovements' },
+        { header: 'BSMovements', field: 'bsMovements' },
         { header: 'fixedAssetDepartment', field: 'fixedAssetDepartment' },
         { header: 'fixedAssetGroup', field: 'fixedAssetGroup' },
         { header: 'Main Account', field: 'mainAccount' },
@@ -654,7 +655,7 @@ export class Comparision3WayComponent
 
   changeTab(val) {
     this.currentTab = val;
-    if (val == 'header') {
+    if (val == 'header' || val == 'cost') {
       this.showPdf = true;
       this.btnText = 'Close';
 

@@ -59,7 +59,12 @@
 
 
 <p-dialog [header]="header_Ac" [(visible)]="accountsSidebar" position="right" [modal]="true" [style]="{width: '55vw',height:'100vh'}" [baseZIndex]="10000"
-    [draggable]="false" [resizable]="false">
+    [draggable]="false" [resizable]="false" [closeIcon]="false">
+    <div (click)="onCancelAccount()" class="closeDialog">
+      <span class="material-icons">
+        close
+        </span>
+    </div>
   <!-- ADD/Edit SP Account -->
     <form [formGroup]="SpAccountDetails" (ngSubmit)="toCreateNewSPAccount()">
       <div class="acc_body">
