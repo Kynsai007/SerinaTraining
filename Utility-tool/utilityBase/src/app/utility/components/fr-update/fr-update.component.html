@@ -293,7 +293,7 @@
                                     </select>
                                 </td>
                             </tr>
-                            <tr class="trHeight" *ngIf="isPObasedVendor && showRule">
+                            <!-- <tr class="trHeight" *ngIf="isPObasedVendor && showRule">
                                 <td class="tdLeft f-13">Select GRN type <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">
                                     <select name="GrnCreationType" id="GRN_TYPE" ngModel #GrnCreationType="ngModel" class="form-control max_width f-13" [(ngModel)]="selectedGRNType" (change)="onSelectGRNType(selectedGRNType)"
@@ -312,7 +312,7 @@
                                         <option *ngFor="let rule of rulesData" [value]="rule.idDocumentRules" [disabled]="rule.IsActive == 0" [ngClass]="rule.IsActive == 0 ? 'opaque' : 'clearopaque'" [selected]="rule.idDocumentRules == 8">{{rule.Name}}</option>
                                     </select>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr *ngIf="showRule" class="trHeight">
                                 <td class="tdLeft f-13">
                                     <div> <span class="f-13 mr-3">TRN is Mandatory? <span class="req_clr">*</span> </span>
