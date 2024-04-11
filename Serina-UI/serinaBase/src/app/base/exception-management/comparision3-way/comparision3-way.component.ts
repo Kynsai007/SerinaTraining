@@ -808,7 +808,9 @@ export class Comparision3WayComponent
         }
 
         // this.lineDataConversion();
-        this.calculateCost();
+        if(this.pageType == "mapping"){
+          this.calculateCost();
+        }
         // this.po_total = response.po_total;
         const pushedArrayHeader = [];
         if(data?.ok?.cost_alloc != null){
@@ -821,11 +823,11 @@ export class Comparision3WayComponent
         }
         else{
           this.normalCostAllocation = false;
-          data?.ok?.dynamic_cost_alloc.forEach(dynamic =>{
+          data?.ok?.dynamic_cost_alloc?.forEach(dynamic =>{
               this.dynamicdata.push(dynamic);
             })
         }
-        response.headerdata.forEach((element) => {
+        response?.headerdata?.forEach((element) => {
           this.mergedArray = {
             ...element.DocumentData,
             ...element.DocumentTagDef,
@@ -852,7 +854,7 @@ export class Comparision3WayComponent
           vendorData = response?.vendordata;
           if (this.Itype == 'PO') {
             let count = 0;
-            let array = data.ok.linedata;
+            let array = data?.ok?.linedata;
             array.forEach((val) => {
               if (val.TagName == 'LineNumber') {
                 val.id = 1;

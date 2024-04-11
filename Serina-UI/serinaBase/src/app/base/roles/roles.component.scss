@@ -37,6 +37,7 @@ table {
 }
 .f-16{
     font-size: 16px;
+    line-height: 1;
 }
 .positionCreateUpload{
     position: absolute;
@@ -87,10 +88,7 @@ td{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0 8px;
-  }
-  .inputForm:focus {
-      border: 1px solid #313971;
+    gap: 10px;
   }
   .header_div {
     background: #a4db9e;
@@ -98,6 +96,9 @@ td{
     display: inline-block;
     border-radius: 6px;
     text-align: center;
+  }
+  .inputForm:focus {
+      border: 1px solid #313971;
   }
   .f-13{
       font-size: 12px;
@@ -125,7 +126,14 @@ td{
 .fixed_pos {
     position: fixed;
     bottom: 0;
-    right: 53px;
+    width: 100%;
+    left: 0;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 4px #00000029;
+    height: 50px;
+    display: flex;
+    padding-right: 30px;
+    padding-top: 10px;
 }
 
 .mt-10{
@@ -149,7 +157,8 @@ td{
     font-weight: 600;
 }
 .alertDiv{
-    margin-top: -8px;
+    position: absolute;
+    bottom: -8px;
 }
 .hard_reset{
     background: #f2be42;
@@ -163,24 +172,33 @@ td{
 
 // entity list
 .ul-list {
-    width: 75%;
-    max-height: 36vh;
     overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.normal_height {
+    max-height: 40vh;
+}
+.full_height {
+    max-height: 74vh;
 }
 .listEntity{
     list-style-type: none;
     padding: 10px 0px 10px 20px;
-    width: 96%;
-    background: #F3FBF4;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-radius: 10px;
+    width: clamp(20vw,330px,330px);
+    height: 43px;
+    background-color: #F7F6F2;
+    // white-space: nowrap;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+    /* border-radius: 0; */
     font-size: 12px;
     font-weight: 600;
-    margin-top: 5px;
     display: flex;
-    justify-content:space-between ;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
 }
 .text_elipse {
     max-width: 93%;
@@ -197,15 +215,18 @@ td{
 :host ::ng-deep .p-autocomplete-dd .p-autocomplete-input, .p-autocomplete-dd .p-autocomplete-multiple-container {
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
-    width: 242px;
+    width: 250px;
     height: 35px;
-    font-size: 12px;
+    font-size: 14px;
     font-family: "Segoe UI Regular", "Segoe UI", Arial;
     font-weight: 600;
-    background: #ffffff;
-    border: 1px solid #d3d3d3;
+    background: transparent;
+    border: 0px solid #d3d3d3;
     border-right: 0;
     border-radius: 6px 0px 0px 6px;
+    position: relative;
+    top: -7px;
+    left: -7px;
 }
 :host ::ng-deep .minWidthOverride{
     width: 187px !important;
@@ -215,14 +236,13 @@ td{
     margin-bottom: 0px !important;
 }
 :host ::ng-deep .p-button.p-button-icon-only {
-    width: 2.357rem;
-    padding: 0.5rem 0;
     height: 35px;
-    color: lightgray;      
-    background: #ffffff;
-    border: 1px solid #d3d3d3;
-    border-left: 0;
+    color: #140101;      
+    background: transparent;
+    border: 0px solid #d3d3d3;
     border-radius: 0px 6px 6px 0px;
+    position: relative;
+    top: -14px;
 
 }
 :host ::ng-deep .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
@@ -279,6 +299,14 @@ td{
 :host ::ng-deep {
     .update .p-multiselect-panel .p-multiselect-header {
         display: none;
+    }
+    .p-dialog {
+        width: 55vw;
+        height: 100vh;
+        z-index: 11001;
+        background-color: white;
+        max-height: 100%;
+        margin: 0 !important;
     }
 }
 
@@ -345,6 +373,7 @@ td{
 // confirm dailog
 :host ::ng-deep .p-dialog .p-dialog-header{
     padding: 0.5rem;
+    border-bottom: 1px solid #e2e2e2;
 }
 :host ::ng-deep.p-dialog .p-dialog-footer{
     display: flex;
@@ -363,7 +392,7 @@ td{
 
 :host ::ng-deep .p-dialog .p-dialog-header .p-dialog-title {
     font-size: 16px;
-    padding-left: 16px;
+    padding-left:16px;
 }
 .statusType {
     color: white !important;
@@ -371,8 +400,13 @@ td{
 :host ::ng-deep {
     .p-multiselect {
         width: 100%;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 600;
+        background: inherit;
+        border: 0;
+        position: relative;
+        top: -11px;
+        left: -6px;
     }
     .p-multiselect-panel .p-multiselect-items .p-multiselect-item {
         font-size: 12px !important;
@@ -388,6 +422,9 @@ td{
         font-size: 12px !important;
         font-weight: 600 !important;
     }
+}
+.btnAction {
+    margin-top: 0px !important;
 }
 .btnAction {
     margin-top: 0px !important;
@@ -526,6 +563,15 @@ td{
     // margin: 0px 54px;
     flex-wrap: wrap;
     gap: 10px;
+    justify-content: space-between;
+}
+.role .card{
+    height: 90px;
+}
+.role .user_name {
+    height: 40px;
+    display: flex;
+    align-items: center;
 }
 .card {
     width: clamp(250px, 22svw, 300px);
@@ -544,10 +590,11 @@ td{
     justify-content: center;
     align-items: center;
     background: aliceblue;
-    margin-right: 20px;
+    margin-right: 10px;
 }
 .user_name {
     margin-top: 5px;
+    max-width: 160px;
 }
 .user_data {
     padding-bottom: 12px;
@@ -571,4 +618,44 @@ td{
 }
 .mr-53 {
     margin-right: 53px;
+}
+.inputDiv {
+    height: 54px;
+    background: #F3F3F3 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 2px #00000029;
+    border-radius: 5px;
+    padding: 6px 10px;
+    width: 48%;
+    input,select {
+        border: 0;
+        background-color: transparent;
+        position: relative;
+        top: -14px;
+        left: -12px;
+    }
+}
+.permisionDiv {
+    background: #F7F6F2;
+    padding: 8px;
+    border-bottom: 0;
+    border: 0;
+    border-radius: 0;
+    height: 43px;
+}
+input:checked + .slider {
+    background-color: #358DC0;
+}
+.switch {
+    width: 34px;
+    height: 15px;
+}
+.slider:before {
+    height: 13px;
+    width: 13px;
+}
+.deleteRole {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    cursor: pointer;
 }

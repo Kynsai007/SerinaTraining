@@ -12,6 +12,8 @@ import {
 import { SharedService } from 'src/app/services/shared.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 export interface UserData {
   name: string;
@@ -102,6 +104,7 @@ export class RolesComponent implements OnInit {
   CreateNewRole: boolean = false;
   editUserdata: boolean = false;
   saveRoleBoolean: boolean;
+  header_Ac:string
 
   roletype: string;
   CustomerUserReadData;
@@ -250,6 +253,10 @@ export class RolesComponent implements OnInit {
   // selEntity: string;
   fullList: any;
   flipPO_approval_bool: boolean;
+  expandFull: boolean;
+  isTableView:boolean;
+  header_role: string;
+  is_grn_approval:boolean
 
   constructor(
     private dataService: DataService,
@@ -262,7 +269,8 @@ export class RolesComponent implements OnInit {
     private _location: Location,
     private settingsService: SettingsService,
     private primengConfig: PrimeNGConfig,
-    private Alert : AlertService
+    private Alert : AlertService,
+    private mat_dlg : MatDialog
   ) {
     routeIn.params.subscribe((params) => {
       this.setupComponent(params['someParam']);
@@ -305,9 +313,10 @@ export class RolesComponent implements OnInit {
       this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
 
     } else {
-      this.alertBoolean = true;
-      this.displayResponsive = true;
-      this.deleteBtnText = "Sorry!, you don't have access";
+      // this.alertBoolean = true;
+      // this.displayResponsive = true;
+      // this.deleteBtnText = ;
+      this.alertFun("Sorry!, you don't have access");
       this._location.back();
     }
   }
@@ -315,15 +324,11 @@ export class RolesComponent implements OnInit {
     this.someParameterValue = someParam;
   }
 
-  showDailog(e) {
+  showDialog(event:Event,e) {
+    event.stopPropagation();
+    this.CreateNewRole = false;
     if (this.addRoleBoolean == true) {
-      this.alertBoolean = false;
-      this.deleteBtnText = 'Are you sure you want to delete this Role?';
-      this.deleteRoleBoolean = true;
-      this.vendorResetBtnBoolean = false;
-      this.userResetBtnBoolean = false;
-      this.deactivateBoolean = false;
-      this.displayResponsive = true;
+      this.confirmation_pop('Are you sure you want to delete this Role?','role');
       this.sharedService.ap_id = e.idAccessPermissionDef;
     } else {
       alert('Sorry, you do not have access!');
@@ -340,15 +345,17 @@ export class RolesComponent implements OnInit {
     this.displayResponsive = false;
   }
 
-  createRole() {
+  createRoles() {
+    console.log("hi");
+    this.header_role = "Add new role";
+    this.CreateNewRole = true;
     if (this.addRoleBoolean == true) {
-      this.router.navigate(['/customer/roles', 'createNewRole']);
+      // this.router.navigate(['/customer/roles', 'createNewRole']);
       this.SpinnerService.hide();
-      this.roletype = 'Create New Role';
-      this.normalRole = false;
+      // this.normalRole = false;
       this.newRoleName = '';
-      this.CreateNewRole = true;
-      this.editUserdata = false;
+      // this.CreateNewRole = true;
+      // this.editUserdata = false;
       this.saveRoleBoolean = true;
     } else {
       alert('Sorry!, you do not have access');
@@ -393,42 +400,27 @@ export class RolesComponent implements OnInit {
     }
   }
   editRole(e) {
-    if (this.addRoleBoolean == true) {
-      this.router.navigate([
-        '/customer/roles',
-        `${e.idAccessPermissionDef}editRoleDetails`,
-      ]);
+    this.header_role = "Edit Role";
+    this.CreateNewRole = true;
+    if (this.addRoleBoolean) {
+      // this.router.navigate(['/customer/roles', `${e.idAccessPermissionDef}editRoleDetails`]);
       this.sharedService.ap_id = e.idAccessPermissionDef;
       this.newRoleName = e.NameOfRole;
-
-      this.roletype = 'Edit Role';
-      this.normalRole = false;
-      this.CreateNewRole = true;
       this.saveRoleBoolean = false;
-      this.editUserdata = false;
+
       this.SpinnerService.show();
       this.max_role_amount = 0;
+  
       this.sharedService.displayRoleInfo().subscribe((data: any) => {
         this.roleInfoDetails = data.roleinfo.AccessPermissionDef;
         this.role_priority = this.roleInfoDetails.Priority;
-        if (data.roleinfo.AmountApproveLevel) {
-          this.max_role_amount = data.roleinfo.AmountApproveLevel.MaxAmount;
-        }
-        if (this.roleInfoDetails.User === 1) {
-          this.AddorModifyUserBoolean = true;
-        } else {
-          this.AddorModifyUserBoolean = false;
-        }
-        if (this.roleInfoDetails.Permissions === 1) {
-          this.userRoleBoolean = true;
-        } else {
-          this.userRoleBoolean = false;
-        }
-        if (this.roleInfoDetails.NewInvoice === 1) {
-          this.invoiceBoolean = true;
-        } else {
-          this.invoiceBoolean = false;
-        }
+  
+        this.max_role_amount = data.roleinfo?.AmountApproveLevel?.MaxAmount || 0;
+  
+        this.AddorModifyUserBoolean = this.roleInfoDetails.User === 1;
+        this.userRoleBoolean = this.roleInfoDetails.Permissions === 1;
+        this.invoiceBoolean = this.roleInfoDetails.NewInvoice === 1;
+  
         this.vendorTriggerBoolean = this.roleInfoDetails.allowBatchTrigger;
         this.spTriggerBoolean = this.roleInfoDetails.allowServiceTrigger;
         this.configAccessBoolean = this.roleInfoDetails.isConfigPortal;
@@ -439,33 +431,15 @@ export class RolesComponent implements OnInit {
         this.settingsPageBoolean = this.roleInfoDetails.is_spa;
         this.is_fp = this.roleInfoDetails.is_fp;
         this.is_fpa = this.roleInfoDetails.is_fpa;
-
-        if (this.roleInfoDetails.AccessPermissionTypeId === 4) {
-          this.viewInvoiceBoolean = true;
-          this.editInvoiceBoolean = true;
-          this.changeApproveBoolean = true;
-          this.financeApproveBoolean = true;
-        } else if (this.roleInfoDetails.AccessPermissionTypeId === 3) {
-          this.viewInvoiceBoolean = true;
-          this.editInvoiceBoolean = true;
-          this.changeApproveBoolean = true;
-          this.financeApproveBoolean = false;
-        } else if (this.roleInfoDetails.AccessPermissionTypeId === 2) {
-          this.viewInvoiceBoolean = true;
-          this.editInvoiceBoolean = true;
-          this.changeApproveBoolean = false;
-          this.financeApproveBoolean = false;
-        } else if (this.roleInfoDetails.AccessPermissionTypeId === 1) {
-          this.viewInvoiceBoolean = true;
-          this.editInvoiceBoolean = false;
-          this.changeApproveBoolean = false;
-          this.financeApproveBoolean = false;
-        } else if (this.roleInfoDetails.AccessPermissionTypeId === 0) {
-          this.viewInvoiceBoolean = false;
-          this.editInvoiceBoolean = false;
-          this.changeApproveBoolean = false;
-          this.financeApproveBoolean = false;
-        }
+        // this.is_grn_approval = this.roleInfoDetails.is_grn_approval;
+  
+        const accessPermissionTypeId = this.roleInfoDetails.AccessPermissionTypeId;
+  
+        this.viewInvoiceBoolean = accessPermissionTypeId >= 1;
+        this.editInvoiceBoolean = accessPermissionTypeId >= 2;
+        this.changeApproveBoolean = accessPermissionTypeId >= 3;
+        this.financeApproveBoolean = accessPermissionTypeId === 4;
+  
         this.SpinnerService.hide();
       });
     } else {
@@ -514,45 +488,26 @@ export class RolesComponent implements OnInit {
     }
   }
   changeViewInvoice(e) {
-    if (e.target.checked === true) {
-      this.viewInvoiceBoolean = true;
-    } else {
-      this.viewInvoiceBoolean = false;
-      this.editInvoiceBoolean = false;
-      this.changeApproveBoolean = false;
-      this.financeApproveBoolean = false;
-    }
+    this.handleChangeInvoice(e, true, false, false, false);
   }
   changeEditInvoice(e) {
-    if (e.target.checked === true) {
-      this.viewInvoiceBoolean = true;
-      this.editInvoiceBoolean = true;
-    } else {
-      this.viewInvoiceBoolean = true;
-      this.editInvoiceBoolean = false;
-      this.changeApproveBoolean = false;
-      this.financeApproveBoolean = false;
-    }
+    this.handleChangeInvoice(e, true, true, false, false);
   }
   changeChangeApproveInvoice(e) {
-    if (e.target.checked === true) {
-      this.viewInvoiceBoolean = true;
-      this.editInvoiceBoolean = true;
-      this.changeApproveBoolean = true;
-    } else {
-      this.viewInvoiceBoolean = true;
-      this.editInvoiceBoolean = true;
-      this.changeApproveBoolean = false;
-      this.financeApproveBoolean = false;
-    }
+    this.handleChangeInvoice(e, true, true, true, false);
   }
   changeFinanceApproveInvoice(e) {
-    if (e.target.checked === true) {
-      this.viewInvoiceBoolean = true;
-      this.editInvoiceBoolean = true;
-      this.changeApproveBoolean = true;
-      this.financeApproveBoolean = true;
-    } else {
+    this.handleChangeInvoice(e, true, true, true, true);
+  }
+  handleChangeInvoice(e, enableView, enableEdit, enableChangeApprove, enableFinanceApprove) {
+    this.viewInvoiceBoolean = enableView && e.target.checked;
+    this.editInvoiceBoolean = enableEdit && this.viewInvoiceBoolean;
+    this.changeApproveBoolean = enableChangeApprove && this.editInvoiceBoolean;
+    this.financeApproveBoolean = enableFinanceApprove && this.changeApproveBoolean && e.target.checked;
+    
+    if (!this.viewInvoiceBoolean) {
+      this.editInvoiceBoolean = false;
+      this.changeApproveBoolean = false;
       this.financeApproveBoolean = false;
     }
   }
@@ -658,9 +613,10 @@ export class RolesComponent implements OnInit {
         );
       });
     } else {
-      this.alertBoolean = true;
-      this.displayResponsive = true;
-      this.deleteBtnText = 'Please select Entity';
+      // this.alertBoolean = true;
+      // this.displayResponsive = true;
+      // this.deleteBtnText = '';
+      this.alertFun("Please select Entity");
     }
   }
   filterEntityDept(event) {
@@ -672,9 +628,10 @@ export class RolesComponent implements OnInit {
         );
       });
     } else {
-      this.alertBoolean = true;
-      this.displayResponsive = true;
-      this.deleteBtnText = 'Please select Department';
+      // this.alertBoolean = true;
+      // this.displayResponsive = true;
+      // this.deleteBtnText = ;
+      this.alertFun('Please select Department');
     }
   }
   onSelectEntity(value) {
@@ -706,9 +663,10 @@ export class RolesComponent implements OnInit {
         this.isEvrythingGood =  true;
         this.checkStatus(0,'approval');
       } else {
-        this.alertBoolean = true;
-        this.displayResponsive = true;
-        this.deleteBtnText = 'Please add all the mandatory fields';
+        // this.alertBoolean = true;
+        // this.displayResponsive = true;
+        // this.deleteBtnText = ;
+        this.alertFun('Please add all the mandatory fields')
         this.isEvrythingGood =  false;
       }
     } else {
@@ -791,9 +749,10 @@ export class RolesComponent implements OnInit {
     let count = 0;
     this.selectedEntitys.forEach((element) => {
       if (element.entityDept === e.DepartmentName) {
-        this.alertBoolean = true;
-        this.displayResponsive = true;
-        this.deleteBtnText = 'Please select other Department';
+        // this.alertBoolean = true;
+        // this.displayResponsive = true;
+        // this.deleteBtnText = '';
+        this.alertFun("Please select other Department");
       } else if (!element.entityDept || element.entityDept == '') {
         count = count + 1;
       } else {
@@ -857,7 +816,6 @@ export class RolesComponent implements OnInit {
         if(data.status == 1){
           this.entityBaseApproveBoolean = true;
           this.isAmountBasedON = data.isAmountBased;
-          console.log( this.financeapproveDisplayBoolean,this.entityBaseApproveBoolean)
         } else {
           this.entityBaseApproveBoolean = false;
         }
@@ -871,9 +829,10 @@ export class RolesComponent implements OnInit {
             delete this.approval_priority;
         } else if(data.status == 1){
           this.entityBaseApproveBoolean = true;
-          this.alertBoolean = true;
-          this.displayResponsive = true;
-          this.deleteBtnText = data.result;
+          // this.alertBoolean = true;
+          // this.displayResponsive = true;
+          // this.deleteBtnText = data.result;
+          this.alertFun(data.result);
         }
       }
 
@@ -906,7 +865,7 @@ export class RolesComponent implements OnInit {
         element.preApprove = e;
       }
     });
-    this.getSkipList();
+    // this.getSkipList();
   }
 
   getSkipList(){
@@ -966,8 +925,9 @@ export class RolesComponent implements OnInit {
 
   editUser(value) {
     this.toGetEntity();
+    this.header_Ac = "Edit user";
     delete this.skip_approval_boolean;
-    this.router.navigate(['/customer/roles', `${value.idUser}editUser`]);
+    // this.router.navigate(['/customer/roles', `${value.idUser}editUser`]);
     if (value.isActive == 0) {
       this.resetBtnText = 'Resend Activation Link';
     } else {
@@ -975,9 +935,9 @@ export class RolesComponent implements OnInit {
     }
     this.appied_permission_def_id = value.idAccessPermissionDef;
     this.sharedService.cuserID = value.idUser;
-    this.headerEdituserboolean = true;
-    this.normalRole = false;
-    this.CreateNewRole = false;
+    // this.headerEdituserboolean = true;
+    // this.normalRole = false;
+    // this.CreateNewRole = false;
     this.editUserdata = true;
     this.firstName = value.firstName;
     this.lastName = value.lastName;
@@ -1071,9 +1031,10 @@ export class RolesComponent implements OnInit {
         {
           this.updateAccessAPICall(editUser);
         } else {
-          this.alertBoolean = true;
-          this.displayResponsive = true;
-          this.deleteBtnText = 'Please add all the mandatory fields';
+          // this.alertBoolean = true;
+          // this.displayResponsive = true;
+          // this.deleteBtnText = '';
+          this.alertFun("Please add all the mandatory fields")
         }
     } else {
       this.updateAccessAPICall(editUser);
@@ -1140,9 +1101,10 @@ export class RolesComponent implements OnInit {
 
   createCustomerUserPage() {
     this.toGetEntity();
-    this.headerEdituserboolean = false;
-    this.normalRole = false;
-    this.CreateNewRole = false;
+    // this.headerEdituserboolean = false;
+    this.header_Ac = "Add new user";
+    // this.normalRole = false;
+    // this.CreateNewRole = false;
     this.editUserdata = true;
     this.userName = '';
     this.userEmail = '';
@@ -1197,9 +1159,10 @@ export class RolesComponent implements OnInit {
           {
             this.addUserAPICall(createUserData);
           } else {
-            this.alertBoolean = true;
-            this.displayResponsive = true;
-            this.deleteBtnText = 'Please add all the mandatory fields';
+            // this.alertBoolean = true;
+            // this.displayResponsive = true;
+            // this.deleteBtnText = '';
+            this.alertFun("Please add all the mandatory fields")
           }
       } else {
             this.addUserAPICall(createUserData);
@@ -1590,13 +1553,7 @@ export class RolesComponent implements OnInit {
     });
   }
   resetPassword() {
-    this.alertBoolean = false;
-    this.deleteBtnText = 'Are you sure you want to Reset this Account?';
-    this.vendorResetBtnBoolean = false;
-    this.userResetBtnBoolean = true;
-    this.deactivateBoolean = false;
-    this.deleteRoleBoolean = false;
-    this.displayResponsive = true;
+    this.confirmation_pop('Are you sure you want to reset this account?','reset_u');
   }
   resetPasswordUserAPI() {
     this.sharedService.resetPassword(this.userEmail).subscribe(
@@ -1616,14 +1573,8 @@ export class RolesComponent implements OnInit {
     );
   }
   resetPasswordVendor(mail) {
-    this.alertBoolean = false;
-    this.deleteBtnText = 'Are you sure you want to Reset this Account?';
-    this.displayResponsive = true;
-    this.vendorResetBtnBoolean = true;
-    this.userResetBtnBoolean = false;
-    this.deactivateBoolean = false;
-    this.deleteRoleBoolean = false;
     this.resetVendorMail = mail;
+    this.confirmation_pop('Are you sure you want to reset this account?','reset_v');
   }
 
   resetPassVendorAPI() {
@@ -1643,15 +1594,15 @@ export class RolesComponent implements OnInit {
     );
   }
 
-  confirmationPopUp(id, text) {
-    this.alertBoolean = false;
-    this.deleteBtnText = `Are you sure you want to ${text} this Account?`;
-    this.deactivateBoolean = true;
-    this.deleteRoleBoolean = false;
-    this.vendorResetBtnBoolean = false;
-    this.userResetBtnBoolean = false;
-    this.displayResponsive = true;
+  confirmationPopUp(id, bool,event:Event) {
+    event.stopPropagation();
+    this.editUserdata = false
+    let text = 'Activate';
+    if(bool){
+      text = 'Deactivate'
+    }
     this.custuserid = id;
+    this.confirmation_pop(`Are you sure you want to ${text} this Account?`,'active');
   }
 
   activa_deactive() {
@@ -1678,13 +1629,10 @@ export class RolesComponent implements OnInit {
     }
   }
   alertFun(txt) {
-    this.Alert.errorObject.detail = txt;
-    this.messageService.add(this.Alert.errorObject);
+    this.Alert.error_alert(txt);
   }
   successAlert(txt) {
-    this.Alert.addObject.severity = 'success';
-    this.Alert.addObject.detail = txt;
-    this.messageService.add(this.Alert.addObject);
+    this.Alert.success_alert(txt);
   }
   // entityChange(){
   //   this.selEntity = '';
@@ -1703,5 +1651,31 @@ export class RolesComponent implements OnInit {
           return !(entity.idEntity === selectedEntity.idEntity);
       });
     });
+    
+  }
+  confirmation_pop(d_msg,type){
+    const drf:MatDialogRef<ConfirmationComponent> = this.mat_dlg.open(ConfirmationComponent,{ 
+      width : '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data : { body: d_msg, type: 'confirmation',heading:'Confirmation',icon:'assets/Serina Assets/new_theme/Group 1336.svg'}})
+
+      drf.afterClosed().subscribe((bool)=>{
+        if(bool){
+          if(type == 'role') {
+            this.DeleteRole()
+          } else if(type == 'reset_u'){
+            this.resetPasswordUserAPI();
+          } else if(type == 'reset_v'){
+            this.resetPassVendorAPI();
+          } else if(type == 'active'){
+            this.activa_deactive()
+          }
+        } 
+      })
+  }
+
+  expand(bool){
+    this.expandFull = bool;
   }
 }
