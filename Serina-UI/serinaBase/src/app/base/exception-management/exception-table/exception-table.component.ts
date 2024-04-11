@@ -470,7 +470,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
           this.ExceptionsService.checkInvStatus().subscribe((resp:any)=>{
             this.SpinnerService.hide();
             if(resp.result.status == e.documentStatusID && resp.result.substatus == e.documentsubstatusID ) {
-          if (this.tagService.batchProcessTab == 'normal' || this.tagService.batchProcessTab == 'PODoc') {
+          if (!this.router.url.includes('approvalPending')) {
             if (this.permissionService.editBoolean == true) {
               if (e.documentStatusID == 24) {
                 this.tagService.approval_selection_boolean = true;
@@ -500,7 +500,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
               this.displayResponsivepopup = true;
               this.confirmText = 'Sorry, you do not have access to edit';
             }
-          } else if (this.tagService.batchProcessTab == 'editApproveBatch') {
+          } else if (this.router.url.includes('approvalPending')) {
             // if (this.permissionService.changeApproveBoolean == true) {
             //   if (e.documentsubstatusID == (29 || 4)) {
             //     this.ExceptionsService.selectedRuleId = e.ruleID;

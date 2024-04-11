@@ -79,6 +79,38 @@
   >
     <button class="primary_btn f-12" (click)="viewPdf()">{{ btnText }}</button>
   </div>
+  <div     
+    class="viewPdf"
+    style="right: 140px">
+    <p-autoComplete
+      [(ngModel)]="entityName"
+      (onSelect)="onSelectEntity($event,'change')"
+      placeholder="Select Entity"
+      [suggestions]="filteredEnt"
+      (completeMethod)="filterEntity($event)"
+      field="EntityName"
+      [dropdown]="true"
+      name="entity"
+      styleClass="mr-3"
+    >
+      <ng-template let-ent pTemplate="item">
+        <div class="ent-item">
+          <div class="f-12">{{ ent.EntityName }}</div>
+        </div>
+      </ng-template>
+    </p-autoComplete>
+
+    <p-dropdown
+      (onChange)="onSelectInvType($event)"
+      [options]="invTypeList"
+      placeholder="Select invoice type"
+      optionLabel=""
+      name="invType"
+    >
+    </p-dropdown>
+
+  </div>
+
   <!-- <div *ngIf="submitBtn_boolean || approveBtn_boolean && isDesktop" class="position_rule">
     <div class="placement-ruleChange f-12 bg-div-rule">
       Current Selected rule : {{ selectedRule }}

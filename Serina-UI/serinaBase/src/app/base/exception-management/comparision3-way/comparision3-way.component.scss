@@ -484,6 +484,29 @@
       background-color: #ffffff;
       top: -15px;
     }
+    .p-autocomplete {
+      display: inline-flex;
+      position: relative;
+      height: 35px;
+      background: #f2f2f2;
+      border-radius: 6px;
+      box-shadow: 1px 1px 6px #00000010;
+  }
+  .p-dropdown {
+      border:0 !important;
+      font-weight: 500 !important;
+      border-radius: 6px !important;
+      height: 35px !important;
+      margin-bottom: 0px !important;
+      background-color: #f2f2f2;
+      box-shadow: 1px 1px 6px #00000010;
+  }
+    .p-autocomplete-dd .p-autocomplete-input {
+      font-size: 14px;
+      font-weight: 600;
+      border: 0;
+      background: transparent;
+    }
   
   }
   .total_table{

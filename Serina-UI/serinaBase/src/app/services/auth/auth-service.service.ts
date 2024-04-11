@@ -92,7 +92,7 @@ export class AuthenticationService {
             localStorage.removeItem("ga.account.keys");
             this.googleService.signOut();
         }
-        let userid = JSON.parse(sessionStorage.getItem('currentLoginUser')).userdetails?.idUser;
+        let userid = JSON.parse(sessionStorage.getItem('currentLoginUser'))?.userdetails?.idUser;
         await this.http.post(`${this.apiUrl}/${this.apiVersion}/logout/${userid}`,null).toPromise();
         this.router.navigate(['/']);
         sessionStorage.removeItem('currentLoginUser');
@@ -108,7 +108,7 @@ export class AuthenticationService {
     refreshToken(){
         let data = {
             "grant_type": "refresh_token",
-            "refresh_token": this.currentUserValue.refresh_token
+            "refresh_token": this.currentUserValue?.refresh_token
           }
           
        return this.http.post(`${this.apiUrl}/${this.apiVersion}/token`,data).pipe(

@@ -6,6 +6,7 @@ import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { AlertService } from '../services/alert/alert.service';
+import { Router } from '@angular/router';
 
 
 
@@ -17,14 +18,14 @@ export class JwtInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private authService: AuthenticationService, private alert : AlertService) {}
+  constructor(private authService: AuthenticationService, private alert: AlertService, private router: Router) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     request = this.addToken(request);
 
     return next.handle(request).pipe(
       catchError(error => {
-        if (error.status === 401) {
+        if (error.status === 401 && !this.router.url.includes('login')) {
           if (!this.isRefreshing) {
             this.isRefreshing = true;
             this.refreshTokenSubject.next(null);
@@ -66,7 +67,7 @@ export class JwtInterceptor implements HttpInterceptor {
       return request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
-          "X-API-Key":`${this.authService.currentUserValue['x_api_token']}`
+          "X-API-Key": `${this.authService.currentUserValue['x_api_token']}`
         }
       });
     }
@@ -74,6 +75,7 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   private handleError(error: any): Observable<never> {
+
     this.authService.logout();
     this.alert.error_alert("Session has expired! Please re-login!");
     return EMPTY;

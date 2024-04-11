@@ -46,6 +46,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   offsetCount = 1;
   accountsArray = [];
   ERPname:string;
+  mainAccount = [];
 
   constructor(private sharedService: SharedService,
     public dataService : DataService,
@@ -82,6 +83,12 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
         this.prepareCostData();
         this.getElementData(this.spDetails);
       }
+  }
+
+  mainAccountFunction(){
+    this.mainAccount = [
+      { label: '',}
+    ]
   }
 
   readVendorInvoiceData() {
@@ -244,6 +251,12 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
       ScheduleDateTime: Date,
       isActive: [true],
       LocationCode: [''],
+      'AX Code':[''],
+      'Approval code': [''],
+      'Phy Group':[''],
+      'Phy(%)': [''],
+      'Sponsor Code':[''],
+      'Store Type':[''],
       operatingUnit: '',
       approver: [{ value: this.spDetails?.ApproverID}],
       costDetails: this.fb.array([]),
@@ -559,6 +572,12 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
         ),
         MeterNumber: data.MeterNumber,
         LocationCode: data.LocationCode,
+        'AX Code':data.miscellaneous_account_data['AX Code'],
+        'Approval code':data.miscellaneous_account_data['Approval code'],
+        'Phy Group':data.miscellaneous_account_data['Phy Group'],
+        'Phy(%)':data.miscellaneous_account_data['Phy(%)'],
+        'Sponsor Code':data.miscellaneous_account_data['Sponsor Code'],
+        'Store Type':data.miscellaneous_account_data['Store Type'],
         Address: data.Address,
         operatingUnit: data.operatingUnit,
         approver: data.approver,

@@ -180,4 +180,14 @@ export class ExceptionsService {
   rejectCommentsList(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getRejectedRecord_approval/${this.invoiceID}`);
   }
+  getInvTypes(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/invoiceTypes`)
+  }
+  changeEntity(ent_id){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/change_entity/${this.invoiceID}?entity_id=${ent_id}`)
+  }
+  changeInvType(type){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/changInvoiceType/${this.userId}/${this.invoiceID}?invoice_type=${type}`)
+    
+  }
 }

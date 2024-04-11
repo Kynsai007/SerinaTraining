@@ -108,6 +108,7 @@
               </div>
             </div>
           </div>
+
           <div>
             <label class="label-head"
               >Account <span class="req_clr">*</span></label
@@ -119,6 +120,7 @@
               [readOnly]="readOnlyForm"
             />
           </div>
+
           <div>
             <label class="label-head">Meter number</label>
             <input
@@ -128,6 +130,7 @@
               class="form-control w-250 inputHeight"
             />
           </div>
+
           <div>
             <label class="label-head"
               >Select Service Provider <span class="req_clr">*</span></label
@@ -192,6 +195,7 @@
               [readOnly]="readOnlyForm"
             />
           </div>
+
           <div>
             <label class="label-head">Location </label><br />
             <input
@@ -201,6 +205,67 @@
               [readOnly]="readOnlyForm"
             />
           </div>
+
+          <div *ngIf="ERPname == 'Dynamics AX'">
+            <label class="label-head">Phy(%) </label><br />
+            <input
+              type="text"
+              formControlName="Phy(%)"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+
+          <div *ngIf="ERPname == 'Dynamics AX'">
+            <label class="label-head">AX Code </label><br />
+            <input
+              type="text"
+              formControlName="AX Code"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+
+          <div *ngIf="ERPname == 'Dynamics AX'">
+            <label class="label-head">Phy Group </label><br />
+            <input
+              type="text"
+              formControlName="Phy Group"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+
+          <div *ngIf="ERPname == 'Dynamics AX'">
+            <label class="label-head">Store Type </label><br />
+            <input
+              type="text"
+              formControlName="Store Type"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+
+          <div *ngIf="ERPname == 'Dynamics AX'">
+            <label class="label-head">Approval code</label><br />
+            <input
+              type="text"
+              formControlName="Approval code"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+
+          <div *ngIf="ERPname == 'Dynamics AX'">
+            <label class="label-head">Sponsor Code </label><br />
+            <input
+              type="text"
+              formControlName="Sponsor Code"
+              class="form-control inputHeight w-250"
+              [readOnly]="readOnlyForm"
+            />
+          </div>
+
           <div>
             <label class="label-head"
               >Schedule Date <span class="req_clr">*</span></label
@@ -212,6 +277,7 @@
               [readOnly]="readOnlyForm"
             />
           </div>
+
           <div>
             <label class="label-head">{{ERPname != 'Oracle'?'Operating':'Business'}} Unit </label><br />
             <input
@@ -225,6 +291,7 @@
               <option *ngFor="let data of OPUnits" [value]="data"></option>
             </datalist>
           </div>
+
           <div>
             <label class="label-head">Approver </label><br />
             <select

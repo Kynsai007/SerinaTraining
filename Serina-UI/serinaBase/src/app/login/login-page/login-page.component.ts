@@ -290,15 +290,15 @@ export class LoginPageComponent implements OnInit {
           this.loginsuccess = false;
           this.loading = false;
           if (error.status === 401 || error.status === 404) {
-          if(error.status === 401){
-            this.error = "Username or/and password are incorrect.";
-          }else{
-            this.error = "User is not Registered!";
-          }
-            this.alertDivBoolean = true
+            if(error.status === 401){
+              this.error = "Username or/and password are incorrect.";
+            }else{
+              this.error = "User is not Registered!";
+            }
           } else {
           this.error = error.statusText;
           }
+          this.alertDivBoolean = true;
 
         });
   }

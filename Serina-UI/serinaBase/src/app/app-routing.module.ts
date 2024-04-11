@@ -7,7 +7,7 @@ import { VendorPortalAuthGaurd } from './services/auth/vendor-portal-auth-gaurd.
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'login',
     loadChildren: () => import('./login/login.module').then(m => m.LoginModule)
   },
   {
@@ -22,14 +22,14 @@ const routes: Routes = [
     path: 'registration-page',
     loadChildren: () => import('./registration-page/registration-page.module').then(m => m.RegistrationPageModule)
   },
-  { path: '', redirectTo: '/', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   // {
   //   path: '404',
   //   component: ErrorPageComponent
   // },
   {
     path: '**', 
-    redirectTo: '/'
+    redirectTo: 'login'
   }
 ];
 

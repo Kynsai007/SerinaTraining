@@ -375,6 +375,7 @@ export class Comparision3WayComponent
   priceData: any;
   totalPoCost: any;
   totalInvCost: number;
+  invTypeList: any[];
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -426,6 +427,7 @@ export class Comparision3WayComponent
     this.readFilePath();
     this.ERPCostAllocation();
     this.AddPermission();
+    this.getInvTypes();
     this.isAdmin = this.dataService.isAdmin;
 
   }
@@ -3015,7 +3017,7 @@ export class Comparision3WayComponent
         this.error("Server error");
       })
   }
-  filterEnttity(event) {
+  filterEntity(event) {
     let filtered: any[] = [];
     let query = event.query;
     for (let i = 0; i < this.entityList?.length; i++) {
@@ -3031,14 +3033,29 @@ export class Comparision3WayComponent
   // onSelectEnt(event){
   //   this.selectedEntity = event.EntityName;
   // }
-  onSelectEntity(event) {
-    this.entityList.forEach(val => {
-      if (event == val.EntityName) {
-        this.readPONumbersLCM(val.idEntity);
-      }
-      this.LCMObj.EntityName = this.EntityName;
-      this.LCMLineForm.control.patchValue(this.LCMObj);
-    })
+  onSelectEntity(event,type) {
+    if(type == 'change'){
+      this.exceptionService.changeEntity(event.idEntity).subscribe((data:any)=>{
+        if(data.status == 'success'){
+          this.success("Entity changed successfully and batch triggered.");
+          this.syncBatch();
+        } else {
+          this.error(data.message)
+        }
+
+      },err=>{
+        this.error("Server error")
+      })
+    } else {
+      this.entityList.forEach(val => {
+        if (event == val.EntityName) {
+          this.readPONumbersLCM(val.idEntity);
+        }
+        this.LCMObj.EntityName = this.EntityName;
+        this.LCMLineForm.control.patchValue(this.LCMObj);
+      })
+    }
+
   }
   readPONumbersLCM(ent_id) {
     this.SharedService.getLCMPOnum(ent_id).subscribe((data: any) => {
@@ -3381,5 +3398,23 @@ export class Comparision3WayComponent
   removeRow(index: number) {
     // Remove the row at the specified index
     this.rows.splice(index, 1);
+  }
+
+  getInvTypes(){
+    this.exceptionService.getInvTypes().subscribe((data:any)=>{
+      this.invTypeList = data.data;
+    })
+  }
+  onSelectInvType(event){
+    this.exceptionService.changeInvType(event.value.toLowerCase()).subscribe((data:any)=>{
+      if(data.status == 'success'){
+        this.success("Invoice type changed successfully, and sent to batch.");
+        this.syncBatch();
+      } else {
+        this.error(data.message)
+      }
+    },err=>{
+      this.error("Server error")
+    })
   }
 }

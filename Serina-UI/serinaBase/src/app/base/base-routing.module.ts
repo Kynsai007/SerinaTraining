@@ -152,6 +152,10 @@ const routes: Routes = [
             component: BatchProcessComponent,
           },
           {
+            path: 'ExceptionManagement/approvalPending',
+            component: BatchProcessComponent,
+          },
+          {
             path:"ExceptionManagement/Service_ExceptionManagement",
             component: BatchProcessComponent
           },

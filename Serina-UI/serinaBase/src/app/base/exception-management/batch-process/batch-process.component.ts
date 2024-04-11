@@ -96,9 +96,8 @@ export class BatchProcessComponent implements OnInit {
     private tagService: TaggingService,
     private ImportExcelService: ImportExcelService,
     private ngxSpinner: NgxSpinnerService,
-    private MessageService: MessageService,
     private alertService: AlertService,
-    private router: Router,
+    public router: Router,
     private exceptionService: ExceptionsService,
     private permissionService : PermissionService,
     private sharedService :SharedService,
@@ -179,14 +178,20 @@ export class BatchProcessComponent implements OnInit {
       this.ColumnsForBatch = this.serviceColumns;
       this.page_supplier = 'Service';
       this.getServiceInvoiceData();
+    } else if(this.router.url.includes(
+      'ExceptionManagement/approvalPending'
+    )){
+      this.heading = 'Approval Pending';
+      this.page_supplier = `${this.partytype}`;
+      this.getApprovalBatchData();
     } else {
       this.heading = `${this.partytype} based Exception`;
       this.page_supplier = `${this.partytype}`;
       this.pageNumber = this.ds.excTabPageNumber;this.isVendorBoolean = true;
       this.getBatchInvoiceData();
-      if(this.apprveBool && this.portalName == 'customer'){
-        this.getApprovalBatchData();
-      }
+      // if(this.apprveBool && this.portalName == 'customer'){
+      //   this.getApprovalBatchData();
+      // }
 
     }
     if (this.router.url.includes('home')) {
@@ -292,6 +297,7 @@ export class BatchProcessComponent implements OnInit {
     this.exceptionService.readApprovalPendingData().subscribe(
       (data: any) => {
         const batchData = [];
+        let mergedStatus = [{ id:0, name:'All'}];
         data.result.pending_approval_invoice.forEach((element) => {
           let mergeData = {
             ...element.Document,
@@ -300,12 +306,27 @@ export class BatchProcessComponent implements OnInit {
           };
           mergeData.status= element.docstatus;
           batchData.push(mergeData);
+          // let status = element.DocumentSubStatus.status
+          // // vendorNameList.push(element.Vendor.VendorName)
+          // if(element.Document.documentsubstatusID == 40 || element.Document.documentsubstatusID == 32){
+          //   status = element.substatus;
+          // }
+          // mergedStatus.push({id: element.Document.documentsubstatusID, name:status})
         });
-        this.columnsDataAdmin = batchData;
-        this.dataLengthAdmin = this.columnsDataAdmin.length;
-        // if (this.dataLengthAdmin > 10) {
-        //   this.showPaginatorApproval = true;
-        // }
+        // let statusData = mergedStatus.filter((obj,index)=>{
+        //   return index == mergedStatus.findIndex(o=> obj.name === o.name )
+        // })
+        // this.vendorNameList = new Set(vendorNameList);
+        // this.statusData = statusData;
+        this.columnsData = batchData.sort((a,b)=>{
+          let c = new Date(a.CreatedOn).getTime();
+          let d = new Date(b.CreatedOn).getTime();
+          return d-c });
+          this.filterData = this.columnsData;
+          this.dataLength = this.columnsData.length;
+          if (this.dataLength > 10) {
+            this.showPaginatorAllInvoice = true;
+          }
         this.ngxSpinner.hide();
       },
       (error) => {

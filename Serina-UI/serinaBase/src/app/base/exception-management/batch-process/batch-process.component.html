@@ -60,7 +60,7 @@
       </div>
 
     <!-- search by Status -->
-    <div class="filter status">
+    <div class="filter status" *ngIf="!router.url.includes('approvalPending')">
       <label class="f-12 png_label"> Search by Status </label>
       <p-autoComplete
         (onSelect)="onSelectStatus($event)"
