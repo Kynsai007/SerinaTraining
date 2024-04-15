@@ -105,6 +105,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   maxSize = 7;
   isTableView:boolean;
   FilterData: any;
+  ERPName:string;
 
   constructor(
     private tagService: TaggingService,
@@ -130,6 +131,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.initialData();
     this.dateFunc();
     let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
+    this.ERPName = this.ds.configData?.erpname;
     if (userRole == 'customer super admin' || userRole == 'ds it admin') {
       this.isAdmin = true;
     } else {
@@ -893,6 +895,18 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         this.globalSearch = this.ds.serviceGlobe;
       }
     }
+  }
+  erpDownload(event: Event,e){
+    event.stopPropagation();
+    let apiParam = `?ismail=false&doc_id=${e.idDocument}`
+    this.SpinnerService.show();
+    this.sharedService.ERPReportDownload(apiParam).subscribe((data:any)=>{
+      this.SpinnerService.hide();
+       this.success("Dear User, The Report downloaded successfully.");
+    },err=>{
+      this.SpinnerService.hide();
+       this.error("Server error");
+    })    
   }
 
 }

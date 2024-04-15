@@ -104,8 +104,8 @@
       (onChange)="onSelectInvType($event)"
       [options]="invTypeList"
       placeholder="Select invoice type"
-      optionLabel=""
       name="invType"
+      [(ngModel)]="docType"
     >
     </p-dropdown>
 

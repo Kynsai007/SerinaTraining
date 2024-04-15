@@ -53,6 +53,39 @@
     font-weight: 600;
     padding: 4px;
   }
+  .inputBox .p-calendar .p-datepicker {
+    left: 0 !important;
+  }
+  .erpDiv .p-autocomplete-dd .p-autocomplete-input {
+    width: 100%;
+  }
+  .erpDiv .p-autocomplete {
+    width: 100%;
+  }
+  .erpDiv .p-dropdown {
+    width: 100%;
+  }
+  .p-autocomplete-dd .p-autocomplete-input {
+    width: auto;
+    height: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    position: relative;
+    top: -10px;
+    left: -7px;
+}
+.p-autocomplete-dd .p-autocomplete-dropdown {
+  background: transparent;
+  border: 0;
+  position: relative;
+  top: -13px;
+}
+.p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
+  font-size: 12px;
+  font-weight: 600;
+}
 }
 
 
@@ -281,7 +314,20 @@ dialog {
   transform: translatey(50%);
   overflow: visible;
 }
-
+.grnDialog {
+  height: 310px;
+  width: 450px;
+  transform: translatey(50%);
+}
+.soaDialog {
+  height: 90svh;
+  width: 90vw;
+  transform: translatey(4%);
+}
+dialog::backdrop {
+  background-color: hsla(240, 2%, 10%, 0.651);
+  opacity: 0.5;
+}
 dialog .inputBox {
   width: 100%;
   background: #f3f3f3;
@@ -371,4 +417,27 @@ dialog .footer {
 .export button {
   min-width: 38px;
   // margin-top: 6px;
+}
+.soaDiv {
+  flex-wrap: wrap;
+  gap: 10px;
+  .soaBox {
+    width: auto;
+    background: #f3f3f3;
+    border-radius: 5px;
+    padding: 0px 10px;
+    margin-bottom: 10px;
+    height: 54px;
+  }
+}
+.erpDiv {
+  .soaBox {
+    width: 100% !important;
+  }
+}
+.soaTable {
+  overflow: auto;
+  min-width: 60svh;
+  max-height: 60svh;
+  margin-top: 10px;
 }

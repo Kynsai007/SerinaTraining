@@ -648,6 +648,9 @@
             (click)="checkStatus($event, invoiceData)"
           >
           </span>
+          <span *ngIf="router.url.includes('ServiceInvoices') && ERPName == 'Dynamics AX'">
+            <i class="fa fa-download showEye ml-3" (click)="erpDownload($event, invoiceData)"></i>
+          </span>
         </td>
       </tr>
     </ng-template>

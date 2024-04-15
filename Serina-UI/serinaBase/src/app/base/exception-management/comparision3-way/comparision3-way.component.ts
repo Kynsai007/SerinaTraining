@@ -190,7 +190,7 @@ export class Comparision3WayComponent
   partytype: string;
   lineTxt1: string;
   lineTxt2: string;
-  docType: number;
+  docType: any;
   poLinedata = [];
   soLinedata = [];
   lineTable = [
@@ -427,7 +427,7 @@ export class Comparision3WayComponent
     this.readFilePath();
     this.ERPCostAllocation();
     this.AddPermission();
-    this.getInvTypes();
+    
     this.isAdmin = this.dataService.isAdmin;
 
   }
@@ -808,7 +808,10 @@ export class Comparision3WayComponent
         if (response?.uploadtime) {
           this.uploadtime = response.uploadtime;
         }
-
+        if(response.doc_type){
+          this.docType = response.doc_type;
+        }
+        this.getInvTypes();
         // this.lineDataConversion();
         if(this.pageType == "mapping"){
           this.calculateCost();
@@ -3403,6 +3406,12 @@ export class Comparision3WayComponent
   getInvTypes(){
     this.exceptionService.getInvTypes().subscribe((data:any)=>{
       this.invTypeList = data.data;
+      this.invTypeList.forEach(el=>{
+        if(el.toLowerCase() == this.docType ){
+          this.docType = el;
+          console.log(this.docType)
+        }
+      })
     })
   }
   onSelectInvType(event){

@@ -397,9 +397,19 @@ export class SharedService {
   downloadGRN(api_param,data){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/downloadGRNList/${this.userId}${api_param}`,data).pipe(retry(2))
   }
+  SOASearch(api_param){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/downloadReport/${this.userId}${api_param}`).pipe(retry(2))
+  }
+
+  ERPReportDownload(api_param){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/SP/DownloaderpExcel/${this.userId}${api_param}`).pipe(retry(2))
+  }
+
+
+    
   // view Invoice
   getInvoiceInfo() {
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2), catchError(this.handleError))
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceData/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2),catchError(this.handleError))
   }
   getInvoiceFilePath() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoiceFile/${this.userId}/idInvoice/${this.invoiceID}`).pipe(retry(2), catchError(this.handleError))

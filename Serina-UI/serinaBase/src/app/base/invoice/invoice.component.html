@@ -193,6 +193,12 @@
             <i class="fa fa-search" aria-hidden="true"></i>
           </button>
         </div>
+        <div class="filter_box export" style="max-width: 100px;" *ngIf="route.url.includes('allInvoices') || route.url.includes('archived') || route.url.includes('rejected')">
+          <button class="primary_btn f-12" (click)="openSOADialog('soa')"> SOA Report </button>
+        </div>
+        <div class="filter_box export" style="max-width: 100px;" *ngIf="route.url.includes('ServiceInvoices') && ERPName == 'Dynamics AX' ">
+          <button class="primary_btn f-12" (click)="openSOADialog('ERP')"> Report </button>
+        </div>
         <div class="filter_box status export">
           <button class="secondary_btn f-18" (click)="exportExcel()">
             <i class="fa fa-download"></i>
@@ -355,42 +361,163 @@
     </div>
   </ngx-spinner>
 
-  <!-- GRN data download -->
-  <dialog #dialog>
+
+  <dialog #dialog  [ngClass]="dialogHeader == 'SOA Reports'? 'soaDialog':'grnDialog'">
     <div class="d-flex justify-content-between mb-2">
-      <h6 class="f-14">Fill the details</h6>
+      <h6 class="f-14">{{dialogHeader}}</h6>
       <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
     </div>
-    <div class="inputBox">
-      <label class="f-12"> Start & End Date </label> <br>
-      <p-calendar
-        #datePicker
-          [(ngModel)]="rangeDates"
-          selectionMode="range"
-          [minDate]="minDate"
-          [maxDate]="maxDate"
-          placeholder="Select dates to Filter"
-          [readonlyInput]="true"
-          [showIcon]="true"
-          showButtonBar="true"
-          (onClearClick)="clearDates()"
-          inputId="range"
-        ></p-calendar>
-    </div>
-    <div class="inputBox">
-      <label for="email" class="f-12">Email ID</label> <br>
-      <input type="email" id="email" class="form-control f-14" [(ngModel)]="userEmailID">
-    </div>
-    <div class="d-flex justify-content-between pointer">
-      <div class="inputBox f-14 mr-3 selectionDiv" (click)="grnDownloadSelection('All')" [ngClass]="grnTabDownloadOpt == 'All'?'activeClass':''">
-        All Record
+
+    <!-- GRN report download -->
+    <div *ngIf="dialogHeader == 'GRN Reports'">
+      <div class="inputBox">
+        <label class="f-12"> Start & End Date </label> <br>
+        <p-calendar
+            [(ngModel)]="rangeDates"
+            selectionMode="range"
+            [minDate]="minDate"
+            [maxDate]="maxDate"
+            placeholder="Select dates to Filter"
+            [readonlyInput]="true"
+            [showIcon]="true"
+            showButtonBar="true"
+            (onClearClick)="clearDates()"
+            inputId="range"
+          ></p-calendar>
       </div>
-      <div class="inputBox f-14 selectionDiv pointer" (click)="grnDownloadSelection('Pending')" [ngClass]="grnTabDownloadOpt == 'Pending'?'activeClass':''">
-        Pending Invoice
+      <div class="inputBox">
+        <label for="email" class="f-12">Email ID</label> <br>
+        <input type="email" id="email" class="form-control f-14" [(ngModel)]="userEmailID">
+      </div>
+      <div class="d-flex justify-content-between pointer">
+        <div class="inputBox f-14 mr-3 selectionDiv" (click)="grnDownloadSelection('All')" [ngClass]="grnTabDownloadOpt == 'All'?'activeClass':''">
+          All Records
+        </div>
+        <div class="inputBox f-14 selectionDiv pointer" (click)="grnDownloadSelection('Pending')" [ngClass]="grnTabDownloadOpt == 'Pending'?'activeClass':''">
+          Pending Invoice
+        </div>
       </div>
     </div>
 
-    <div class="footer d-flex justify-content-end">
+    <!-- SOA Reports -->
+    <div *ngIf="dialogHeader == 'SOA Reports' || dialogHeader == 'ERP Reports'" >
+      <div class="d-flex soaDiv" [ngClass]="dialogHeader == 'ERP Reports'?'erpDiv':''">
+        <div class="inputBox soaBox">
+          <label class="f-12"> Start & End Date </label> <br>
+          <p-calendar
+              [(ngModel)]="rangeDates_soa"
+              selectionMode="range"
+              [minDate]="minDate"
+              [maxDate]="maxDate"
+              placeholder="Select dates to Filter"
+              [readonlyInput]="true"
+              [showIcon]="true"
+              showButtonBar="true"
+              (onClearClick)="clearDates()"
+              inputId="range"
+            ></p-calendar>
+        </div>
+
+        <div class="soaBox">
+          <label class="f-12">Entity name</label><br />
+          <p-autoComplete
+            placeholder="Select Entity"
+            (onSelect)="selectEntity($event)"
+            [group]="false"
+            [suggestions]="filteredEnt"
+            (completeMethod)="filterEntity($event)"
+            field="EntityName"
+            [dropdown]="true"
+            [completeOnFocus]="true"
+            [autofocus]="true"
+            name="EntityName"
+            [(ngModel)]="selectedEntityId"
+          >
+          </p-autoComplete>
+        </div>
+
+        <!--Vendor Selection-->
+        <div class="soaBox" *ngIf='portal_name == "customer" && dialogHeader == "SOA Reports"'>
+          <label class="f-12">VendorName</label><br />
+          <p-autoComplete
+            placeholder="Select vendor"
+            (onSelect)="selectedVendor($event)"
+            [group]="false"
+            [suggestions]="filteredVendors"
+            (completeMethod)="filterVendor($event)"
+            field="VendorName"
+            [dropdown]="true"
+            [completeOnFocus]="true"
+            [autofocus]="true"
+            name="vendor"
+            [(ngModel)]="selectedVendorId"
+          >
+          </p-autoComplete>
+        </div>
+
+        <!--Service Selection-->
+        <div class="soaBox" *ngIf='dialogHeader == "ERP Reports"'>
+          <label class="f-12">ServiceProvider</label><br />
+          <p-autoComplete
+            placeholder="Select service"
+            (onSelect)="selectedVendor($event)"
+            [group]="false"
+            [suggestions]="filteredService"
+            (completeMethod)="filterService($event)"
+            field="ServiceProviderName"
+            [dropdown]="true"
+            [completeOnFocus]="true"
+            [autofocus]="true"
+            name="ServiceProvider"
+            [(ngModel)]="selectedVendorId"
+          >
+          </p-autoComplete>
+        </div>
+
+        <div class="inputBox soaBox" *ngIf='dialogHeader == "SOA Reports"'>
+          <label class="f-12">PO number/Invoice number</label><br />
+          <input type="text" class="form-control f-14" [(ngModel)]="soa_uniSearch">
+        </div>
+
+        <!-- <div class="inputBox soaBox">
+          <label class="f-12">Invoice number</label><br />
+          <input type="text" class="form-control f-14">
+        </div> -->
+
+        <div *ngIf="dialogHeader == 'SOA Reports'">
+          <!-- <label class="f-12 mb-0" for="hide" style="visibility: hidden;">Hide</label><br> -->
+          <button class="primary_btn f-12" (click)="soaSearch(false)"> Search </button>
+        </div>
+
+        <div *ngIf="dialogHeader == 'SOA Reports'">
+
+          <!-- <label class="f-12 mb-0" for="hiden" style="visibility: hidden;">Hide</label><br> -->
+          <button class="primary_btn f-12" (click)="soaSearch(true)"> Download report to email </button>
+        </div>
+        <div *ngIf="dialogHeader == 'ERP Reports'" class="d-flex justify-content-end">
+          <button class="primary_btn f-12 mr-3" (click)="ERPReports(false)"> Download </button>
+          <button class="primary_btn f-12" (click)="ERPReports(true)"> Download to email </button>
+        </div>
+      </div>
+
+      <div class="soaTable" *ngIf="dialogHeader == 'SOA Reports'">
+        <app-exception-table
+          [columnsData]="SOATableData"
+          [invoiceColumns]="columnsForSOA"
+          [ColumnLength]="columnLengthSOA"
+        >
+        </app-exception-table>
+        <!-- <table class="d-flex">
+          <tr  *ngFor="let data of SOATableData | keyvalue" style="display: block;">
+            <th [ngStyle]="{width: data.key == 'Description'?'200px':'auto'}" >{{data.key}}</th>
+            <td *ngFor="let data1 of data.value">{{data1}}</td>
+          </tr>
+        </table> -->
+      </div>
+
+    </div>
+
+    <div *ngIf="dialogHeader == 'GRN Reports'"  class="footer d-flex justify-content-end" >
       <button class="btnUpload btn_extra_bg" (click)='email_download()' [disabled]="!userEmailID">Download to email</button>
     </div>
     <ngx-spinner

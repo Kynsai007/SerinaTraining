@@ -67,7 +67,8 @@ export class InvoiceComponent implements OnInit {
   usertypeBoolean: boolean;
 
   rangeDates: Date[];
-  rangeDatesinv: Date[]
+  rangeDatesinv: Date[];
+  rangeDates_soa: Date[];
   routeName: string;
   lastYear: number;
   displayYear: string;
@@ -114,9 +115,19 @@ export class InvoiceComponent implements OnInit {
   invsTabAllColumns: any;
   showFactsComponent: boolean;
   userEmailID: string;
+  dialogHeader: string;
+  entityName: any;
+  selectedEntityId: any;
+  entityList: any;
+  filteredEnt: any[];
+  vendorsList: any;
+  filteredVendors: any;
   grnTabDownloadOpt = 'All';
   cardCount: number;
   searchText: string;
+  ERPName: any;
+  servicesList: any[];
+  filteredService: any[];
   
   close(reason: string) {
     this.sidenav.close();
@@ -138,6 +149,24 @@ export class InvoiceComponent implements OnInit {
   @ViewChild('datePicker') datePicker: Calendar;
   pageNumber:number = 1;
   pageId:string = 'Inv';
+  maxSize = 7;
+
+selectedVendorId: any;
+selectedServiceId: any;
+soa_uniSearch: string;
+SOATableData = [];
+columnsForSOA = [
+  { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+  { dbColumnname: 'EntityName', columnName: 'Entity' },
+  { dbColumnname: 'InvoiceNo', columnName: 'Invoice Number' },
+  { dbColumnname: 'PurchaseOrder', columnName: 'PO Number' },
+  { dbColumnname: 'GRN Number', columnName: 'GRN Number' },
+  { dbColumnname: 'Invoice Status', columnName: 'Invoice Status' },
+  { dbColumnname: 'Description', columnName: 'Description' },
+  { dbColumnname: 'InvoiceTotal', columnName: 'Amount' },
+  { dbColumnname: 'Rejected BY', columnName: 'Rejected BY' },
+];
+columnLengthSOA:number;
 
   constructor(
     public route: Router,
@@ -160,6 +189,7 @@ export class InvoiceComponent implements OnInit {
     this.vendorInvoiceAccess = this.ds?.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.ds?.configData?.serviceInvoices;
     this.isDesktop = this.ds.isDesktop;
+    this.ERPName = this.ds.configData?.erpname;
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
@@ -177,6 +207,8 @@ export class InvoiceComponent implements OnInit {
       this.portal_name = 'vendorPortal';
 
     }
+    this.ds.portalName = this.portal_name;
+    this.columnLengthSOA = this.columnsForSOA.length;
     // if (this.vendorInvoiceAccess) {
     //   if (this.ds.ap_boolean) {
     //     this.partyType = 'Vendor';
@@ -915,10 +947,26 @@ export class InvoiceComponent implements OnInit {
         alert('No Data to import');
       }
     } else {
+      this.dialogHeader = "GRN Reports";
       const dialog = document.querySelector('dialog');
       if (dialog) {
         dialog.showModal();
       }
+    }
+  }
+  openSOADialog(txt){
+    if(txt == 'soa'){
+      this.getCustomerVendors();
+      this.dialogHeader = "SOA Reports";
+    } else {
+      this.getServiceProviders();
+      this.dialogHeader = "ERP Reports";
+    }
+    this.readEntity();
+
+    const dialog = document.querySelector('dialog');
+    if (dialog) {
+      dialog.showModal();
     }
   }
   onOptionDrop(event: CdkDragDrop<any[]>) {
@@ -1371,5 +1419,167 @@ export class InvoiceComponent implements OnInit {
   }
   onPageChange(number: number) {
     this.pageNumber = number;
+}
+readEntity(){
+  this.ds.entityData.subscribe((data:[])=>{
+    this.entityList = data;
+    this.filteredEnt = this.entityList;
+  })
+}
+
+filterEntity(event) {
+  let filtered: any[] = [];
+  let query = event.query;
+
+  if (this.entityList?.length > 0) {
+    for (let i = 0; i < this.entityList?.length; i++) {
+      let ent: any = this.entityList[i];
+      if (ent.EntityName.toLowerCase().includes(query.toLowerCase())) {
+        filtered.push(ent);
+      }
+    }
+  }
+  this.filteredEnt = filtered;
+}
+selectEntity(value) {
+  // this.selectedEntityId = value.idEntity;
+  this.sharedService.selectedEntityId = value.idEntity;
+  this.entityName = value;
+}
+getCustomerVendors() {
+  this.sharedService
+    .getVendorsListToCreateNewlogin(`?offset=1&limit=100`)
+    .subscribe((data: any) => {
+      this.vendorsList = data.vendorlist;
+      // this.filteredVendors = this.vendorsList
+    });
+}
+filterVendor(event) {
+  let query = event.query.toLowerCase();
+  if (query != '') {
+    this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&ven_name=${query}`).subscribe((data: any) => {
+      this.filteredVendors = data.vendorlist;
+    });
+  } else {
+    this.filteredVendors = this.vendorsList;
+  }
+}
+getServiceProviders() {
+  this.sharedService
+    .readserviceprovider()
+    .subscribe((data: any) => {
+      let mergerdArray = [];
+      data.forEach(element => {
+        let spData = {...element.Entity,...element.ServiceProvider};
+        mergerdArray.push(spData);
+      });
+      this.servicesList = mergerdArray;
+      // this.filteredVendors = this.vendorsList
+    });
+}
+filterService(event) {
+  let filtered: any[] = [];
+  let query = event.query;
+
+  if (this.servicesList?.length > 0) {
+    for (let i = 0; i < this.servicesList?.length; i++) {
+      let ent: any = this.servicesList[i];
+      if (ent.ServiceProviderName.toLowerCase().includes(query.toLowerCase())) {
+        filtered.push(ent);
+      }
+    }
+  }
+  this.filteredService = filtered;
+}
+selectedVendor(val){
+}
+soaSearch(bool){
+  // Initialize API parameter with usertype and filter_type
+  let apiParam = `?usertype=${this.userDetails.user_type}&filter_type=${bool}`;
+  
+  // Add entity ID if selected
+  if (this.selectedEntityId) {
+    let ent_id = this.selectedEntityId?.idEntity;
+    apiParam += `&ent_id=${ent_id}`;
+  }
+
+  // Add vendor ID if selected
+  if (this.selectedVendorId) {
+    let ven_name = this.selectedVendorId?.VendorName;
+    apiParam += `&ven_name=${ven_name}`;
+  }
+
+  // Transform dates if rangeDates_soa is available
+  let frmDate, toDate;
+  if (this.rangeDates_soa) {
+    frmDate = this.datePipe.transform(this.rangeDates_soa[0], 'yyyy-MM-dd');
+    toDate = this.datePipe.transform(this.rangeDates_soa[1], 'yyyy-MM-dd');
+    apiParam += `&start_date=${frmDate}&end_date=${toDate}`;
+  }
+
+  // Add unique search key if present
+  if (this.soa_uniSearch) {
+    apiParam += `&unq_key=${this.soa_uniSearch}`;
+  }
+  this.SpinnerService.show();
+  this.sharedService.SOASearch(apiParam).subscribe((data:any)=>{
+    this.SpinnerService.hide();
+    if(bool){
+      this.AlertService.addObject.detail = "Dear User, The Report will be sent to your email shortly."
+      this.messageService.add( this.AlertService.addObject);
+      this.closeDialog();
+    } else {
+      this.SOATableData = data;
+      console.log(this.SOATableData);
+    }
+  },err=>{
+    this.SpinnerService.hide();
+    this.AlertService.errorObject.detail = "Server error."
+    this.messageService.add( this.AlertService.errorObject);
+  })
+}
+
+ERPReports(bool) {
+   // Initialize API parameter with usertype and filter_type
+   let apiParam = `?ismail=${bool}`;
+  
+   // Add entity ID if selected
+   if (this.selectedEntityId) {
+     let ent_id = this.selectedEntityId?.idEntity;
+     apiParam += `&ent_id=${ent_id}`;
+   }
+ 
+   // Add service ID if selected
+   if (this.selectedServiceId) {
+     let sp_name = this.selectedServiceId?.ServiceProviderName;
+     apiParam += `&SP_name=${sp_name}`;
+   }
+ 
+   // Transform dates if rangeDates_soa is available
+   let frmDate, toDate;
+   if (this.rangeDates_soa) {
+     frmDate = this.datePipe.transform(this.rangeDates_soa[0], 'yyyy-MM-dd');
+     toDate = this.datePipe.transform(this.rangeDates_soa[1], 'yyyy-MM-dd');
+     apiParam += `&start_date=${frmDate}&end_date=${toDate}`;
+   }
+ 
+   // Add unique search key if present
+  //  if (this.soa_uniSearch) {
+  //    apiParam += `&unq_key=${this.soa_uniSearch}`;
+  //  }
+   this.SpinnerService.show();
+   this.sharedService.ERPReportDownload(apiParam).subscribe((data:any)=>{
+     this.SpinnerService.hide();
+     if(bool){
+       this.success("Dear User, The Report will be sent to your email shortly.");
+       this.closeDialog();
+     } else {
+      this.success("Dear User, The Report downloaded successfully.");
+      //  this.SOATableData = data;
+     }
+   },err=>{
+     this.SpinnerService.hide();
+      this.error("Server error");
+   }) 
 }
 }
