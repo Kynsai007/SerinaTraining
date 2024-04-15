@@ -557,33 +557,57 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
       }
       this.SpAccountDetails.controls['isActive'].enable();
       // this.SpAccountDatails.controls['Account'].disable();
-      this.SpAccountDetails.patchValue({
-        Account: data.Account,
-        entityID: data.entityID,
-        serviceProviderNameAccount: data.ServiceProviderName,
-        serviceProviderID: data.serviceProviderID,
-        Email: data.Email,
-        URL: data.URL,
-        UserName: data.UserName,
-        LogSecret: data.LogSecret,
-        ScheduleDateTime: this.datePipe.transform(
-          data.account_schedule.ScheduleDateTime,
-          'yyyy-MM-dd'
-        ),
-        MeterNumber: data.MeterNumber,
-        LocationCode: data.LocationCode,
-        'AX Code':data.miscellaneous_account_data['AX Code'],
-        'Approval code':data.miscellaneous_account_data['Approval code'],
-        'Phy Group':data.miscellaneous_account_data['Phy Group'],
-        'Phy(%)':data.miscellaneous_account_data['Phy(%)'],
-        'Sponsor Code':data.miscellaneous_account_data['Sponsor Code'],
-        'Store Type':data.miscellaneous_account_data['Store Type'],
-        Address: data.Address,
-        operatingUnit: data.operatingUnit,
-        approver: data.approver,
-        isActive: data.isActive,
-        costDetails: this.CostArray,
-      });
+      if(this.ERPname == 'Dynamics AX'){
+        this.SpAccountDetails.patchValue({
+          Account: data.Account,
+          entityID: data.entityID,
+          serviceProviderNameAccount: data.ServiceProviderName,
+          serviceProviderID: data.serviceProviderID,
+          Email: data.Email,
+          URL: data.URL,
+          UserName: data.UserName,
+          LogSecret: data.LogSecret,
+          ScheduleDateTime: this.datePipe.transform(
+            data.account_schedule.ScheduleDateTime,
+            'yyyy-MM-dd'
+          ),
+          MeterNumber: data.MeterNumber,
+          LocationCode: data.LocationCode,
+          'AX Code':data?.miscellaneous_account_data['AX Code'],
+          'Approval code':data?.miscellaneous_account_data['Approval code'],
+          'Phy Group':data?.miscellaneous_account_data['Phy Group'],
+          'Phy(%)':data?.miscellaneous_account_data['Phy(%)'],
+          'Sponsor Code':data?.miscellaneous_account_data['Sponsor Code'],
+          'Store Type':data?.miscellaneous_account_data['Store Type'],
+          Address: data.Address,
+          operatingUnit: data.operatingUnit,
+          approver: data.approver,
+          isActive: data.isActive,
+          costDetails: this.CostArray,
+        });
+      } else {
+        this.SpAccountDetails.patchValue({
+          Account: data.Account,
+          entityID: data.entityID,
+          serviceProviderNameAccount: data.ServiceProviderName,
+          serviceProviderID: data.serviceProviderID,
+          Email: data.Email,
+          URL: data.URL,
+          UserName: data.UserName,
+          LogSecret: data.LogSecret,
+          ScheduleDateTime: this.datePipe.transform(
+            data.account_schedule.ScheduleDateTime,
+            'yyyy-MM-dd'
+          ),
+          MeterNumber: data.MeterNumber,
+          LocationCode: data.LocationCode,
+          Address: data.Address,
+          operatingUnit: data.operatingUnit,
+          approver: data.approver,
+          isActive: data.isActive,
+          costDetails: this.CostArray,
+        });
+      }
   
       // this.sharedService.spListBoolean = false;
       this.addSpAccountBoolean = false;
