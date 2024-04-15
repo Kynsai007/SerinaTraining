@@ -1574,7 +1574,9 @@ ERPReports(bool) {
        this.success("Dear User, The Report will be sent to your email shortly.");
        this.closeDialog();
      } else {
+      this.sharedService.excelDownload(data);
       this.success("Dear User, The Report downloaded successfully.");
+      this.closeDialog();
       //  this.SOATableData = data;
      }
    },err=>{
@@ -1582,4 +1584,5 @@ ERPReports(bool) {
       this.error("Server error");
    }) 
 }
+
 }

@@ -902,6 +902,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.SpinnerService.show();
     this.sharedService.ERPReportDownload(apiParam).subscribe((data:any)=>{
       this.SpinnerService.hide();
+      this.sharedService.excelDownload(data);
        this.success("Dear User, The Report downloaded successfully.");
     },err=>{
       this.SpinnerService.hide();

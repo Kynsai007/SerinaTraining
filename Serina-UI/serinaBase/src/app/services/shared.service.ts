@@ -3,6 +3,8 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { Observable, Subject, of, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, map, retry, tap } from 'rxjs/operators';
+import * as fileSaver from 'file-saver';
+
 
 @Injectable({
   providedIn: 'root'
@@ -402,7 +404,17 @@ export class SharedService {
   }
 
   ERPReportDownload(api_param){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/SP/DownloaderpExcel/${this.userId}${api_param}`).pipe(retry(2))
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/SP/DownloaderpExcel${api_param}`,'',
+    { responseType: 'blob' }
+    ).pipe(retry(2))
+  }
+  excelDownload(data){
+    let blob: any = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    let d = new Date();
+    let datestring = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
+      d.getHours() + ":" + d.getMinutes();
+    fileSaver.saveAs(blob, `ERPReport-(${datestring})`);
   }
 
 
