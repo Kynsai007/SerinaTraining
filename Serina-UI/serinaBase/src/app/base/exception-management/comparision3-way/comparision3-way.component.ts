@@ -1170,10 +1170,10 @@ export class Comparision3WayComponent
           if (ele.TagName == 'Quantity') {
             ele.TagName = 'Inv - Quantity';
             ele.linedata?.forEach((ele2, index) => {
-              this.validatePOInvUnit.push({ invoice_itemcode: ele2.invoice_itemcode })
+              this.validatePOInvUnit.push({ invoice_itemcode: ele2?.invoice_itemcode })
               if (ele.linedata?.length <= ele.grndata?.length) {
                 ele.grndata?.forEach((ele3) => {
-                  ele.grndata[index].old_value = ele2.Value;
+                  ele.grndata[index].old_value = ele2?.Value;
                 });
               }
             });
@@ -3015,7 +3015,9 @@ export class Comparision3WayComponent
     }
   }
   sendApprovalAPI() {
+    this.SpinnerService.show();
     this.SharedService.setApprovers(JSON.stringify(this.approversSendData[0]), this.preApproveBoolean).subscribe((data: any) => {
+      this.SpinnerService.hide();
       if (data?.error_status) {
         this.error(data?.error_status)
       } else {
@@ -3026,6 +3028,7 @@ export class Comparision3WayComponent
       }
     },
       (err) => {
+        this.SpinnerService.hide();
         this.error("Server error");
       })
   }

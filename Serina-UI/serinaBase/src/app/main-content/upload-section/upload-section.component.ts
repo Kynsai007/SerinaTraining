@@ -1648,13 +1648,18 @@ export class UploadSectionComponent implements OnInit {
     }
 
   }
-  uploadSingle(val) {
-    this.addInvoiceDetailsToQueue(val);
-    setTimeout(() => {
-      if (this.APIPostData.length > 0) {
-        this.uploadAllFiles();
-      }
-    }, 100);
+  uploadSingle(bool,val) {
+    if(!bool){
+      this.addInvoiceDetailsToQueue(val);
+      setTimeout(() => {
+        if (this.APIPostData.length > 0) {
+          this.uploadAllFiles();
+        }
+      }, 100);
+    } else {
+      this.error("Dear User, please add the required details");
+    }
+
   }
   uploadAllFiles() {
     const inv_formData: any = new FormData();
@@ -1907,7 +1912,7 @@ checkSupportFile(){
 uploadCheck(event){
   if( this.lowerLimit === 1 && this.upperLimit === this.totalPages){
     if (confirm('No supporting document found, are you sure to proceed without supporting document')){
-      this.uploadSingle(event);
+      this.uploadSingle(false,event);
       this.isButtonDisabled = false;
     }
     else{
@@ -1915,7 +1920,7 @@ uploadCheck(event){
     }
   }
   else{
-    this.uploadSingle(event);
+    this.uploadSingle(false,event);
   }
 
 }

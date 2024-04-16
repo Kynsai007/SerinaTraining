@@ -11,19 +11,7 @@
   <h6 class="headh6 pl-80">{{ headerName }}</h6>
 </div> -->
 <div class="row invoice-body">
-  <div
-    class="viewPdf"
-    style="right: 147px"
-    *ngIf="
-      (editPermissionBoolean ||
-        changeApproveBoolean ||
-        financeApproveBoolean) &&
-      submitBtn_boolean &&
-      isDesktop &&
-      router.url.includes('comparision-docs') &&
-      currentTab == 'line'
-    "
-  >
+  <div class="viewPdf d-flex">
     <!-- <button
       class="btnUpload  mr-2"
       (click)="open_dialog_comp('Amend')"
@@ -32,85 +20,92 @@
     </button> -->
 
     <!-- [ngClass]="subStatusId == 75 || subStatusId == 17 ? 'bt-hlt' : ''" -->
-    <button
-      *ngIf="
-        portalName == 'customer' && (subStatusId == 75 || subStatusId == 17)
-      "
-      class="secondary_btn f-12 m-t-neg ml-2 mr-2"
-      (click)="opengrnDailog()"
-    >
-      Select GRN
-    </button>
-    <button
-      *ngIf="
-        (portalName == 'customer' && subStatusId == 8) ||
-        subStatusId == 16 ||
-        subStatusId == 17 ||
-        subStatusId == 21 ||
-        subStatusId == 27 ||
-        subStatusId == 34
-      "
-      class="secondary_btn f-12 mr-2"
-      (click)="open_dialog_comp('flip line')"
-    >
-      Flip PO
-    </button>
 
-    <button
-      *ngIf="(subStatusId == 32 || subStatusId == 40) && isAdmin"
-      class="level_3_btn f-12 mr-2"
-      (click)="status_dialog()"
+    <div
+      class="d-flex"
+      *ngIf="
+        (editPermissionBoolean ||
+          changeApproveBoolean ||
+          financeApproveBoolean) &&
+        submitBtn_boolean &&
+        isDesktop &&
+        router.url.includes('comparision-docs') &&
+        currentTab == 'line'
+      "
     >
-      Change status
+      <button
+        *ngIf="
+          portalName == 'customer' && (subStatusId == 75 || subStatusId == 17)
+        "
+        class="secondary_btn f-12 m-t-neg ml-2 mr-2"
+        (click)="opengrnDailog()"
+      >
+        Select GRN
+      </button>
+      <button
+        *ngIf="
+          portalName == 'customer' && [8,16,17,19,21,27,34].includes(subStatusId)
+        "
+        class="secondary_btn f-12 mr-2"
+        (click)="open_dialog_comp('flip line')"
+      >
+        Flip PO
+      </button>
+
+      <button
+        *ngIf="(subStatusId == 32 || subStatusId == 40) && isAdmin"
+        class="level_3_btn f-12 mr-2"
+        (click)="status_dialog()"
+      >
+        Change status
+      </button>
+    </div>
+
+    <div *ngIf="Itype == 'Invoice' && statusId != 10 && editable" class="mr-2 invType">
+      <p-autoComplete
+        [(ngModel)]="entityName"
+        (onSelect)="onSelectEntity($event, 'change')"
+        placeholder="Select Entity"
+        [suggestions]="filteredEnt"
+        (completeMethod)="filterEntity($event)"
+        field="EntityName"
+        [dropdown]="true"
+        name="entity"
+        styleClass="mr-3"
+      >
+        <ng-template let-ent pTemplate="item">
+          <div class="ent-item">
+            <div class="f-12">{{ ent.EntityName }}</div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+
+      <p-dropdown
+        (onChange)="onSelectInvType($event)"
+        [options]="invTypeList"
+        placeholder="Select invoice type"
+        name="invType"
+        [(ngModel)]="docType"
+      >
+      </p-dropdown>
+    </div>
+    <button
+      *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
+      class="primary_btn mr-2 f-12"
+      (click)="viewPdf()"
+    >
+      {{ btnText }}
     </button>
   </div>
-  <div
+  <!-- <div
     class="viewPdf"
     style="right: 100px"
     *ngIf="!isPdfAvailable && isDesktop"
   >
-    <!-- <button class="btnUpload" (click)="DownloadPDF()">
+    <button class="btnUpload" (click)="DownloadPDF()">
       <i class="fa fa-download" aria-hidden="true"></i>
-    </button> -->
-  </div>
-  <div
-    class="viewPdf"
-    *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
-  >
-    <button class="primary_btn f-12" (click)="viewPdf()">{{ btnText }}</button>
-  </div>
-  <div    
-    *ngIf="Itype == 'Invoice' && statusId != 10 && editable" 
-    class="viewPdf"
-    style="right: 140px">
-    <p-autoComplete
-      [(ngModel)]="entityName"
-      (onSelect)="onSelectEntity($event,'change')"
-      placeholder="Select Entity"
-      [suggestions]="filteredEnt"
-      (completeMethod)="filterEntity($event)"
-      field="EntityName"
-      [dropdown]="true"
-      name="entity"
-      styleClass="mr-3"
-    >
-      <ng-template let-ent pTemplate="item">
-        <div class="ent-item">
-          <div class="f-12">{{ ent.EntityName }}</div>
-        </div>
-      </ng-template>
-    </p-autoComplete>
-
-    <p-dropdown
-      (onChange)="onSelectInvType($event)"
-      [options]="invTypeList"
-      placeholder="Select invoice type"
-      name="invType"
-      [(ngModel)]="docType"
-    >
-    </p-dropdown>
-
-  </div>
+    </button>
+  </div> -->
 
   <!-- <div *ngIf="submitBtn_boolean || approveBtn_boolean && isDesktop" class="position_rule">
     <div class="placement-ruleChange f-12 bg-div-rule">
@@ -274,7 +269,7 @@
         class="nav-item ml-2"
         pTooltip="history"
         tooltipPosition="top"
-        *ngIf="approvalRejectRecord.length>0 && fin_boolean"
+        *ngIf="approvalRejectRecord.length > 0 && fin_boolean"
         (click)="changeTab('history')"
       >
         <a
@@ -287,7 +282,7 @@
           aria-selected="false"
           [ngClass]="currentTab == 'history' ? 'active' : ''"
           ><span class="fa fa-columns f-16 font_weight100"></span>History
-         </a>
+        </a>
       </li>
       <li
         *ngIf="!isServiceData && approval_selection_boolean && isLCMCompleted"
@@ -329,8 +324,9 @@
           role="tab"
           aria-controls="cost"
           aria-selected="true"
-          [ngClass]="currentTab == 'cost'? 'active': ''"
-          >Allocation</a>
+          [ngClass]="currentTab == 'cost' ? 'active' : ''"
+          >Allocation</a
+        >
       </li>
       <!-- <button class="raiseAlert" pTooltip="raise an alert" tooltipPosition="top"><i class="fa fa-exclamation-triangle"
             aria-hidden="true"></i></button> -->
@@ -511,13 +507,7 @@
               <button
                 *ngIf="
                   portalName == 'customer' &&
-                  flipEnabled &&
-                  (subStatusId == 8 ||
-                    subStatusId == 16 ||
-                    subStatusId == 17 ||
-                    subStatusId == 21 ||
-                    subStatusId == 27 ||
-                    subStatusId == 34)
+                  flipEnabled && [8,16,17,19,21,27,34].includes(subStatusId)
                 "
                 class="secondary_btn f_12 m-t-neg ml-2"
                 (click)="open_dialog_comp('flip line', '')"
@@ -1453,131 +1443,161 @@
         <!-- Cost -->
         <ng-template #cost>
           <div
-          class="tab-pane fade header_container"
-          [ngClass]="currentTab == 'cost' ? 'show active' : ''"
-          id="cost"
-          role="tabpanel"
-          aria-labelledby="cost-tab">
-          <div *ngIf="reqServiceprovider" class="displayFlex" style="display: flex; flex-direction: column;">
-            <div *ngIf="editable">
-              <div *ngFor="let row of rows; let i = index" style="display: flex; flex-direction: row;" class="head-box">
-                <div style="position: relative">
-                  <label class="label-head" >Driver Name</label>
-                  <input
-                    id="d_name_{{i}}"
-                    type="text"
-                    class="form-control mb-1 inputHeight"
-                    [(ngModel)]="row.driver_name"
-                    (input)="reqDataValidation()"
-          
-                  />
-                </div>
-                <div style="position: relative; margin-left: 20px;">
-                  <label class="label-head" >Company Name</label>
-                  <!-- <input
+            class="tab-pane fade header_container"
+            [ngClass]="currentTab == 'cost' ? 'show active' : ''"
+            id="cost"
+            role="tabpanel"
+            aria-labelledby="cost-tab"
+          >
+            <div
+              *ngIf="reqServiceprovider"
+              class="displayFlex"
+              style="display: flex; flex-direction: column"
+            >
+              <div *ngIf="editable">
+                <div
+                  *ngFor="let row of rows; let i = index"
+                  style="display: flex; flex-direction: row"
+                  class="head-box"
+                >
+                  <div style="position: relative">
+                    <label class="label-head">Driver Name</label>
+                    <input
+                      id="d_name_{{ i }}"
+                      type="text"
+                      class="form-control mb-1 inputHeight"
+                      [(ngModel)]="row.driver_name"
+                      (input)="reqDataValidation()"
+                    />
+                  </div>
+                  <div style="position: relative; margin-left: 20px">
+                    <label class="label-head">Company Name</label>
+                    <!-- <input
                     id="c_name"
                     type="text"
                     class="form-control mb-1 inputHeight"
                     [(ngModel)]="companyName"
                     (input)="reqDataValidation()"
                   /> -->
-                  <select
-                    class="form-control mb-1 inputHeight"
-                    [(ngModel)]="row.company_name"
-                    required
-                    (change)="reqDataValidation()"
+                    <select
+                      class="form-control mb-1 inputHeight"
+                      [(ngModel)]="row.company_name"
+                      required
+                      (change)="reqDataValidation()"
                     >
-                    <option value=""></option>
-                    <option value="FASTLINK">FAST LINK</option>
-                    <option value="AMGLOBAL">AM GLOBAL</option>
-                    <option value="ONTIME">ONTIME</option>
-                    <option value="INNOVATION">INNOVATION</option>
-                  </select>
-                  <!-- <button class="btn btnVender bg-btn-cancel mr-3" (click)="removeRow(i)">Remove</button> -->
+                      <option value=""></option>
+                      <option value="FASTLINK">FAST LINK</option>
+                      <option value="AMGLOBAL">AM GLOBAL</option>
+                      <option value="ONTIME">ONTIME</option>
+                      <option value="INNOVATION">INNOVATION</option>
+                    </select>
+                    <!-- <button class="btn btnVender bg-btn-cancel mr-3" (click)="removeRow(i)">Remove</button> -->
+                  </div>
+                  <div class="buttonposition">
+                    <button class="addbtn btn btn-add" (click)="addRow(i)">
+                      <mat-icon class="addicon">add_circle_outline</mat-icon>
+                    </button>
+                    <button
+                      class="addbtn btn bg-btn-cancel"
+                      (click)="removeRow(i)"
+                      [disabled]="rows.length === 1"
+                    >
+                      <mat-icon class="addicon">delete_sweep</mat-icon>
+                    </button>
+                  </div>
                 </div>
-                <div class="buttonposition">
-                  <button class="addbtn btn  btn-add" (click)="addRow(i)">
-                    <mat-icon class="addicon">add_circle_outline</mat-icon>
-                  </button>
-                  <button class="addbtn btn   bg-btn-cancel" (click)="removeRow(i)" [disabled]="rows.length === 1"><mat-icon class="addicon">delete_sweep</mat-icon></button>
+              </div>
+              <div *ngIf="!editable && !normalCostAllocation">
+                <div *ngFor="let dynamic of dynamicdata; let i = index">
+                  <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
+                  <div class="displayFlex">
+                    <div *ngFor="let item of dynamicAllocationFileds">
+                      <div style="position: relative">
+                        <label class="label-head" style="margin-bottom: -5px"
+                          >{{ item.header }}
+                        </label>
+                        <input
+                          type="text"
+                          [value]="dynamic[item.field]"
+                          [title]="dynamic[item.field]"
+                          (input)="
+                            updateEditedValue(
+                              dynamic.iddynamiccostallocation,
+                              item.field,
+                              $event.target.value
+                            )
+                          "
+                          class="form-control mb-1 inputHeight"
+                          [readonly]="
+                            item.field === 'iddynamiccostallocation' ||
+                            item.field === 'documentID'
+                          "
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div *ngIf="!editable && !normalCostAllocation">
-              <div *ngFor="let dynamic of dynamicdata; let i = index">
-                <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
-                <div class="displayFlex">
-                  <div *ngFor="let item of dynamicAllocationFileds">
-                    <div style="position: relative">
-                      <label class="label-head" style="margin-bottom: -5px"
-                            >{{ item.header }}             
-                      </label>
-                          <input
-                            type="text"
-                            [value]="dynamic[item.field]"
-                            [title]="dynamic[item.field]"
-                            (input)="updateEditedValue(dynamic.iddynamiccostallocation, item.field, $event.target.value)"
-                            class="form-control mb-1 inputHeight"
-                            [readonly]="item.field === 'iddynamiccostallocation' || item.field === 'documentID'" 
-                          />
+
+            <div *ngIf="!reqServiceprovider">
+              <div *ngIf="normalCostAllocation">
+                <div *ngFor="let a of costAllocation; let i = index">
+                  <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
+                  <div class="displayFlex">
+                    <div *ngFor="let b of allocationFileds">
+                      <div style="position: relative" class="input_container">
+                        <label class="label-head" style="margin-bottom: -5px"
+                          >{{ b.header }}
+                        </label>
+                        <input
+                          #inputv
+                          type="text"
+                          [value]="a[b.field]"
+                          [title]="a[b.field]"
+                          disabled
+                          class="form-control inv_inp_cls"
+                        />
+                      </div>
                     </div>
                   </div>
-                  
                 </div>
               </div>
+              <div *ngIf="!normalCostAllocation">
+                <div *ngFor="let dynamic of dynamicdata; let i = index">
+                  <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
+                  <div class="displayFlex">
+                    <div *ngFor="let item of dynamicAllocationFileds">
+                      <div style="position: relative" class="input_container">
+                        <label class="label-head" style="margin-bottom: -5px"
+                          >{{ item.header }}
+                        </label>
+                        <input
+                          type="text"
+                          [value]="dynamic[item.field]"
+                          [title]="dynamic[item.field]"
+                          (input)="
+                            updateEditedValue(
+                              dynamic.iddynamiccostallocation,
+                              item.field,
+                              $event.target.value
+                            )
+                          "
+                          class="form-control inv_inp_cls"
+                          [readonly]="
+                            item.field === 'iddynamiccostallocation' ||
+                            item.field === 'documentID'
+                          "
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <ngx-json-viewer [json]="JsonData" [depth]="3"></ngx-json-viewer>
             </div>
           </div>
-          
-          <div *ngIf="!reqServiceprovider">
-            <div *ngIf="normalCostAllocation">
-              <div *ngFor="let a of costAllocation; let i = index">
-                <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
-                <div class="displayFlex">
-                  <div *ngFor="let b of allocationFileds" >
-                    <div style="position: relative" class="input_container">
-                      <label class="label-head" style="margin-bottom: -5px"
-                        >{{ b.header }}             </label>
-                      <input
-                        #inputv
-                        type="text"
-                        [value]="a[b.field]"
-                        [title]="a[b.field]"
-                        disabled
-                        class="form-control inv_inp_cls"
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-              </div>
-            </div>
-            <div *ngIf="!normalCostAllocation">
-              <div *ngFor="let dynamic of dynamicdata; let i = index">
-                <h6 class="f-12 cost_head">Cost Allocation - {{i+1}} </h6>
-                <div class="displayFlex">
-                  <div *ngFor="let item of dynamicAllocationFileds">
-                    <div style="position: relative" class="input_container">
-                      <label class="label-head" style="margin-bottom: -5px"
-                            >{{ item.header }}             
-                      </label>
-                          <input
-                            type="text"
-                            [value]="dynamic[item.field]"
-                            [title]="dynamic[item.field]"
-                            (input)="updateEditedValue(dynamic.iddynamiccostallocation, item.field, $event.target.value)"
-                            class="form-control inv_inp_cls"
-                            [readonly]="item.field === 'iddynamiccostallocation' || item.field === 'documentID'" 
-                          />
-                    </div>
-                  </div>
-                  
-                </div>
-              </div>
-            </div>
-            
-            <ngx-json-viewer [json]="JsonData" [depth]="3"></ngx-json-viewer>
-          </div>
-        </div>
         </ng-template>
 
         <!--PO lines-->
@@ -1724,13 +1744,13 @@
         </ng-template>
 
         <ng-template #history>
-            <div
-              class="tab-pane fade reject_comment"
-              [ngClass]="currentTab == 'history' ? 'show active' : ''"
-              id="support"
-              style="position: relative"
-            >
-              <!-- <table class="reject_comment"> 
+          <div
+            class="tab-pane fade reject_comment"
+            [ngClass]="currentTab == 'history' ? 'show active' : ''"
+            id="support"
+            style="position: relative"
+          >
+            <!-- <table class="reject_comment"> 
                 <tr><th>S.No</th><th>Rejected By</th><th>Comments</th></tr>
                 <tr *ngFor="let item of approvalRejectRecord;let i = index;">
                   <td>{{i+1}}</td>
@@ -1738,49 +1758,57 @@
                   <td>{{item.DocumentHistoryLogs.documentdescription}}</td>
                 </tr>
               </table> -->
-              <span *ngFor="let item of approvalRejectRecord; let i = index">
-                <span
-                  [ngStyle]="{
-                    visibility: item.DocumentHistoryLogs.CreatedOn
-                      ? 'visible'
-                      : 'hidden'
-                  }"
-                  class="date_box"
-                >
-                  <span *ngIf="item.DocumentHistoryLogs.CreatedOn">{{
-                    item.DocumentHistoryLogs?.CreatedOn + "Z"  | date: "medium"
-                  }}</span>
-                </span>
-                <span
-                  class="circles"
-                ></span>
-                <!-- <span class="material-icons circles" [class.active]="((orderStatus == item.dochistorystatus) && (i == statusData.length-1))">
+            <span *ngFor="let item of approvalRejectRecord; let i = index">
+              <span
+                [ngStyle]="{
+                  visibility: item.DocumentHistoryLogs.CreatedOn
+                    ? 'visible'
+                    : 'hidden'
+                }"
+                class="date_box"
+              >
+                <span *ngIf="item.DocumentHistoryLogs.CreatedOn">{{
+                  item.DocumentHistoryLogs?.CreatedOn + "Z" | date : "medium"
+                }}</span>
+              </span>
+              <span class="circles"></span>
+              <!-- <span class="material-icons circles" [class.active]="((orderStatus == item.dochistorystatus) && (i == statusData.length-1))">
                             check_circle
                         </span> -->
-        
-                <div
-                  class="circle-desc"
-                >
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <div>
-                        <span class="f-12"><span *ngIf="item.DocumentHistoryLogs?.documentSubStatusID == 82" style="color:red">Rejection </span>Done by</span> :
-                        <span style="font-weight: 500"
-                          >{{ item.firstName }} {{ item.lastName }}</span
-                        >
-                      </div>
-                      <div *ngIf="item.DocumentHistoryLogs.documentdescription">
-                        <span class="f-12">Description</span> :
-                        <span style="font-weight: 500">{{
-                          item.DocumentHistoryLogs.documentdescription
-                        }}</span>
-                      </div>
+
+              <div class="circle-desc">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div>
+                      <span class="f-12"
+                        ><span
+                          *ngIf="
+                            item.DocumentHistoryLogs?.documentSubStatusID == 82
+                          "
+                          style="color: red"
+                          >Rejection </span
+                        >Done by</span
+                      >
+                      :
+                      <span style="font-weight: 500"
+                        >{{ item.firstName }} {{ item.lastName }}</span
+                      >
+                    </div>
+                    <div *ngIf="item.DocumentHistoryLogs.documentdescription">
+                      <span class="f-12">Description</span> :
+                      <span style="font-weight: 500">{{
+                        item.DocumentHistoryLogs.documentdescription
+                      }}</span>
                     </div>
                   </div>
                 </div>
-                <span class="bar" *ngIf="i != approvalRejectRecord.length - 1"></span>
-              </span>
-            </div>
+              </div>
+              <span
+                class="bar"
+                *ngIf="i != approvalRejectRecord.length - 1"
+              ></span>
+            </span>
+          </div>
         </ng-template>
 
         <!--Approval Selection-->
@@ -1800,7 +1828,10 @@
             style="position: relative"
           >
             <div *ngIf="selectionTabBoolean" class="selection_Div">
-              <div class="d-flex justify-content-between flex-wrap f-12" style="gap: 10px;">
+              <div
+                class="d-flex justify-content-between flex-wrap f-12"
+                style="gap: 10px"
+              >
                 <div class="input_box">
                   <label class="mb-0">Select Entity</label>
                   <select
@@ -1971,20 +2002,22 @@
             <button
               *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
-              (click)="approval_selection_boolean && isLCMCompleted ? onSubmitApprovers():approveChangesBatch()"
+              (click)="
+                approval_selection_boolean && isLCMCompleted
+                  ? onSubmitApprovers()
+                  : approveChangesBatch()
+              "
             >
               Next
             </button>
 
             <button
-            *ngIf="fin_boolean"
-            class="primary_btn f-12"
-            (click)="financeApprove()"
-          >
-            Approve
-          </button>
-
-
+              *ngIf="fin_boolean"
+              class="primary_btn f-12"
+              (click)="financeApprove()"
+            >
+              Approve
+            </button>
           </div>
 
           <div *ngIf="grnCreateBoolean && isGRNDataLoaded" class="m_r_80">
@@ -2382,7 +2415,10 @@
             </tr>
           </table>
         </div>
-        <div *ngIf="selected_GRN_total" class="d-flex justify-content-between total_grn f-12">
+        <div
+          *ngIf="selected_GRN_total"
+          class="d-flex justify-content-between total_grn f-12"
+        >
           <div>Total</div>
           <div>{{ selected_GRN_total }}</div>
         </div>
@@ -2532,9 +2568,10 @@
   [resizable]="false"
 >
   <div>
-    <div 
+    <div
       class="input_box mb-2"
-      *ngIf="rejectModalHeader == 'ADD Rejection Comments' && fin_boolean">
+      *ngIf="rejectModalHeader == 'ADD Rejection Comments' && fin_boolean"
+    >
       <label class="f-12 mb-0">Please select the user to reject</label>
       <select
         name="reject_user"
@@ -2656,7 +2693,10 @@
         Send for Rejection
       </button>
     </div>
-    <div class="d-flex justify-content-end"  *ngIf="rejectModalHeader != 'ADD Rejection Comments'">
+    <div
+      class="d-flex justify-content-end"
+      *ngIf="rejectModalHeader != 'ADD Rejection Comments'"
+    >
       <button
         *ngIf="preApproveBoolean"
         type="button"

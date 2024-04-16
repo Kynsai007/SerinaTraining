@@ -194,7 +194,7 @@
           </button>
         </div>
         <div class="filter_box export" style="max-width: 100px;" *ngIf="route.url.includes('allInvoices') || route.url.includes('archived') || route.url.includes('rejected')">
-          <button class="primary_btn f-12" (click)="openSOADialog('soa')"> SOA Report </button>
+          <button class="primary_btn f-12" (click)="openSOADialog('soa')"> SOA </button>
         </div>
         <div class="filter_box export" style="max-width: 100px;" *ngIf="route.url.includes('ServiceInvoices') && ERPName == 'Dynamics AX' ">
           <button class="primary_btn f-12" (click)="openSOADialog('ERP')"> Report </button>

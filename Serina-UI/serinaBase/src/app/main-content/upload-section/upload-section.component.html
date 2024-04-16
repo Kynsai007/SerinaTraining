@@ -1020,10 +1020,8 @@
               </button>
               <button
                 class="primary_btn f-12"
-                [disabled]="quickUploadForm.invalid"
-                [ngClass]=" quickUploadForm.invalid ? 'disable' : ''"
                 type="button"
-                (click)="uploadInvoicesListData?.length > 1 ? uploadAllFiles(): uploadSingle(quickUploadForm.value)"
+                (click)="uploadInvoicesListData?.length > 1 ? uploadAllFiles(): uploadSingle(quickUploadForm.invalid,quickUploadForm.value)"
               >
                 Upload
               </button>
