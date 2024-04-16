@@ -185,6 +185,7 @@ export class Comparision3WayComponent
   poDocId: any;
   po_num: any;
   subStatusId: any;
+  statusId:number;
   isAmtStr: boolean;
   flipEnabled: boolean;
   partytype: string;
@@ -333,7 +334,7 @@ export class Comparision3WayComponent
   commentsBool: boolean = true;
   selected_GRN_total: number;
 
-  userList_approved = [{firstName: "Vendor",idUser: 0,lastName: ""}]
+  userList_approved = [];
   rejectionUserId: number = 0;
   approvalRejectRecord = [];
   message: any;
@@ -549,6 +550,7 @@ export class Comparision3WayComponent
     this.financeapproveDisplayBoolean =
       this.settingService.finaceApproveBoolean;
     this.subStatusId = this.dataService.subStatusId;
+    this.statusId = this.dataService.statusId;
     this.routeOptions();
     if(this.fin_boolean){
       this.getRejectionComments();
@@ -1272,7 +1274,7 @@ export class Comparision3WayComponent
           }, 10);
         });
         this.lineDisplayData = dummyLineArray;
-
+        this.getInvTypes();
         setTimeout(() => {
           this.lineDisplayData = this.lineDisplayData.filter((v) => {
             return !(
@@ -2123,10 +2125,17 @@ export class Comparision3WayComponent
   }
 
   getApprovedUserList(){
+    this.userList_approved = [];
+    this.SpinnerService.show();
     this.exceptionService.getApprovedUsers().subscribe((data:any)=>{
-      data?.result?.forEach(el=>{
-        this.userList_approved.push(el);
-      });
+      this.userList_approved.push({firstName: "Vendor",idUser: 0,lastName: ""});
+
+      if(typeof(data?.result) != "string"){
+        data?.result?.forEach(el=>{
+          this.userList_approved.push(el);
+        });
+      }
+      this.SpinnerService.hide();
     })
   }
   selectUserForReject(event){
@@ -3406,10 +3415,12 @@ export class Comparision3WayComponent
   getInvTypes(){
     this.exceptionService.getInvTypes().subscribe((data:any)=>{
       this.invTypeList = data.data;
-      this.invTypeList.forEach(el=>{
+      data.data.forEach(el=>{
         if(el.toLowerCase() == this.docType ){
-          this.docType = el;
-          console.log(this.docType)
+            this.docType = el;
+        }
+        if(this.docType == 'credit'){
+          this.docType = 'Single PO'
         }
       })
     })

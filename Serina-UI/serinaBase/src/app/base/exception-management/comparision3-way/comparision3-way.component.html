@@ -79,7 +79,8 @@
   >
     <button class="primary_btn f-12" (click)="viewPdf()">{{ btnText }}</button>
   </div>
-  <div     
+  <div    
+    *ngIf="Itype == 'Invoice' && statusId != 10 && editable" 
     class="viewPdf"
     style="right: 140px">
     <p-autoComplete

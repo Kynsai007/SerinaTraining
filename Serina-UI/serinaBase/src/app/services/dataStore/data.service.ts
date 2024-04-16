@@ -219,6 +219,7 @@ export class DataService {
   approval_uniSearch: any;
   approvalPageNumberSP: any;
   SP_aprve_uniSearch: string;
+  statusId: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
