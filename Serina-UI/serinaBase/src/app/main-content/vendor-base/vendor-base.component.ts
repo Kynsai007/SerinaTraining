@@ -51,7 +51,7 @@ export class VendorBaseComponent implements OnInit {
     private chartService: ChartsService,
     private exceptionService: ExceptionsService,
     private serviceproviderService : ServiceInvoiceService,
-    private DS : DataService,
+    public DS : DataService,
     private renderer: Renderer2,
     private mat_dlg: MatDialog) { 
       this.subscription = this.SharedService.getMessage().subscribe(message => {

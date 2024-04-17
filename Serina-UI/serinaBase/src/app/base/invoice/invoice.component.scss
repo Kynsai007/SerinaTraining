@@ -324,10 +324,7 @@ dialog {
   width: 90vw;
   transform: translatey(4%);
 }
-dialog::backdrop {
-  background-color: hsla(240, 2%, 10%, 0.651);
-  opacity: 0.5;
-}
+
 dialog .inputBox {
   width: 100%;
   background: #f3f3f3;

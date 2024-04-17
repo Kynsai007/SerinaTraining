@@ -109,7 +109,7 @@
       [ngClass]="tabName == 'vendor' ? 'show active' : ''"
       id="vendor"
     >
-      <div class="filter mt-2">
+      <div class="filter mt-2 d-flex justify-content-between">
         <label for="uni" class="f-12">
           Search Universal <br />
           <input
@@ -119,15 +119,23 @@
             class="textFilter f-13"
             placeholder="Ex: By Vendor, By Entity"
           />
+
         </label>
+        <button class="secondary_btn mt-1" (click)="filterString(searchTextVendor)">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
       </div>
       <hr />
 
       <!-- vendors -->
-      <div *ngIf="tabName == 'vendor'" class="card_container mt-2">
+      <div *ngIf="tabName == 'vendor'" class="card_container mt-2 scroll"    
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [scrollWindow]="false"
+      (scrolled)="onScroll()">
         <div
           class="card"
-          *ngFor="let vendor of vendors_list | filter : searchTextVendor"
+          *ngFor="let vendor of vendors_list"
           (click)="onChange(vendor)"
           [ngStyle]="{
             'background-color':

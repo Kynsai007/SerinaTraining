@@ -205,11 +205,12 @@ export class LoginPageComponent implements OnInit {
 
   getInstancedata(){
     this.settingService.readConfig().subscribe((resp:any)=>{
-      this.instanceInfo = {...resp.InstanceModel,...resp.ERPModel };
+      this.instanceInfo = {...resp.InstanceModel,...resp.ERPModel,...resp.ClientModel };
       // this.dataStoreService.configData.flipBool = true;
       this.dataStoreService.configData = this.instanceInfo ;
       this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
       this.vendorInvoiceAccess = this.instanceInfo?.vendorInvoices;
+
     })
   }
   loginMS(){
@@ -252,6 +253,7 @@ export class LoginPageComponent implements OnInit {
           this.error = "";
           this.loading = false;
           this.getIPAddress();
+
             if(this.instanceInfo?.enable2fa){
               if(data["status"]){
                 this.loginsuccess = true;

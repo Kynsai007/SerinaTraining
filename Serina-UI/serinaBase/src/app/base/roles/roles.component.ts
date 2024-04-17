@@ -5,10 +5,6 @@ import { Location } from '@angular/common';
 import { PermissionService } from './../../services/permission.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import {
-  MessageService,
-  PrimeNGConfig,
-} from 'primeng/api';
 import { SharedService } from 'src/app/services/shared.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
@@ -158,12 +154,6 @@ export class RolesComponent implements OnInit {
 
   deleteBtnText: string;
 
-  updateObject = {
-    severity: 'info',
-    summary: 'Updated',
-    detail: 'Updated Successfully',
-  };
-
   viewType = 'user';
   updateroleData;
   appied_permission_def_id: number;
@@ -260,7 +250,6 @@ export class RolesComponent implements OnInit {
 
   constructor(
     private dataService: DataService,
-    private messageService: MessageService,
     private sharedService: SharedService,
     private router: Router,
     public routeIn: ActivatedRoute,
@@ -268,7 +257,6 @@ export class RolesComponent implements OnInit {
     private SpinnerService: NgxSpinnerService,
     private _location: Location,
     private settingsService: SettingsService,
-    private primengConfig: PrimeNGConfig,
     private Alert : AlertService,
     private mat_dlg : MatDialog
   ) {
@@ -300,7 +288,6 @@ export class RolesComponent implements OnInit {
     if (this.permissionService.addUsersBoolean == true) {
       this.router.navigate(['/customer/roles', 'createdUsers']);
       this.someParameterValue = 'createdUsers';
-      this.primengConfig.ripple = true;
       this.DisplayCustomerUserDetails();
       this.toGetEntity();
       this.getDisplayTotalRoles();
@@ -570,7 +557,7 @@ export class RolesComponent implements OnInit {
       .subscribe(
         (data: any) => {
           if (data.result) {
-            this.messageService.add(this.updateObject);
+            this.successAlert("Updated successfully");
             this.getDisplayTotalRoles();
             this.normalRole = true;
             this.CreateNewRole = false;
@@ -1062,7 +1049,7 @@ export class RolesComponent implements OnInit {
           }
           this.DisplayCustomerUserDetails();
           this.entityBaseApproveBoolean = false;
-          this.messageService.add(this.updateObject);
+          this.successAlert("Updated successfully");
 
           this.normalRole = true;
           this.CreateNewRole = false;
@@ -1432,7 +1419,7 @@ export class RolesComponent implements OnInit {
       if(this.approveDialog){
         this.successAlert("Account Activation Done.");
       } else {
-        this.messageService.add(this.updateObject);
+        this.successAlert("Updated successfully");
         this.displayAddUserDialog = false;
         this.getVendorSuperUserList();
       }

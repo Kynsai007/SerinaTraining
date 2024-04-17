@@ -42,6 +42,10 @@
 .card:hover {
     background: #EAF3F9 0% 0% no-repeat padding-box;
 }
+.scroll {
+    height: calc(100svh - 255px);
+    overflow: auto;
+}
 @media (min-width: 768px){
     .col-md-9 {
         flex: 0 0 70%;

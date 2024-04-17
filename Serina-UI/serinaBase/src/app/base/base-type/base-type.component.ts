@@ -84,7 +84,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     public router: Router,
     private SharedService: SharedService,
     private permissionService: PermissionService,
-    private dataStoreService: DataService,
+    public dataStoreService: DataService,
     private settingService: SettingsService,
     private serviceBased: ServiceInvoiceService,
     private exceptionService: ExceptionsService,

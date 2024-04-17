@@ -202,13 +202,13 @@ export class VendorComponent implements OnInit, AfterViewInit {
   }
   filtersForAPI(limit) {
     if (this.selectedEntityId != 'All' && this.selectedEntityId) {
-      this.APIParams = `?ent_id=${this.selectedEntityId}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=${this.partyType}&ent_id=${this.selectedEntityId}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     }else if (this.vendorNameForSearch && this.vendorNameForSearch != '') {
-      this.APIParams = `?ven_code=${this.vendorNameForSearch}&offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=${this.partyType}&ven_code=${this.vendorNameForSearch}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     } else {
-      this.APIParams = `?offset=${this.dataService.offsetCount}&limit=${limit}`;
+      this.APIParams = `?partyType=${this.partyType}&offset=${this.dataService.offsetCount}&limit=${limit}`;
       this.DisplayVendorDetails(this.APIParams);
     }
   }
@@ -218,12 +218,12 @@ export class VendorComponent implements OnInit, AfterViewInit {
       first: this.fst,
       rows : 50
     }
-    if(!this.isDesktop){
-       this.paginate(evnt);
-       console.log('scrolled, Mobile mode');
-    } else {
-      console.log('Desktop mode');
-    }
+    // if(!this.isDesktop){
+    this.paginate(evnt);
+    //    console.log('scrolled, Mobile mode');
+    // } else {
+    //   console.log('Desktop mode');
+    // }
   }
   onTabChange(str) {
     this.tabName = str;
