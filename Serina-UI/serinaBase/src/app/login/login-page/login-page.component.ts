@@ -114,16 +114,10 @@ export class LoginPageComponent implements OnInit {
       password: ['', Validators.required]
     });
 
-    // if(){
-    //   if(this.User_type === 'customer_portal'){
-    //     this.router.navigate(['/customer']);
-    //   } else if(this.User_type === 'vendor_portal'){
-    //     this.router.navigate(['/vendorPortal']);
-    //   }
-    // }
-
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
+
   }
+
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
   }
@@ -210,7 +204,11 @@ export class LoginPageComponent implements OnInit {
       this.dataStoreService.configData = this.instanceInfo ;
       this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
       this.vendorInvoiceAccess = this.instanceInfo?.vendorInvoices;
-
+      if(this.dataStoreService?.configData?.client_name == 'Cenomi'){
+        this.dataStoreService.changeTheme("#20113E",'#ffffff');
+      } else {
+        this.dataStoreService.changeTheme("#358dc0",'#140101');
+      }
     })
   }
   loginMS(){

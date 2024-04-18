@@ -59,7 +59,7 @@
 
 
 
-
+$theme_color: var(--themeColor);
 
 // new theme designs
 .layout {
@@ -96,8 +96,8 @@
 }
 .active_cls {
   opacity: 1 !important;
-  border-bottom: 2px solid #358DC0;
-  color: #358dc0 !important;
+  border-bottom: 2px solid $theme_color;
+  color: $theme_color !important;
 }
 .active_sub_cls{
   border-bottom: 2px solid #ffffff;
@@ -122,7 +122,7 @@
 .short_name {
   height: 30px;
   width: 30px;
-  background-color: #358DC0;
+  background-color: $theme_color;
   color: #ffffff;
   border-radius: 50%;
   text-transform: uppercase;

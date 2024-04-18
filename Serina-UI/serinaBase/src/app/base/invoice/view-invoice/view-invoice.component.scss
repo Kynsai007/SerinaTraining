@@ -1,3 +1,5 @@
+$theme_color: var(--themeColor);
+
 .zoom {
   background-color: #ffffff;
   border-radius: 5px;
@@ -605,11 +607,11 @@ a {
   }
   .nav-tabs .nav-link.active,
   .nav-tabs .nav-item.show .nav-link {
-      color: #358DC0 !important;
+      color: $theme_color !important;
       font-size: 14px;
       background-color: white !important;
       font-weight: 600;
-      border-bottom: 2px solid #358DC0 !important;
+      border-bottom: 2px solid $theme_color !important;
       border-radius: 0 !important;
       position: relative;
       top: -1px;
@@ -786,7 +788,7 @@ a {
   padding-bottom: 7px;
   width: 130px;
   height: 34px;
-  background-color: #358DC0;
+  background-color: $theme_color;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -845,7 +847,7 @@ a {
   padding-right: 33px;
   width: 117px;
   height: 34px;
-  background-color: #358DC0;
+  background-color: $theme_color;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -881,8 +883,8 @@ button.submitButton:disabled {
 }
 
 .tabs span.active {
-  border-bottom: 2px solid #358DC0;
-  color: #358DC0;
+  border-bottom: 2px solid $theme_color;
+  color: $theme_color;
 }
 .close-icon {
   position: absolute;
@@ -899,7 +901,7 @@ button.submitButton:disabled {
   padding-right: 5px;
 }
 // .submitButton{
-//   background-color: #358DC0;
+//   background-color: $theme_color;
 //   padding: 10px;
 // }
 .percentage{

@@ -263,11 +263,8 @@
 <div class="layout">
   <nav class="desktop d-flex justify-content-between">
     <div class="d-flex" style="gap: 60px;">
-      <div  *ngIf="DS.configData.client_name == 'Cenomi'">
-        <img src="assets/Serina Assets/new_theme/cenomiLogo.png" alt="Serina logo"  class="otherBrand"/>
-      </div>
-      <div  *ngIf="DS.configData.client_name != 'Cenomi'">
-        <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" class="Serina" />
+      <div>
+        <img [src]="logoSrc" alt="Serina logo"  [ngClass]="DS.configData.client_name == 'Cenomi'? 'otherBrand':'Serina'"/>
       </div>
       <div class="navLinks d-flex justify-content-between" *ngIf="!isNewVendorForERP">
           <div

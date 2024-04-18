@@ -262,4 +262,9 @@ export class DataService {
       return false;
     });
   }
+
+  changeTheme(primary: string, secondary: string) {
+    document.documentElement.style.setProperty('--themeColor', primary);
+    document.documentElement.style.setProperty('--textWColor', secondary);
+  }
 }

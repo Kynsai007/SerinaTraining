@@ -1,3 +1,5 @@
+$theme_color: var(--themeColor);
+
 .tb_div {
     max-height: 66vh;
     overflow: auto;
@@ -18,7 +20,7 @@
 }
 .total_table tr:nth-child(1) {
   height: 30px;
-  background: #358dc0;
+  background: $theme_color;
 }
 .total_table tr:nth-child(2){
   height: 30px;

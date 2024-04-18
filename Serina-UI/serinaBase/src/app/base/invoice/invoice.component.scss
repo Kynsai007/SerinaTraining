@@ -1,6 +1,8 @@
 @import "src/styles/sharedDocstyle";
 @include sharedDoc;
 
+$theme_color: var(--themeColor);
+
 :host ::ng-deep .p-sidebar {
   background: #272727;
   color: #f2be42;
@@ -351,7 +353,7 @@ dialog .footer {
     padding: 20px 0px;
 }
 .activeClass {
-  background-color: #358dc0 !important;
+  background-color: $theme_color !important;
   color: white;
 }
 .pointer .fa-close {

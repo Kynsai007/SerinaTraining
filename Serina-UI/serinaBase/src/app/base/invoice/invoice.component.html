@@ -61,8 +61,8 @@
       <ul class="nav nav-tabs d-flex  nav_sub" [class.reversed]="!vendorInvoiceAccess">
         <li class="nav-item" *ngIf="vendorInvoiceAccess">
           <a
-            [ngClass]="route.url == invoiceTab ? 'active' : ''"
-            class="nav-link shade_color"
+            [ngClass]="route.url == invoiceTab ? 'active' : 'shade_color'"
+            class="nav-link "
             (click)="menuChange('invoice')"
             >Invoice({{ allInvoiceLength }})
             <i
@@ -74,32 +74,32 @@
         </li>
         <li class="nav-item" *ngIf="vendorInvoiceAccess">
           <a
-            [ngClass]="route.url == POTab ? 'active' : ''"
-            class="nav-link shade_color"
+            [ngClass]="route.url == POTab ? 'active' : 'shade_color'"
+            class="nav-link "
             (click)="menuChange('po')"
             >PO({{ poArrayLength }})</a
           >
         </li>
         <li class="nav-item" *ngIf="vendorInvoiceAccess">
           <a
-            [ngClass]="route.url == GRNTab ? 'active' : ''"
-            class="nav-link shade_color"
+            [ngClass]="route.url == GRNTab ? 'active' : 'shade_color'"
+            class="nav-link "
             (click)="menuChange('grn')"
             >GRN({{ GRNArrayLength }})</a
           >
         </li>
         <li class="nav-item">
           <a
-            [ngClass]="route.url == archivedTab ? 'active' : ''"
-            class="nav-link shade_color"
+            [ngClass]="route.url == archivedTab ? 'active' : 'shade_color'"
+            class="nav-link "
             (click)="menuChange('archived')"
             >Posted({{ archivedLength }})</a
           >
         </li>
         <li class="nav-item">
           <a
-            [ngClass]="route.url == rejectedTab ? 'active' : ''"
-            class="nav-link shade_color"
+            [ngClass]="route.url == rejectedTab ? 'active' : 'shade_color'"
+            class="nav-link "
             (click)="menuChange('rejected')"
             >Rejected({{ rejectedLength }})</a
           >
@@ -108,8 +108,8 @@
         <li class="nav-item service" *ngIf="usertypeBoolean  && serviceInvoiceAccess"
         >
           <a
-            [ngClass]="route.url == serviceInvoiceTab ? 'active' : ''"
-            class="nav-link ite shade_color"
+            [ngClass]="route.url == serviceInvoiceTab ? 'active' : 'shade_color'"
+            class="nav-link ite "
             (click)="menuChange('ServiceInvoices')"
             >Service Invoices({{ serviceInvoiceLength }})
             <i

@@ -1,6 +1,8 @@
 @import "src/styles/documentsStyles";
 @include document;
 
+$theme_color: var(--themeColor);
+
 :host ::ng-deep {
   .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
     font-size: 12px;
@@ -245,7 +247,7 @@
   z-index: 125;
   display: none;
   border-radius: 5px;
-  background-color: #358dc0;
+  background-color: $theme_color;
   color: white;
   width: 200px;
   padding: 1px 10px;
@@ -348,7 +350,7 @@
   top: -2px;
 }
 .active_count {
-  background: #358dc0 !important;
+  background: $theme_color !important;
   color: #ffffff !important;
 }
 .highlt {

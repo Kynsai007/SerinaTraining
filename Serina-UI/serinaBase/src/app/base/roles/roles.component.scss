@@ -1,3 +1,5 @@
+$theme_color: var(--themeColor);
+
 .rolespage{
     overflow: hidden;
     max-height: 100vh;
@@ -643,7 +645,7 @@ td{
     height: 43px;
 }
 input:checked + .slider {
-    background-color: #358DC0;
+    background-color: $theme_color;
 }
 .switch {
     width: 34px;

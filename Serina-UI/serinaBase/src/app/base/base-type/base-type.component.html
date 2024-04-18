@@ -632,12 +632,12 @@
 <div class="layout">
   <nav class="desktop d-flex justify-content-between">
     <div class="d-flex" style="gap: 64px">
-      <div  *ngIf="dataStoreService.configData.client_name == 'Cenomi'">
-        <img src="assets/Serina Assets/new_theme/cenomiLogo.png" alt="Serina logo"  class="otherBrand"/>
+      <div>
+        <img [src]="logoSrc" alt="Serina logo"  [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'otherBrand':'Serina'"/>
       </div>
-      <div  *ngIf="dataStoreService.configData.client_name != 'Cenomi'">
+      <!-- <div  *ngIf="dataStoreService.configData.client_name != 'Cenomi'">
         <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" class="Serina" />
-      </div>
+      </div> -->
       <div class="navLinks d-flex justify-content-between">
         <div
           class="nav_Link f-14"

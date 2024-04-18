@@ -1,6 +1,8 @@
 @mixin auth {
   :host {
     // The styles you want to share
+    $theme_color: var(--themeColor);
+    $hover_color: var(--textWColor);
 
     .menu_icon {
       position: absolute;
@@ -190,7 +192,7 @@
       // display: none;
       top: 55px;
       position: absolute;
-      background-color: #358DC0;
+      background-color: $theme_color;
       min-width: 160px;
       box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.1);
       z-index: 109;
@@ -229,7 +231,7 @@
     .dropdown-content a:hover {
       background-color: #358dc033;
       border-radius: 0;
-      color: #333 !important;
+      color: $hover_color !important;
       opacity: 1;
     }
     .dropdown-content a:hover::after {

@@ -1,3 +1,5 @@
+$theme_color: var(--themeColor);
+
 .img-wrapper {
   width: 40px;
   height: 40px;
@@ -84,7 +86,7 @@
   background: #d3d3d3;
 }
 .line {
-  color: #358dc0;
+  color: $theme_color;
 }
 .line_text {
   color: #140101;

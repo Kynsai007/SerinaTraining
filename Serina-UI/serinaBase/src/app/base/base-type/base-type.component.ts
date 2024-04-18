@@ -79,6 +79,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   isOpen_apr:boolean;
   approveBoolean: boolean;
   serviceApprovalsEnabled:boolean = true;
+  logoSrc: string;
 
   constructor(
     public router: Router,
@@ -108,6 +109,13 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.dataStoreService.configData = JSON.parse(sessionStorage.getItem('configData'));
     this.dataStoreService.ap_boolean = JSON.parse(sessionStorage.getItem('ap_boolean'));
     this.portalName = this.dataStoreService.portalName;
+    if(this.dataStoreService.configData.client_name == 'Cenomi'){
+      this.logoSrc = 'assets/Serina Assets/new_theme/cenomiLogo.png';
+      this.dataStoreService.changeTheme("#20113E",'#ffffff');
+    } else {
+      this.dataStoreService.changeTheme("#358dc0",'#140101');
+      this.logoSrc = 'assets/Serina Assets/new_theme/logo.png';
+    }
     if(!this.dataStoreService.configData){
       this.readConfig();
     }

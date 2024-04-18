@@ -40,6 +40,7 @@ export class VendorBaseComponent implements OnInit {
   name_short: string;
   isTableView: boolean;
   isNewVendorForERP:boolean;
+  logoSrc: string;
   
   constructor(private router:Router,
     private settingService : SettingsService,
@@ -73,6 +74,13 @@ export class VendorBaseComponent implements OnInit {
     this.chartService.docType = 3;
     this.SharedService.docType = 3;
     this.ap_boolean = this.DS.ap_boolean;
+    if(this.DS.configData.client_name == 'Cenomi'){
+      this.logoSrc = 'assets/Serina Assets/new_theme/cenomiLogo.png';
+      this.DS.changeTheme("#20113E",'#ffffff');
+    } else {
+      this.DS.changeTheme("#358dc0",'#140101');
+      this.logoSrc = 'assets/Serina Assets/new_theme/logo.png';
+    }
     if(!this.DS.configData){
       this.readConfig();
     }

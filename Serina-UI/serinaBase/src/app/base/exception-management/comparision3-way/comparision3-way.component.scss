@@ -1,3 +1,5 @@
+$theme_color: var(--themeColor);
+
 .btnFooter-sm {
   position: absolute;
   bottom: 3%;
@@ -154,7 +156,7 @@
   margin-right: 20px;
 }
 .po_bg_clr::before {
-  background-color: #358DC0;
+  background-color: $theme_color;
   color: white;
 }
 .in_bg_clr::before {
@@ -350,7 +352,7 @@
     background-color: #ffffff;
   }
  .invert_tr td:nth-child(odd) {
-    background-color: #358dc01a;
+    background-color: #358cd01a;
   }
   .linevalue button {
     padding: 3px 6px;
@@ -366,7 +368,7 @@
   .total {
     display: flex;
     width: fit-content;
-    background: #358dc0;
+    background: $theme_color;
     color: white;
     height: 34px;
     align-items: center;
@@ -455,7 +457,7 @@
   select option {
     display: inline-block;
     padding: 5px;
-    background-color: #358DC0;
+    background-color: $theme_color;
     color: white;
     border-bottom: 1px solid white;
   }
@@ -504,6 +506,15 @@
       background-color: #f2f2f2;
       box-shadow: 1px 1px 6px #00000010;
   }
+  .p-dropdown-items {
+    background-color: $theme_color;
+
+  }
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+  }
     .p-autocomplete-dd .p-autocomplete-input {
       font-size: 14px;
       font-weight: 600;
@@ -520,7 +531,7 @@
 }
 .total_table tr:nth-child(1) {
     height: 30px;
-    background: #358dc0;
+    background: $theme_color;
 }
 .total_table tr:nth-child(2){
     height: 30px;
@@ -568,7 +579,7 @@
   z-index: 300;
 }
 .img-browse {
-  background-color: #358DC0;
+  background-color: $theme_color;
   color: #ffffff;
   padding: 0.5rem;
   border-radius: 0.3rem;

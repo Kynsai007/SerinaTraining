@@ -1,5 +1,7 @@
+$theme_color: var(--themeColor);
+
 .leftSide{
-background-color: #358DC0;
+background-color: $theme_color;
 min-height: 100vh;
 max-height: 100vh;
 padding-right: 0;

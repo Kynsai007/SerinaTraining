@@ -1,3 +1,5 @@
+$theme_color: var(--themeColor);
+
 .nav-pills .nav-link {
   border-radius: 0px;
   background: white;
@@ -11,8 +13,8 @@
 }
 
 .active-pill {
-  border-bottom: 2px solid #358dc0 !important;
-  color: #358dc0 !important;
+  border-bottom: 2px solid $theme_color !important;
+  color: $theme_color !important;
   opacity: 1 !important;
 }
 .tableDataDiv {

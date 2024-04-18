@@ -22,6 +22,10 @@ body {
   }
 $primary_color: var(--primary1-color);
 $secondary_color: var(--secondary1-color);
+
+$theme_color: var(--themeColor);
+$hover_color: var(--textWColor);
+
 .f-16 {
     font-size: 1rem;
     font-weight: 500;
@@ -73,12 +77,12 @@ $secondary_color: var(--secondary1-color);
   font-weight: 600;
 }
 
-.sideBar {
-    width: 12.5%;
-    height: 100vh;
-    background-color: $secondary_color;
-    z-index: 1;
-  }
+// .sideBar {
+//     width: 12.5%;
+//     height: 100vh;
+//     background-color: $secondary_color;
+//     z-index: 1;
+//   }
   .bodyContent {
     // width: 94%;
     height: 100vh;
@@ -87,14 +91,14 @@ $secondary_color: var(--secondary1-color);
     background-color: $primary_color;
   }
 
-  .bg-design-all {
-    background: white;
-    padding: 0px;
-    border-radius: 0px 10px 10px 10px;
-    border: 1px solid #efefef;
-    min-height: 70vh;
-    max-height: 92vh;
-}
+//   .bg-design-all {
+//     background: white;
+//     padding: 0px;
+//     border-radius: 0px 10px 10px 10px;
+//     border: 1px solid #efefef;
+//     min-height: 70vh;
+//     max-height: 92vh;
+// }
 // material side nav
 .mat-drawer.mat-drawer-end {
     width: 25%;
@@ -306,7 +310,7 @@ $secondary_color: var(--secondary1-color);
     font-size: 12px !important;
     font-weight: 700 !important;
     color: #ffffff !important;
-    background: #358DC0 !important;
+    background: $theme_color !important;
     // width: 100%;
     padding: 0px !important;
     height: 34px;
@@ -430,7 +434,7 @@ $secondary_color: var(--secondary1-color);
     background-color: royalblue !important;
 }
 .primary_btn {
-    background: #358dc0;
+    background: $theme_color;
     color: white;
     border-radius: 5px;
     border: 0;
@@ -438,8 +442,8 @@ $secondary_color: var(--secondary1-color);
     height: 34px;
 }
 .secondary_btn {
-    border: 1px solid #398FC1;
-    color: #358DC0;
+    border: 1px solid $theme_color;
+    color: $theme_color;
     min-width: 100px;
     border-radius: 5px;
     height: 34px;
@@ -448,12 +452,12 @@ $secondary_color: var(--secondary1-color);
 .level_3_btn {
     border: 0;
     padding: 0;
-    color: #358dc0;
+    color: $theme_color;
     height: 34px;
     background-color: inherit;
 }
 .text_color {
-    color: #358DC0;
+    color: $theme_color;
 }
 .cdk-overlay-dark-backdrop {
   background: rgb(255 255 255 / 89%);
@@ -701,7 +705,7 @@ $secondary_color: var(--secondary1-color);
     color: #ffffff !important;
 }
 .btnUpload {
-    background: #358DC0;
+    background: $theme_color;
     color: #ffffff;
     border: 0;
     padding: 0px 15px;
@@ -893,7 +897,7 @@ option:hover {
     }
   }
   .p-autocomplete-items {
-    background: #358dc0;
+    background: $theme_color;
     padding: 5px 10px !important;
   }
   .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
@@ -905,8 +909,8 @@ option:hover {
     font-family: 600;
   }
   .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item:hover {
-    color: #140101 !important;
-    background: #358dc0 !important
+    color: $hover_color !important;
+    background: $theme_color !important
   }
   .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item::after {
     content: '';
@@ -920,6 +924,26 @@ option:hover {
     transform: translateX(-50%);
   }
   .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item:hover::after {
+    width: 100%;
+    left: 0;
+    transform: translateX(0);
+  }
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover {
+    color: $hover_color !important;
+    background: $theme_color !important
+  }
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ffffff;
+    transition: width 0.4s ease, left 0.4s ease;
+    transform: translateX(-50%);
+  }
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item:hover::after {
     width: 100%;
     left: 0;
     transform: translateX(0);
@@ -1066,11 +1090,11 @@ option:hover {
 }
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
-    color: #358DC0 !important;
+    color: $theme_color !important;
     font-size: 12px;
     background-color: white !important;
     font-weight: 600;
-    border-bottom: 2px solid #358DC0 !important;
+    border-bottom: 2px solid $theme_color !important;
     border-radius: 0 !important;
     position: relative;
     top: 2px;
@@ -1241,7 +1265,7 @@ box-shadow: 0px 3px 6px #00000029;
   
   .floating {
     transform: translateY(-12px) scale(1);
-    color: #358dc0; 
+    color: $theme_color; 
   }
   .custom_snackbar {
     width: 254px;
