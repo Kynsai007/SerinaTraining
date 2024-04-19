@@ -1583,7 +1583,7 @@ export class RolesComponent implements OnInit {
 
   confirmationPopUp(id, bool,event:Event) {
     event.stopPropagation();
-    this.editUserdata = false
+    this.editUserdata = false;
     let text = 'Activate';
     if(bool){
       text = 'Deactivate'

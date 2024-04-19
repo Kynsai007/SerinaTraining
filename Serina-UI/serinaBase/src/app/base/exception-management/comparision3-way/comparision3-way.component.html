@@ -367,7 +367,7 @@
             >
               <div class="d-flex justify-content-between">
                 <div class="f-14">{{ Itype }}/Purchase Details</div>
-                <div class="f-12 status_btn" *ngIf="doc_status">
+                <div class="f-12 status_btn" *ngIf="doc_status" [title]="doc_status">
                   {{ doc_status }}
                 </div>
               </div>

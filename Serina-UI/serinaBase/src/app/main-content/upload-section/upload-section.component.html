@@ -21,7 +21,7 @@
       <div *ngFor="let obj of uploadInvoicesListData" class="addDetails">
         <div *ngFor="let item of obj|keyvalue">
           <label class="f-12 shade_color mb-0">{{item.key}}</label>
-          <div class="f-12" [ngStyle]="{'width':item?.key?.includes('Name')? '160px':'110px'}">{{item.value}}</div>
+          <div class="f-12 wrap" [ngStyle]="{'width':item?.key?.includes('Name')? '160px':'110px'}">{{item.value}}</div>
         </div>
       </div>
     </div>
@@ -1159,42 +1159,45 @@
 <p-dialog
   header="Multiple PO"
   [(visible)]="mutliPODailog"
-  [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '70vw' }"
+  position="right"
+  [modal]="true"
+  [style]="{ width: '55vw', height: '100vh', margin:'0' }"
   [baseZIndex]="10"
   [draggable]="false"
   [resizable]="false"
 >
   <div class="multipo_pop">
-    <div class="d-flex justify-content-between">
-      <div>
-        <label class="f-12 mb-0">Select Dates for PO</label><br />
-        <p-calendar
-          [(ngModel)]="rangeDates"
-          selectionMode="range"
-          [minDate]="minDate"
-          [maxDate]="maxDate"
-          showButtonBar="true"
-          (onClearClick)="clearDates()"
-          placeholder="Select dates to Filter"
-          [readonlyInput]="true"
-          [showIcon]="true"
-          inputId="range"
-        ></p-calendar>
-        <button class="btnUpload filter_btn_m" (click)="filterData(rangeDates)">
+      <div class="f-14">Please select date from to to</div>
+      <div class="d-flex">
+        <div class="selectFilter">
+          <label class="f-12 mb-0">Select Dates for PO</label><br />
+          <p-calendar
+            [(ngModel)]="rangeDates"
+            selectionMode="range"
+            [minDate]="minDate"
+            [maxDate]="maxDate"
+            showButtonBar="true"
+            (onClearClick)="clearDates()"
+            placeholder="Select dates to Filter"
+            [readonlyInput]="true"
+            [showIcon]="true"
+            inputId="range"
+          ></p-calendar>
+  
+        </div>
+        <button class="primary_btn f-12 ml-2 mt-2" (click)="filterData(rangeDates)">
           <!-- <i class="fa fa-filter" aria-hidden="true"></i> -->
           Filter
         </button>
       </div>
 
-      <div class="d-flex align-items-center">
-        <button class="btnUpload filter_btn_m" (click)="downloadTemplate()">
+      <div class="multi_upload d-flex align-items-center">
+        <div class="f-12 pointer" (click)="downloadTemplate()">
           Download Template
-        </button>
-        <!-- <button class="btnUpload filter_btn_m">
-          Upload Excel
-        </button> -->
-        <div style="margin-top: 7px">
+          <i class="fa fa-download mr-2 ml-2"></i>
+        </div>
+        <div style="color: lightgrey;">|</div>
+        <div style="margin-top: 7px" class="ml-2">
           <input
             type="file"
             id="custom-upload"
@@ -1204,21 +1207,20 @@
             #inputFile
             accept=".xls,.xlsx"
           />
-          <label for="custom-upload" class="btnUpload filter_btn_m f-12 mr-2"
-            ><span style="position: relative; top: 5px"
-              >Upload Excel</span
-            ></label
+          <label for="custom-upload" class=" f-12 mr-2">
+            <span>Upload Excel</span>
+            <i class="fa fa-upload mr-2 ml-2"></i>
+          </label
           >
         </div>
       </div>
-    </div>
     <form
-      class="d-flex flex-wrap"
-      style="gap: 0px 5px"
+      class="d-flex flex-wrap multiPO mt-2"
+      style="gap: 10px"
       #multiPO="ngForm"
       (ngSubmit)="addMultiPOLines(multiPO.value)"
     >
-      <div>
+      <div class="selectFilter">
         <label class="f-12 mb-0">Select PO Number</label><br />
         <p-autoComplete
           placeholder="PO Number"
@@ -1230,7 +1232,6 @@
           optionDisabled="idDocument"
           [dropdown]="true"
           showEmptyMessage="true"
-          [style]="{ width: '160px' }"
           name="PODocumentID"
           ngModel
           required
@@ -1243,7 +1244,7 @@
         </p-autoComplete>
       </div>
 
-      <div>
+      <div class="selectFilter">
         <label class="f-12 mb-0">Select PO Line</label><br />
         <p-autoComplete
           placeholder="PO Description"
@@ -1265,7 +1266,7 @@
         </p-autoComplete>
       </div>
 
-      <div>
+      <div class="selectFilter">
         <label class="f-12 mb-0">Select GRN Number</label><br />
         <p-autoComplete
           placeholder="GRN Number"
@@ -1276,7 +1277,6 @@
           field="PackingSlip"
           [dropdown]="true"
           showEmptyMessage="true"
-          [style]="{ width: '160px' }"
           name="GRN_number"
           ngModel
           required
@@ -1289,7 +1289,7 @@
         </p-autoComplete>
       </div>
 
-      <div>
+      <div class="selectFilter">
         <label class="f-12 mb-0">Select GRN Line</label><br />
         <p-autoComplete
           placeholder="GRN Description"
@@ -1310,11 +1310,11 @@
           </ng-template>
         </p-autoComplete>
       </div>
-      <div>
+      <div class="selectFilter">
         <label class="f-12 mb-0">PO Unit price</label><br />
         <input
           type="text"
-          class="form-control accountSelect width-100"
+          class="form-control f-14 accountSelect width-100"
           name="POLineAmount"
           [(ngModel)]="PO_amount_line"
           required
@@ -1322,43 +1322,43 @@
         />
       </div>
 
-      <div>
+      <div class="selectFilter">
         <label class="f-12 mb-0">PO Qty</label><br />
         <input
           type="text"
-          class="form-control accountSelect width-100"
+          class="form-control f-14 accountSelect width-100"
           name="ConsumedPOQty"
           [(ngModel)]="PO_qty"
           required
         />
       </div>
 
-      <div>
+      <div class="selectFilter">
         <label class="f-12 mb-0">GRN Line Amount</label><br />
         <input
           type="text"
-          class="form-control accountSelect width-100"
+          class="form-control f-14 accountSelect width-100"
           name="GRNLineAmount"
           [(ngModel)]="GRN_amount_line"
           required
           readonly
         />
       </div>
-      <div>
+
+      <div class="selectFilter">
         <label class="f-12 mb-0">GRN Qty</label><br />
         <input
           type="text"
-          class="form-control accountSelect width-100"
+          class="form-control accountSelect  f-14 width-100"
           name="GRNQty"
           [(ngModel)]="GRN_qty"
           required
         />
       </div>
 
-      <div>
-        <label class="f-12 mb-0"></label><br />
+      <div class="btn_fix">
         <button
-          class="btnUpload"
+          class="secondary_btn f-12 mr-2"
           [disabled]="multiPO.invalid"
           [ngStyle]="{ cursor: multiPO.invalid ? 'not-allowed' : 'pointer' }"
         >
@@ -1368,6 +1368,13 @@
     </form>
 
     <div class="mt-1">
+      <div class="f-14">Recently Added Details</div>
+      <div *ngFor="let obj of mutliplePOTableData" class="addDetails">
+        <div *ngFor="let item of obj|keyvalue">
+          <label class="f-12 shade_color mb-0">{{item.key}}</label>
+          <div class="f-12" [ngStyle]="{'width':item?.key?.includes('Name')? '160px':'110px'}">{{item.value}}</div>
+        </div>
+      </div>
       <!-- <app-table
         [tableData]="mutliplePOTableData"
         [invoiceColumns]="summaryColumn"
@@ -1376,7 +1383,7 @@
         [columnLength]="ColumnLengthVendor"
       >
       </app-table> -->
-      <p-table
+      <!-- <p-table
         *ngIf="mutliplePOTableData?.length > 0"
         [value]="mutliplePOTableData"
         [paginator]="false"
@@ -1418,25 +1425,19 @@
         <ng-template pTemplate="emptymessage"> </ng-template>
         <ng-template pTemplate="paginatorleft"> </ng-template>
         <ng-template pTemplate="paginatorright"> </ng-template>
-      </p-table>
+      </p-table> -->
     </div>
 
-    <p-toast></p-toast>
   </div>
 
   <ng-template pTemplate="footer">
-    <div class="d-flex justify-content-center">
+    <div class="btnAction fixed_pos">
+
       <button
         type="button"
-        class="btn btnVender bg-btn-cancel"
-        (click)="mutliPODailog = false"
-      >
-        Cancel
-      </button>
-      <button
-        type="button"
-        class="btn btnVender bg-btn-success"
+        class="primary_btn f-12"
         [disabled]="mutliplePOTableData?.length < 1"
+        [ngStyle]="{ cursor: mutliplePOTableData?.length < 1 ? 'not-allowed' : 'pointer' }"
         (click)="submitMultiPO()"
       >
         {{ multiBtn }}

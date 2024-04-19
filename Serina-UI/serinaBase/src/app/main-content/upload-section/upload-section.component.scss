@@ -279,8 +279,19 @@ $theme_color: var(--themeColor);
     font-weight: 600;
     height: 30px;
   }
+  .p-calendar {
+    position: relative;
+    top: -16px;
+    left: -9px;
+    width: 100%;
+  }
   .p-calendar .p-inputtext {
     height: 35px !important;
+    width: 100% !important;
+    background: transparent;
+  }
+  .p-calendar .p-datepicker {
+    left: 0px !important;
   }
   .p-datatable .p-datatable-thead > tr > th {
     padding: 6px !important;
@@ -578,6 +589,9 @@ input[type="checkbox"] {
   width: clamp(20rem, 28vw, 25rem);
   position: relative;
 }
+.multiPO .selectFilter {
+  width: 340px;
+}
 .selectFilter label {
   position: relative;
   top: -6px;
@@ -663,11 +677,36 @@ label {
   position: relative;
   z-index: 121;
 }
+.multi_upload {
+  position: absolute;
+    top: 6px;
+    right: 42px;
+}
+.wrap {
+  overflow-wrap: anywhere;
+}
+.btn_fix {
+  position: absolute;
+  bottom: 6px;
+  right: 155px;
+  z-index: 123;
+}
+.multi_list {
+  max-height: calc(48vh - 100px);
+  overflow: auto;
+}
 :host::ng-deep{
+  .p-dialog {
+    max-height: 100%;
+    margin: 0 !important;
+}
   .p-dialog .p-dialog-header {
     border-bottom: 1px solid #e1e1e1;
   }
   .p-dialog .p-dialog-header .p-dialog-title {
-    padding-left: 25px;
+    padding-left: 15px;
+  }
+  .p-dialog .p-dialog-content {
+    padding: 10px 20px;
   }
 } 

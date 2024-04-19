@@ -190,7 +190,7 @@
                     <div class="f-14 shade_color">{{ user.LogName }}</div>
                   </div>
                 </div>
-                <div>
+                <!-- <div>
                   <label class="switch">
                     <input
                       type="checkbox"
@@ -201,12 +201,12 @@
                     />
                     <span class="slider round"></span>
                   </label>
-                </div>
+                </div> -->
               </div>
               <div class="user_down">
                 <div class="f-12 d-flex justify-content-between">
                   <div>{{ user.NameOfRole }}</div>
-                  <div>No of Entities</div>
+                  <!-- <div>No of Entities</div> -->
                 </div>
                 <div class="f-12 mt-2 d-flex justify-content-between">
                   <div
@@ -221,7 +221,13 @@
                   >
                     {{ user.isActive ? "Activated" : "Inactive" }}
                   </div>
-                  <div class="e_count">{{ user.entity_site_count }}</div>
+                  <!-- <div class="e_count">{{ user.entity_site_count }}</div> -->
+                  <button *ngIf="!user.isActive" class="primary_btn f-12 actBtn" (click)="
+                  confirmationPopUp(user.idUser, user.isActive, $event)
+                ">Activate</button>
+                  <button *ngIf="user.isActive" class="primary_btn f-12 deactBtn" (click)="
+                  confirmationPopUp(user.idUser, user.isActive, $event)
+                ">De-activate</button>
                 </div>
               </div>
             </div>
@@ -568,7 +574,7 @@
                       <div class="f-14 shade_color">{{ user.email }}</div>
                     </div>
                   </div>
-                  <div>
+                  <!-- <div>
                     <label class="switch">
                       <input
                         type="checkbox"
@@ -579,16 +585,16 @@
                       />
                       <span class="slider round"></span>
                     </label>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="user_down p-0">
                   <div class="f-12 d-flex justify-content-between">
                     <div>
-                      <!-- <div>Username</div> -->
+                      <div class="f-12 shade_color">Username</div>
                       <div>{{ user.LogName }}</div>
                     </div>
                     <div>
-                      <!-- <div>Name</div> -->
+                      <div class="f-12 shade_color">Name</div>
                       <div>{{ user.firstName }} {{ user.lastName }}</div>
                     </div>
                   </div>
@@ -606,6 +612,12 @@
                       {{ user.isActive ? "Activated" : "Inactive" }}
                     </div>
                     <!-- <div class="e_count">{{ user.entity_site_count }}</div> -->
+                    <button *ngIf="!user.isActive" class="primary_btn f-12 actBtn mt-1" (click)="
+                      confirmationPopUp(user.idUser, user.isActive, $event)
+                    ">Activate</button>
+                      <button *ngIf="user.isActive" class="primary_btn f-12 deactBtn mt-1" (click)="
+                      confirmationPopUp(user.idUser, user.isActive, $event)
+                    ">De-activate</button>
                   </div>
                 </div>
               </div>
@@ -770,7 +782,7 @@
                     <div class="f-14 shade_color">{{ user.email }}</div>
                   </div>
                 </div>
-                <div>
+                <!-- <div>
                   <label class="switch">
                     <input
                       type="checkbox"
@@ -781,16 +793,16 @@
                     />
                     <span class="slider round"></span>
                   </label>
-                </div>
+                </div> -->
               </div>
               <div class="user_down p-0">
                 <div class="f-12 d-flex justify-content-between">
                   <div>
-                    <!-- <div>Username</div> -->
+                    <div class="f-12 shade_color">Username</div>
                     <div>{{ user.LogName }}</div>
                   </div>
                   <div>
-                    <!-- <div>Name</div> -->
+                    <div class="f-12 shade_color">Name</div>
                     <div>{{ user.firstName }} {{ user.lastName }}</div>
                   </div>
                 </div>
@@ -807,6 +819,7 @@
                   >
                     {{ user.isActive ? "Activated" : "Approval pending" }}
                   </div>
+                  <button *ngIf="!user.isActive" class="primary_btn f-12 actBtn mt-2">Approve</button>
                   <!-- <div class="e_count">{{ user.entity_site_count }}</div> -->
                 </div>
               </div>

@@ -125,18 +125,7 @@ td{
 .inputBox:focus {
     border: 1px solid #313971;
 }
-.fixed_pos {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    left: 0;
-    background: #FFFFFF 0% 0% no-repeat padding-box;
-    box-shadow: 0px 0px 4px #00000029;
-    height: 50px;
-    display: flex;
-    padding-right: 30px;
-    padding-top: 10px;
-}
+
 
 .mt-10{
     position: absolute;
@@ -660,4 +649,15 @@ input:checked + .slider {
     top: 4px;
     right: 6px;
     cursor: pointer;
+}
+.actBtn {
+    background-color: #14BB12;
+    height: 24px;
+}
+.deactBtn {
+    background-color: #BF2D28;
+    height: 24px;
+}
+.user_down .shade_color {
+    line-height: 1;
 }
