@@ -106,6 +106,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   isTableView:boolean;
   FilterData: any;
   ERPName:string;
+  actionBool: boolean = true;
 
   constructor(
     private tagService: TaggingService,
@@ -180,6 +181,13 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if(this.invoiceColumns){
+      this.invoiceColumns.forEach(e=>{
+        if(e.columnName == 'Rejected BY'){
+          this.actionBool = false;
+        }
+      })
+    }
     if (changes.columnsData && changes.columnsData.currentValue && changes.columnsData.currentValue.length > 0) {
       this.FilterData = this.columnsData;
       let mergedStatus = ['All'];

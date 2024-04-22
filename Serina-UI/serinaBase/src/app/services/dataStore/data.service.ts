@@ -75,6 +75,7 @@ export class DataService {
     { id:4, sub_id:4, name :'Need To Review', bgcolor: '#FEDD58', textColor :'#000000'},
     { id:4, sub_id:35, name :'Waiting For GRN Creation', bgcolor: '#FEFFD6', textColor :'#CDD160'},
     { id:4, sub_id:39, name :'GRN Created in Serina', bgcolor: '#8F00FF', textColor :'#ffffff'},
+    { id:4, sub_id:100, name :'GRN Attachment not Found', bgcolor: '#79a2b4', textColor :'#ffffff'},
     { id:5, sub_id:5, name :'Edit in Progress', bgcolor: '#FFE8FD', textColor :'#AE5BA7'},
     { id:6, sub_id:6, name :'Awaiting Edit Approval', bgcolor: '#F7FFC8', textColor :'#8EA01F'},
     { id:7, sub_id:7, name :'Sent to ERP', bgcolor: '#14BB12', textColor :'#ffffff'},
