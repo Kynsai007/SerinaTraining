@@ -106,7 +106,7 @@ export class SignUpComponent implements OnInit {
       }
   
       if(signup_value.vendorName){
-        this.registrationService.signup_vendoruser( this.signupToken,JSON.stringify(Obj)).subscribe((data:any)=>{
+        this.registrationService.signup_vendoruser( this.signupToken,Obj).subscribe((data:any)=>{
           this.alert.success_alert("Account created, sent for admin approval.")
           this.dialogRef.close();
       },error=>{
@@ -124,7 +124,7 @@ export class SignUpComponent implements OnInit {
         "password": signup_value.password,
         "account_type": this.accountType
       }
-      this.registrationService.vendorRegistration(JSON.stringify(obj)).subscribe((data:any)=>{
+      this.registrationService.vendorRegistration(obj).subscribe((data:any)=>{
         this.alert.success_alert("Account created, Please login and proceed the onboarding process.")
         // this.activationBoolean = false;
         this.isAccountSuccess =  true;

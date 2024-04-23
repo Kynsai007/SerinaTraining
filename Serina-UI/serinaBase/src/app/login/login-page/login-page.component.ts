@@ -92,7 +92,7 @@ export class LoginPageComponent implements OnInit {
     public sharedService: SharedService,
     private route: ActivatedRoute,
     private settingService: SettingsService,
-    private dataStoreService: DataService,
+    public dataStoreService: DataService,
     private matDialog: MatDialog,
     private authenticationService: AuthenticationService,private msalService: MsalService,private googleService: SocialAuthService) {
     // redirect to home if already logged in
@@ -179,7 +179,7 @@ export class LoginPageComponent implements OnInit {
       "activation_code": this.tokenOTP,
       "password": this.paswrd
     } 
-    this.sharedService.updatepass(JSON.stringify(updatePassword),this.otp).subscribe(data => {
+    this.sharedService.updatepass(updatePassword,this.otp).subscribe(data => {
       this.loading = false;
       this.loginboolean = false;
       this.forgotboolean = false;
@@ -245,7 +245,7 @@ export class LoginPageComponent implements OnInit {
       "type":type
     }
     sessionStorage.setItem('username',JSON.stringify(data1.username));
-    this.authenticationService.login(JSON.stringify(data1))
+    this.authenticationService.login(data1)
       .subscribe(
         data => {
           this.error = "";

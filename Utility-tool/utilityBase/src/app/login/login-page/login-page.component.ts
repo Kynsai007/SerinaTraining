@@ -171,7 +171,7 @@ export class LoginPageComponent implements OnInit {
       "activation_code": this.otp,
       "password": this.paswrd
     } 
-    this.sharedService.updatepass(JSON.stringify(updatePassword)).subscribe(data => {
+    this.sharedService.updatepass(updatePassword).subscribe(data => {
       
       this.loading = false;
       this.loginboolean = false;
@@ -215,7 +215,7 @@ export class LoginPageComponent implements OnInit {
       "password": this.f.password.value,
       "type":"normal"
     }
-    this.authenticationService.login(JSON.stringify(data1))
+    this.authenticationService.login(data1)
       .subscribe(
         data => {
           this.error = "";

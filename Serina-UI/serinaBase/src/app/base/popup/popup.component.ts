@@ -99,7 +99,7 @@ export class PopupComponent implements OnInit {
   }
   onSubmit(value) {
     this.spin.show();
-    this.ES.flip_po(JSON.stringify(this.selectedPOLines)).subscribe((data: any) => {
+    this.ES.flip_po(this.selectedPOLines).subscribe((data: any) => {
       if (data?.result) {
         if(data.Flippo_Approval){
           this.flipApproverlist();
@@ -201,7 +201,7 @@ export class PopupComponent implements OnInit {
         Podata: this.selectedPOLines,
         GRNdata: this.GRNData
       }
-      this.ES.validateFlipPO(JSON.stringify(obj),this.po_num).subscribe((data:string) => {
+      this.ES.validateFlipPO(obj,this.po_num).subscribe((data:string) => {
         if (data == 'success') {
           this.ES.popupmsg.next(this.component);
           this.success("PO flip is successful")
@@ -225,7 +225,7 @@ export class PopupComponent implements OnInit {
             "inv_qty": el.Quantity
         })
       })
-      this.ES.validateReturns(JSON.stringify(APIdata)).subscribe((data:any)=>{
+      this.ES.validateReturns(APIdata).subscribe((data:any)=>{
         if(data.result == 'Success') {
           this.success("Successful")
           this.dialogRef.close(APIdata);
@@ -264,7 +264,7 @@ export class PopupComponent implements OnInit {
   }
 
   setApprover(){
-    this.ES.setFlipApproval(JSON.stringify(this.approversSendData)).subscribe((data)=>{
+    this.ES.setFlipApproval(this.approversSendData).subscribe((data)=>{
       this.success("Successfully sent for Approvals")
       this.dialogRef.close('success');
     },err=>{

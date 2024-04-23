@@ -269,8 +269,8 @@
       <div class="navLinks d-flex justify-content-between" *ngIf="!isNewVendorForERP">
           <div
             class="nav_Link f-14"
+            [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
-            data-text="Dashboard"
             [routerLink]="'home'"
           >
             Dashboard
@@ -278,8 +278,8 @@
   
           <div
             class="nav_Link f-14"
+            [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
-            data-text="Upload"
             [routerLink]="'uploadInvoices'"
           >
             Upload
@@ -287,8 +287,8 @@
   
           <div
           class="nav_Link f-14"
+          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
-            data-text="Document Status"
             [routerLink]="'invoice'"
           >
             Document Status
@@ -296,8 +296,8 @@
   
           <div
           class="nav_Link f-14"
+          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
-            data-text="Exceptions"
             [routerLink]="'ExceptionManagement'"
           >
             Exceptions
@@ -322,7 +322,7 @@
           <div
             *ngIf="addUsersBoolean"
             class="nav_Link f-14"
-            data-text="Contact Details"
+            [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
             [routerLink]="'vendorContacts'"
           >

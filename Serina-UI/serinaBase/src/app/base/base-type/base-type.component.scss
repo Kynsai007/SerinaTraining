@@ -131,4 +131,13 @@ $theme_color: var(--themeColor);
   align-items: center;
   margin: 0px 10px;
 }
-
+.cenomiBg {
+  background-color: #20113E !important;
+}
+.cenomiNavlink {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+.cenomiNavlink.active_cls {
+  border-bottom: 4px solid white !important;
+}

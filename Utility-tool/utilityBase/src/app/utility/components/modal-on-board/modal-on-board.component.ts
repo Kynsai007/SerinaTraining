@@ -94,7 +94,7 @@ export class ModalOnBoardComponent implements OnInit {
       "cont_name": "string",
       "local_path": "string"
     }
-    this.sharedService.uploadBlob(JSON.stringify(blobData)).subscribe((data:any)=>{
+    this.sharedService.uploadBlob(blobData).subscribe((data:any)=>{
       console.log(data);
     })
   }
@@ -141,7 +141,7 @@ export class ModalOnBoardComponent implements OnInit {
       "cont_name": "string",
       "VendorAccount": "string"
     }
-    this.sharedService.modelValidate(JSON.stringify(validateModel)).subscribe((data:any)=>{
+    this.sharedService.modelValidate(validateModel).subscribe((data:any)=>{
       console.log(data);
     })
   }

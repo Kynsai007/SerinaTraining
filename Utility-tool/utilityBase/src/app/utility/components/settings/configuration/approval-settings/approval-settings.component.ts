@@ -108,7 +108,7 @@ export class ApprovalSettingsComponent implements OnInit {
   }
   UpdateSettings(){
    
-    this.sharedService.updateApprovalSettings(JSON.stringify(this.updateUsersEntityInfo)).subscribe((data:any)=>{
+    this.sharedService.updateApprovalSettings(this.updateUsersEntityInfo).subscribe((data:any)=>{
       
       this.sharedService.updateObject.detail = "Entity data updated."
       this.messageService.add(this.sharedService.updateObject);

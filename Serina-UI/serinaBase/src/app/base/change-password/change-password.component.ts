@@ -25,12 +25,12 @@ export class ChangePasswordComponent implements OnInit {
     const passwordObj = {
       "new_pass": value.newpassword
     }
-    this.settingService.changePassword(JSON.stringify(passwordObj)).subscribe((data:any)=>{
+    this.settingService.changePassword(passwordObj).subscribe((data:any)=>{
     this.alertService.success_alert("Password changed successfully");
     this.dialogRef.close();
     setTimeout(()=>{
       this.authService.logout();
-    },1000)
+    },1000) 
     },err=>{
       if(err.status == 400){
         this.alertService.error_alert("Please enter correct old password");

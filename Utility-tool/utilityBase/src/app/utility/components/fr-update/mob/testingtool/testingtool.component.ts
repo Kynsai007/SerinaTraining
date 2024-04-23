@@ -292,7 +292,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     //   validateModel.model_path = this.filePath
     // }
 
-    this.sharedService.modelValidate(JSON.stringify(validateModel)).pipe(take(1), finalize(() => {
+    this.sharedService.modelValidate(validateModel).pipe(take(1), finalize(() => {
       this.uploadingFileBoolean = false;
     })).subscribe((data: any) => {
       this.validating = false;
@@ -341,7 +341,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
       this.jsonFinalData.final_data.ModelID = this.modelid;
       this.jsonFinalData.final_data['TestResult'] = this.jsonresult.analyzeResult ? this.jsonresult.analyzeResult : {};
       this.saving = true;
-      this.sharedService.uploadDb(JSON.stringify(this.jsonFinalData.final_data),this.modelStatus.idDocumentModel).subscribe(data=>{
+      this.sharedService.uploadDb(this.jsonFinalData.final_data,this.modelStatus.idDocumentModel).subscribe(data=>{
         this.messageService.add({
           severity: "success",
           summary: "Uploaded",
@@ -438,7 +438,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     //   console.log("hi else")
     //   updatedData.folderPath = this.pathFolder;
     // }
-    this.sharedService.updateModel(JSON.stringify(updatedData), this.modelStatus.idDocumentModel).subscribe((data: any) => {
+    this.sharedService.updateModel(updatedData, this.modelStatus.idDocumentModel).subscribe((data: any) => {
       console.log(data);
     },error=>{
       this.sharedService.errorObject.detail = error.statusText

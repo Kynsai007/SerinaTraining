@@ -3,8 +3,12 @@
     <div class="col-1 col-md-6 m-0 leftSide">
       
         <div class="d-flex justify-content-between">
-          <img class="ml-3"
+          <img class="ml-3" *ngIf="dataStoreService.configData.client_name != 'Cenomi'"
           src="assets/Serina Assets/new_theme/Group 27317.svg"
+          alt="login"
+        />
+        <img class="cenomiLogo" *ngIf="dataStoreService.configData.client_name == 'Cenomi'"
+          src="assets/Serina Assets/new_theme/cenomiLogo.png"
           alt="login"
         />
         <div class="pos_rel">

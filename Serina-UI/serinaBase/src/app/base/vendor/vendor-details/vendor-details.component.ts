@@ -288,7 +288,7 @@ export class VendorDetailsComponent implements OnInit, AfterViewInit {
         "VLExpiryDate": e[0]['VLExpiryDate'],
         "TRNNumber": e[0]['TRNNumber']
       }
-      this.sharedService.updatevendor(JSON.stringify(updateVendorData)).subscribe((data) => {
+      this.sharedService.updatevendor(updateVendorData).subscribe((data) => {
         if (data.result == 'updated') {
           this.messageService.add({
             severity: "info",

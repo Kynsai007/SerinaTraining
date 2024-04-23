@@ -360,7 +360,7 @@ export class RolesComponent implements OnInit {
     } else {
       this.addandUpdaterole();
       this.sharedService
-        .createRole(JSON.stringify(this.updateroleData))
+        .createRole(this.updateroleData)
         .subscribe(
           (data: any) => {
             if (data.result) {
@@ -553,7 +553,7 @@ export class RolesComponent implements OnInit {
   updateRoleInfoData() {
     this.addandUpdaterole();
     this.sharedService
-      .updateRoleData(JSON.stringify(this.updateroleData))
+      .updateRoleData(this.updateroleData)
       .subscribe(
         (data: any) => {
           if (data.result) {
@@ -798,7 +798,7 @@ export class RolesComponent implements OnInit {
         bool = true;
       }
     let obj = this.updateUsersEntityInfo[this.updateUsersEntityInfo.length-1]
-    this.sharedService.checkPriority(bool,JSON.stringify(obj)).subscribe((data:any)=>{
+    this.sharedService.checkPriority(bool,obj).subscribe((data:any)=>{
       if(bool == true){
         if(data.status == 1){
           this.entityBaseApproveBoolean = true;
@@ -1029,7 +1029,7 @@ export class RolesComponent implements OnInit {
   }
 
   updateAccessAPICall(editUser){
-    this.sharedService.updatecustomeruser(JSON.stringify(editUser)).subscribe(
+    this.sharedService.updatecustomeruser(editUser).subscribe(
       (data: any) => {
         if (data.result == 'Updated') {
           const userData = data.customer_user_details;
@@ -1041,7 +1041,7 @@ export class RolesComponent implements OnInit {
 
           if (this.AccessPermissionTypeId) {
             this.sharedService
-              .editRole(JSON.stringify(selectrole))
+              .editRole(selectrole)
               .subscribe((data: any) => {
                 delete this.AccessPermissionTypeId;
 
@@ -1163,7 +1163,7 @@ export class RolesComponent implements OnInit {
 
   addUserAPICall(createUserData){
     this.sharedService
-    .createNewUser(JSON.stringify(createUserData))
+    .createNewUser(createUserData)
     .subscribe(
       (data) => {
         this.successAlert('User Created Successfully');
@@ -1207,7 +1207,7 @@ export class RolesComponent implements OnInit {
       appied_permission_def_id: item[0].idAccessPermissionDef,
     };
     this.sharedService
-      .editRole(JSON.stringify(roleData))
+      .editRole(roleData)
       .subscribe((data: any) => {
         if (data.result == 'success') {
           this.successAlert('Role Created Successfully');
@@ -1373,7 +1373,7 @@ export class RolesComponent implements OnInit {
       },
     };
     this.sharedService
-      .createVendorSuperUser(JSON.stringify(vendorSpUserData))
+      .createVendorSuperUser(vendorSpUserData)
       .subscribe(
         (data: any) => {
           this.successAlert("Created Successfully");
@@ -1415,7 +1415,7 @@ export class RolesComponent implements OnInit {
         "entityID": this.updateVenrEntityAccess,
       }
     }
-    this.sharedService.updateVendorUserAccess(JSON.stringify(Obj),this.vendorUserId).subscribe((data:any)=>{
+    this.sharedService.updateVendorUserAccess(Obj,this.vendorUserId).subscribe((data:any)=>{
       if(this.approveDialog){
         this.successAlert("Account Activation Done.");
       } else {

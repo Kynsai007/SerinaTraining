@@ -47,7 +47,7 @@ export class RegistrationComponent implements OnInit {
       "password": this.registrationForm.value.password
     };
 
-    this.registrationService.savenewUserPassword(JSON.stringify(passwordData)).subscribe((data:any)=>{
+    this.registrationService.savenewUserPassword(passwordData).subscribe((data:any)=>{
       if(data.result == "Account Activated"){
         this.messageService.add({
           severity: "success",

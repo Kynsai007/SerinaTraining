@@ -421,7 +421,7 @@ export class UploadSectionComponent implements OnInit {
       `${environment.apiUrl}/${
         this.apiVersion
       }/ocr/status/stream?eventSourceObj=${encodeURIComponent(
-        JSON.stringify(eventSourceObj)
+        eventSourceObj
       )}`
     ,headers);
   }
@@ -1065,7 +1065,7 @@ export class UploadSectionComponent implements OnInit {
     if (this.multiPO_filepath != '') {
       query = `?filename=${this.multiPO_filepath}`
     }
-    this.sharedService.saveMultiPO(JSON.stringify(this.mutliplePOTableData), query).subscribe((data: any) => {
+    this.sharedService.saveMultiPO(this.mutliplePOTableData, query).subscribe((data: any) => {
       this.multiPO_filepath = data.Result;
       this.mutliPODailog = false;
       if (this.viewType == 'ideal') {
@@ -1427,7 +1427,7 @@ export class UploadSectionComponent implements OnInit {
     this.approverList = {};
     this.sharedService.invoiceID = 12344;
     this.approverNameList = [];
-    this.sharedService.readApprovers(JSON.stringify(this.approversSendData[0])).subscribe((data: any) => {
+    this.sharedService.readApprovers(this.approversSendData[0]).subscribe((data: any) => {
       let resultData = data?.result
       let array = [];
       let list = [];
@@ -1469,7 +1469,7 @@ export class UploadSectionComponent implements OnInit {
       "DepartmentID": Number(this.selectedDepartmentID),
       "userPriority": 0
     }
-    this.sharedService.checkPriority(true, JSON.stringify(obj)).subscribe((data: any) => {
+    this.sharedService.checkPriority(true, obj).subscribe((data: any) => {
 
       if (data.status == 1) {
         this.approvalBoolean = true;
@@ -1669,7 +1669,7 @@ export class UploadSectionComponent implements OnInit {
     for (const file of this.supportDocList) {
       inv_formData.append('supporting_docs', file, file.name);
     }
-    inv_formData.append('data', JSON.stringify(this.APIPostData))
+    inv_formData.append('data', this.APIPostData)
     this.spinMsg = 'Please wait..'
     this.spinnerService.show();
     this.sharedService.mutliUpload(inv_formData).subscribe((data: any) => {

@@ -105,7 +105,7 @@ export class TriggerSettingsComponent implements OnInit {
       "isTriggerActive": this.triggerBoolean
     }
     console.log(updateTriggerData)
-    this.sharedService.serviceBatchTriggerUpdate(JSON.stringify(updateTriggerData)).subscribe((data:any)=>{
+    this.sharedService.serviceBatchTriggerUpdate(updateTriggerData).subscribe((data:any)=>{
       console.log(data);
       // this.SpinnerService.hide();
       // this.alertService.updateObject.detail = "Settings updated";

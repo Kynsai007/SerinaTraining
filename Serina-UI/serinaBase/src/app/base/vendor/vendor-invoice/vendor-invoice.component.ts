@@ -398,7 +398,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
       };
       // if (ele_fact == 100) {
       this.sharedService
-        .createserviceprovideraccount(JSON.stringify(spAcountdata))
+        .createserviceprovideraccount(spAcountdata)
         .subscribe(
           (data: any) => {
             this.alertService.success_alert("Created successfully")
@@ -451,7 +451,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
       };
       // if (u_ele_fact == 100) {
       this.sharedService
-        .updateSpAccount(JSON.stringify(spUpdateAcountdata))
+        .updateSpAccount(spUpdateAcountdata)
         .subscribe(
           (data) => {
             // this.messageService.add(this.alertService.updateObject);

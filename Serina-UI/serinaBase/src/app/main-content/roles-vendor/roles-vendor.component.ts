@@ -124,7 +124,7 @@ export class RolesVendorComponent implements OnInit {
         "idAccessPermissionDef": this.appied_permission_def_id
       }
     console.log(editVendor);
-    this.docService.updateVendorUser(JSON.stringify(editVendor)).subscribe((data: any) => {
+    this.docService.updateVendorUser(editVendor).subscribe((data: any) => {
       console.log(data)
       if (data) {
         // const userData = data.customer_user_details
@@ -188,7 +188,7 @@ export class RolesVendorComponent implements OnInit {
         "LogSecret": "string"
       }
     }
-    this.docService.addVendorUser(JSON.stringify(vendorData)).subscribe((data:any)=>{
+    this.docService.addVendorUser(vendorData).subscribe((data:any)=>{
       this.addObject.detail = data.result;
       this.messageService.add(this.addObject);
       this.displayAddUserDialog = false;

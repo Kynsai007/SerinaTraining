@@ -94,3 +94,13 @@ $theme_color: var(--themeColor);
     z-index: 1;
     background: #00000029 !important;
   }
+  .cenomiBg {
+    background-color: #20113E !important;
+  }
+  .cenomiNavlink {
+    color: #ffffff !important;
+    opacity: 1 !important;
+  }
+  .cenomiNavlink.active_cls {
+    border-bottom: 4px solid white !important;
+  }

@@ -560,7 +560,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     value.SasExpiry = this.sasExpiry;
     let _this = this;
     if (window.confirm("Are you sure you want to update the configs?")) {
-    this.sharedService.updateFrConfig(JSON.stringify(value)).subscribe((data:any)=>{
+    this.sharedService.updateFrConfig(value).subscribe((data:any)=>{
       (<HTMLDivElement>document.getElementById("notify")).style.opacity = "0.8";
       setTimeout(() => {
         _this.closeNotify();
@@ -858,7 +858,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         return;
       }
     }
-    this.sharedService.createNewTemplate(JSON.stringify(value)).subscribe((data: any) => {
+    this.sharedService.createNewTemplate(value).subscribe((data: any) => {
       (<HTMLButtonElement>document.getElementById("closeBtn")).click();
       this.getModalList(this.selecteddocType);
       this.getVendorAccounts();
@@ -968,7 +968,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     let _this = this;
     _this.saving = true;
     if (window.confirm("Are you sure you want to update the metadata?")) {
-    this.sharedService.updateFrMetaData(this.currentTemplate,JSON.stringify(value)).subscribe((data:any)=>{
+    this.sharedService.updateFrMetaData(this.currentTemplate,value).subscribe((data:any)=>{
       _this.saving = false;
       (<HTMLDivElement>document.getElementById("notify")).style.opacity = "0.8";
       setTimeout(() => {

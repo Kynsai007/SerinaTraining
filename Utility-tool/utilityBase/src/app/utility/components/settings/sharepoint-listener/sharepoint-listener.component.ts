@@ -47,7 +47,7 @@ export class SharepointListenerComponent implements OnInit {
   }
   saveConfigData(){
     console.log(this.configData.value)
-    this.sharedService.saveSharePointConfig(JSON.stringify(this.configData.value)).subscribe(data=>{
+    this.sharedService.saveSharePointConfig(this.configData.value).subscribe(data=>{
       console.log(data);
       if(data.message == "success"){
         this.messageService.add({

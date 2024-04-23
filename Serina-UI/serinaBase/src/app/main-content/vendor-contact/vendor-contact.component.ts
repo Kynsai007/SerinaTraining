@@ -41,7 +41,7 @@ export class VendorContactComponent implements OnInit {
   }
   updatevendor(value){
     console.log(value)
-    this.sharedService.updatevendor(JSON.stringify(value)).subscribe((data:any)=>{
+    this.sharedService.updatevendor(value).subscribe((data:any)=>{
       console.log(data)
     })
   }

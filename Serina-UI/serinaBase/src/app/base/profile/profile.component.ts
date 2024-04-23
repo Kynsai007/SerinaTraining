@@ -40,7 +40,7 @@ export class ProfileComponent implements OnInit {
   }
   onSave(val) {
 
-    this.settingService.update_profile(JSON.stringify(this.profile.value)).subscribe((data: any) => {
+    this.settingService.update_profile(this.profile.value).subscribe((data: any) => {
       this.alert.updateObject.detail = "Profile Updated, Please re-login to check the changes.";
       this.ms.add(this.alert.updateObject);
       this.editable = false;

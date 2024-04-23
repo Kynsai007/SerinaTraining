@@ -208,7 +208,7 @@ export class MobComponent implements OnInit, OnChanges {
     this.isuploadable = true;
     this.isuploadable1 = false;
     this.msg1 = "";
-    this.sharedService.uploadBlob(JSON.stringify(blobData)).subscribe((data: any) => {
+    this.sharedService.uploadBlob(blobData).subscribe((data: any) => {
       console.log(data);
       this.enableTab.emit(true);
       this.isuploadable = false;
@@ -293,7 +293,7 @@ export class MobComponent implements OnInit, OnChanges {
 
 
     console.log(validateModel);
-    this.sharedService.modelValidate(JSON.stringify(validateModel)).pipe(take(1), finalize(() => {
+    this.sharedService.modelValidate(validateModel).pipe(take(1), finalize(() => {
       this.uploadingFileBoolean = false;
     })).subscribe((data: any) => {
       console.log(data);
@@ -376,7 +376,7 @@ export class MobComponent implements OnInit, OnChanges {
     }else{
       this.isuploadable = true;
     }
-    this.sharedService.reupload_blob(JSON.stringify(reuplaodMeta)).subscribe((data: any) => {
+    this.sharedService.reupload_blob(reuplaodMeta).subscribe((data: any) => {
       console.log(data);
       this.enableTab.emit(true);
       this.isuploadable = false;
@@ -415,7 +415,7 @@ export class MobComponent implements OnInit, OnChanges {
     //   updatedData.folderPath = this.pathFolder;
     // }
     console.log(updatedData);
-    this.sharedService.updateModel(JSON.stringify(updatedData), this.modelStatus.idDocumentModel).subscribe((data: any) => {
+    this.sharedService.updateModel(updatedData, this.modelStatus.idDocumentModel).subscribe((data: any) => {
       console.log(data);
       this.updateStatus.emit(true);
     },error=>{
@@ -424,7 +424,7 @@ export class MobComponent implements OnInit, OnChanges {
     })
   }
   uploadToSerina(){
-    this.sharedService.uploadDb(JSON.stringify(this.jsonFinalData.final_data),this.modelStatus.idDocumentModel).subscribe(data=>{
+    this.sharedService.uploadDb(this.jsonFinalData.final_data,this.modelStatus.idDocumentModel).subscribe(data=>{
       console.log(data);
       this.messageService.add({
         severity: "success",

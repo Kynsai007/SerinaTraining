@@ -459,7 +459,7 @@ export class Comparision3WayComponent
       "client_address": JSON.parse(sessionStorage.getItem('userIp'))
     };
     this.exceptionService
-      .updateDocumentLockInfo(JSON.stringify(sessionData))
+      .updateDocumentLockInfo(sessionData)
       .subscribe((data: any) => { });
   }
 
@@ -1481,8 +1481,7 @@ export class Comparision3WayComponent
   saveChanges() {
     if (!this.isAmtStr && !this.isEmpty) {
       if (this.updateInvoiceData.length != 0) {
-        this.SharedService.updateInvoiceDetails(
-          JSON.stringify(this.updateInvoiceData)
+        this.SharedService.updateInvoiceDetails(this.updateInvoiceData
         ).subscribe(
           (data: any) => {
             this.success('Changes saved successfully')
@@ -1661,7 +1660,7 @@ export class Comparision3WayComponent
   serviceSubmit() {
     if(!this.normalCostAllocation){
       if(this.reqServiceprovider){
-        this.exceptionService.submitAllocationDetails(JSON.stringify(this.rows))
+        this.exceptionService.submitAllocationDetails(this.rows)
         .subscribe((data: any) => {
           this.success("submitted successfully.")
           setTimeout(() => {
@@ -1684,7 +1683,7 @@ export class Comparision3WayComponent
             groupedValues[iddynamiccostallocation][property] = this.editedValues[key];
           }
 
-          this.exceptionService.editedDynamicAllocationDetails(JSON.stringify(groupedValues))
+          this.exceptionService.editedDynamicAllocationDetails(groupedValues)
           .subscribe((data: any) => {
             this.success("submitted successfully")
             setTimeout(() => {
@@ -1808,7 +1807,7 @@ export class Comparision3WayComponent
     let desc = {
       "desp": `Document approved by ${this.userDetails['userdetails'].firstName}`
     }
-    this.SharedService.financeApprovalPermission(JSON.stringify(desc)).subscribe(
+    this.SharedService.financeApprovalPermission(desc).subscribe(
       (data: any) => {
         this.dataService.invoiceLoadedData = [];
         this.success(data.result);
@@ -2090,8 +2089,7 @@ export class Comparision3WayComponent
           this.SpinnerService.hide();
         })
       } else {
-        this.SharedService.vendorRejectInvoice(
-          JSON.stringify(rejectionData)
+        this.SharedService.vendorRejectInvoice(rejectionData
         ).subscribe(
           (data: any) => {
             this.dataService.invoiceLoadedData = [];
@@ -2307,7 +2305,7 @@ export class Comparision3WayComponent
     if (this.invoiceNumber) {
       inv_number = `&inv_num=${this.invoiceNumber}`
     }
-    this.SharedService.createGRNWithPO(inv_number, JSON.stringify(this.GRNObjectDuplicate)).subscribe((data: any) => {
+    this.SharedService.createGRNWithPO(inv_number, this.GRNObjectDuplicate).subscribe((data: any) => {
       this.SpinnerService.hide();
       if (data.status == 'Posted') {
         this.success(data.message);
@@ -2347,7 +2345,7 @@ export class Comparision3WayComponent
       if(this.router.url.includes('GRN_approvals')){
         extra_param = `&grn_id=${this.invoiceID}`
       } 
-      this.SharedService.duplicateGRNCheck(JSON.stringify(arr),extra_param).subscribe((data: any) => {
+      this.SharedService.duplicateGRNCheck(arr,extra_param).subscribe((data: any) => {
         duplicateAPI_response = data?.result;
         this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
           let negativeData = [];
@@ -2399,7 +2397,7 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.SharedService.saveGRNData(
       boolean,
-      JSON.stringify(this.GRNObject)
+      this.GRNObject
     ).subscribe(
       (data: any) => {
         this.SpinnerService.hide();
@@ -2431,7 +2429,7 @@ export class Comparision3WayComponent
   }
 
   validateInvPOUnitPrice() {
-    this.SharedService.validateUnitprice(JSON.stringify(this.validatePOInvUnit)).subscribe((data: any) => {
+    this.SharedService.validateUnitprice(this.validatePOInvUnit).subscribe((data: any) => {
       if (data.result.length > 0) {
         this.validateUnitpriceBool = true;
       } else {
@@ -2527,7 +2525,7 @@ export class Comparision3WayComponent
           "documentID": this.invoiceID,
           "itemCode": item
         };
-        this.exceptionService.addLineItem(JSON.stringify(addLineData)).subscribe((data: any) => {
+        this.exceptionService.addLineItem(addLineData).subscribe((data: any) => {
           this.success("Line item Added")
 
           this.getInvoiceFulldata('');
@@ -2561,7 +2559,7 @@ export class Comparision3WayComponent
   ChangeGRNData() {
     if (this.selectedGRNList.length > 0) {
       this.progressDailogBool = false;
-      this.SharedService.updateGRNnumber(JSON.stringify(this.selectedGRNList)).subscribe(data => {
+      this.SharedService.updateGRNnumber(this.selectedGRNList).subscribe(data => {
         this.success("GRN Data Updated. Kindly click 'Next' button to send the invoice to the batch")
 
       }, err => {
@@ -2967,7 +2965,7 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.approversSendData[0].approver = [];
     this.approverList = {}
-    this.SharedService.readApprovers(JSON.stringify(this.approversSendData[0])).subscribe((data: any) => {
+    this.SharedService.readApprovers(this.approversSendData[0]).subscribe((data: any) => {
       let resultData = data?.result
       let array = [];
       let list = [];
@@ -3016,7 +3014,7 @@ export class Comparision3WayComponent
   }
   sendApprovalAPI() {
     this.SpinnerService.show();
-    this.SharedService.setApprovers(JSON.stringify(this.approversSendData[0]), this.preApproveBoolean).subscribe((data: any) => {
+    this.SharedService.setApprovers(this.approversSendData[0], this.preApproveBoolean).subscribe((data: any) => {
       this.SpinnerService.hide();
       if (data?.error_status) {
         this.error(data?.error_status)
@@ -3277,7 +3275,7 @@ export class Comparision3WayComponent
   }
   SaveLCM(obj) {
     this.SpinnerService.show();
-    this.SharedService.saveLCMdata(JSON.stringify([obj]), true).subscribe((data: any) => {
+    this.SharedService.saveLCMdata([obj], true).subscribe((data: any) => {
       if (data?.result) {
         this.SpinnerService.hide();
         this.success(data?.result)
@@ -3295,7 +3293,7 @@ export class Comparision3WayComponent
 
   submitLCMLines() {
     this.SpinnerService.show();
-    this.SharedService.saveLCMdata(JSON.stringify(this.LCMDataTable), false).subscribe((data: any) => {
+    this.SharedService.saveLCMdata(this.LCMDataTable, false).subscribe((data: any) => {
       if (data?.result[2] == true) {
         this.success('LCM Lines added please select Approvers');
         this.isLCMCompleted = true;

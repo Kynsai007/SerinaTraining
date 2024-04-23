@@ -630,7 +630,7 @@
 </mat-drawer-container> -->
 
 <div class="layout">
-  <nav class="desktop d-flex justify-content-between">
+  <nav class="desktop d-flex justify-content-between" [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiBg':''">
     <div class="d-flex" style="gap: 64px">
       <div>
         <img [src]="logoSrc" alt="Serina logo"  [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'otherBrand':'Serina'"/>
@@ -641,6 +641,7 @@
       <div class="navLinks d-flex justify-content-between">
         <div
           class="nav_Link f-14"
+          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
           [routerLink]="'home'"
           routerLinkActive="active_cls"
           (click)="navClick()"
@@ -649,6 +650,7 @@
         </div>
         <div
           class="nav_Link f-14"
+          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
           [routerLink]="'uploadInvoices'"
           routerLinkActive="active_cls"
           *ngIf="uploadPermissionBoolean"
@@ -661,7 +663,8 @@
           <div
             class="nav_Link f-14 z_index"
             [ngClass]="{
-              active_cls: router.url.includes('ExceptionManagement')
+              active_cls: router.url.includes('ExceptionManagement'),
+              'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
             }"
             (click)="exceptionDrop()"
             *ngIf="excpetionPageAccess"
@@ -706,6 +709,7 @@
         </div>
         <div
           class="nav_Link f-14"
+          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
           [routerLink]="'Create_GRN_inv_list'"
           routerLinkActive="active_cls"
           *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
@@ -717,7 +721,10 @@
           class="nav_Link f-14"
           [routerLink]="'invoice'"
           (click)="doc_status_route()"
-          [ngClass]="router.url.includes('invoice') ? 'active_cls' : ''"
+          [ngClass]="{ 
+            'active_cls': router.url.includes('invoice'),
+            'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
+          }"
           routerLinkActive="active_cls"
           (click)="navClick()"
         >
@@ -733,7 +740,8 @@
             class="nav_Link f-14 "
             (click)="approvalDropdown()"
             [ngClass]="{
-              active_cls: router.url.includes('approvals')
+              active_cls: router.url.includes('approvals'),
+              'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
             }"
           >
             Approvals
@@ -771,6 +779,7 @@
 
         <div
           class="nav_Link f-14"
+          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
           [routerLink]="'GRN_approvals'"
           routerLinkActive="active_cls"
           *ngIf="GRNApprovalAccess"
@@ -793,7 +802,8 @@
                 router.url.includes('roles') ||
                 router.url.includes('service_batch_trigger') ||
                 router.url.includes('bulkUploadService') ||
-                router.url.includes('ERP_approvals')
+                router.url.includes('ERP_approvals'),
+              'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
             }"
           >
             {{ more_text }}
@@ -906,7 +916,7 @@
         Table
       </div>
       <div class="short_name f-12">{{ name_short }}</div>
-      <div class="f-12 mr-1">{{ userDetails.userdetails.firstName }}</div>
+      <div class="f-12 mr-1" [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''">{{ userDetails.userdetails.firstName }}</div>
       <div (clickOutside)="onClickedOutside($event, 'logout')">
         <mat-icon
           class="sign_out dropdown"
