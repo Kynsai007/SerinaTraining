@@ -272,6 +272,15 @@
                                     </select>
                                 </td>
                             </tr>
+                            <tr class="trHeight">
+                                <td class="tdLeft f-13">Language <span class="colon">:</span></td>
+                                <td class="tdRight">
+                                    <select name="temp_language" id="temp_language" ngModel #Units="ngModel" class="form-control max_width f-13"
+                                         >
+                                        <option *ngFor="let lang of languages" [value]="lang.code">{{lang.language}}</option>
+                                    </select>
+                                </td>
+                            </tr>
 
                             <tr class="trHeight" *ngIf="showRule">
                                 <td class="tdLeft f-13">Select Vendor type <span class="req_clr">*</span> <span class="colon">:</span></td>

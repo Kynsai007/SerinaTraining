@@ -21,6 +21,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   displayAddTemplateDialog: boolean;
   vendorAccountList = [];
   currencies = [];
+  languages = [];
   select_vendorAccount: any;
   templateName: string;
   modaladderr:boolean=false;
@@ -414,6 +415,16 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         "description":"South African Rand"},
         {"currency":"ZMW",
         "description":"Zambian Kwacha"}
+        ];
+        this.languages = [
+          {"language":"English","code":'en'},
+          {"language":"Arabic","code":'ar'},
+          {"language":"French","code":'fr'},
+          {"language":"Spanish","code":'es'},
+          {"language":"German","code":'ge'},
+          {"language":"Hindi","code":'hi'},
+          {"language":"Italian","code":'it'},
+          {"language":"Turkish","code":'tr'}
         ]
     }
 
@@ -745,8 +756,14 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
           (<HTMLInputElement>document.getElementById("quantity_tol")).value = this.FRMetaData['QtyTol_percent'];
           if(!this.FRMetaData['Units'] || this.FRMetaData['Units'] == ''){
             this.FRMetaData['Units'] = 'USD';
+          }else{
+            (<HTMLInputElement>document.getElementById("Units")).value = this.FRMetaData['Units'];
           }
-          (<HTMLInputElement>document.getElementById("Units")).value = this.FRMetaData['Units'];
+          if(!this.FRMetaData['temp_language'] || this.FRMetaData['temp_language'] == ''){
+            this.FRMetaData['temp_language'] = 'en';
+          }else{
+            (<HTMLInputElement>document.getElementById("temp_language")).value = this.FRMetaData['temp_language'];
+          }
           this.selectedRuleId= this.FRMetaData['ruleID'];
 
           if(!this.FRMetaData['erprule']){
@@ -784,6 +801,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
           (<HTMLInputElement>document.getElementById("AccuracyOverall")).value = '90';
           (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = '90';
           (<HTMLInputElement>document.getElementById("Units")).value = 'USD';
+          (<HTMLInputElement>document.getElementById("temp_language")).value = 'en';
           if((<HTMLSelectElement>document.getElementById("ruleID")))
           (<HTMLSelectElement>document.getElementById("ruleID")).value = '';
         }    
@@ -947,6 +965,9 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
 
     if(value['Units'] == ''){
       value['Units'] = (<HTMLInputElement>document.getElementById("Units")).value;
+    }
+    if(value['temp_language'] == ''){
+      value['temp_language'] = (<HTMLInputElement>document.getElementById("temp_language")).value;
     }
      value['InvoiceFormat'] = this.selectedDocFormat;
      value['mandatoryheadertags'] = this.headerArray.toString();
