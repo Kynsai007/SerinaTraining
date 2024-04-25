@@ -1331,9 +1331,13 @@
                             [disabled]="!editable"
                             class="form-control f-12 input_disabled"
                             (change)="
-                              onChangeAdvance(line.value,inputv.value)
+                            item.TagName == 'AdvancePercent'?onChangeAdvance(line.value,inputv.value): onChangeLineValue(
+                              item.TagName,
+                              inputv.value,
+                              line.value
+                            )
                             "
-                            (blur)="saveAdChanges()"
+                            (blur)="item.TagName == 'AdvancePercent'?saveAdChanges():saveChanges()"
                           />
                         </span>
                       </div>

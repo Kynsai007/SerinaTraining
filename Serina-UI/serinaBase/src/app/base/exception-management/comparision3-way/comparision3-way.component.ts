@@ -555,6 +555,7 @@ export class Comparision3WayComponent
     this.approval_selection_boolean =
       this.tagService.approval_selection_boolean;
     this.isLCMInvoice = this.tagService.LCM_boolean;
+    this.documentType = this.dataService.documentType;
     this.documentInvType = this.tagService.documentType;
     this.documentTypeId = this.dataService.idDocumentType;
     this.headerName = this.tagService.headerName;
@@ -825,7 +826,7 @@ export class Comparision3WayComponent
         }
         if(response.doc_type){
           this.docType = response.doc_type;
-          this.documentType = response.doc_type;
+          this.documentType = response.doc_type.toLowerCase();
         }
         this.getInvTypes();
         // this.lineDataConversion();

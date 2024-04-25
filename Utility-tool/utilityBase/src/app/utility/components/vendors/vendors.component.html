@@ -34,7 +34,7 @@
         </option>
         <option value="ALL" style="font-weight: 500">ALL</option>
         <option *ngFor="let entity of entity" [value]="entity.idEntity">
-          {{ entity.EntityName }}
+          {{ (entity.EntityCode && entity.EntityCode !== '') ? entity.EntityCode : entity.EntityName }}
         </option>
       </select>
     </div>
@@ -88,7 +88,7 @@
           <div class="card-body">
             <h5 class="card-title f-14">{{ vendor.VendorName }}</h5>
             <h6 class="card-subtitle mb-2">
-              <small>{{ vendor.EntityName }}</small>
+              <small>{{ vendor.EntityName }} - {{ vendor.EntityCode }}</small>
             </h6>
             <!-- <p style="font-size: small;">{{vendor.Address}}</p> -->
             <!-- <a href="#" class="card-link">Card link</a>

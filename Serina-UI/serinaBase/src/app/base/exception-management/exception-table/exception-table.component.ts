@@ -200,7 +200,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
           }
           mergedStatus.push(ele.status)
         }
-        
+
       })
       this.statusData = new Set(mergedStatus);
       if (!this.isDesktop || this.columnsData?.length <= this.cardCount) {
@@ -249,7 +249,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     } else {
       this.dashboardViewBoolean = false;
     }
-   
+
     // if (this.tagService.batchProcessTab == 'normal') {
     //   this.batchBoolean = true;
     //   this.first = this.ds.exc_batch_edit_page_first;
@@ -313,7 +313,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   viewInvoiceDetails(e) {
     this.tagService.submitBtnBoolean = false;
-    this.ds.documentType = e?.UploadDocTypeCategory;
+    this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
     let route: string;
     if (this.router.url.includes('PO')) {
       route = 'PODetails';
@@ -415,7 +415,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   // edit invoice details if something wrong
   editInvoice(e) {
     this.tagService.approval_selection_boolean = false;
-    this.ds.documentType = e.UploadDocTypeCategory;
+    this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
     if(this.router.url.includes('invoice')){
       this.tagService.submitBtnBoolean = false;
       let route: string;
@@ -595,7 +595,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       //   ]
       // }
 
-    
+
   }
   showSidebar() {
     this.sideBarBoolean.emit(true);
@@ -628,7 +628,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
             bool = true;
             header = 'Amended';
             icon = 'assets/Serina Assets/new_theme/Group 1005.svg';
-            
+
             this.confirmText = `PO(${e.PODocumentID}) was amended and not confirmed. \n Please ensure the confirmation in the ERP system and then retry.`;
           }
 
@@ -645,7 +645,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
               }
             })
           }
-          
+
           this.SpinnerService.hide();
         }, err => {
           this.SpinnerService.hide();
@@ -919,7 +919,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     },err=>{
       this.SpinnerService.hide();
        this.error("Server error");
-    })    
+    })
   }
 
 }
