@@ -421,7 +421,7 @@ export class UploadSectionComponent implements OnInit {
       `${environment.apiUrl}/${
         this.apiVersion
       }/ocr/status/stream?eventSourceObj=${encodeURIComponent(
-        eventSourceObj
+        JSON.stringify(eventSourceObj)
       )}`
     ,headers);
   }
