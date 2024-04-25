@@ -1,255 +1,19 @@
-<!-- <h6 *ngIf="!dashboardViewBoolean" class="headh6">Approval</h6> -->
-
-<div
-  *ngIf="invoiceListBoolean"
-  class="container-fluid"
-  style="overflow: hidden; max-height: 100vh"
->
-  <!-- <div>
-
-    <div class="tableDataDiv bg-design-all pt-1" [ngSwitch]="viewType">
-      <div *ngSwitchCase="'vendorInvoice'">
-        <div class="tableDataDiv">
-          <div>
-            <div *ngIf="!dashboardViewBoolean" class="searchBar">
-              <input
-                class="searchInput"
-                pInputText
-                type="text"
-                (keyup)="searchImport($event.target.value)"
-                placeholder="Search..."
-                (input)="approve.filterGlobal($event.target.value, 'contains')"
-              />
-              <span class="material-icons searchIcon"> search </span>
-            </div>
-            <p-table
-              #approve
-              [value]="approvedData"
-              [rows]="rows"
-              [first]="first"
-              [paginator]="showPaginatorApproved"
-              (onPage)="paginateVendor($event)"
-              [showCurrentPageReport]="true"
-              [columns]="ApprovedColumn"
-              styleClass="p-datatable-striped"
-              [globalFilterFields]="approvedColumnField"
-              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-              [rowsPerPageOptions]="[10, 25, 50]"
-            >
-              <ng-template pTemplate="header" let-columns>
-                <tr>
-                  <th
-                    *ngFor="let col of columns"
-                    [pSortableColumn]="col.field"
-                    [pTooltip]="col.header"
-                    tooltipPosition="top"
-                    [ngStyle]="{backgroundColor : ap_boolean ? '#313971' : '#a72845'}"
-                  >
-                    {{ col.header }}
-                  </th>
-                  <th *ngIf="!dashboardViewBoolean" class="action_Zindex" [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
-                    [ngStyle]="{'width': isDesktop? '6%':'56px'}">
-                    Actions
-                  </th>
-                </tr>
-                <tr>
-                  <td *ngFor="let col of columns">
-                    <input
-                      pInputText
-                      type="text"
-                      (input)="
-                        approve.filter(
-                          $event.target.value || ' ',
-                          col.field,
-                          'contains'
-                        )
-                      "
-                      [value]="approve.filters[col.field]?.value"
-                      [placeholder]="'Search by ' + col.header"
-                      class="tableSearchInput"
-                    />
-                  </td>
-                  <td></td>
-                </tr>
-              </ng-template>
-              <ng-template
-                pTemplate="body"
-                let-invoiceData
-                let-columns="columns"
-              >
-                <tr>
-                  <td
-                    *ngFor="let col of columns"
-                    [title]="invoiceData[col.field]"
-                  >
-                  <span *ngIf=" col.field == 'CreatedOn' || col.field == 'documentDate'">
-                    <span *ngIf="invoiceData[col?.field]">{{ invoiceData[col?.field] + "Z" | date:'dd-MM-yy, h:mm a' }}</span>  
-                  </span>
-                  <span *ngIf="col.field != 'CreatedOn' && col.field != 'documentDate'">{{
-                    invoiceData[col.field]
-                  }}</span>
-                  </td>
-                  <td *ngIf="!dashboardViewBoolean">
-                    <button
-                      class="b-0 actionsBtn"
-                      [disabled]="!editPermissionBoolean"
-                      [ngStyle]="{
-                        cursor: !editPermissionBoolean
-                          ? 'not-allowed'
-                          : 'pointer'
-                      }"
-                      (click)="editInvoice(invoiceData)"
-                    >
-                      <i class="fa fa-pencil-square-o"></i>
-                    </button>
-                  </td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td [attr.colspan]="ColumnLengthVendor" class="p-t-30">
-                    <img
-                      src="assets/Group 2691.png"
-                      width="260"
-                      alt="imageUrl"
-                    />
-                    <br />
-                    No Invoices found.
-                  </td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="paginatorleft"> </ng-template>
-              <ng-template pTemplate="paginatorright"> </ng-template>
-            </p-table>
-          </div>
-        </div>
-      </div>
-
-      <div *ngSwitchCase="'serviceInvoice'">
-        <div *ngIf="!dashboardViewBoolean" class="tableDataDiv">
-          <div>
-            <div class="searchBar">
-              <input
-                class="searchInput"
-                pInputText
-                type="text"
-                (keyup)="searchImport($event.target.value)"
-                placeholder="Search..."
-                (input)="approve.filterGlobal($event.target.value, 'contains')"
-              />
-              <span class="material-icons searchIcon"> search </span>
-            </div>
-            <p-table
-              #approveSP
-              [value]="approvedDataSP"
-              [rows]="rows_service"
-              [first]="first_service"
-              [paginator]="showPaginatorApprovedSP"
-              (onPage)="paginateService($event)"
-              [showCurrentPageReport]="true"
-              [columns]="ApprovedColumnSP"
-              styleClass="p-datatable-striped"
-              [globalFilterFields]="approvedColumnField"
-              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-              [rowsPerPageOptions]="[10, 25, 50]"
-            >
-              <ng-template pTemplate="header" let-columns>
-                <tr>
-                  <th
-                    *ngFor="let col of columns"
-                    [pSortableColumn]="col.field"
-                    [pTooltip]="col.header"
-                    tooltipPosition="top"
-                  >
-                    {{ col.header }}
-                  </th>
-                  <th class="action_Zindex" style="width: 6%">Actions</th>
-                </tr>
-                <tr>
-                  <td *ngFor="let col of columns">
-                    <input
-                      pInputText
-                      type="text"
-                      (input)="
-                        approveSP.filter(
-                          $event.target.value || ' ',
-                          col.field,
-                          'contains'
-                        )
-                      "
-                      [value]="approveSP.filters[col.field]?.value"
-                      [placeholder]="'Search by ' + col.header"
-                      class="tableSearchInput"
-                    />
-                  </td>
-                  <td></td>
-                </tr>
-              </ng-template>
-
-              <ng-template
-                pTemplate="body"
-                let-invoiceData
-                let-columns="columns"
-              >
-                <tr>
-                  <td
-                    *ngFor="let col of columns"
-                    [title]="invoiceData[col.field]"
-                  >
-                    {{ invoiceData[col.field] }}
-                  </td>
-                  <td>
-                    <button
-                      class="b-0 actionsBtn"
-                      [disabled]="!editPermissionBoolean"
-                      [ngStyle]="{
-                        cursor: !editPermissionBoolean
-                          ? 'not-allowed'
-                          : 'pointer'
-                      }"
-                      (click)="editInvoice(invoiceData)"
-                    >
-                      <i class="fa fa-pencil-square-o"></i>
-                    </button>
-                  </td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td [attr.colspan]="ColumnLengthSP" class="p-t-30">
-                    <img
-                      src="assets/Group 2691.png"
-                      width="260"
-                      alt="imageUrl"
-                    />
-                    <br />
-                    No Invoices found.
-                  </td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="paginatorleft"> </ng-template>
-              <ng-template pTemplate="paginatorright"> </ng-template>
-            </p-table>
-          </div>
-        </div>
-      </div>
+<div class="container-fluid" style="overflow: hidden; max-height: 100vh">
+  <div class="wild_search_all mt-2">
+    <div class="filter_box">
+      <label for="uni" class="f-12">
+        Search Universal <br />
+        <input
+          [(ngModel)]="searchText"
+          type="text"
+          id="uni"
+          class="textFilter f-13"
+          [placeholder]="search_placeholder"
+          (keyup)="universalSearch(searchText)"
+        />
+      </label>
     </div>
-  </div> -->
-    <div class="wild_search_all mt-2">
-      <div class="filter_box">
-        <label for="uni" class="f-12">
-          Search Universal <br />
-          <input
-            [(ngModel)]="searchText"
-            type="text"
-            id="uni"
-            class="textFilter f-13"
-            [placeholder]="search_placeholder"
-            (keyup)="universalSearch(searchText)"
-          />
-        </label>
-      </div>
-      <!-- <div class="calender_div">
+    <!-- <div class="calender_div">
         <p-calendar
           #datePicker
           [(ngModel)]="rangeDates"
@@ -265,7 +29,7 @@
           inputId="range"
         ></p-calendar>
       </div> -->
-    </div>
+  </div>
   <div class="pt-1 mt-2">
     <div *ngIf="!router.url.includes('serviceInvoices')">
       <app-exception-table
@@ -277,7 +41,7 @@
         [searchText]="searchText"
         [pageId]="'apr_v'"
         [pageNumber]="pageNumber"
-        (paginationEvent) = "paginate($event)"
+        (paginationEvent)="paginate($event)"
       >
       </app-exception-table>
     </div>
@@ -291,19 +55,19 @@
         [searchText]="searchText"
         [pageId]="'apr_s'"
         [pageNumber]="pageNumber"
-        (paginationEvent) = "paginate($event)"
+        (paginationEvent)="paginate($event)"
       >
       </app-exception-table>
     </div>
 
-  <ngx-spinner
-    bdColor="rgba(251, 251, 251, 0.8)"
-    size="medium"
-    color="#070900"
-    [fullScreen]="false"
-    type="ball-spin-clockwise"
-  >
-    <p style="color: rgb(0, 0, 0)"></p>
-  </ngx-spinner>
-</div>
+    <ngx-spinner
+      bdColor="rgba(251, 251, 251, 0.8)"
+      size="medium"
+      color="#070900"
+      [fullScreen]="false"
+      type="ball-spin-clockwise"
+    >
+      <p style="color: rgb(0, 0, 0)"></p>
+    </ngx-spinner>
+  </div>
 </div>

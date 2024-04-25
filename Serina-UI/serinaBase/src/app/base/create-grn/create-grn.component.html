@@ -1,14 +1,16 @@
-<h6 *ngIf="api_route == 'readGRNReadyInvoiceList'" class="headh6 f-14 text_color d-flex justify-content-between">
+<h6
+  *ngIf="api_route == 'readGRNReadyInvoiceList'"
+  class="headh6 f-14 text_color d-flex justify-content-between"
+>
   <div>Create GRN with Invoice</div>
-  <button class="primary_btn f-12 pl-3 pr-3" (click)="grnWithPOdialog = true">Create GRN with PO</button>
+  <button class="primary_btn f-12 pl-3 pr-3" (click)="grnWithPOdialog = true">
+    Create GRN with PO
+  </button>
 </h6>
-<div class="filters d-flex justify-content-end" [ngClass]="api_route == 'readGRNReadyInvoiceList'?'':'pt-2'">
-  <!-- universal search -->
-  <!-- <div class="filter">
-    <label for="uni" class="f-12"> Search Universal <br>
-      <input [(ngModel)]="searchText" type="text" id="uni" class="textFilter f-13" placeholder="Ex: By Vendor, By PO" (keyup)="universalSearch(searchText)">
-    </label>
-  </div> -->
+<div
+  class="filters d-flex justify-content-end"
+  [ngClass]="api_route == 'readGRNReadyInvoiceList' ? '' : 'pt-2'"
+>
   <div class="wild_search_all">
     <div class="filter_box">
       <label for="uni" class="f-12">
@@ -40,67 +42,22 @@
       ></p-calendar>
     </div>
   </div>
-  
 </div>
-<!-- <div >
-      <ul class="nav nav-tabs">
-        <li class="nav-item mr-1">
-          <a
-            class="nav-link"
-            [class.active-tab]="viewType == 'normal'"
-            (click)="chooseEditedpageTab('normal')"
-            >Create GRN with Invoice({{ dataLength }})</a
-          >
-        </li>
-        <li class="nav-item ml-1">
-          <a
-            class="nav-link"
-            [class.active-tab]="viewType == 'grnWithPO'"
-            (click)="chooseEditedpageTab('grnWithPO')"
-            >GRN Creation with PO</a
-          >
-        </li>
-      </ul>
-
-      <div class="positionCreateUpload">
-        <button *ngIf="viewType == 'normal'" class="btnUpload mr-2" (click)="exportExcel()">
-          <i class="fa fa-download" aria-hidden="true"></i>
-        </button>
-        <button class=" btnUpload mr-2" (click)="toCreateNew()"><span class="f-16">+</span> Create</button>
-      </div>
-      <div class="filter_input">
-                <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="Select dates to Filter"
-                    [readonlyInput]="true" [showIcon]="true" inputId="range"></p-calendar>
-                <button class="btnUpload filter_btn_m "> Filter</button>
-            </div>
-    </div> -->
 
 <div class="pt-1 mt-2">
-    <app-exception-table
-      [invoiceColumns]="ColumnsForGRN"
-      [columnsToDisplay]="columnsToDisplay"
-      [showPaginatorAllInvoice]="showPaginatorAllInvoice"
-      [ColumnLength]="GRNTableColumnLength"
-      (searchInvoiceData)="searchInvoiceDataV($event)"
-      [columnsData]="columnsData"
-      [searchText]="searchText"
-      [pageId]="'exc_v'"
-      [pageNumber]="pageNumber"
-      (paginationEvent) = "paginate($event)"
-    >
-    </app-exception-table>
-
-    <!-- <div *ngIf="columnsDataPO.length > 0" class="mt-2">
-      <app-exception-table
-        [invoiceColumns]="ColumnsForGRN"
-        [columnsToDisplay]="columnsToDisplay"
-        [showPaginatorAllInvoice]="showPaginator"
-        [ColumnLength]="GRNTableColumnLength"
-        (searchInvoiceData)="searchInvoiceDataV($event)"
-        [columnsData]="columnsDataPO"
-      >
-      </app-exception-table>
-    </div> -->
+  <app-exception-table
+    [invoiceColumns]="ColumnsForGRN"
+    [columnsToDisplay]="columnsToDisplay"
+    [showPaginatorAllInvoice]="showPaginatorAllInvoice"
+    [ColumnLength]="GRNTableColumnLength"
+    (searchInvoiceData)="searchInvoiceDataV($event)"
+    [columnsData]="columnsData"
+    [searchText]="searchText"
+    [pageId]="'exc_v'"
+    [pageNumber]="pageNumber"
+    (paginationEvent)="paginate($event)"
+  >
+  </app-exception-table>
 
   <ngx-spinner
     bdColor="rgba(251, 251, 251, 0.8)"
@@ -117,19 +74,19 @@
   header="Create GRN with Purchase Order"
   [(visible)]="grnWithPOdialog"
   [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '35vw'}"
+  [style]="{ width: '35vw' }"
   [baseZIndex]="10000"
   [draggable]="false"
   [resizable]="false"
   [modal]="true"
 >
-    <form
+  <form
     #PO_GRNForm="ngForm"
     (ngSubmit)="routeToGRN(PO_GRNForm.value)"
     class="d-flex flex-wrap ml-2"
     style="gap: 15px"
   >
-  <!-- select PO Number -->
+    <!-- select PO Number -->
     <div>
       <div class="box mr-2">
         <label class="f-13 mb-0">Enter PO Number</label><br />
@@ -139,8 +96,8 @@
           [group]="false"
           [suggestions]="filteredPO"
           (completeMethod)="filterPOnumber($event)"
-          (onKeyUp)="getPODetails($event.target.value,$event)"
-          (onClick)="getPODetails($event.target.value,$event)"
+          (onKeyUp)="getPODetails($event.target.value, $event)"
+          (onClick)="getPODetails($event.target.value, $event)"
           field="PODocumentID"
           [dropdown]="true"
           name="PONumber"
@@ -154,14 +111,19 @@
           </ng-template>
         </p-autoComplete>
         <!-- <input type="text" class="form-control f-12" (keyup)="getPODetails($event.target.value,$event)" placeholder="Ex: RTC-PO-123456 and press Enter" name="PONumber" ngModel required> -->
-        
       </div>
       <small class="f-12">Note: Please press "Enter"</small>
-
     </div>
     <div class="box mr-2">
       <label class="f-12 mb-0 z_index">Entity Name</label><br />
-      <input type="text" class="form-control f-12" [(ngModel)]="EntityName" name="EntityName" required readonly>
+      <input
+        type="text"
+        class="form-control f-12"
+        [(ngModel)]="EntityName"
+        name="EntityName"
+        required
+        readonly
+      />
       <!-- <p-autoComplete
         placeholder="Select Entity"
         (onSelect)="selectEntity($event)"
@@ -198,7 +160,14 @@
           </div>
         </ng-template>
       </p-autoComplete> -->
-      <input type="text" class="form-control f-12" [(ngModel)]="vendorName" name="vendor" required readonly>
+      <input
+        type="text"
+        class="form-control f-12"
+        [(ngModel)]="vendorName"
+        name="vendor"
+        required
+        readonly
+      />
     </div>
 
     <!-- select GRN Line -->

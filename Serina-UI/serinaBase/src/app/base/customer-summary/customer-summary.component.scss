@@ -6,57 +6,35 @@
   width: 100%;
 }
 
-.table_top {
-  position: relative;
-  top: 10px;
-}
-
-.card-div {
-  // border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 14px 20px 13px 15px;
-  // background-color: #5DC5CC;
-  color: #ffffff;
-  min-width: 16vw;
-}
-.f-15 {
-  font-size: 15px;
-  font-weight: 600;
-}
-// .text_color {
-//   font-size: 12px;
-//   // color: #666363;
+// .img-wrapper {
+//   width: 46px;
+//   height: 46px;
+//   margin: 0 15px 0 0;
+//   padding: 10px 13px 12px 12px;
+//   border-radius: 28px;
+//   text-align: center;
+//   color: white;
+// }
+// .card1-bg {
+//   background-color: #5dc5cc;
+// }
+// .card2-bg {
+//   background-color: #716197;
 // }
 
-.img-wrapper {
-  width: 46px;
-  height: 46px;
-  margin: 0 15px 0 0;
-  padding: 10px 13px 12px 12px;
-  border-radius: 28px;
-  text-align: center;
-  color: white;
-}
-.card1-bg {
-  background-color: #5dc5cc;
-}
-.card2-bg {
-  background-color: #716197;
-}
+// .bg-2 {
+//   background-color: #ffffff;
+//   color: #716197;
+// }
+// .bg-1 {
+//   background-color: white;
+//   color: #5dc5cc;
+// }
 
-.bg-2 {
-  background-color: #ffffff;
-  color: #716197;
-}
-.bg-1 {
-  background-color: white;
-  color: #5dc5cc;
-}
-
-.table_scroll {
-  max-height: 72vh;
-  overflow: auto;
-}
+// .table_scroll {
+//   max-height: 72vh;
+//   overflow: auto;
+// }
 .selectFilter {
   height: 35px;
   width: 170px;
@@ -66,7 +44,6 @@
   top: 55px;
   right: 303px;
 }
-
 
 // :host ::ng-deep .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
 //     color: #272727 !important;
@@ -100,18 +77,18 @@
 // }
 .nav_sub {
   display: flex;
-  background-color: #FFFFFF;
-    height: 54px;
-    border-radius: 5px;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1px 8px;
+  background-color: #ffffff;
+  height: 54px;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1px 8px;
 }
 .c_gap {
   column-gap: 12px;
   padding: 15px;
   min-width: 200px;
-  background-color: #193B68;
+  background-color: #193b68;
   color: white;
 }
 .filter_box input {
@@ -127,14 +104,14 @@
   border-bottom: 2px solid #00000080 !important;
   width: 140px;
 }
-@media screen and (max-width: 576px) { 
+@media screen and (max-width: 576px) {
   .card-div {
     min-width: 43vw;
   }
   .down_filter {
     float: none;
     margin-top: 10px;
-    margin-right: 5px; 
+    margin-right: 5px;
     flex-wrap: wrap;
   }
   .selectFilter {
@@ -144,7 +121,7 @@
     max-height: 54vh;
   }
 }
-@media screen and (max-width: 800px) and (min-width: 577px) { 
+@media screen and (max-width: 800px) and (min-width: 577px) {
   .card-div {
     min-width: 27vw;
   }

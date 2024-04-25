@@ -5,7 +5,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
-import { MessageService } from 'primeng/api';
 import { PermissionService } from 'src/app/services/permission.service';
 import { TaggingService } from 'src/app/services/tagging.service';
 import { NgForm } from '@angular/forms';
@@ -26,7 +25,6 @@ export class CreateGRNComponent implements OnInit {
   showPaginatorAllInvoice: boolean;
   columnsToDisplay = [];
   columnsToDisplayGRNApproval = [];
-  viewType: any;
   allSearchInvoiceString: any[];
   rangeDates: Date[];
   dataLength: number;
@@ -69,7 +67,6 @@ export class CreateGRNComponent implements OnInit {
     private ImportExcelService: ImportExcelService,
     private sharedService : SharedService,
     private ngxSpinner: NgxSpinnerService,
-    private MessageService: MessageService,
     private alertService: AlertService,
     private router: Router,
     private permissionService : PermissionService,
@@ -83,7 +80,6 @@ export class CreateGRNComponent implements OnInit {
       if(this.router.url.includes('Create_GRN_inv_list')){
         this.pageNumber = this.ds.crGRNTabPageNumber;
         this.api_route = 'readGRNReadyInvoiceList';
-        this.viewType = this.tagService.GRNTab;
         this.isDesktop = this.ds.isDesktop;
         if(!this.isDesktop){
           this.mob_columns()
@@ -133,20 +129,11 @@ export class CreateGRNComponent implements OnInit {
         element.header = "GRN Number"
       }
       this.columnsToDisplay.push(element.dbColumnname);
-      // this.invoiceColumnField.push(element.field)
     });
-    // this.ColumnsForGRNApproval.filter((ele) => {
-    //   this.columnsToDisplayGRNApproval.push(ele.field);
-    // });
+
     this.GRNTableColumnLength = this.ColumnsForGRN.length + 1;
-    console.log(this.ColumnsForGRN)
   }
 
-  chooseEditedpageTab(value) {
-    this.viewType = value;
-    this.tagService.GRNTab = value;
-    this.allSearchInvoiceString = [];
-  }
 
   searchInvoiceDataV(value) {
     // this.allSearchInvoiceString = []
@@ -333,8 +320,7 @@ export class CreateGRNComponent implements OnInit {
       this.permissionService.enable_create_grn = true;
       // this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`);
       if(this.poLineData?.length <= 0){
-        this.alertService.errorObject.detail = "Oops, sorry no lines are available";
-        this.MessageService.add(this.alertService.errorObject);
+        this.error("Oops, sorry no lines are available")
       }
 
     }, err => {
@@ -354,17 +340,13 @@ export class CreateGRNComponent implements OnInit {
           width : '30%',
           height: '45vh',
           hasBackdrop: false,
-          data : { body: 'The invoice already exist for this PO, Still you want to create GRN from PO for remaining balance?', type: 'confirmation'}})
+          data : { body: 'The invoice already exist for this PO, Still you want to create GRN from PO for remaining balance?', type: 'confirmation',heading: 'Confirmation', icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }})
 
           drf.afterClosed().subscribe((bool)=>{
             if(bool){
               this.routeToGRN(val);
             } else {
-              this.MessageService.add({
-                severity : 'warn',
-                summary  : 'Alert',
-                detail  : "Okay, Please create the GRN from the given list of invoices."
-              })
+              this.error("Okay, Please create the GRN from the given list of invoices.");
             }
           })
           
@@ -378,7 +360,7 @@ export class CreateGRNComponent implements OnInit {
           width : '400px',
           height: '300px',
           hasBackdrop: false,
-          data : { body: `GRN is already available for ${val}, are you sure to create one more record?`, type: 'confirmation'}})
+          data : { body: `GRN is already available for ${val}, are you sure to create one more record?`, type: 'confirmation',heading: 'Confirmation', icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }})
 
           drf.afterClosed().subscribe(bool=>{
             if(bool){

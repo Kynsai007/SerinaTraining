@@ -186,6 +186,7 @@ export class DataService {
   grnWithPOBoolean: boolean;
   GRN_PO_Data = [];
   idDocumentType: number;
+  documentType:string;
   ap_boolean:any;
   doc_status_tab: any;
   searchSOStr = '';

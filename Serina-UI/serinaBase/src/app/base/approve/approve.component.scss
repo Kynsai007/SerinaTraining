@@ -5,22 +5,6 @@
 }
 
 
-  @media screen and (max-width: 800px) {
-    .searchBar {
-        top: 45px;
-        left: 74%;
-    }
-
-  }
-  @media screen and (max-width: 576px) {
-    .searchBar {
-      left: 50%;
-    }
-    .searchInput {
-      width: 83% !important;
-    }
-   }
-
    .wild_search_all {
     display: flex;
     height: 54px;

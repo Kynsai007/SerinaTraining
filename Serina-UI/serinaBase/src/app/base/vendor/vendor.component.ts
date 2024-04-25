@@ -231,12 +231,12 @@ export class VendorComponent implements OnInit, AfterViewInit {
     if(str == 'vendor'){
       this.router.navigate(['/customer/vendor/vendorDetails']);
       this.supplier_data = this.vendors_list[0];
-      this.supplier_id = this.vendors_list[0].idVendor;
+      this.supplier_id = this.vendors_list[0]?.idVendor;
       this.vendorTabNames();
     } else if (str == 'service') {
       this.router.navigate(['/customer/vendor/ServiceDetails']);
       this.supplier_data = this.SP_list[0];
-      this.supplier_id = this.SP_list[0].idServiceProvider;
+      this.supplier_id = this.SP_list[0]?.idServiceProvider;
       this.serviceTabNames();
     }
   }

@@ -2,94 +2,10 @@
   font-size: 13px !important;
   font-weight: 600;
 }
-.action-i {
-  font-size: 18px;
-  position: relative;
-  top: 3px;
-  height: 20px;
-  left: 8px;
-  width: 20px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-.tableDiv {
-  max-height: 84vh;
-  min-height: 78vh;
-}
-.tableDataDiv {
-  max-height: 78vh;
-}
-// :host ::ng-deep {
-//   .p-multiselect-label-container {
-//     width: 27vw !important;
-//     // height: 35px;
-//     font-size: 12px;
-//   }
-//   .p-multiselect {
-//     width: 18vw;
-//   }
-//   .p-multiselect:not(.p-disabled):hover {
-//     border-color: #e9ecef;
-//   }
-//   .p-multiselect-panel .p-multiselect-items .p-multiselect-item {
-//     font-size: 11px;
-//     font-weight: 600;
-//   }
-//   .p-multiselect-panel .p-multiselect-header .p-multiselect-filter-container .p-inputtext {
-//     height: 35px;
-//     font-size: 12px;
-//   }
-//   .p-multiselect-panel .p-multiselect-items .p-multiselect-empty-message {
-//     font-size: 12px;
-//     font-weight: 600;
-//   }
-//   .p-dropdown-panel .p-dropdown-items .p-dropdown-empty-message {
-//     font-size: 12px;
-//     font-weight: 600;
-//   }
-//   .p-autocomplete-dd .p-autocomplete-dropdown {
-//     height: 35px;
-//   }
-//   .p-autocomplete-dd .p-autocomplete-input,
-//   .p-autocomplete-dd .p-autocomplete-multiple-container {
-//     border-bottom-right-radius: 0;
-//     border-top-right-radius: 0;
-//     color: #272727;
-//     font-weight: 600;
-//     height: 35px;
-//     font-size: 12px;
-//     font-family: "Segoe UI Regular", "Segoe UI", Arial;
-//     background: #ffffff;
-//     border: 1px solid lightgray;
-//     border-right: hidden;
-//   }
-//   .p-autocomplete {
-//     width: 18vw;
-//   }
-//   .p-autocomplete .p-autocomplete-panel {
-//     font-size: 11px;
-//     font-weight: 600;
-//   }
-//   .p-autocomplete-loader {
-//     display: none;
-//   }
-// }
+
+
 @media screen and (max-width: 576px) {
-  .tableDataDiv {
-    max-height: 86vh;
-    min-height: 72vh;
-    position: relative;
-    top: 40px;
-  }
-  .positionCreateUpload {
-    right: 11px;
-    top: 103px;
-  }
   :host ::ng-deep {
-    .searchBar {
-      top: 93px !important;
-      right: 40px !important;
-    }
     .p-autocomplete {
       width: 87vw;
     }

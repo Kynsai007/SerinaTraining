@@ -7,7 +7,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
 import { Table } from 'primeng/table';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
-import { MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DataService } from 'src/app/services/dataStore/data.service';
 
@@ -19,12 +18,8 @@ import { DataService } from 'src/app/services/dataStore/data.service';
   ],
 })
 export class ApproveComponent implements OnInit {
-  invoiceListBoolean: boolean = true;
-  editPermissionBoolean: boolean;
 
   @ViewChild('approve') approve: Table;
-
-  users;
   approvedData: any[];
   approvedDataSP: any[];
   ApprovedColumn = [
@@ -66,10 +61,8 @@ export class ApproveComponent implements OnInit {
   rows_service: any;
   ColumnLengthVendor: number;
   ColumnLengthSP: number;
-  dashboardViewBoolean: boolean;
-  ap_boolean: any;
   isDesktop: boolean;
-  searchText:string;
+  searchText: string;
   search_placeholder = 'Ex : By Vendor. By PO';
   pageNumber: any;
   filterData: any[];
@@ -86,7 +79,7 @@ export class ApproveComponent implements OnInit {
     private ds: DataService,
     private permissionService: PermissionService,
     private ImportExcelService: ImportExcelService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.init();
@@ -97,20 +90,16 @@ export class ApproveComponent implements OnInit {
       this.search_placeholder = 'Ex : By Vendor. By PO';
       this.readInvoiceApprovedData();
     }
-    
-    // 
     this.findColumns();
     this.dateRange();
 
   }
 
   init() {
-    this.editPermissionBoolean = this.permissionService.editBoolean;
-    this.ap_boolean = this.ds.ap_boolean;
     this.isDesktop = this.ds.isDesktop;
     this.pageNumber = this.ds.approvalPageNumber;
     this.pageNumberSP = this.ds.approvalPageNumberSP;
-    if(!this.isDesktop) {
+    if (!this.isDesktop) {
       this.mob_columns();
     }
     this.tagService.headerName = 'Approve';
@@ -119,14 +108,9 @@ export class ApproveComponent implements OnInit {
     this.rows = this.ds.approvalVendorPaginationRowLength;
     this.first_service = this.ds.approvalServicePaginationFirst;
     this.rows_service = this.ds.approvalServicePaginationRowLength;
-    // if (this.router.url.includes('serviceInvoices')) {
-    //   this.dashboardViewBoolean = true;
-    // } else {
-    //   this.dashboardViewBoolean = false;
-    // }
   }
 
-  mob_columns(){
+  mob_columns() {
     this.ApprovedColumn = [
       { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
       { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
@@ -164,27 +148,6 @@ export class ApproveComponent implements OnInit {
     this.allSearchInvoiceString = [];
   }
 
-  viewInvoice(e) {
-    this.router.navigate(['customer/approved/InvoiceDetails/' + e.idDocument]);
-    this.invoiceListBoolean = false;
-    this.tagService.editable = false;
-  }
-  editInvoice(e) {
-    if (this.permissionService.financeApproveBoolean == true) {
-      this.router.navigate([
-        'customer/approved/InvoiceDetails/' + e.idDocument,
-      ]);
-      this.invoiceListBoolean = false;
-      this.tagService.editable = true;
-      this.tagService.financeApprovePermission = true;
-      this.sharedService.invoiceID = e.idDocument;
-    } else {
-      alert('Do not have access to approve');
-    }
-  }
-  backToInvoice() {
-    this.invoiceListBoolean = true;
-  }
   readInvoiceApprovedData() {
     this.SpinnerService.show();
     this.sharedService.readApprovedInvoiceData().subscribe(
@@ -210,7 +173,7 @@ export class ApproveComponent implements OnInit {
         setTimeout(() => {
           this.searchText = this.ds.grn_aprve_uniSearch;
           this.universalSearch(this.searchText);
-      }, 1000);
+        }, 1000);
         if (this.approvedData.length > 10) {
           this.showPaginatorApproved = true;
         }
@@ -245,7 +208,7 @@ export class ApproveComponent implements OnInit {
         setTimeout(() => {
           this.searchTextSP = this.ds.SP_aprve_uniSearch;
           this.universalSearch(this.searchTextSP);
-      }, 1000);
+        }, 1000);
         if (this.approvedDataLengthSP > 10) {
           this.showPaginatorApprovedSP = true;
         }
@@ -256,28 +219,28 @@ export class ApproveComponent implements OnInit {
       }
     );
   }
-  universalSearch(txt){
+  universalSearch(txt) {
     if (this.router.url.includes('serviceInvoices')) {
       this.ds.SP_aprve_uniSearch = txt;
       this.approvedDataSP = this.filterDataSP;
-      this.approvedDataSP = this.ds.searchFilter(txt,this.filterDataSP);
+      this.approvedDataSP = this.ds.searchFilter(txt, this.filterDataSP);
     } else {
       this.ds.grn_aprve_uniSearch = txt;
       this.approvedData = this.filterData;
-      this.approvedData = this.ds.searchFilter(txt,this.filterData);
+      this.approvedData = this.ds.searchFilter(txt, this.filterData);
     }
 
-}
+  }
   paginateService(event) {
-    this.first_service = event.first;
+    this.first_service = event?.first;
     this.ds.approvalServicePaginationFirst = this.first_service;
-    this.ds.approvalServicePaginationRowLength = event.rows;
+    this.ds.approvalServicePaginationRowLength = event?.rows;
   }
 
   paginateVendor(event) {
-    this.first = event.first;
+    this.first = event?.first;
     this.ds.approvalVendorPaginationFirst = this.first;
-    this.ds.approvalVendorPaginationRowLength = event.rows;
+    this.ds.approvalVendorPaginationRowLength = event?.rows;
   }
 
   searchImport(value) {
@@ -299,13 +262,15 @@ export class ApproveComponent implements OnInit {
     }
   }
 
-  paginate(event){
-    if(this.router.url.includes('serviceInvoices')){
+  paginate(event) {
+    if (this.router.url.includes('serviceInvoices')) {
       this.pageNumberSP = event.pageNumber;
       this.ds.approvalPageNumberSP = event.pageNumber;
+      this.paginateService(event);
     } else {
       this.pageNumber = event.pageNumber;
       this.ds.approvalPageNumber = event.pageNumber;
+      this.paginateVendor(event);
     }
   }
 }

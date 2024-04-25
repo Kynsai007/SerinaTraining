@@ -192,6 +192,7 @@ export class Comparision3WayComponent
   lineTxt1: string;
   lineTxt2: string;
   docType: any;
+  documentType:string;
   poLinedata = [];
   soLinedata = [];
   lineTable = [
@@ -250,7 +251,7 @@ export class Comparision3WayComponent
   support_doc_list = [];
   approval_selection_boolean: boolean;
   documentTypeId: number;
-  documentType: any;
+  documentInvType: any;
   isLCMInvoice: boolean;
   multiPOBool: boolean;
   isLinenonEditable: boolean;
@@ -377,6 +378,18 @@ export class Comparision3WayComponent
   totalPoCost: any;
   totalInvCost: number;
   invTypeList: any[];
+  isBoxOpen: boolean = false;
+  activeTab: string = 'percentage';
+  percentageData: string = '';
+  amountData: string = '';
+  isButtonDisabled: boolean = true;
+  resultAmount: any;
+  // prePayBox: boolean = false;
+  // ciTab: boolean = false;
+  // invoiceType: string = '';
+  // disableButton: boolean = false;
+  advanceAPIbody:any;
+
   constructor(
     fb: FormBuilder,
     private tagService: TaggingService,
@@ -542,7 +555,7 @@ export class Comparision3WayComponent
     this.approval_selection_boolean =
       this.tagService.approval_selection_boolean;
     this.isLCMInvoice = this.tagService.LCM_boolean;
-    this.documentType = this.tagService.documentType;
+    this.documentInvType = this.tagService.documentType;
     this.documentTypeId = this.dataService.idDocumentType;
     this.headerName = this.tagService.headerName;
     this.userDetails = this.authService.currentUserValue;
@@ -559,8 +572,8 @@ export class Comparision3WayComponent
   }
 
   routeOptions() {
-    if (this.documentType == 'lcm' || this.documentType == 'multipo') {
-      if (this.documentType == 'multipo') {
+    if (this.documentInvType == 'lcm' || this.documentInvType == 'multipo') {
+      if (this.documentInvType == 'multipo') {
         this.multiPOBool = true;
         this.currentTab = "line";
       }
@@ -791,7 +804,7 @@ export class Comparision3WayComponent
     this.inputDisplayArray = [];
     // this.lineData = [];
     let serviceName;
-    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service') {
+    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance' || this.dataService.documentType == 'non-po') {
       this.pageType = "normal";
       serviceName = this.SharedService;
     } else {
@@ -812,6 +825,7 @@ export class Comparision3WayComponent
         }
         if(response.doc_type){
           this.docType = response.doc_type;
+          this.documentType = response.doc_type;
         }
         this.getInvTypes();
         // this.lineDataConversion();
@@ -3367,24 +3381,7 @@ export class Comparision3WayComponent
   update(msg) {
     this.AlertService.update_alert(msg);
   }
-  ngOnDestroy() {
-    let sessionData = {
-      session_status: false,
-      "client_address": JSON.parse(sessionStorage.getItem('userIp'))
-    };
-    this.exceptionService
-      .updateDocumentLockInfo(sessionData)
-      .subscribe((data: any) => { });
-    clearTimeout(this.callSession);
-    this.AlertService.addObject.severity = 'success';
-    this.tagService.financeApprovePermission = false;
-    this.tagService.approveBtnBoolean = false;
-    this.tagService.submitBtnBoolean = false;
-    this.dataService.grnWithPOBoolean = false;
-    this.dataService.poLineData = [];
-    delete this.SharedService.fileSrc;
-    this.mat_dlg.closeAll();
-  }
+
   reqDataValidation(){
     for (const row of this.rows) {
       if (!row.driver_name || !row.company_name) {
@@ -3437,5 +3434,126 @@ export class Comparision3WayComponent
     },err=>{
       this.error("Server error")
     })
+  }
+
+  openBox() {
+    this.isBoxOpen = true;
+    this.activeTab = 'percentage';
+  }
+  
+  saveData(tab: string){
+    let pa_data;
+    let inv_type = true;
+
+    if (tab === 'percentage') {
+      pa_data = this.percentageData;
+      inv_type = true;
+    } else{
+      pa_data = this.amountData;
+      inv_type = false;
+    }
+    this.SharedService.uploadPercentageAndAmountDetails(pa_data,inv_type,tab).subscribe((data: any) => {
+      this.success("Submitted successfully")
+      setTimeout(() => {
+        this.isBoxOpen = false;
+      }, 100);
+    }, err => {
+      this.error("Server error");
+      setTimeout(() => {
+        this.isBoxOpen = false;
+      }, 100);
+    });
+  }
+  closeBox(): void {
+    this.isBoxOpen = false;
+    // Reset other properties as needed
+  }
+  updateButtonState(tab: string) {
+    // Enable the button only when both percentageData and amountData are provided
+    this.isButtonDisabled = !(this.percentageData || this.amountData);
+    if(this.percentageData == ''){
+      this.resultAmount = 0;
+    }
+    if (tab === 'percentage') {
+      this.isButtonDisabled = !/^[0-9]*$/.test(this.percentageData);
+      this.SharedService.getAmountofPercentage(this.percentageData).subscribe((data: any) => {
+        this.resultAmount = data;
+        // this.cdr.detectChanges();
+      });
+    } else if (tab === 'amount') {
+      this.isButtonDisabled = !/^[0-9]*$/.test(this.amountData);
+    }
+  }
+
+  onChangeAdvance(data,in_value){
+    let amount_old;
+    let lineNumber;
+    this.lineDisplayData.forEach(tag=>{
+      if(tag.TagName == 'AmountExcTax'){
+        tag.linedata.forEach(ele=>{
+          if(ele.DocumentLineItems.itemCode == data.itemCode){
+            amount_old = ele.DocumentLineItems.Value;
+            lineNumber = ele.DocumentLineItems.idDocumentLineItems;
+          }
+        })
+      }
+    })
+    this.advanceAPIbody = [{
+      "linenumber": data.itemCode,
+      "prev_value": amount_old,
+      "id_documentline": lineNumber,
+      "adv_percent": in_value
+    },
+    {
+      "linenumber": data.itemCode,
+      "prev_value": data.Value,
+      "id_documentline": data.idDocumentLineItems,
+      "adv_percent": in_value
+    }];
+  }
+  saveAdChanges(){
+    if(this.advanceAPIbody){
+      this.SpinnerService.show();
+      this.exceptionService.getAdPercentage(this.advanceAPIbody).subscribe((data:any)=>{
+        this.SpinnerService.hide();
+        if(data?.status == "Success"){
+          this.success("Updated succesfully");
+          this.lineDisplayData.forEach(tag=>{
+            if(tag.TagName == 'AmountExcTax'){
+              tag.linedata.forEach(ele=>{
+                if(ele.DocumentLineItems.itemCode == data.itemCode){
+                  ele.DocumentLineItems.Value = data?.result;
+                }
+              })
+            }
+          })
+        } else {
+          this.error(data?.msg);
+        }
+      },err=>{
+        this.SpinnerService.hide();
+        this.error("Server error");
+      })
+    }
+  }
+
+  ngOnDestroy() {
+    let sessionData = {
+      session_status: false,
+      "client_address": JSON.parse(sessionStorage.getItem('userIp'))
+    };
+    this.exceptionService
+      .updateDocumentLockInfo(sessionData)
+      .subscribe((data: any) => { });
+    clearTimeout(this.callSession);
+    this.AlertService.addObject.severity = 'success';
+    this.tagService.financeApprovePermission = false;
+    this.tagService.approveBtnBoolean = false;
+    this.tagService.submitBtnBoolean = false;
+    this.dataService.grnWithPOBoolean = false;
+    this.dataService.poLineData = [];
+    delete this.SharedService.fileSrc;
+    delete this.dataService.documentType;
+    this.mat_dlg.closeAll();
   }
 }

@@ -361,6 +361,11 @@
             role="tabpanel"
             aria-labelledby="header-tab"
           >
+          <!-- <span class="boxopen" *ngIf="documentType == 'advance'" >
+            <div class="button-container">
+              <button class="advSettingsButton" (click)="openBox()"> Pre Payment </button>
+            </div>
+          </span> -->
             <div
               class="header_container"
               [ngClass]="!editable ? 'disable_div' : ''"
@@ -471,6 +476,45 @@
                 </div>
               </div>
             </div>
+
+            <div *ngIf="isBoxOpen" class="amount-box">
+          
+              <h6 class="headamtbox">Please Select</h6>
+              <div class="close-icon" (click)="closeBox()"><i class="fa fa-times" aria-hidden="true"></i>
+              </div>
+              
+                <ul class="tabs">
+                  <span class="percentage" (click)="activeTab = 'percentage'" [class.active]="activeTab === 'percentage'">Percentage</span>
+                  <span class="amount"(click)="activeTab = 'amount'" [class.active]="activeTab === 'amount'">Amount</span>
+                </ul>
+              <div class="tabContent">
+                <div *ngIf="activeTab === 'percentage'" class="tabBg">
+                  <label for="percentageInput" class="boxHead">Add Percentage:</label>
+                  <input type="text" id="percentageInput" [(ngModel)]="percentageData"  (ngModelChange)="updateButtonState('percentage')" pattern="[0-9]*">
+                  <label>Amount: {{ resultAmount }}</label>
+                  <!-- <input type="text" [value]="resultAmount" readonly> -->
+                  <!-- <button (click)="savePercentage()">Submit Percentage</button> -->
+                  <div class="subButton">
+                    <button class="submitButton"
+                    (click)="saveData('percentage')" [disabled]="isButtonDisabled"
+                    >Submit</button>
+                  </div>
+                </div>
+              
+                <div *ngIf="activeTab === 'amount'" class="tabBg">
+                  <label for="amountInput" class="boxHead">Add Amount:</label>
+                  <input type="text" id="amountInput" [(ngModel)]="amountData" (input)="updateButtonState('amount')" pattern="[0-9]*">
+              
+                  <!-- <button (click)="saveAmount()">Submit Amount</button> -->
+                  <div class="subButton">
+                    <button class="submitButton"
+                    (click)="saveData('amount')" [disabled]="isButtonDisabled"
+                    >Submit</button>
+                  </div>
+                </div>
+              </div>
+            
+            </div>
           </div>
         </ng-template>
 
@@ -484,6 +528,7 @@
             role="tabpanel"
             aria-labelledby="line-tab"
           >
+
             <div
               *ngIf="
                 !isDesktop &&
@@ -567,7 +612,9 @@
                   <td class="count_line">
                     <span class="f-12 p-2" style="margin-top: -6px">S.No</span>
                     <div
-                      class="f-12 mb-1 count-h"
+                      class="f-12 mb-1 "
+                      [ngClass]="(documentType == 'advance' || documentType == 'non-po')? 'count-h_normal':'count-h' "
+
                       *ngFor="let tagName of lineCount; let i = index"
                     >
                       {{ i + 1 }}
@@ -597,6 +644,7 @@
                       >
                         <div
                           class="f-12 td_padding invoice_color doc_height"
+                          [ngStyle]="{ borderBottom:(documentType == 'advance' || documentType == 'non-po')? '1px solid lightgray':'' }"
                           data-text="IN"
                           [ngClass]="
                             tagName.tagname == 'Description'
@@ -675,6 +723,7 @@
                           ></span>
                         </div>
                         <div
+                          *ngIf="documentType != 'advance' && documentType != 'non-po'"
                           class="f-12 td_padding po_color doc_height"
                           data-text="PO"
                           [ngClass]="
@@ -777,7 +826,8 @@
                     <div style="margin-top: -5px">
                       <div *ngFor="let data of lineCount">
                         <div *ngFor="let data2 of data.linedetails" class="mb1">
-                          <div class="f-12 td_padding invoice_color doc_height">
+                          <div class="f-12 td_padding invoice_color doc_height"
+                          [ngStyle]="{ borderBottom:(documentType == 'advance' || documentType == 'non-po')? '1px solid lightgray':'' }">
                             <button
                               class="trash_btn"
                               (click)="
@@ -790,7 +840,7 @@
                               <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </button>
                           </div>
-                          <div class="f-12 td_padding po_color doc_height">
+                          <div *ngIf="documentType != 'advance' && documentType != 'non-po'" class="f-12 td_padding po_color doc_height">
                             <div
                               class="f-12 d-flex"
                               *ngIf="submitBtn_boolean"
@@ -814,7 +864,7 @@
                   <td class="total_count">{{ invoice_subTotal }}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
-                <tr>
+                <tr *ngIf="documentType != 'advance' && documentType != 'non-po'">
                   <td></td>
                   <td class="total_txt">Purchase Total</td>
                   <td></td>
@@ -1250,7 +1300,7 @@
                             {{ line.value.itemCode }}
                           </div>
                         </div>
-                        <!-- <div *ngIf="item.TagName == 'Actions' && editable">
+                        <div *ngIf="item.TagName == 'Actions' && editable">
                           <div class="linevalue invert_thtd">
                             <button
                               class="trash_btn"
@@ -1259,7 +1309,7 @@
                               <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </button>
                           </div>
-                        </div> -->
+                        </div>
                         <span
                           *ngIf="
                             item.TagName != 'S.No' && item.TagName != 'Actions'
@@ -1278,8 +1328,12 @@
                             "
                             [value]="line.value.Value"
                             [title]="line.value.Value"
-                            disabled
-                            class="form-control inputHeight"
+                            [disabled]="!editable"
+                            class="form-control f-12 input_disabled"
+                            (change)="
+                              onChangeAdvance(line.value,inputv.value)
+                            "
+                            (blur)="saveAdChanges()"
                           />
                         </span>
                       </div>

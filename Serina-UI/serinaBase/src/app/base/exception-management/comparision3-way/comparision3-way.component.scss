@@ -265,6 +265,9 @@ $theme_color: var(--themeColor);
 .count-h {
   min-height: 66px;
 }
+.count-h_normal {
+  min-height: 29px;
+}
 @media screen and (max-width: 1000px) {
   .GRN_btn_position {
     bottom: 15px;
