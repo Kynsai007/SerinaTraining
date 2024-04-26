@@ -86,3 +86,22 @@
     padding: 10px;
     border-radius: 5px;
 }
+
+:host ::ng-deep {
+    .p-calendar {
+        width: 100%;
+    }
+    .p-calendar .p-datepicker {
+        left: 0 !important;
+    }
+    .p-datepicker .p-monthpicker{
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .p-calendar .p-inputtext {
+        width: 100% !important;
+        background: transparent;
+        height: 35px !important;
+        font-size: 14px !important;
+    }
+}

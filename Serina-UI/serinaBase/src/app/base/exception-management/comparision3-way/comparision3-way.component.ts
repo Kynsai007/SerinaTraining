@@ -3555,6 +3555,7 @@ export class Comparision3WayComponent
     this.dataService.poLineData = [];
     delete this.SharedService.fileSrc;
     delete this.dataService.documentType;
+    delete this.tagService.approval_selection_boolean;
     this.mat_dlg.closeAll();
   }
 }

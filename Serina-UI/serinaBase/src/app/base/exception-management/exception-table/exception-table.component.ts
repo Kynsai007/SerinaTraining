@@ -464,6 +464,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.ds.grnWithPOBoolean = false;
     } else if(this.router.url.includes('Service_ExceptionManagement')){
       this.tagService.submitBtnBoolean = true;
+      if (e.documentStatusID == 24) {
+        this.tagService.approval_selection_boolean = true;
+      }
       this.router.navigate([
         `${this.portalName}/invoice/serviceDetails/${e.idDocument}`,
       ]);

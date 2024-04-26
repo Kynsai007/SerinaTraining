@@ -3,6 +3,11 @@
 <div class="d-i-block di-ceter" [ngClass]="btnEnabled? 'mt-0':'di-ceter'">
     <div class="d-i-block bg-clr" [ngClass]="btnEnabled? 'mt-0':'bg-clr'">
         <div class="d-flex bulk">
+            <div class="erpSelectionBox" *ngIf="client_name == 'Enova'">
+                <p-calendar [(ngModel)]="selectedMonth" view="month" dateFormat="mm/yy" [showIcon]="true" [yearNavigator]="true" [minDate]="minDate" 
+                [maxDate]="maxDate" [yearRange]='displayYear' placeholder="Select Month" [readonlyInput]="false"
+                inputId="monthpicker"></p-calendar>
+            </div>
             <div class="erpSelectionBox">
                 <label class="f-13">Select allocation type</label> <br>
                 <select class="form-control w-250 inputHeight mr-4" (change)="selectedErp($event.target.value)">

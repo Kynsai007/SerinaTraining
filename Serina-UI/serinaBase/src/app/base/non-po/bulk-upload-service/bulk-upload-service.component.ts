@@ -11,6 +11,7 @@ import * as XLSX from 'xlsx';
 import * as fileSaver from 'file-saver';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
+import { DatePipe } from '@angular/common';
 
 
 @Component({
@@ -43,15 +44,25 @@ export class BulkUploadServiceComponent implements OnInit {
   ca_template_path:string;
   uploadBool: boolean;
 
+  displayYear;
+  minDate: Date;
+  maxDate: Date;
+  lastYear: number;
+  selectedMonth: Date;
+  client_name:string;
+
   constructor(private http: HttpClient,
     private spinner: NgxSpinnerService,
     private spService: ServiceInvoiceService,
     private alert: AlertService,
-    private dataService: DataService) { }
+    private dataService: DataService,
+  private datePipe : DatePipe) { }
 
   ngOnInit(): void {
     this.displayErpBoolean = this.spService.displayErpBoolean;
-    this.selectedERPType = this.dataService?.configData?.erpname
+    this.selectedERPType = this.dataService?.configData?.erpname;
+    this.getDate();
+    this.client_name = this.dataService.configData.client_name;
   }
 
   onChange(evt) {
@@ -132,11 +143,12 @@ export class BulkUploadServiceComponent implements OnInit {
   }
   excelDownload(data,type){
     let blob: any = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    let d = new Date();
-    let datestring = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
-      d.getHours() + ":" + d.getMinutes();
-    fileSaver.saveAs(blob, `${type}-${this.selectedFileType}-(${datestring})`);
+    // const url = window.URL.createObjectURL(blob);
+    // let d = new Date();
+    let datestr = this.datePipe.transform(this.selectedMonth, "MMM-yyyy");
+    // let datestring = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
+    //   d.getHours() + ":" + d.getMinutes();
+    fileSaver.saveAs(blob, `${type}-${this.selectedFileType}-(${datestr})`);
   }
   uploadXlFile() {
     this.spinner.show();
@@ -210,6 +222,25 @@ export class BulkUploadServiceComponent implements OnInit {
       this.spinner.hide();
 
     })
+  }
+
+  getDate() {
+    // this.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let today = new Date();
+    let month = today.getMonth();
+    // this.selectedMonth = this.months[month];
+    let year = today.getFullYear();
+    this.lastYear = year - 5;
+    this.displayYear = `${this.lastYear}:${year}`;
+    let prevYear = year - 5;
+
+    this.minDate = new Date();
+    this.minDate.setMonth(month);
+    this.minDate.setFullYear(prevYear);
+
+    this.maxDate = new Date();
+    this.maxDate.setMonth(month);
+    this.maxDate.setFullYear(year);
   }
 
   // uploadFile(e: any, filetype: any,type:string) {
