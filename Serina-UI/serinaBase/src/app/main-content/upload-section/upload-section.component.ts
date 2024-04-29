@@ -1669,7 +1669,7 @@ export class UploadSectionComponent implements OnInit {
     for (const file of this.supportDocList) {
       inv_formData.append('supporting_docs', file, file.name);
     }
-    inv_formData.append('data', this.APIPostData)
+    inv_formData.append('data', JSON.stringify(this.APIPostData))
     this.spinMsg = 'Please wait..'
     this.spinnerService.show();
     this.sharedService.mutliUpload(inv_formData).subscribe((data: any) => {
