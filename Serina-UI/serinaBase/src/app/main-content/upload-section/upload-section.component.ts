@@ -1589,11 +1589,11 @@ export class UploadSectionComponent implements OnInit {
       EntityName: this.entityName,
       VendorName: val.vendor?.VendorName,
       PONumber: val.PONumber?.PODocumentID,
-      invoiceType: val.invoiceType,
+      InvoiceType: val.invoiceType,
       // attchedInvoice: this.invoiceFilename,
       // attchedSupport: this.supportFileNamelist,
       // departmentName: val.departmentName,
-      approvers: Approver,
+      Approvers: Approver,
       // po_grn_data: po_grn_data
     }
     let APIObj = {

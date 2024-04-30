@@ -748,6 +748,16 @@ $theme_color: var(--themeColor);
   }
 
 }
+
+@media screen and (width <= 576px){
+  .doc_mobile {
+    // display: none;
+    position: absolute;
+    top: 50px;
+    z-index: 124;
+    background: #272727;
+  }
+}
 .label-head {
   font-size: 12px;
   font-weight: 600;

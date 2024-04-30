@@ -556,6 +556,7 @@ input[type="checkbox"] {
   gap: 0px 20px;
   padding: 4px;
   margin-bottom: 10px;
+  position: relative;
 }
 .w-value {
   width: 160px !important;
@@ -694,6 +695,13 @@ label {
 .multi_list {
   max-height: calc(48vh - 100px);
   overflow: auto;
+}
+.closeDetails {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: rgb(196, 61, 61);
+  cursor: pointer;
 }
 :host::ng-deep{
   .p-dialog {

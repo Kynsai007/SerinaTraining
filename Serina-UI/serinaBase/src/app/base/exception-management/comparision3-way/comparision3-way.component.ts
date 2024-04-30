@@ -330,6 +330,7 @@ export class Comparision3WayComponent
   allocateTotal: number;
   balanceAmount: any;
   invoiceTotal: any;
+  inv_line_total:number;
   entityList: any;
   entityName: any;
   commentsBool: boolean = true;
@@ -441,7 +442,7 @@ export class Comparision3WayComponent
     this.readFilePath();
     this.ERPCostAllocation();
     this.AddPermission();
-    
+
     this.isAdmin = this.dataService.isAdmin;
 
   }
@@ -841,7 +842,7 @@ export class Comparision3WayComponent
             let merge = { ...cost.AccountCostAllocation }
             this.costAllocation.push(merge);
             })
-            
+
         }
         else{
           this.normalCostAllocation = false;
@@ -953,11 +954,17 @@ export class Comparision3WayComponent
                 idDocumentLineItemTags: 1,
               });
             }
+            this.inv_line_total = 0 ;
             this.lineDisplayData.forEach((ele) => {
               if (ele.TagName == 'S.No') {
                 ele.linedata = this.lineDisplayData[1]?.linedata;
               } else if (ele.TagName == 'Actions') {
                 ele.linedata = this.lineDisplayData[1]?.linedata;
+              }
+              if(ele.TagName == 'AmountExcTax'){
+                  ele.linedata.forEach(ele=>{
+                  this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
+                })
               }
             });
           }
@@ -1692,7 +1699,7 @@ export class Comparision3WayComponent
 
             if (!groupedValues[iddynamiccostallocation]) {
               groupedValues[iddynamiccostallocation] = {
-                iddynamiccostallocation: iddynamiccostallocation, 
+                iddynamiccostallocation: iddynamiccostallocation,
               };
             }
             groupedValues[iddynamiccostallocation][property] = this.editedValues[key];
@@ -2359,7 +2366,7 @@ export class Comparision3WayComponent
       let extra_param = '';
       if(this.router.url.includes('GRN_approvals')){
         extra_param = `&grn_id=${this.invoiceID}`
-      } 
+      }
       this.SharedService.duplicateGRNCheck(arr,extra_param).subscribe((data: any) => {
         duplicateAPI_response = data?.result;
         this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
@@ -3336,12 +3343,12 @@ export class Comparision3WayComponent
 
   }
   calculateCost() {
-    
+
     const unitPriceObject = this.lineData?.Result?.find(obj => obj?.tagname === "UnitPrice");
     const quantityObject = this.lineData?.Result?.find(obj => obj?.tagname === "Quantity");
     // console.log(unitPriceObject)
     if (unitPriceObject && quantityObject) {
-        
+
         const unitPriceData = unitPriceObject?.items;
         const quantityData = quantityObject?.items;
 
@@ -3353,7 +3360,7 @@ export class Comparision3WayComponent
 
             const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
             const invquantity = parseInt(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-            
+
             if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
                 totalpoCost += pounitPrice * poquantity;
             }
@@ -3396,7 +3403,7 @@ export class Comparision3WayComponent
   //   this.editedValues[iddynamiccostallocation] = this.editedValues[iddynamiccostallocation] || {};
   //   this.editedValues[iddynamiccostallocation][key] = value;
     this.editedValues[iddynamiccostallocation + ',' + key] = value;
-    
+
   }
   addRow(index: number){
     this.isFormValid = false;
@@ -3441,7 +3448,7 @@ export class Comparision3WayComponent
     this.isBoxOpen = true;
     this.activeTab = 'percentage';
   }
-  
+
   saveData(tab: string){
     let pa_data;
     let inv_type = true;
@@ -3501,13 +3508,13 @@ export class Comparision3WayComponent
     })
     this.advanceAPIbody = [{
       "linenumber": data.itemCode,
-      "prev_value": amount_old,
+      "prev_value": amount_old.toString(),
       "id_documentline": lineNumber,
       "adv_percent": in_value
     },
     {
       "linenumber": data.itemCode,
-      "prev_value": data.Value,
+      "prev_value": data.Value.toString(),
       "id_documentline": data.idDocumentLineItems,
       "adv_percent": in_value
     }];
@@ -3519,12 +3526,14 @@ export class Comparision3WayComponent
         this.SpinnerService.hide();
         if(data?.status == "Success"){
           this.success("Updated succesfully");
+          this.inv_line_total = 0;
           this.lineDisplayData.forEach(tag=>{
             if(tag.TagName == 'AmountExcTax'){
               tag.linedata.forEach(ele=>{
-                if(ele.DocumentLineItems.itemCode == data.itemCode){
+                if(ele.DocumentLineItems.itemCode == this.advanceAPIbody[0].linenumber){
                   ele.DocumentLineItems.Value = data?.result;
                 }
+                this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
               })
             }
           })

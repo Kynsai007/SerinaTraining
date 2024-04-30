@@ -18,7 +18,8 @@
 
     <div *ngIf="displayTablebool" class="p-2">
       <div class="f-14">Recently Added Details</div>
-      <div *ngFor="let obj of uploadInvoicesListData" class="addDetails">
+      <div *ngFor="let obj of uploadInvoicesListData; let ind = index" class="addDetails">
+        <i class="fa fa-close closeDetails" (click)="deleteQueue(ind, obj)"></i>
         <div *ngFor="let item of obj|keyvalue">
           <label class="f-12 shade_color mb-0">{{item.key}}</label>
           <div class="f-12 wrap" [ngStyle]="{'width':item?.key?.includes('Name')? '160px':'110px'}">{{item.value}}</div>
@@ -654,7 +655,7 @@
               ngModel
               required
             >
-              <ng-template let-group pTemplate="item">
+              <!-- <ng-template let-group pTemplate="item">
                 <div class="flex align-items-center group-item">
                   <div
                     [ngStyle]="{
@@ -664,7 +665,7 @@
                     {{ group.VendorName }}
                   </div>
                 </div>
-              </ng-template>
+              </ng-template> -->
             </p-autoComplete>
           </div>
 

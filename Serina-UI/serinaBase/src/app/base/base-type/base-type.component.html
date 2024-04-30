@@ -661,7 +661,7 @@
 
         <div style="position: relative">
           <div
-            class="nav_Link f-14 z_index"
+            class="nav_Link f-14"
             [ngClass]="{
               active_cls: router.url.includes('ExceptionManagement'),
               'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
@@ -899,7 +899,7 @@
           router.url.includes('documentSummary') ||
           router.url.includes('GRN_approvals') ||
           router.url.includes('approvals') ||
-          router.url.includes('Create_GRN_inv_list')
+          router.url.includes('Create_GRN_inv_list') && isDesktop
         "
       >
         Card

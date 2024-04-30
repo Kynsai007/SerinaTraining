@@ -161,6 +161,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.isDesktop = false;
       this.isnotTablet = false;
       this.dataStoreService.isDesktop = false;
+      this.dataStoreService.isTableView.next(false);
     } else if(window.screen.width >= 769 && window.screen.width < 1024) {
       this.sidebarMode = 'over';
       this.isnotTablet = false;

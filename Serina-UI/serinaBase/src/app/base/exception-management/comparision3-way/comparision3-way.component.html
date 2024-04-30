@@ -478,11 +478,11 @@
             </div>
 
             <div *ngIf="isBoxOpen" class="amount-box">
-          
+
               <h6 class="headamtbox">Please Select</h6>
               <div class="close-icon" (click)="closeBox()"><i class="fa fa-times" aria-hidden="true"></i>
               </div>
-              
+
                 <ul class="tabs">
                   <span class="percentage" (click)="activeTab = 'percentage'" [class.active]="activeTab === 'percentage'">Percentage</span>
                   <span class="amount"(click)="activeTab = 'amount'" [class.active]="activeTab === 'amount'">Amount</span>
@@ -875,148 +875,6 @@
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
               </table>
-
-              <table
-                style="display: none"
-                class="w-100 mt-2"
-                cdkDropList
-                (cdkDropListDropped)="onOptionDrop($event)"
-              >
-                <tr *ngFor="let linesList of sampleLineData; let i = index">
-                  <div
-                    class="f-12 td_padding invoice_color doc_height"
-                    data-text="IN"
-                    [id]="i"
-                    *ngIf="linesList[0]?.invline"
-                  >
-                    <td *ngFor="let lineData of linesList">
-                      <input
-                        type="text"
-                        #lineInput
-                        [title]="lineData?.invline[0]?.DocumentLineItems?.Value"
-                        [value]="lineData?.invline[0]?.DocumentLineItems?.Value"
-                        class="f-12 input_disabled"
-                        style="text-transform: lowercase"
-                        [disabled]="!editable || fin_boolean"
-                        (change)="
-                          onChangeLineValue(
-                            lineData?.tagName,
-                            lineInput.value,
-                            lineData.invline[0]?.DocumentLineItems
-                          )
-                        "
-                        (blur)="saveChanges()"
-                        [ngClass]="!editable ? 'input_disabled' : ''"
-                        [ngStyle]="{
-                          width:
-                            lineData?.tagName == 'Description'
-                              ? '-webkit-fill-available'
-                              : '150px'
-                        }"
-                      />
-                    </td>
-                  </div>
-                  <div
-                    [id]="i"
-                    class="f-12 td_padding po_color doc_height"
-                    data-text="PO"
-                    *ngIf="linesList[0]?.poline"
-                    cdkDrag
-                  >
-                    <td *ngFor="let lineData of linesList">
-                      <div>
-                        <input
-                          type="text"
-                          [title]="lineData?.poline[0]?.Value"
-                          [value]="lineData?.poline[0]?.Value"
-                          class="f-12 input_disabled"
-                          style="text-transform: lowercase"
-                          disabled
-                          [ngClass]="!editable ? 'input_disabled' : ''"
-                          [ngStyle]="{
-                            width:
-                              lineData?.tagName == 'Description'
-                                ? '-webkit-fill-available'
-                                : '150px'
-                          }"
-                        />
-                      </div>
-                    </td>
-                  </div>
-                </tr>
-
-                <!-- <ng-container *ngFor="let group of sampleLineData"> -->
-                <!-- Display invline data -->
-                <!-- <tr class="f-12 td_padding invoice_color doc_height"
-                  data-text="IN">
-                    <ng-container>
-                      <td *ngFor="let lineData of group">
-                        <input
-                        type="text"
-                        #lineInput
-                        [title]="
-                          lineData.invline?.DocumentLineItems.Value
-                        "
-                        [value]="
-                          lineData.invline?.DocumentLineItems.Value
-                        "
-                        class="f-12 input_disabled"
-                        style="text-transform: lowercase"
-                        [disabled]="!editable || fin_boolean"
-                        (change)="
-                          onChangeLineValue(
-                            lineData.invline?.tagName,
-                            lineInput.value,
-                            lineData.invline?.DocumentLineItems
-                          )
-                        "
-                        (blur)="saveChanges()"
-                        [ngClass]="!editable ? 'input_disabled' : ''"
-                        [ngStyle]="{
-                          width:
-                          lineData.invline?.tagName == 'Description'
-                              ? '-webkit-fill-available'
-                              : '100px'
-                        }"
-                      />
-                      </td>
-                    </ng-container>
-                  </tr> -->
-
-                <!-- Display poline data -->
-                <!-- <tr cdkDropList (cdkDropListDropped)="onOptionDrop($event, group)"
-                  class="f-12 td_padding po_color doc_height"
-                    data-text="PO">
-                    <ng-container >
-                      <td *ngFor="let lineData of group" cdkDrag>
-                        <input
-                        type="text"
-                        [title]="lineData.poline?.DocumentLineItems.Value"
-                        [value]="lineData.poline?.DocumentLineItems.Value"
-                        class="f-12 input_disabled"
-                        style="text-transform: lowercase"
-                        disabled
-                        [ngClass]="!editable ? 'input_disabled' : ''"
-                        [ngStyle]="{
-                          width:
-                          lineData.poline?.tagName == 'Description'
-                              ? '-webkit-fill-available'
-                              : '100px'
-                        }"
-                      />
-                      </td>
-                    </ng-container>
-                  </tr> -->
-                <!-- </ng-container> -->
-              </table>
-              <!-- <table cdkDropList
-              (cdkDropListDropped)="onOptionDrop($event)">
-                <tr *ngFor="let item of lineItems" >
-                  <div cdkDrag>
-                    <td>{{ item.Value}}</td>
-                  </div>
-                </tr>
-              </table> -->
             </div>
 
             <!-- Create GRN screen Line details -->
@@ -1343,6 +1201,19 @@
                       </div>
                     </div>
                   </td>
+                </tr>
+              </table>
+
+              <table class="f-13 total_table" *ngIf="documentType == 'advance'">
+                <tr class="mb-1">
+                  <td></td>
+                  <td class="total_txt">Invoice Total</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td class="total_count">{{ inv_line_total }}</td>
+                  <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
               </table>
               <div *ngIf="!isDesktop">
