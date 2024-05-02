@@ -292,6 +292,8 @@ export class LoginPageComponent implements OnInit {
           if (error.status === 401 || error.status === 404) {
             if(error.status === 401){
               this.error = "Username or/and password are incorrect.";
+            }else if(error.status === 402){
+              this.error = "Account Deactivated. Please request for Activation";
             }else{
               this.error = "User is not Registered!";
             }
