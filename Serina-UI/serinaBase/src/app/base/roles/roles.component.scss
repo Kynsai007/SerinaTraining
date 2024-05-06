@@ -589,10 +589,15 @@ td{
 }
 .user_data {
     padding-bottom: 12px;
-    border-bottom: 1px solid lightgray;
+    // border-bottom: 1px solid lightgray;
 }
 .user_down {
     padding-top: 12px;
+    position: absolute;
+    bottom: 5px;
+    width: 90%;
+    right: 10px;
+    border-top: 1px solid lightgray;
 }
 .e_count {
     height: 30px;

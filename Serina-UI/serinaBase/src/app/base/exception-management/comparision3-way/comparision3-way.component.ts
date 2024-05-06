@@ -3565,6 +3565,7 @@ export class Comparision3WayComponent
     delete this.SharedService.fileSrc;
     delete this.dataService.documentType;
     delete this.tagService.approval_selection_boolean;
+    delete this.dataService.subStatusId;
     this.mat_dlg.closeAll();
   }
 }

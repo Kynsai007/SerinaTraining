@@ -110,9 +110,9 @@ export class ServiceInvoiceService {
   }
 
   // bulk upload
-  downloadTemplate(erp,type): Observable<any> {
+  downloadTemplate(erp,type,query): Observable<any> {
     return this.http.get(
-      `${environment.apiUrl}/${environment.apiVersion}/SP/downloadTemplate/${erp}/${type}`,
+      `${environment.apiUrl}/${environment.apiVersion}/SP/downloadTemplate/${erp}/${type}${query}`,
       { responseType: 'blob' }
     ).pipe(retry(3));
   }

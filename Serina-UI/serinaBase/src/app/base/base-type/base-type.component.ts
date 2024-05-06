@@ -295,8 +295,11 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       if(this.userDetails.userdetails.show_updates){
         this.releaseDocs();
       }
-      this.name_short = this.userDetails?.userdetails?.firstName[0] + this.userDetails?.userdetails?.lastName[0]
-      console.log(this.name_short)
+      if(this.userDetails?.userdetails?.lastName[0]){
+        this.name_short = this.userDetails?.userdetails?.firstName[0] + this.userDetails?.userdetails?.lastName[0];
+      } else {
+        this.name_short = this.userDetails?.userdetails?.firstName[0];
+      }
   }
 
 
@@ -509,6 +512,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       data : value})
   }
   doc_status_route(){
+    this.navClick();
     if(this.vendorInvoiceAccess && this.ap_boolean){
       this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
     } else if(this.vendorInvoiceAccess && !this.ap_boolean){
