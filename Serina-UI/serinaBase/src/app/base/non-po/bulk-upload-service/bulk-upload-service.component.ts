@@ -130,7 +130,13 @@ export class BulkUploadServiceComponent implements OnInit {
     this.erpSelectionBoolean = true;
   }
   downloadTemplate() {
-    this.spService.downloadTemplate(this.selectedERPType,this.selectedFileType).subscribe((data: any) => {
+    let monthInfo = '';
+    let datestr = this.datePipe.transform(this.selectedMonth, "MM-yyyy");
+
+    if(this.selectedFileType == 'dynamic'){
+      monthInfo = `?monthyear=${datestr}`
+    }
+    this.spService.downloadTemplate(this.selectedERPType,this.selectedFileType,monthInfo).subscribe((data: any) => {
       this.excelDownload(data,'Service_template_serina');
 
       // this.uploadSectionBoolean = true;

@@ -193,40 +193,12 @@ columnLengthSOA:number;
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;
       this.portal_name = 'customer';
-      // if (!this.vendorInvoiceAccess) {
-      //   if (this.ds.doc_status_tab == undefined) {
-      //     this.route.navigate([`/${this.portal_name}/invoice/ServiceInvoices`])
-      //   } else {
-      //     this.route.navigate([`${this.ds.doc_status_tab}`]);
-      //   }
-      // } else {
-      //   this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
-      // }
     } else if (this.userDetails.user_type == 'vendor_portal') {
       this.usertypeBoolean = false;
       this.portal_name = 'vendorPortal';
-
     }
     this.ds.portalName = this.portal_name;
     this.columnLengthSOA = this.columnsForSOA.length;
-    // if (this.vendorInvoiceAccess) {
-    //   if (this.ds.ap_boolean) {
-    //     this.partyType = 'Vendor';
-    //     this.invoceDoctype = true;
-    //     if (!this.ds.doc_status_tab) {
-    //       this.route.navigate([`/${this.portal_name}/invoice/allInvoices`]);
-    //     } else {
-    //       // this.route.navigate([`${this.ds.doc_status_tab}`]);
-    //     }
-    //   } else {
-    //     if (!this.ds.doc_status_tab) {
-    //       this.route.navigate([`/${this.portal_name}/invoice/PO`]);
-    //     } else {
-    //       this.route.navigate([`${this.ds.doc_status_tab}`]);
-    //     }
-    //     this.partyType = 'Customer';
-    //   }
-    // }
     this.APIParams = `?offset=1&limit=50`;
 
     this.routeForTabs();
@@ -1073,6 +1045,7 @@ columnLengthSOA:number;
     } else {
       this.first = event.pageNumber;
     }
+    console.log(this.first)
     if (this.route.url == this.invoiceTab) {
       this.ds.allPaginationFirst = this.first;
       this.ds.allPaginationRowLength = event.rows;
