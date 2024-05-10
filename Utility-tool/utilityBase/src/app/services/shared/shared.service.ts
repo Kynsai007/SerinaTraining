@@ -335,10 +335,18 @@ export class SharedService {
   resetTagging(resetObj): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/reset_tagging`,resetObj).pipe(retry(3));
   }
+  // auto tagging value to fields
+  tagValuesToFields(folderPath: string, fileName?: string): Observable<any> {
+    let url = `${this.url}/${this.apiVersion}/ModelOnBoard/autoLabels/${folderPath}`;
+    if (fileName) {
+      url += `?filename=${fileName}`;
+    }
+    return this.http.get(url).pipe(retry(3));
+  }
+
   getLabelsInfo(folderPath,filename): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_labels_info/${filename}`,{headers:new HttpHeaders({'folderpath':folderPath})}).pipe(retry(3));
   }
-
 
   /*Configuration settings APIs*/
   financeApprovalSetting(data):Observable<any> {

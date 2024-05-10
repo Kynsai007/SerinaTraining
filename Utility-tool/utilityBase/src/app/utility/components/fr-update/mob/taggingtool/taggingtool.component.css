@@ -389,14 +389,42 @@ td:hover{
   flex-shrink: 0;
   align-items: stretch;
 }
+.dropdown{
+  font-family: 'Times New Roman', Times, serif;
+}
+.dropdown-toggle{
+  position: relative;
+  top: -10px;
+  font-size: 15px;
+  background-color:rgb(189,195,199);
+  border: none;
+  outline: none;
+  color: white;
+}
+.dropdown-item{
+  font-size: small;
+}
+.dropdown-item:active{
+  background-color:rgb(189,195,199);
+  color: white;
+}
+.spinner-border{
+  position: relative;
+  top: -10px;
+  font-size: 10px;
+}
 .item-66 {
   flex-shrink: 0;
   display: inherit;
   padding: 15px;
   color: #ffffff;
 }
-
- 
+.item-66 i{
+  cursor: pointer;
+} 
+.item-66 i:active{
+  scale: 0.95;
+}
   ul{
     list-style-type: none;
   }
@@ -484,6 +512,7 @@ td:hover{
 .canvasremove{
   background-color: transparent;
 }
+
 @media screen and (min-width: 1400px) {
   .item2{
     flex:4;

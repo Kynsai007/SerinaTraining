@@ -16,6 +16,10 @@ if( pdfjsLib !== undefined ){
 export class TaggingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any;
   @Input() modelData:any;
+  layouttext:string;
+  textValue: string;
+  loadingValues: boolean = false;
+  allFileLabels: any[] = [];
   resp:any;
   top:number;
   activatedrw:boolean = false;
@@ -57,6 +61,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   showtabletags:boolean = false;
   target:any;
   currentSelection:any[]=[];
+  // currentwidth:any;
   currentwidth:number;
   currentheight:number;
   p_name:any;
@@ -783,21 +788,62 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
     });
   }
+
   async analyzeDocument(id:any,filename:string,data:Object){
+    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
     this.showtags = true;
     this.showtabletags = false;
     (<HTMLDivElement>document.getElementById("tagdiv")).style.flex = '19%';
     this.clearFields();
     if(Object.keys(data['labels']).length > 0){
       this.labelsJson = JSON.parse(data['labels'].blob);
-    }else{
+    //customized labeling start
+    if (ocr_engine_version === "Azure Form Recognizer 2.1") {
+      if (!this.labelsJson["labelingState"]) {
+          this.labelsJson["labelingState"] = 2;
+      }
+      this.labelsJson["labels"].forEach(item => {
+        if (!item.hasOwnProperty('key')) {
+            item.key = null;
+        }
+    });
+      this.labelsJson["labels"].forEach(item => {
+        if (item.hasOwnProperty('labelType')) {
+            delete item.labelType;
+        }
+    });
+  }else if (ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1") {
+      if (this.labelsJson["labelingState"]) {
+          delete this.labelsJson["labelingState"];
+      }
+      this.labelsJson["labels"].forEach(item => {
+        if (item.hasOwnProperty('key')) {
+            delete item.key;
+        }
+      });
+      this.labelsJson["labels"].forEach(item => {
+        if (!item.hasOwnProperty('labelType')) {
+            item["labelType"] = "Words";
+        }
+      });
+    }
+    //customized labeling end
+  }else{
+    if(ocr_engine_version === "Azure Form Recognizer 2.1"){
       this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
       this.labelsJson["document"] = this.currentfile;
       this.labelsJson["labels"] = [];
       this.labelsJson["labelingState"] = 2;
+    }else if(ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1"){
+      this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
+      this.labelsJson["document"] = this.currentfile;
+      this.labelsJson["labels"] = [];
     }
-    this.clearTableTags();
-    this.analyzing = true;
+   
+  }
+  this.clearTableTags();
+  this.analyzing = true;
+  this.layouttext = "Running Layout"
     this.ready = false;
     (<HTMLDivElement>document.getElementById("sticky")).classList.remove("sticky-top")
     let frobj = {
@@ -819,9 +865,14 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }else{
         this.zoomVal = 1;
       } 
-        
-      this.readResults = this.jsonresult['analyzeResult']['readResults']
-      let obj = this.readResults.filter(v => v.page == 1);
+      let obj;
+      if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+        this.readResults = this.jsonresult['analyzeResult']['readResults']
+        obj = this.readResults.filter(v => v.page == 1);
+      }else{
+        this.readResults = this.jsonresult['analyzeResult']['pages']
+        obj = this.readResults.filter(v => v.pageNumber == 1);
+      }
       this.currentwidth = obj[0]['width'];
       this.currentheight = obj[0]['height'];
       this.currentangle = obj[0]['angle'];
@@ -833,7 +884,11 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
       setTimeout(async () => {
         for await(let obj of this.readResults){
-          await this.drawCanvas(obj);
+          if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+            await this.drawCanvas(obj);
+          }else{
+            await this.drawCanvasv3(obj);
+          }
         }
         let inc = 0;
         for (let f of this.fields){
@@ -865,8 +920,14 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }catch(ex){
             console.log(ex);
           }
-          this.readResults = this.jsonresult['analyzeResult']['readResults']
-          let obj = this.readResults.filter(v => v.page == 1);
+          let obj;
+          if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+            this.readResults = this.jsonresult['analyzeResult']['readResults']
+            obj = this.readResults.filter(v => v.page == 1);
+          }else{
+            this.readResults = this.jsonresult['analyzeResult']['pages']
+            obj = this.readResults.filter(v => v.pageNumber == 1);
+          }
           this.currentwidth = obj[0]['width'];
           this.currentheight = obj[0]['height'];
           this.currentangle = obj[0]['angle'];
@@ -878,7 +939,11 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           setTimeout(async () => {
             for await(let obj of this.readResults){
-              await this.drawCanvas(obj);
+              if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+                await this.drawCanvas(obj);
+              }else{
+                await this.drawCanvasv3(obj);
+              }
             }
             let inc = 0;
             for (let f of this.fields){
@@ -1141,6 +1206,214 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       console.log(ex);
     }
   }
+
+  drawCanvasv3(obj){
+    try{
+      let _this = this;
+      document.addEventListener('mousemove', function(event) {
+        _this.target = event.target;
+      }, false);
+      const ZOOM_SPEED = 0.08;
+      let pagenum = obj['pageNumber'];
+      let parentdiv = (<HTMLDivElement>document.getElementById("parentcanvas"+pagenum));
+      if(parentdiv){
+        parentdiv.addEventListener('mouseover',function(e){
+          if(_this.activatedrw){
+            _this.dragdisable = true;
+          }else{
+            _this.dragdisable = false;
+          }
+        })
+      }
+      document.addEventListener('wheel',function(e){
+        if(_this.target.id == 'canvas'+pagenum){
+          let scaletransform = (<HTMLDivElement>document.getElementById("parentcanvas"+pagenum)).style.transform;
+          let res = scaletransform.split("scale")[0];
+          if(_this.zoomVal <= 0.1 || _this.zoomVal >=3.0){
+            _this.zoomVal = 1;
+          }
+          if(e.deltaY < 0){    
+            res = res + `scale(${_this.zoomVal += ZOOM_SPEED})`;
+            (<HTMLDivElement>document.getElementById("parentcanvas"+pagenum)).style.transform = res;  
+          }else{    
+            res = res + `scale(${_this.zoomVal -= ZOOM_SPEED})`;
+            (<HTMLDivElement>document.getElementById("parentcanvas"+pagenum)).style.transform = res;  }  
+          }
+      })
+      $("#parentcanvas"+pagenum+" div[id^='rect']").remove();
+      let line = 0;
+      let transformdiv = (<HTMLDivElement>document.getElementById("parentcanvas"+pagenum));
+      if(transformdiv && this.currentfiletype == 'application/pdf'){
+        transformdiv.style.transform = 'translate3d(-18px, -300px, 0px) scale('+this.zoomVal+')';
+      }
+      for(let l of obj['lines']){
+        let i = 0;
+        let boundingbox = l.polygon;
+        if(this.currentfiletype == 'application/pdf'){
+          boundingbox = this.convertInchToPixel(boundingbox);
+        }else{
+          boundingbox = this.convertImagePixelToPixel(boundingbox);
+        }
+        let div : any = document.createElement('div');
+        div.id = "rect"+pagenum+l.content+Math.round(boundingbox[0])+Math.round(boundingbox[1]);
+        div.setAttribute("line",line);
+        div.style.position = 'absolute';
+        div.style.border = '1px solid yellow';
+        div.style.top = boundingbox[1]+'px'
+        div.style.left = boundingbox[0]+'px';
+        div.style.width = boundingbox[4]+'px';
+        div.style.height = boundingbox[5]+'px';
+        div.style.zIndex = "5000";
+        div.setAttribute("selected","false");
+        let parentdiv = (<HTMLDivElement>document.getElementById("parentcanvas"+pagenum));
+        if(parentdiv){
+          parentdiv.appendChild(div)
+        }
+        i++;
+        let popdiv = (<HTMLDivElement>document.getElementById("hidden"+pagenum));
+        if(popdiv){
+          popdiv.style.display = 'none';  
+        }
+        div.addEventListener('mousedown',function(eve){
+          if(_this.activatedrw){
+            return;
+          }
+          if(div.getAttribute("selected") == "false"){
+            if(!_this.showtabletags){
+              popdiv.style.position = 'absolute';
+              popdiv.style.display = 'block';
+              popdiv.style.zIndex = '10000';
+              popdiv.style.background = '#F8F8FF'
+              popdiv.style.color = '#f1c40f';
+              popdiv.style.top = boundingbox[1]+15+"px";
+              popdiv.style.left = boundingbox[0]+10+"px";
+            }
+            div.setAttribute("selected","true")
+            div.style.backgroundColor = "rgba(0,255,0,0.4)"
+            _this.displayResponsivepopup = true;
+            _this.top = boundingbox[1]+10;
+            _this.currentSelection.push({'x':boundingbox[0],'y':boundingbox[1],'w':boundingbox[4],'h':boundingbox[5],'x2':boundingbox[2],'y2':boundingbox[3],'x4':boundingbox[6],'y4':boundingbox[7],'text':l.content,'line':Number(div.getAttribute("line")),'div':div.id})
+            if(_this.currentSelection.length > 1){
+              _this.currentSelection = _this.currentSelection.sort((a,b) => {
+                return _this.float2int(a.line) - _this.float2int(b.line) || _this.float2int(a.x) - _this.float2int(b.x); 
+              })
+            }
+          }else{
+            div.setAttribute("selected","false")
+            div.style.backgroundColor = "transparent";
+            _this.currentSelection = _this.currentSelection.filter(a => a.div != div.id);
+            if(_this.currentSelection.length > 1){
+              _this.currentSelection = _this.currentSelection.sort((a,b) => {
+                return _this.float2int(a.line) - _this.float2int(b.line) || _this.float2int(a.x) - _this.float2int(b.x); 
+              })
+            }
+          }
+          if(_this.currentSelection.length == 0){
+            popdiv.style.display = 'none';
+          }
+        });
+        div.addEventListener('mouseenter',function(eve){
+          if(_this.activatedrw){
+            _this.dragdisable = true;
+            return;
+          } 
+          _this.dragdisable = true;
+          if(eve.which == 1){
+          if(div.getAttribute("selected") == "false"){
+              div.setAttribute("selected","true")
+              if(div.style.backgroundColor != "rgba(0,255,0,0.4)"){
+                if(!_this.showtabletags){
+                  popdiv.style.position = 'absolute';
+                  popdiv.style.display = 'block';
+                  popdiv.style.zIndex = '10000';
+                  popdiv.style.background = '#F8F8FF'
+                  popdiv.style.color = '#f1c40f';
+                  popdiv.style.top = boundingbox[1]+15+"px";
+                  popdiv.style.left = boundingbox[0]+10+"px";
+                }
+                div.style.backgroundColor = "rgba(0,255,0,0.4)"
+                _this.currentSelection.push({'x':boundingbox[0],'y':boundingbox[1],'w':boundingbox[4],'h':boundingbox[5],'x2':boundingbox[2],'y2':boundingbox[3],'x4':boundingbox[6],'y4':boundingbox[7],'text':l.content,'line':Number(div.getAttribute("line")),'div':div.id})
+                if(_this.currentSelection.length > 1){
+                  _this.currentSelection = _this.currentSelection.sort((a:any,b:any) => {
+                    return _this.float2int(a.line) - _this.float2int(b.line) || _this.float2int(a.x) - _this.float2int(b.x); 
+                  })
+                }
+              }
+            }else{
+              div.setAttribute("selected","false")
+              div.style.backgroundColor = "transparent";
+              _this.currentSelection = _this.currentSelection.filter(a => a.div != div.id);
+              if(_this.currentSelection.length > 1){
+                _this.currentSelection = _this.currentSelection.sort((a,b) => {
+                  return _this.float2int(a.line) - _this.float2int(b.line) || _this.float2int(a.x) - _this.float2int(b.x); 
+                })
+              }
+              if(_this.currentSelection.length == 0){
+                popdiv.style.display = 'none';
+              }
+            }
+            
+          }
+        });
+        line++;
+      }
+      document.addEventListener('keydown',async function(eve){
+          const key = eve.key;
+          if(key === 'Delete'){
+            let popdiv = (<HTMLDivElement>document.getElementById("hidden"+pagenum));
+            if(popdiv){
+              popdiv.style.display = 'none';
+            }
+            for(let m=0;m<_this.currentSelection.length;m++){
+              let boundingbox = [_this.currentSelection[m].x,_this.currentSelection[m].y,_this.currentSelection[m].x2,_this.currentSelection[m].y2,_this.currentSelection[m].w,_this.currentSelection[m].h,_this.currentSelection[m].x4,_this.currentSelection[m].y4];
+              if(_this.currentfiletype == 'application/pdf'){
+                boundingbox = _this.convertPixelToInch(boundingbox);
+              }else{
+                boundingbox = _this.convertPixeltoImagePixel(boundingbox);
+              }
+              let div = (<HTMLDivElement>document.getElementById("rect"+_this.currentindex+_this.currentSelection[m].text+Math.round(_this.currentSelection[m].x)+Math.round(_this.currentSelection[m].y)));
+              if(div){
+                div.style.backgroundColor = 'transparent';
+                div.setAttribute("selected","false");
+                div.style.border = '1px solid yellow';
+                _this.fieldid = div.getAttribute("fieldid");
+                let index;
+                if(_this.fieldid){
+                  if(!_this.fieldid.startsWith(_this.currenttable)){
+                    let fieldKey = _this.fieldid.split("-")[1]
+                    index =  _this.labelsJson["labels"].findIndex(el => el.label == fieldKey);
+                  }else{
+                    index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
+                  }
+                 
+                  for(let v of _this.labelsJson["labels"][index]["value"]){
+                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0].toFixed(3) == boundingbox[0].toFixed(3) && v.boundingBoxes[0][1].toFixed(3) == boundingbox[1].toFixed(3)){
+                      _this.labelsJson["labels"][index]["value"] = _this.labelsJson["labels"][index]["value"].filter(val => val != v);
+                    }
+                  }
+                  _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
+                  (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
+                }
+              }
+            }
+            let frobj = {
+              'documentId':_this.modelData.idDocumentModel,
+              'container':_this.frConfigData[0].ContainerName,
+              'connstr':_this.frConfigData[0].ConnectionString,
+              'filename':_this.modelData.folderPath+"/"+_this.currentfile,
+              'saveJson':null,
+              'labelJson':_this.labelsJson
+            }
+            _this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
+            })
+            _this.currenttext = "";
+            _this.currentSelection = [];
+          }
+      });
+    }catch(ex){
+      console.log(ex);
+    }
+  }
   
   updateTableType(event){
     if(event.target.id == 'dynamicsized'){
@@ -1231,6 +1504,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
     }
   }
+
+
   previous(){
     this.currentindex = this.currentindex - 1
     if(this.currentindex < 1){
@@ -1446,10 +1721,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           'saveJson':null,
           'labelJson':this.labelsJson
         }
-        this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
-          
+        this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {    
         })
-      
     }
   }
   zoomOut(){
@@ -1462,5 +1735,40 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     res = res + 'scale('+this.zoomVal+')';
     (<HTMLDivElement>document.getElementById("parentcanvas"+this.currentindex)).style.transform = res;
   }
-
+  findIndexByKey(array, key) {
+    for (let i = 0; i < array.length; i++) {
+        const obj = array[i];
+        if (key in obj) {
+            return i; // Return index if key exists in the object
+        }
+    }
+    return -1; // Return -1 if key doesn't exist in any object
+  }
+  //Auto tagging function start
+  tagValues(e) {
+      let value = e.target.id;
+      let filename = this.currentfile;
+      let index = this.findIndexByKey(this.thumbnails, filename);
+      if (value === "currentFile") {
+        this.analyzing = true;
+        this.layouttext = "Getting Labels for Current File"
+        this.ready = false;
+        this.sharedService.tagValuesToFields(this.modelData.folderPath, filename).subscribe((data: any) => {
+          this.SelectDoc(index);
+          this.analyzing = false;
+          this.ready = true;
+        });
+      }
+      else if(value === "allFiles"){
+        this.analyzing = true;
+        this.ready = false;
+        this.layouttext = "Getting Labels for All Files"
+        this.sharedService.tagValuesToFields(this.modelData.folderPath).subscribe((data: any) => {
+          this.SelectDoc(0);
+          this.ready = true;
+          this.analyzing = false;
+        });
+      }   
+  }
 }
+//Auto tagging function end

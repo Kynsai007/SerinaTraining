@@ -1,6 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import {MatMenuModule} from '@angular/material/menu';
+import {MatButtonModule} from '@angular/material/button';
+
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -16,12 +20,15 @@ import { JwtInterceptor } from './services/Interceptors/Jwt.interceptor';
 import { ErrorInterceptor } from './services/Interceptors/errorInterceptor';
 import { PathLocationStrategy, LocationStrategy } from '@angular/common';
 
+
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
     BrowserModule,
+    MatMenuModule,
+    MatButtonModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
