@@ -12,6 +12,7 @@ import * as fileSaver from 'file-saver';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { DatePipe } from '@angular/common';
+import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
 
 
 @Component({
@@ -50,18 +51,47 @@ export class BulkUploadServiceComponent implements OnInit {
   lastYear: number;
   selectedMonth: Date;
   client_name:string;
+  currentTab: string = 'bulk';
+
+  columnsData = [];
+  showPaginatorAllInvoice: boolean;
+  columnsToDisplayInvoke = [];
+  selectedEntityId: any;
+  erpTriggerBoolean: boolean;
+
+  totalTableData = [];
+  columnsForTotal = [];
+  totalColumnHeader = [];
+  totalColumnField = [];
+  ColumnLengthtotal: any;
+  showPaginatortotal: boolean;
+  entity: any;
+  dataLength: number;
+  showInvokeBtnBoolean: boolean;
+  isTableView: boolean;
 
   constructor(private http: HttpClient,
     private spinner: NgxSpinnerService,
     private spService: ServiceInvoiceService,
     private alert: AlertService,
     private dataService: DataService,
-  private datePipe : DatePipe) { }
+    private datePipe : DatePipe,
+    private exceptionService: ExceptionsService) {
+      this.dataService.isTableView.subscribe(bool => {
+        this.isTableView = bool;
+        console.log(this.isTableView)
+        // this.ngOnInit();
+      });
+     }
 
   ngOnInit(): void {
     this.displayErpBoolean = this.spService.displayErpBoolean;
     this.selectedERPType = this.dataService?.configData?.erpname;
     this.getDate();
+    this.prepareColumns();
+    // this.readBatchData();
+    this.tableDataForBatch();
+    this.getEntitySummary();
     this.client_name = this.dataService.configData.client_name;
   }
 
@@ -347,5 +377,114 @@ export class BulkUploadServiceComponent implements OnInit {
   //     .toPromise();
   // }
 
+  changeTab(val:string){
+    this.currentTab = val
+  }
+    // to prepare display columns array
+    prepareColumns() {
+      this.columnsForTotal = [
+        // { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+        // { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+        // { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
+        { dbColumnname: 'EntityName', columnName: 'Entity' },
+        { dbColumnname: 'started_on', columnName: 'Started time' },
+        { dbColumnname: 'compeleted_on', columnName: 'End time' },
+        { dbColumnname: 'status', columnName: 'Batch Status' },
+      ];
+  
+      this.columnsForTotal.forEach((e) => {
+        this.totalColumnHeader.push(e.columnName);
+        this.totalColumnField.push(e.dbColumnname);
+      });
+  
+      this.ColumnLengthtotal = this.columnsForTotal.length;
+    }
 
+    // searchInvoiceDataV(value) {
+    //   this.allSearchInvoiceString = [];
+    //   this.allSearchInvoiceString = value.filteredValue;
+    // }
+  
+    // exportExcel() {
+    //   if (this.allSearchInvoiceString && this.allSearchInvoiceString.length > 0) {
+    //     this.ImportExcelService.exportExcel(this.allSearchInvoiceString);
+    //   } else if (this.columnsData && this.columnsData.length > 0) {
+    //     this.ImportExcelService.exportExcel(this.columnsData);
+    //   } else {
+    //     alert('No Data to import');
+    //   }
+    // }
+  
+    readBatchData() {
+      this.spinner.show();
+      this.exceptionService.readInvokeBatchData().subscribe(
+        (data: any) => {
+          const batchData = [];
+          data.forEach((element) => {
+            let mergeData = {
+              ...element.Document,
+              ...element.DocumentSubStatus,
+              ...element.Rule,
+              ...element.Vendor,
+            };
+            batchData.push(mergeData);
+          });
+          this.columnsData = batchData;
+          this.dataLength = this.columnsData.length;
+          if (this.dataLength > 10) {
+            this.showPaginatorAllInvoice = true;
+          }
+          if (this.dataLength > 0) {
+            this.showInvokeBtnBoolean = true;
+          }
+          this.spinner.hide();
+        },
+        (error) => {
+          this.spinner.hide();
+          this.alert.error_alert("Server error");
+        }
+      );
+    }
+  
+  
+    getEntitySummary() {
+      this.spService.getSummaryEntity().subscribe((data: any) => {
+        this.entity = data.result;
+      });
+    }
+  
+    selectEntity(value){
+      this.selectedEntityId = value;
+      this.erpTriggerBoolean = true;
+    }
+  
+    triggerBatch(){
+      let triggerData = {
+        "entity_ids": [
+          this.selectedEntityId
+        ]
+      }
+      this.spService.triggerBatch(triggerData).subscribe(data=>{
+        this.alert.success_alert(data.result);
+      },err=>{
+        this.alert.error_alert("Server error");
+      })
+    }
+  
+    tableDataForBatch(){
+      this.spService.triggerBatchHistory().subscribe((data:any)=>{
+        const batchData = [];
+          data.result.forEach((element) => {
+            let mergeData = {
+              ...element.BatchTriggerHistory
+            };
+            mergeData.EntityName = element.EntityName
+            batchData.push(mergeData);
+          });
+          this.totalTableData = batchData;
+          if (this.totalTableData.length > 10) {
+            this.showPaginatortotal = true;
+          }
+      })
+    }
 }

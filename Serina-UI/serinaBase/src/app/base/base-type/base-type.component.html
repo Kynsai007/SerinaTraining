@@ -846,17 +846,17 @@
             <a
               [routerLink]="'bulkUploadService'"
               routerLinkActive="active_sub_cls"
-              (click)="onMenuChange('Bulk upload')"
+              (click)="onMenuChange('Service Bulk upload/ Batch trigger')"
               *ngIf="serviceInvoiceAccess"
-              >Bulk upload</a
+              >Service Bulk upload/ Batch trigger</a
             >
-            <a
+            <!-- <a
               [routerLink]="'service_batch_trigger'"
               routerLinkActive="active_sub_cls"
               (click)="onMenuChange('Service batch trigger')"
               *ngIf="serviceInvoiceAccess"
               >Service batch trigger</a
-            >
+            > -->
           </div>
         </div>
 
@@ -898,6 +898,7 @@
           router.url.includes('documentSummary') ||
           router.url.includes('GRN_approvals') ||
           router.url.includes('approvals') ||
+          router.url.includes('bulkUploadService') ||
           router.url.includes('Create_GRN_inv_list') && isDesktop
         "
       >

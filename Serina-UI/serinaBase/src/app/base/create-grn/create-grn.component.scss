@@ -45,7 +45,7 @@
 }
 .p-autocomplete-dd .p-autocomplete-input {
   flex: 1 1 auto;
-  width: 1%;
+  width: 100%;
   background: inherit;
   border: 0;
   height: 30px;
@@ -64,7 +64,7 @@
   top: -10px;
 }
 .p-autocomplete {
-  width: 31vw;
+  width: 100%;
   position: relative;
   top: -7px;
 }

@@ -148,7 +148,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     } else if(this.router.url.includes('service_batch_trigger')){
       this.more_text = 'Service batch trigger';
     } else if(this.router.url.includes('bulkUploadService')){
-      this.more_text = 'Bulk Upload';
+      this.more_text = 'Service Bulk upload/ Batch trigger';
     } else if(this.router.url.includes('ERP_approvals')){
       this.more_text = 'ERP Approvals';
     } else {

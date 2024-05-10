@@ -1,70 +1,138 @@
-<h6 class="headh6 text_color f-14">Bulk Upload for service accounts</h6>
+<!-- <h6 class="headh6 text_color f-14">Bulk Upload for service accounts</h6> -->
 
-<div class="d-i-block di-ceter" [ngClass]="btnEnabled? 'mt-0':'di-ceter'">
-    <div class="d-i-block bg-clr" [ngClass]="btnEnabled? 'mt-0':'bg-clr'">
-        <div class="d-flex bulk">
-            <div class="erpSelectionBox" *ngIf="client_name == 'Enova'">
-                <p-calendar [(ngModel)]="selectedMonth" view="month" dateFormat="mm/yy" [showIcon]="true" [yearNavigator]="true" [minDate]="minDate" 
-                [maxDate]="maxDate" [yearRange]='displayYear' placeholder="Select Month" [readonlyInput]="false"
-                inputId="monthpicker"></p-calendar>
+<div class="pt-2">
+    <ul class="nav nav-tabs nav_sub">
+        <li class="nav-item" >
+            <a
+              class="nav-link"
+              [ngClass]="currentTab == 'bulk' ? 'active' : ''"
+              (click)="changeTab('bulk')"
+            >
+              Bulk Upload</a>
+        </li>
+        <li class="nav-item" >
+            <a
+              class="nav-link"
+              [ngClass]="currentTab == 'batch' ? 'active' : ''"
+              (click)="changeTab('batch')"
+            >
+            Service Batch Trigger</a>
+        </li>
+    </ul>
+    <div *ngIf="currentTab == 'bulk'" class="d-i-block di-ceter bg_white p-2 mt-2" [ngClass]="btnEnabled? 'mt-0':'di-ceter'">
+        <div class="d-i-block bg-clr" [ngClass]="btnEnabled? 'mt-0':'bg-clr'">
+            <div class="d-flex bulk">
+                <div class="erpSelectionBox" *ngIf="client_name == 'Enova'">
+                    <p-calendar [(ngModel)]="selectedMonth" view="month" dateFormat="mm/yy" [showIcon]="true" [yearNavigator]="true" [minDate]="minDate" 
+                    [maxDate]="maxDate" [yearRange]='displayYear' placeholder="Select Month" [readonlyInput]="false"
+                    inputId="monthpicker"></p-calendar>
+                </div>
+                <div class="erpSelectionBox">
+                    <label class="f-12 shade_color">Select allocation type</label> <br>
+                    <select class="form-control w-250 inputHeight mr-4" (change)="selectedErp($event.target.value)">
+                        <option value="" selected disabled>Please Select Template</option>
+                        <option *ngFor="let erp of ERPList" [value]="erp.erp">
+                            {{erp.erp}}</option>
+                    </select>
+                </div>
+                <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate()">
+                    Download template
+                    <div><i class="fa fa-download"></i></div>
+                </button>
+                <!-- <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate('ca')">Cost allocation
+                    <div><i class="fa fa-download"></i></div>
+                </button> -->
             </div>
-            <div class="erpSelectionBox">
-                <label class="f-13">Select allocation type</label> <br>
-                <select class="form-control w-250 inputHeight mr-4" (change)="selectedErp($event.target.value)">
-                    <option value="" selected disabled>Please Select Template</option>
-                    <option *ngFor="let erp of ERPList" [value]="erp.erp">
-                        {{erp.erp}}</option>
-                </select>
-            </div>
-            <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate()">
-                Download template
-                <div><i class="fa fa-download"></i></div>
-            </button>
-            <!-- <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate('ca')">Cost allocation
-                <div><i class="fa fa-download"></i></div>
-            </button> -->
-        </div>
-        <div class="uploadBox mt-3" *ngIf="selectedFileType">
-            <div class="d-i-block uploadDiv">
-                <label class="f-13">Template upload</label><br>
-                <input type="file" id="custom-upload" (change)="onChange($event)" hidden [disabled]="btnEnabled" #inputFile>
-                <label for="custom-upload" class="custom-btn f-12 mr-2">Choose file</label>
+            <div class="uploadBox mt-3" *ngIf="selectedFileType">
+                <div class="d-i-block uploadDiv">
+                    <label class="f-12 shade_color">Template upload</label><br>
+                    <input type="file" id="custom-upload" (change)="onChange($event)" hidden [disabled]="btnEnabled" #inputFile>
+                    <label for="custom-upload" class="custom-btn f-12 mr-2">Choose file</label>
+        
+                    <!-- name of file chosen -->
+                    <span class="f-12">{{fileChoosen}}</span>
+                </div>
+        
+                <!-- <div class="d-i-block uploadDiv">
+                    <label class="f-13">Cost allocation template upload</label><br>
+                    <input type="file" id="custom-upload" (change)="onChange($event,'ca')" hidden [disabled]="btnEnabled" #inputFile>
+                    <label for="custom-upload" class="custom-btn f-12 mr-2">Choose file</label>
+        
+                    <span class="f-12">{{fileChoosen}}</span>
+                </div> -->
     
-                <!-- name of file chosen -->
-                <span class="f-12">{{fileChoosen}}</span>
+    
             </div>
-    
-            <!-- <div class="d-i-block uploadDiv">
-                <label class="f-13">Cost allocation template upload</label><br>
-                <input type="file" id="custom-upload" (change)="onChange($event,'ca')" hidden [disabled]="btnEnabled" #inputFile>
-                <label for="custom-upload" class="custom-btn f-12 mr-2">Choose file</label>
-    
-                <span class="f-12">{{fileChoosen}}</span>
-            </div> -->
-
-
-        </div>
-        <div *ngIf="btnEnabled" class="mt-2" style="text-align: right;">
-            <!-- <button  class="btnUpload mr-3 ml-3" (click)="removeData()">Remove Data</button> -->
-            <button [disabled]="progress && !uploadBool" class="btnUpload" (click)="uploadFiles()">
-                <span *ngIf="progress" class="spinner-border spinner-border-sm mr-1"></span>
-                Upload
-            </button>
-        </div>
-        <div>
-            <div class="f-12" *ngIf="progress">Upload progressbar</div>
-            <div class="progress mb-2" *ngIf="progress">
-                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" [style.width]="progress + '%'">
-                    {{progress}}%</div>
+            <div *ngIf="btnEnabled" class="mt-2" style="text-align: right;">
+                <!-- <button  class="btnUpload mr-3 ml-3" (click)="removeData()">Remove Data</button> -->
+                <button [disabled]="progress && !uploadBool" class="btnUpload" (click)="uploadFiles()">
+                    <span *ngIf="progress" class="spinner-border spinner-border-sm mr-1"></span>
+                    Upload
+                </button>
+            </div>
+            <div>
+                <div class="f-12" *ngIf="progress">Upload progressbar</div>
+                <div class="progress mb-2" *ngIf="progress">
+                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" [style.width]="progress + '%'">
+                        {{progress}}%</div>
+                </div>
+            </div>
+            <div class="f-13 text-danger" *ngIf="isExcelFile === false">
+                This is not an Excel file
             </div>
         </div>
-        <div class="f-13 text-danger" *ngIf="isExcelFile === false">
-            This is not an Excel file
-        </div>
+    
     </div>
+    
+    <div *ngIf="currentTab == 'batch'" class="bg_white">
+        <div class="fileUploadDiv p-2 m-2">
+            <div>
+              <div class="d-flex">
+                <div class="selectFilter mr-2">
+                  <label class="f-12 z_index shade_color mb-0">Select Entity</label><br />
+                  <select class="form-control accountSelect f-14" (change)="selectEntity($event.target.value)">
+                    <option value="" style="font-weight: 500;">Select Entity</option>
+                    <option *ngFor="let entity of entity" [value]="entity.idEntity" >
+                      {{ entity.EntityName }}
+                    </option>
+                  </select>
+                </div>
+                <button *ngIf="erpTriggerBoolean" class="primary_btn f-12 mt-2" (click)="triggerBatch()" >Start Batch</button>
+              </div>
+        
+            </div>
+          </div>
+        
+          <div *ngIf="isTableView">
+                <app-exception-table
+                [invoiceColumns]="columnsForTotal"
+                [columnsToDisplay]="totalColumnField"
+                [showPaginatorAllInvoice]="showPaginatortotal"
+                [ColumnLength]="ColumnLengthtotal"
+                [columnsData]="totalTableData"
+              >
+              </app-exception-table>
+          </div>
 
+          <div *ngIf="!isTableView"
+          class="card_container d-flex flex-wrap">
+            <ng-container *ngFor="let e_data of totalTableData">
+                <div class="card">
+                    <div class="f-12 status_btn" [ngStyle]="{
+                        backgroundColor: e_data.status == 'Completed'
+                          ? '#14BB12'
+                          : '#F1932F'
+                      }">{{e_data.status}}</div>
+                    <div class="f-14">{{e_data.EntityName}}</div>
+
+                    <div class="f-12">
+                        {{e_data.started_on + "Z" | date:'dd-MM-yyyy, h:mm a'}} To {{e_data.compeleted_on + "Z" | date:'dd-MM-yyyy, h:mm a'}}
+                    </div>
+                </div>
+            </ng-container>
+          </div>
+    </div>
 </div>
-
 <!-- <div class="d-inline">
 
     <button *ngIf="btnEnabled" class="btnUpload mr-3 ml-3" (click)="removeData()">Remove Data</button>

@@ -264,12 +264,12 @@
   <nav class="desktop d-flex justify-content-between">
     <div class="d-flex" style="gap: 60px;">
       <div>
-        <img [src]="logoSrc" alt="Serina logo"  [ngClass]="DS.configData.client_name == 'Cenomi'? 'otherBrand':'Serina'"/>
+        <img [src]="logoSrc" alt="Serina logo"  [ngClass]="DS.configData?.client_name == 'Cenomi'? 'otherBrand':'Serina'"/>
       </div>
       <div class="navLinks d-flex justify-content-between" *ngIf="!isNewVendorForERP">
           <div
             class="nav_Link f-14"
-            [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+            [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
             [routerLink]="'home'"
           >
@@ -278,7 +278,7 @@
   
           <div
             class="nav_Link f-14"
-            [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+            [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
             [routerLink]="'uploadInvoices'"
           >
@@ -287,7 +287,7 @@
   
           <div
           class="nav_Link f-14"
-          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+          [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
             [routerLink]="'invoice'"
           >
@@ -296,7 +296,7 @@
   
           <div
           class="nav_Link f-14"
-          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+          [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
             [routerLink]="'ExceptionManagement'"
           >
@@ -322,7 +322,7 @@
           <div
             *ngIf="addUsersBoolean"
             class="nav_Link f-14"
-            [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+            [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
             routerLinkActive="active_cls"
             [routerLink]="'vendorContacts'"
           >

@@ -300,7 +300,7 @@
             isDesktop &&
             !router.url.includes('documentSummary') &&
             !router.url.includes('home') && 
-            !router.url.includes('service_batch_trigger') && actionBool
+            !router.url.includes('bulkUploadService') && actionBool
           "
         >
           Actions
@@ -525,7 +525,7 @@
           </ng-container>
         </td>
         <td *ngIf="!router.url.includes('home') && 
-        !router.url.includes('service_batch_trigger')">
+        !router.url.includes('bulkUploadService')">
           <i
             *ngIf="router.url.includes('invoice')"
             class="pi pi-eye f-13 showEye mr-2 font_weight_500"
