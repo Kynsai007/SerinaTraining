@@ -45,8 +45,8 @@
         </div>
         <div class="item3 bg-white h-md-100 loginarea box">
             <div class="row" style="margin-top: 10%;">
-                <label for="modelname" class="form-label"><b>Model Name</b></label>
-                <input type="text" class="form-control form-control-sm"  id="modelname" value="{{modelData.modelName}}" disabled>
+                <label for="modelname" class="form-label"><b>{{textmodel}}</b></label>
+                <input type="text" class="form-control form-control-sm"  id="modelname" value="{{modelData.modelName}}" [disabled]="apiversion == 'Azure Form Recognizer 2.1'">
             </div>
             <div class="row" style="width: 100%;margin-top: 5%;">
                 <button type="button" class="btn btnbg btn-sm" (click)="trainModel()"><div *ngIf="training" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!training" class="fa fa-connectdevelop"></i> Train</button>
@@ -55,7 +55,7 @@
             
 
             <div *ngIf="!nottrained" class="row" style="width: 100%;">
-                <span class="fw-bold-dark">Model Information</span>
+                <span class="fw-bold-dark">Version: {{apiversion}}</span>
                 <div class="col-md-12 p-2">
                     <b>Model ID: </b> <span style="font-size: x-small;">{{previoustrainingres.modelInfo.modelId}}</span>
                 </div>

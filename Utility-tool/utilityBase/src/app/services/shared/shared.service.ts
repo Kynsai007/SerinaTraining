@@ -296,7 +296,7 @@ export class SharedService {
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/create_compose_result`,modelobj).pipe(retry(3));
   }
   testModel(modelobj): Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result/${modelobj['modelid']}`,modelobj['formData'],{headers:new HttpHeaders({'fr_endpoint':modelobj['fr_endpoint'],'fr_key':modelobj['fr_key']})}).pipe(retry(3));
+    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result/${modelobj['modelName']}/model/${modelobj['modelid']}`,modelobj['formData'],{headers:new HttpHeaders({'fr_endpoint':modelobj['fr_endpoint'],'fr_key':modelobj['fr_key']})}).pipe(retry(3));
   }
   testHtml(formData): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result_html`,formData).pipe(retry(3));

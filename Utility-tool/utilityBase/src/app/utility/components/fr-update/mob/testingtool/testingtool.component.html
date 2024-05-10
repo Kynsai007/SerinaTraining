@@ -101,7 +101,7 @@
                             <li *ngIf="fields[f].type == 'string'" class="list-group-item d-flex justify-content-between align-items-start" id="field{{i}}">
                             <div class="ms-2 me-auto">
                                 <div class="fw-bold" style="color: #888888;">{{i+1}}. {{f}}</div>
-                                <div class="result" style="font-size: small;">{{fields[f].text}}</div>
+                                <div class="result" style="font-size: small;">{{fields[f].text || fields[f].content}}</div>
                             </div>
                             <span *ngIf="fields[f].confidence > 0.7" class="badge bg-success rounded-pill">{{RoundOff(fields[f].confidence * 100)}} %</span>
                             <span *ngIf="fields[f].confidence > 0.3 && fields[f].confidence < 0.7" class="badge bg-primary rounded-pill">{{RoundOff(fields[f].confidence * 100)}} %</span>

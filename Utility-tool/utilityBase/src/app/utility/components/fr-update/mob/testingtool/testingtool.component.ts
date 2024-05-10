@@ -109,6 +109,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     this.model_validate_msg = "";
     this.modelid = e.target.value;
     let isComposed = this.models.filter(v => v.modelInfo.modelId == this.modelid)[0].modelInfo.attributes.isComposed;
+    this.modelname = this.models.filter(v => v.modelInfo.modelId == this.modelid)[0].modelInfo.modelName;
     console.log(isComposed)
     if(!isComposed){
       this.defaultmodel = e.target.value;
@@ -211,6 +212,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     element.scrollIntoView(); 
   }
   async runAnalyses(){
+    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
     if(this.file_url != ""){
       const formData: FormData = new FormData();
       formData.append('file', this.file);
@@ -218,6 +220,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
       this.analyzed = false;
       let testobj = {
         "formData":formData,
+        "modelName":this.modelname,
         "modelid":this.modelid,
         "fr_endpoint":"",
         "fr_key":""
@@ -229,16 +232,22 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         if(this.resp['message'] == 'success'){
           //this.model_validate();
           this.jsonresult = this.resp['json_result'];
-          console.log(this.jsonresult);
-          this.readResults = this.jsonresult['analyzeResult']['readResults']
-          let obj = this.readResults.filter(v => v.page == 1);
+          let obj;
+          if(ocr_engine_version == "Azure Form Recognizer 2.1"){
+            this.readResults = this.jsonresult['analyzeResult']['readResults']
+            obj = this.readResults.filter(v => v.page == 1);
+            this.fields = this.jsonresult.analyzeResult.documentResults[0].fields
+          }else{
+            this.readResults = this.jsonresult['analyzeResult']['pages']
+            obj = this.readResults.filter(v => v.pageNumber == 1);
+            this.fields = this.jsonresult.analyzeResult.documents[0].fields
+          }
           this.currentwidth = obj[0]['width'];
           this.currentheight = obj[0]['height'];
           if(this.resp['content_type'] != "application/pdf"){
             this.file_url = this.resp['url'];
             this.setcanvastest();
           }
-          this.fields = this.jsonresult.analyzeResult.documentResults[0].fields
           setTimeout(async () => {
             for(let i=0;i<Object.keys(this.fields).length;i++){
               this.randomHsltest(i);
@@ -430,7 +439,6 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
       "folderPath": this.modelStatus.folderPath,
       "modelStatus": id_status
     }
-    console.log(this.modelStatus);
     // if(this.modelStatus.modelStatus != 1){
     //   console.log("hi 1")
     //   updatedData.folderPath = this.modelStatus.folderPath;
@@ -593,11 +601,11 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   }
   drawCanvastest(obj){
     try{
-      let pagenum = obj['page'];
+      let pagenum = obj['page'] || obj['pageNumber'];
       for(let k=0;k<Object.keys(this.fields).length;k++){
         if(this.fields[Object.keys(this.fields)[k]].type == 'string'){
           if(pagenum == this.fields[Object.keys(this.fields)[k]].page){
-            let comparebox = this.fields[Object.keys(this.fields)[k]].boundingBox;
+            let comparebox = this.fields[Object.keys(this.fields)[k]].boundingBox || this.fields[Object.keys(this.fields)[k]].boundingRegions.polygon;
             if(this.file.type == 'application/pdf'){
               comparebox = this.convertInchToPixeltest(comparebox);
             }else{
@@ -617,8 +625,8 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         }else{
           for(let v=0;v<this.fields[Object.keys(this.fields)[k]].valueArray.length;v++){
             for(let key of Object.keys(this.fields[Object.keys(this.fields)[k]].valueArray[v].valueObject)){
-              if(pagenum == this.fields[Object.keys(this.fields)[k]].valueArray[v].valueObject[key].page){
-                let comparebox = this.fields[Object.keys(this.fields)[k]].valueArray[v].valueObject[key].boundingBox;
+              if(pagenum == this.fields[Object.keys(this.fields)[k]].valueArray[v].valueObject[key].page || this.fields[Object.keys(this.fields)[k]].valueArray[v].valueObject[key].pageNumber){
+                let comparebox = this.fields[Object.keys(this.fields)[k]].valueArray[v].valueObject[key].boundingBox || this.fields[Object.keys(this.fields)[k]].valueArray[v].valueObject[key].boundingRegions.polygon;
                 if(this.file.type == 'application/pdf'){
                   comparebox = this.convertInchToPixeltest(comparebox);
                 }else{
