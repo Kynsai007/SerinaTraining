@@ -876,7 +876,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   this.alldivs = {};
   this.clearTableTags();
   this.analyzing = true;
-  this.layouttext = "Running Layout"
+  this.layouttext = "Running Layout. Please Wait!"
     this.ready = false;
     (<HTMLDivElement>document.getElementById("sticky")).classList.remove("sticky-top")
     let frobj = {
@@ -1832,6 +1832,16 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           this.analyzing = false;
         });
       }   
+  }
+  runLayout() {
+    this.analyzing = true;
+    this.ready = false;
+    this.layouttext = "Running Layout for all files. Please Wait!"
+    this.sharedService.runLayout(this.modelData.folderPath).subscribe((data:any) =>{
+      this.ready = true;
+      this.analyzing = false;
+      this.SelectDoc(0);
+    })
   }
 }
 //Auto tagging function end

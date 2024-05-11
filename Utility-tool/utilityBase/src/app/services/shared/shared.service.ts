@@ -344,6 +344,10 @@ export class SharedService {
     return this.http.get(url).pipe(retry(3));
   }
 
+  runLayout(folderPath:string): Observable<any>{
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/runlayout/${folderPath}`).pipe(retry(3));
+  }
+
   getLabelsInfo(folderPath,filename): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_labels_info/${filename}`,{headers:new HttpHeaders({'folderpath':folderPath})}).pipe(retry(3));
   }
