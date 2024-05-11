@@ -2,6 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import * as pdfjsLib from 'pdfjs-dist';
+import Fuse from 'fuse.js'
 import {CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { SharedService } from 'src/app/services/shared/shared.service';
 import $ from 'jquery';
@@ -20,6 +21,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   textValue: string;
   loadingValues: boolean = false;
   allFileLabels: any[] = [];
+  alldivs: {};
   resp:any;
   top:number;
   activatedrw:boolean = false;
@@ -99,6 +101,14 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
     });
   }
+  bestMatch(targetId:string){
+    const fuse = new Fuse(this.alldivs[this.currentindex], {
+      threshold: 0.3, // Adjust the threshold as needed
+      keys: [], // The keys to search for similarity
+    });
+    let result = fuse.search(targetId);
+    return result[0];
+  }  
   createRect(x:any, y:any, w:any, h:any) {
     return $('<div/>').css({
         left: x,
@@ -263,8 +273,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }
               boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
               boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-              if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1]))){
-                unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
+              let divid = "rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1];
+              let bestmatch = this.bestMatch(divid);
+              if(bestmatch && (<HTMLDivElement>document.getElementById(String(bestmatch["item"])))){
+                unsorted[o].line = Number((<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).getAttribute("line"));
               }
             }
             unsorted = unsorted.sort((a:any,b:any) => {
@@ -285,14 +297,18 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }
               boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
               boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-              let div = (<HTMLDivElement>document.getElementById("rect"+arr[i].page+arr[i].text+boundingBox[0]+boundingBox[1]));
-              if(div){
-                div.style.backgroundColor = 'transparent';
-                div.setAttribute("selected","false");
-                div.setAttribute("fieldid",l.label);
-                div.style.borderColor = 'rgb(0, 121, 255)';
-                div.style.borderStyle = 'solid';
-                div.style.borderWidth = '2px';
+              let divid = "rect"+arr[i].page+arr[i].text+boundingBox[0]+boundingBox[1];
+              let bestmatch = this.bestMatch(divid);
+              if(bestmatch){
+                let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
+                if(div){
+                  div.style.backgroundColor = 'transparent';
+                  div.setAttribute("selected","false");
+                  div.setAttribute("fieldid",l.label);
+                  div.style.borderColor = 'rgb(0, 121, 255)';
+                  div.style.borderStyle = 'solid';
+                  div.style.borderWidth = '2px';
+                }
               }
             }
           }
@@ -316,14 +332,18 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
         if(!this.checkFieldExists({page:this.currentindex,text:arr[i].text,boundingBoxes:[boundingbox]})){
           this.labelsJson["labels"][tabindex]["value"].push({page:this.currentindex,text:arr[i].text,boundingBoxes:[boundingbox]})
-          let div = (<HTMLDivElement>document.getElementById("rect"+this.currentindex+arr[i].text+Math.round(arr[i].x)+Math.round(arr[i].y)));
-          if(div){
-            div.style.backgroundColor = 'transparent';
-            div.setAttribute("selected","false");
-            div.setAttribute("fieldid",this.currenttable+"/"+index+"/"+fieldKey);
-            div.style.borderColor = 'rgb(0, 121, 255)';
-            div.style.borderStyle = 'solid';
-            div.style.borderWidth = 'medium';
+          let divid = "rect"+this.currentindex+arr[i].text+Math.round(arr[i].x)+Math.round(arr[i].y);
+          let bestmatch = this.bestMatch(divid);
+          if(bestmatch){
+            let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
+            if(div){
+              div.style.backgroundColor = 'transparent';
+              div.setAttribute("selected","false");
+              div.setAttribute("fieldid",this.currenttable+"/"+index+"/"+fieldKey);
+              div.style.borderColor = 'rgb(0, 121, 255)';
+              div.style.borderStyle = 'solid';
+              div.style.borderWidth = 'medium';
+            }
           }
         }
       }
@@ -337,7 +357,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
           boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
+          let divid = "rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1];
+          let bestmatch = this.bestMatch(divid);
+          if(bestmatch)
+          unsorted[o].line = Number((<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).getAttribute("line"));
         }
         unsorted = unsorted.sort((a:any,b:any) => {
           return a.line - b.line || a.boundingBoxes[0][0] - b.boundingBoxes[0][0]; 
@@ -376,8 +399,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
           boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])){
-            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])).style.transform = 'scale(2)';
+          let divid = "rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1];
+          let bestmatch = this.bestMatch(divid)
+          if(bestmatch && <HTMLDivElement>document.getElementById(String(bestmatch["item"]))){
+            (<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).style.transform = 'scale(2)';
           }
         }
       }
@@ -394,8 +419,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
           boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          if(<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])){
-            (<HTMLDivElement>document.getElementById("rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1])).style.transform = 'scale(1)';
+          let divid = "rect"+this.currentindex+v.text+boundingBox[0]+boundingBox[1];
+          let bestmatch = this.bestMatch(divid)
+          if(bestmatch && <HTMLDivElement>document.getElementById(String(bestmatch["item"]))){
+            (<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).style.transform = 'scale(1)';
           }
         }
       }
@@ -846,6 +873,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     }
    
   }
+  this.alldivs = {};
   this.clearTableTags();
   this.analyzing = true;
   this.layouttext = "Running Layout"
@@ -890,8 +918,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       setTimeout(async () => {
         for await(let obj of this.readResults){
           if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+            this.alldivs[obj["page"]] = [];
             await this.drawCanvas(obj);
           }else{
+            this.alldivs[obj["pageNumber"]] = [];
             await this.drawCanvasv3(obj);
           }
         }
@@ -945,8 +975,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           setTimeout(async () => {
             for await(let obj of this.readResults){
               if(ocr_engine_version === "Azure Form Recognizer 2.1"){
+                this.alldivs[obj["page"]] = [];
                 await this.drawCanvas(obj);
               }else{
+                this.alldivs[obj["pageNumber"]] = [];
                 await this.drawCanvasv3(obj);
               }
             }
@@ -1052,6 +1084,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           let div : any = document.createElement('div');
           div.id = "rect"+pagenum+w.text+Math.round(boundingbox[0])+Math.round(boundingbox[1]);
+          this.alldivs[pagenum].push(div.id);
           div.setAttribute("line",line);
           div.style.position = 'absolute';
           div.style.border = '1px solid yellow';
@@ -1168,28 +1201,32 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingbox = _this.convertPixeltoImagePixel(boundingbox);
               }
-              let div = (<HTMLDivElement>document.getElementById("rect"+_this.currentindex+_this.currentSelection[m].text+Math.round(_this.currentSelection[m].x)+Math.round(_this.currentSelection[m].y)));
-              if(div){
-                div.style.backgroundColor = 'transparent';
-                div.setAttribute("selected","false");
-                div.style.border = '1px solid yellow';
-                _this.fieldid = div.getAttribute("fieldid");
-                let index;
-                if(_this.fieldid){
-                  if(!_this.fieldid.startsWith(_this.currenttable)){
-                    let fieldKey = _this.fieldid.split("-")[1]
-                    index =  _this.labelsJson["labels"].findIndex(el => el.label == fieldKey);
-                  }else{
-                    index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
-                  }
-                 
-                  for(let v of _this.labelsJson["labels"][index]["value"]){
-                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0].toFixed(3) == boundingbox[0].toFixed(3) && v.boundingBoxes[0][1].toFixed(3) == boundingbox[1].toFixed(3)){
-                      _this.labelsJson["labels"][index]["value"] = _this.labelsJson["labels"][index]["value"].filter(val => val != v);
+              let divid = "rect"+_this.currentindex+_this.currentSelection[m].text+Math.round(_this.currentSelection[m].x)+Math.round(_this.currentSelection[m].y);
+              let bestmatch = _this.bestMatch(divid)
+              if(bestmatch){
+                let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
+                if(div){
+                  div.style.backgroundColor = 'transparent';
+                  div.setAttribute("selected","false");
+                  div.style.border = '1px solid yellow';
+                  _this.fieldid = div.getAttribute("fieldid");
+                  let index;
+                  if(_this.fieldid){
+                    if(!_this.fieldid.startsWith(_this.currenttable)){
+                      let fieldKey = _this.fieldid.split("-")[1]
+                      index =  _this.labelsJson["labels"].findIndex(el => el.label == fieldKey);
+                    }else{
+                      index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
                     }
+                   
+                    for(let v of _this.labelsJson["labels"][index]["value"]){
+                      if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0].toFixed(1) == boundingbox[0].toFixed(1) && v.boundingBoxes[0][1].toFixed(1) == boundingbox[1].toFixed(1)){
+                        _this.labelsJson["labels"][index]["value"] = _this.labelsJson["labels"][index]["value"].filter(val => val != v);
+                      }
+                    }
+                    _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
+                    (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
                   }
-                  _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
-                  (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
                 }
               }
             }
@@ -1262,6 +1299,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
         let div : any = document.createElement('div');
         div.id = "rect"+pagenum+l.content+Math.round(boundingbox[0])+Math.round(boundingbox[1]);
+        this.alldivs[pagenum].push(div.id);
         div.setAttribute("line",line);
         div.style.position = 'absolute';
         div.style.border = '1px solid yellow';
@@ -1377,28 +1415,32 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }else{
                 boundingbox = _this.convertPixeltoImagePixel(boundingbox);
               }
-              let div = (<HTMLDivElement>document.getElementById("rect"+_this.currentindex+_this.currentSelection[m].text+Math.round(_this.currentSelection[m].x)+Math.round(_this.currentSelection[m].y)));
-              if(div){
-                div.style.backgroundColor = 'transparent';
-                div.setAttribute("selected","false");
-                div.style.border = '1px solid yellow';
-                _this.fieldid = div.getAttribute("fieldid");
-                let index;
-                if(_this.fieldid){
-                  if(!_this.fieldid.startsWith(_this.currenttable)){
-                    let fieldKey = _this.fieldid.split("-")[1]
-                    index =  _this.labelsJson["labels"].findIndex(el => el.label == fieldKey);
-                  }else{
-                    index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
-                  }
-                 
-                  for(let v of _this.labelsJson["labels"][index]["value"]){
-                    if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0].toFixed(3) == boundingbox[0].toFixed(3) && v.boundingBoxes[0][1].toFixed(3) == boundingbox[1].toFixed(3)){
-                      _this.labelsJson["labels"][index]["value"] = _this.labelsJson["labels"][index]["value"].filter(val => val != v);
+              let divid = "rect"+_this.currentindex+_this.currentSelection[m].text+Math.round(_this.currentSelection[m].x)+Math.round(_this.currentSelection[m].y);
+              let bestmatch = _this.bestMatch(divid)
+              if(bestmatch){
+                let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
+                if(div){
+                  div.style.backgroundColor = 'transparent';
+                  div.setAttribute("selected","false");
+                  div.style.border = '1px solid yellow';
+                  _this.fieldid = div.getAttribute("fieldid");
+                  let index;
+                  if(_this.fieldid){
+                    if(!_this.fieldid.startsWith(_this.currenttable)){
+                      let fieldKey = _this.fieldid.split("-")[1]
+                      index =  _this.labelsJson["labels"].findIndex(el => el.label == fieldKey);
+                    }else{
+                      index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
                     }
+                  
+                    for(let v of _this.labelsJson["labels"][index]["value"]){
+                      if(v.text == _this.currentSelection[m].text && v.boundingBoxes[0][0].toFixed(1) == boundingbox[0].toFixed(1) && v.boundingBoxes[0][1].toFixed(1) == boundingbox[1].toFixed(1)){
+                        _this.labelsJson["labels"][index]["value"] = _this.labelsJson["labels"][index]["value"].filter(val => val != v);
+                      }
+                    }
+                    _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
+                    (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
                   }
-                  _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
-                  (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
                 }
               }
             }
@@ -1616,8 +1658,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
           boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          if((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1]))){
-            unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
+          let divid = "rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1];
+          let bestmatch = this.bestMatch(divid);
+          if(bestmatch && (<HTMLDivElement>document.getElementById(String(bestmatch["item"])))){
+            unsorted[o].line = Number((<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).getAttribute("line"));
           }
         }
         unsorted = unsorted.sort((a:any,b:any) => {
@@ -1638,14 +1682,18 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
           boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          let div = (<HTMLDivElement>document.getElementById("rect"+arr[j].page+arr[j].text+boundingBox[0]+boundingBox[1]));
-          if(div){
-            div.style.backgroundColor = 'transparent';
-            div.setAttribute("selected","false");
-            div.setAttribute("fieldid","field-"+field.fieldKey);
-            div.style.borderColor = 'rgb(9, 179, 60)';
-            div.style.borderStyle = 'solid';
-            div.style.borderWidth = '2px';
+          let divid = "rect"+arr[j].page+arr[j].text+boundingBox[0]+boundingBox[1];
+          let bestmatch = this.bestMatch(divid);
+          if(bestmatch){
+            let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
+            if(div){
+              div.style.backgroundColor = 'transparent';
+              div.setAttribute("selected","false");
+              div.setAttribute("fieldid","field-"+field.fieldKey);
+              div.style.borderColor = 'rgb(9, 179, 60)';
+              div.style.borderStyle = 'solid';
+              div.style.borderWidth = '2px';
+            }
           }
         }
         this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
@@ -1684,15 +1732,19 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           if(!this.checkFieldExists({"page":this.currentindex,"text":arr[j].text,"boundingBoxes":[boundingbox]})){
             this.labelsJson["labels"][index]["value"].push({"page":this.currentindex,"text":arr[j].text,"boundingBoxes":[boundingbox]})
-            let div = (<HTMLDivElement>document.getElementById("rect"+this.currentindex+arr[j].text+Math.round(arr[j].x)+Math.round(arr[j].y)));
-            if(div){
-              div.style.backgroundColor = 'transparent';
-              div.setAttribute("selected","false");
-              div.setAttribute("fieldid","field-"+field.fieldKey);
-              div.style.borderColor = 'rgb(9, 179, 60)';
-              div.style.borderStyle = 'solid';
-              div.style.borderWidth = '2px';
-              (<HTMLDivElement>document.getElementById("hidden"+this.currentindex)).style.display = 'none';
+            let divid = "rect"+this.currentindex+arr[j].text+Math.round(arr[j].x)+Math.round(arr[j].y);
+            let bestmatch = this.bestMatch(divid)
+            if(bestmatch){
+              let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
+              if(div){
+                div.style.backgroundColor = 'transparent';
+                div.setAttribute("selected","false");
+                div.setAttribute("fieldid","field-"+field.fieldKey);
+                div.style.borderColor = 'rgb(9, 179, 60)';
+                div.style.borderStyle = 'solid';
+                div.style.borderWidth = '2px';
+                (<HTMLDivElement>document.getElementById("hidden"+this.currentindex)).style.display = 'none';
+              }
             }
           }
         }
@@ -1706,7 +1758,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
           boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          unsorted[o].line = Number((<HTMLDivElement>document.getElementById("rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1])).getAttribute("line"));
+          let divid = "rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1];
+          let bestmatch = this.bestMatch(divid)
+          if(bestmatch)
+          unsorted[o].line = Number((<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).getAttribute("line"));
         }
         unsorted = unsorted.sort((a:any,b:any) => {
           return a.line - b.line || a.boundingBoxes[0][0] - b.boundingBoxes[0][0]; 

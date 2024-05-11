@@ -67,6 +67,20 @@
                     <div class="primarySet-65 p-2">{{p_name}} <span *ngIf="currentfile != ''">[{{this.currentfile}}]</span></div>
                     <div class="secondarySet-72">
                         <!-- <div class="item-66" id="drawdiv" (click)="activateDraw()"><i class="fa fa-pencil-square-o" aria-hidden="true"> Draw Region</i></div> -->
+                        <!-- auto tagging menu options start -->
+                        <div class="item-66">
+                            <div *ngIf="!loadingValues"  class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Auto tag
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu2" >
+                                  <button id="currentFile" class="dropdown-item" type="button" (click)="tagValues($event)">Current file</button>
+                                  <button id="allFiles" class="dropdown-item" type="button" (click)="tagValues($event)">All files</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- auto tagging menu options end -->
+                        <!-- <div class="item-66"></div> -->
                         <div class="item-66"><i class="fa fa-trash" title="Reset Tagging" data-toggle="modal" data-target="#confirmModel"> Reset Tagging</i></div>
                         <div class="item-66"><i class="fa fa-search-minus" (click)="zoomOut()"></i></div>
                         <div class="item-66"><i class="fa fa-search-plus" (click)="zoomIn()"></i></div>
@@ -77,7 +91,7 @@
                 </div>
             </div>
             <div class="text-center" *ngIf="analyzing" style="margin-top: 30%;">
-                <strong>Running Layout</strong>&nbsp;
+                <strong>{{layouttext}}</strong>&nbsp;
                 <div class="spinner-border spinner-border-sm" role="status">
                 </div>
             </div>
@@ -106,7 +120,12 @@
                 <div class="spinner-border spinner-border-sm" role="status">
                 </div>
             </div>
-            <div class="tag-input" *ngIf="!loading">
+            <div class="text-center" *ngIf="loadingValues" style="margin-top: 50%;">
+                <strong>Getting Values</strong>&nbsp;
+                <div class="spinner-border spinner-border-sm" role="status">
+                </div>
+            </div>
+            <div class="tag-input" *ngIf="!loading && !loadingValues">
                 <div class="tag-input-header">
                     <span *ngIf="showtags && !showtabletags" class="tag-input-title">Tags</span>
                     <div class="tag-input-toolbar" *ngIf="showtags && !showtabletags">
@@ -284,6 +303,7 @@ style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-w
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- tagfields start-->
                                     <div class="tag-item-label-container tablehover" *ngIf="f.fieldType == 'string'">
                                         <div class="tag-item-label-container-item2">
                                             <div class="tag-item-label flex-center px-2">
@@ -291,6 +311,8 @@ style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-w
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- fields end -->
+
                                     <div class="tag-item-label-container tablehover p-2" *ngIf="f.fieldType == 'array'" (click)="startTableTagging(i,f.fieldKey)">
                                         <i class="fa fa-tasks"></i> Click to assign Table values
                                     </div>
