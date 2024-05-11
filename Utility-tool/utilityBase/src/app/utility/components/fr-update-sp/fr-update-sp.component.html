@@ -271,18 +271,24 @@
                                 </td>
                             </tr> -->
     
-                            <!-- <tr class="trHeight">
+                            <tr class="trHeight">
                                 <td class="tdLeft f-13">Currency <span class="colon">:</span></td>
                                 <td class="tdRight">
                                     <select name="Units" id="Units" ngModel #Units="ngModel" class="form-control max_width f-13"
                                          >
-                                        <option value="USD" selected>US Dollars</option>
-                                        <option value="AED">AED</option>
-                                        <option value="INR">INR</option> 
+                                        <option *ngFor="let cur of currencies" [value]="cur.currency">{{cur.description}}</option>
                                     </select>
                                 </td>
-                            </tr> -->
-
+                            </tr>
+                            <tr class="trHeight">
+                                <td class="tdLeft f-13">Language <span class="colon">:</span></td>
+                                <td class="tdRight">
+                                    <select name="temp_language" id="temp_language" ngModel #Units="ngModel" class="form-control max_width f-13"
+                                         >
+                                        <option *ngFor="let lang of languages" [value]="lang.code">{{lang.language}}</option>
+                                    </select>
+                                </td>
+                            </tr>
                             <!-- <tr class="trHeight">
                                 <td class="tdLeft f-13">Select Service Provider type <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">

@@ -347,10 +347,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           text : s.text,
           boundingBoxes : s.boundingBoxes
         }))
-      this.currenttext =  this.labelsJson["labels"][tabindex]["value"].map(function(element){return element.text}).join(" ");
-      (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = this.currenttext;
-      this.currentSelection = [];
-      this.currenttext = "";
+      this.labelsJson = await this.customMizeLabels(this.labelsJson);
       let frobj = {
         'documentId':this.modelData.idDocumentModel,
         'container':this.frConfigData[0].ContainerName,
@@ -361,6 +358,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
       this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
       })
+      this.currenttext =  this.labelsJson["labels"][tabindex]["value"].map(function(element){return element.text}).join(" ");
+      (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = this.currenttext;
+      this.currentSelection = [];
+      this.currenttext = "";
   }
  
   mouseEnter(field){
@@ -643,7 +644,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     return this.domSanitizer.bypassSecurityTrustUrl(str);
   }
   
-  clearTableTags(){
+ async clearTableTags(){
     let existingfields = [];
     if(this.fieldsfile['definitions']){
       for(let v of this.fieldsfile['definitions'][this.currenttable+'_object']['fields']){
@@ -788,7 +789,39 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       }
     });
   }
-
+  async customMizeLabels(labelsJson:any){
+    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
+    if (ocr_engine_version === "Azure Form Recognizer 2.1") {
+      if (!labelsJson["labelingState"]) {
+          labelsJson["labelingState"] = 2;
+      }
+      labelsJson["labels"].forEach(item => {
+        if (!item.hasOwnProperty('key')) {
+            item.key = null;
+        }
+    });
+      labelsJson["labels"].forEach(item => {
+        if (item.hasOwnProperty('labelType')) {
+            delete item.labelType;
+        }
+    });
+  }else if (ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1") {
+      if (labelsJson["labelingState"]) {
+          delete labelsJson["labelingState"];
+      }
+      labelsJson["labels"].forEach(item => {
+        if (item.hasOwnProperty('key')) {
+            delete item.key;
+        }
+      });
+      labelsJson["labels"].forEach(item => {
+        if (!item.hasOwnProperty('labelType')) {
+            item["labelType"] = "Words";
+        }
+      });
+    }
+    return labelsJson
+  }
   async analyzeDocument(id:any,filename:string,data:Object){
     const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
     this.showtags = true;
@@ -798,35 +831,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     if(Object.keys(data['labels']).length > 0){
       this.labelsJson = JSON.parse(data['labels'].blob);
     //customized labeling start
-    if (ocr_engine_version === "Azure Form Recognizer 2.1") {
-      if (!this.labelsJson["labelingState"]) {
-          this.labelsJson["labelingState"] = 2;
-      }
-      this.labelsJson["labels"].forEach(item => {
-        if (!item.hasOwnProperty('key')) {
-            item.key = null;
-        }
-    });
-      this.labelsJson["labels"].forEach(item => {
-        if (item.hasOwnProperty('labelType')) {
-            delete item.labelType;
-        }
-    });
-  }else if (ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1") {
-      if (this.labelsJson["labelingState"]) {
-          delete this.labelsJson["labelingState"];
-      }
-      this.labelsJson["labels"].forEach(item => {
-        if (item.hasOwnProperty('key')) {
-            delete item.key;
-        }
-      });
-      this.labelsJson["labels"].forEach(item => {
-        if (!item.hasOwnProperty('labelType')) {
-            item["labelType"] = "Words";
-        }
-      });
-    }
+      this.labelsJson = await this.customMizeLabels(this.labelsJson);
     //customized labeling end
   }else{
     if(ocr_engine_version === "Azure Form Recognizer 2.1"){
@@ -1188,6 +1193,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                 }
               }
             }
+            _this.labelsJson = await _this.customMizeLabels(_this.labelsJson);
             let frobj = {
               'documentId':_this.modelData.idDocumentModel,
               'container':_this.frConfigData[0].ContainerName,
@@ -1396,6 +1402,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                 }
               }
             }
+            _this.labelsJson = await _this.customMizeLabels(_this.labelsJson);
             let frobj = {
               'documentId':_this.modelData.idDocumentModel,
               'container':_this.frConfigData[0].ContainerName,
@@ -1709,10 +1716,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           text : s.text,
           boundingBoxes : s.boundingBoxes
         }))
-        this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
-        (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
-        this.currenttext = "";
-        this.currentSelection = [];
+        this.labelsJson = await this.customMizeLabels(this.labelsJson);
         let frobj = {
           'documentId':this.modelData.idDocumentModel,
           'container':this.frConfigData[0].ContainerName,
@@ -1723,6 +1727,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
         this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {    
         })
+        this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
+        (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
+        this.currenttext = "";
+        this.currentSelection = [];
     }
   }
   zoomOut(){
