@@ -1840,7 +1840,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     this.sharedService.runLayout(this.modelData.folderPath).subscribe((data:any) =>{
       this.ready = true;
       this.analyzing = false;
-      this.SelectDoc(0);
+      location.reload();
     })
   }
 }
