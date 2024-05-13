@@ -463,13 +463,17 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     saveAs(blob,filename);
   }
   viewTable(f){
+    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
     this.rows = [];
     this.currenttable = f;
     this.currentheaders = Object.keys(this.fields[f].valueArray[0].valueObject);
     for(let r=0;r<this.fields[f].valueArray.length;r++){
       let temparr:any[] = [];
       for(let h of this.currentheaders){
+        if(ocr_engine_version == "Azure Form Recognizer 2.1")
         temparr.push(this.fields[f].valueArray[r].valueObject[h].text);
+        else
+        temparr.push(this.fields[f].valueArray[r].valueObject[h].content);
       }
       this.rows.push(temparr);
     }
