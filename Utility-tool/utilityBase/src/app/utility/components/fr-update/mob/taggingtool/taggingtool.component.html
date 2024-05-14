@@ -82,7 +82,17 @@
                         </div>
                         <!-- auto tagging menu options end -->
                         <!-- <div class="item-66"></div> -->
-                        <div class="item-66"><i class="fa fa-trash" title="Reset Tagging" data-toggle="modal" data-target="#confirmModel"> Reset Tagging</i></div>
+                        <div class="item-66">
+                            <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-trash" title="Reset Tagging"> Reset Tagging </i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu3" >
+                                <button class="dropdown-item" type="button"  data-toggle="modal" data-target="#confirmModel1">Current file</button>
+                                <button class="dropdown-item" type="button"  data-toggle="modal" data-target="#confirmModel">All files</button>
+                            </div> 
+                            </div>
+                        </div>
                         <div class="item-66"><i class="fa fa-search-minus" (click)="zoomOut()"></i></div>
                         <div class="item-66"><i class="fa fa-search-plus" (click)="zoomIn()"></i></div>
                         <div *ngIf="maxpage > 1" class="item-66"><i class="fa fa-arrow-left" (click)="previous()"></i></div>
@@ -413,7 +423,34 @@ style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-w
             </div>
           </div><br><br>
           <div class="d-flex justify-content-center mb-3">
-            <button class="btn btnbg mr-3" data-dismiss="modal" (click)="resetTagging()">Yes</button>
+            <button class="btn btnbg mr-3" data-dismiss="modal" (click)="resetTagging('allfiles')">Yes</button>
+            <button class="btn btncancel" data-dismiss="modal">No</button>
+          </div>
+        </div>
+        
+          
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirmModel1" style="z-index: 3001;margin-top: 10%;"  data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="border: none;">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center">
+            <div>
+              <i class="fa fa-exclamation-triangle" style="font-size: 4rem;color:#f2be42;"></i>
+            </div>
+            <div class="deleteDivText">
+              Do you want to completely Delete the existing tag items for the selected file?
+            </div>
+          </div><br><br>
+          <div class="d-flex justify-content-center mb-3">
+            <button class="btn btnbg mr-3" data-dismiss="modal" (click)="resetTagging('currentfile')">Yes</button>
             <button class="btn btncancel" data-dismiss="modal">No</button>
           </div>
         </div>

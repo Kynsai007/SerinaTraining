@@ -427,11 +427,15 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
       }
   }
-  resetTagging(){
+  resetTagging(opt:any){
     let model_id = this.modelData.idDocumentModel;
     let folderPath = this.modelData.folderPath;
+    let filename = null;
     let resetObj = {'model_id':model_id,'folderpath':folderPath}
-    this.sharedService.resetTagging(resetObj).subscribe((data:any) =>{
+    if(opt == "currentfile"){
+      filename = folderPath+"/"+this.currentfile+".labels.json";
+    }
+    this.sharedService.resetTagging(resetObj,filename).subscribe((data:any) =>{
       if(data['message'] == 'success'){
         location.reload()
       }

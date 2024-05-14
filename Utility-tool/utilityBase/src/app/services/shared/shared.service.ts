@@ -332,8 +332,12 @@ export class SharedService {
   saveSharePointConfig(shareConfig): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/sharepoint/savesharepointconfig`,shareConfig).pipe(retry(3));
   }
-  resetTagging(resetObj): Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/reset_tagging`,resetObj).pipe(retry(3));
+  resetTagging(resetObj,filename): Observable<any>{
+    let url = `${this.url}/${this.apiVersion}/ModelOnBoard/reset_tagging`;
+    if (filename) {
+      url += `?filename=${filename}`;
+    }
+    return this.http.post(url,resetObj).pipe(retry(3));
   }
   // auto tagging value to fields
   tagValuesToFields(folderPath: string, fileName?: string): Observable<any> {
