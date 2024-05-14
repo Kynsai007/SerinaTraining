@@ -56,19 +56,19 @@ const routes: Routes = [
           },
           {
             path: 'invoice/InvoiceDetails/vendorUpload/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'invoice/InvoiceDetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'invoice/PODetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'invoice/GRNDetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'invoice/InvoiceStatus/:id',
@@ -80,7 +80,7 @@ const routes: Routes = [
           },
           {
             path: 'action-center/InvoiceDetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'payment-details-vendor',
@@ -101,7 +101,7 @@ const routes: Routes = [
           
           {
             path: 'ExceptionManagement/InvoiceDetails/:id',
-            component: ViewInvoiceComponent,
+            component: Comparision3WayComponent,
           },
           {
             path: 'vendorUsers',
