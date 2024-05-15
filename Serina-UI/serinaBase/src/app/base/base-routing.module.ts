@@ -123,7 +123,7 @@ const routes: Routes = [
             path: 'approvals',
             component: ApproveComponent,
           },
-          { path: 'approvals/serviceInvoices',
+          { path: 'approvals/ServiceInvoices',
             component: ApproveComponent
           },
           {

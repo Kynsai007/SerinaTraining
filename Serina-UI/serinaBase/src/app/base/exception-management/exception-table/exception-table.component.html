@@ -309,7 +309,7 @@
               router.url.includes('allInvoices') ||
               router.url.includes('PO') ||
               router.url.includes('archived') ||
-              router.url.includes('ServiceInvoices')
+              router.url.includes('invoice/ServiceInvoices')
             "
             class="fa fa-pencil-square-o actionsBtn"
             style="border: 0"
@@ -568,7 +568,7 @@
             *ngIf="
               router.url.includes('allInvoices') ||
               router.url.includes('archived') ||
-              router.url.includes('ServiceInvoices')
+              router.url.includes('invoice/ServiceInvoices')
             "
           >
             <span
@@ -638,7 +638,7 @@
           <span
             *ngIf="
               router.url.includes('allInvoices') ||
-              router.url.includes('ServiceInvoices') ||
+              router.url.includes('invoice/ServiceInvoices') ||
               router.url.includes('payment-details-vendor')
             "
             pTooltip="Click here to view ERP Status details"
@@ -647,7 +647,7 @@
             (click)="checkStatus($event, invoiceData)"
           >
           </span>
-          <span *ngIf="router.url.includes('ServiceInvoices') && ERPName == 'Dynamics AX'">
+          <span *ngIf="router.url.includes('invoice/ServiceInvoices') && ERPName == 'Dynamics AX'">
             <i class="fa fa-download showEye ml-3" (click)="erpDownload($event, invoiceData)"></i>
           </span>
         </td>

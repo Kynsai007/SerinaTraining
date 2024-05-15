@@ -630,18 +630,35 @@
 </mat-drawer-container> -->
 
 <div class="layout">
-  <nav class="desktop d-flex justify-content-between" [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiBg':''">
+  <nav
+    class="desktop d-flex justify-content-between"
+    [ngClass]="
+      dataStoreService.configData.client_name == 'Cenomi' ? 'cenomiBg' : ''
+    "
+  >
     <div class="d-flex" style="gap: 64px">
       <div>
-        <img [src]="logoSrc" alt="Serina logo"  [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'otherBrand':'Serina'"/>
+        <img
+          [src]="logoSrc"
+          alt="Serina logo"
+          [ngClass]="
+            dataStoreService.configData.client_name == 'Cenomi'
+              ? 'otherBrand'
+              : 'Serina'
+          "
+        />
       </div>
       <!-- <div  *ngIf="dataStoreService.configData.client_name != 'Cenomi'">
         <img src="assets/Serina Assets/new_theme/logo.png" alt="Serina logo" class="Serina" />
       </div> -->
-      <div class="navLinks d-flex justify-content-between">
+      <div class="navLinks d-flex justify-content-between" *ngIf="isDesktop">
         <div
           class="nav_Link f-14"
-          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+          [ngClass]="
+            dataStoreService.configData.client_name == 'Cenomi'
+              ? 'cenomiNavlink'
+              : ''
+          "
           [routerLink]="'home'"
           routerLinkActive="active_cls"
           (click)="navClick()"
@@ -650,7 +667,11 @@
         </div>
         <div
           class="nav_Link f-14"
-          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+          [ngClass]="
+            dataStoreService.configData.client_name == 'Cenomi'
+              ? 'cenomiNavlink'
+              : ''
+          "
           [routerLink]="'uploadInvoices'"
           routerLinkActive="active_cls"
           *ngIf="uploadPermissionBoolean"
@@ -664,7 +685,7 @@
             class="nav_Link f-14"
             [ngClass]="{
               active_cls: router.url.includes('ExceptionManagement'),
-              'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
+              cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
             }"
             (click)="exceptionDrop()"
             *ngIf="excpetionPageAccess"
@@ -690,26 +711,30 @@
             <a
               [routerLink]="'ExceptionManagement'"
               routerLinkActive="active_sub_cls"
-              (click)="exceptionMenu('vendor','exc')"
+              (click)="exceptionMenu('vendor', 'exc')"
               >Vendor</a
             >
             <a
               [routerLink]="'ExceptionManagement/Service_ExceptionManagement'"
               routerLinkActive="active_sub_cls"
-              (click)="exceptionMenu('service','exc')"
+              (click)="exceptionMenu('service', 'exc')"
               >Service</a
             >
             <a
               [routerLink]="'ExceptionManagement/approvalPending'"
               routerLinkActive="active_sub_cls"
-              (click)="exceptionMenu('service','exc')"
+              (click)="exceptionMenu('service', 'exc')"
               >Approval Pending</a
             >
           </div>
         </div>
         <div
           class="nav_Link f-14"
-          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+          [ngClass]="
+            dataStoreService.configData.client_name == 'Cenomi'
+              ? 'cenomiNavlink'
+              : ''
+          "
           [routerLink]="'Create_GRN_inv_list'"
           routerLinkActive="active_cls"
           *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
@@ -721,41 +746,53 @@
           class="nav_Link f-14"
           [routerLink]="'invoice'"
           (click)="doc_status_route()"
-          [ngClass]="{ 
-            'active_cls': router.url.includes('invoice'),
-            'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
+          [ngClass]="{
+            active_cls: router.url.includes('invoice'),
+            cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
           }"
           routerLinkActive="active_cls"
         >
           Document Status
         </div>
-        <div style="position: relative"             
+        <div
+          style="position: relative"
           *ngIf="
-          financeapproveDisplayBoolean &&
-          vendorInvoiceAccess &&
-          approveBoolean
-        ">
+            financeapproveDisplayBoolean &&
+            vendorInvoiceAccess &&
+            approveBoolean
+          "
+        >
           <div
-            class="nav_Link f-14 "
+            class="nav_Link f-14"
             (click)="approvalDropdown()"
             [ngClass]="{
               active_cls: router.url.includes('approvals'),
-              'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
+              cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
             }"
           >
             Approvals
             <span
-                class="material-icons more_pos"
-                *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && !isOpen_apr && serviceApprovalsEnabled"
-              >
-                expand_more
-              </span>
-              <span
-                class="material-icons more_pos"
-                *ngIf="vendorInvoiceAccess && serviceInvoiceAccess && isOpen_apr && serviceApprovalsEnabled"
-              >
-                expand_less
-              </span>
+              class="material-icons more_pos"
+              *ngIf="
+                vendorInvoiceAccess &&
+                serviceInvoiceAccess &&
+                !isOpen_apr &&
+                serviceApprovalsEnabled
+              "
+            >
+              expand_more
+            </span>
+            <span
+              class="material-icons more_pos"
+              *ngIf="
+                vendorInvoiceAccess &&
+                serviceInvoiceAccess &&
+                isOpen_apr &&
+                serviceApprovalsEnabled
+              "
+            >
+              expand_less
+            </span>
           </div>
           <div
             [ngStyle]="{ display: isOpen_apr ? 'block' : 'none' }"
@@ -764,13 +801,13 @@
             <a
               [routerLink]="'approvals'"
               routerLinkActive="active_sub_cls"
-              (click)="exceptionMenu('vendor','apr')"
+              (click)="exceptionMenu('vendor', 'apr')"
               >Vendor</a
             >
             <a
-              [routerLink]="'approvals/serviceInvoices'"
+              [routerLink]="'approvals/ServiceInvoices'"
               routerLinkActive="active_sub_cls"
-              (click)="exceptionMenu('service','apr')"
+              (click)="exceptionMenu('service', 'apr')"
               >Service</a
             >
           </div>
@@ -778,7 +815,11 @@
 
         <div
           class="nav_Link f-14"
-          [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
+          [ngClass]="
+            dataStoreService.configData.client_name == 'Cenomi'
+              ? 'cenomiNavlink'
+              : ''
+          "
           [routerLink]="'GRN_approvals'"
           routerLinkActive="active_cls"
           *ngIf="GRNApprovalAccess"
@@ -802,7 +843,7 @@
                 router.url.includes('service_batch_trigger') ||
                 router.url.includes('bulkUploadService') ||
                 router.url.includes('ERP_approvals'),
-              'cenomiNavlink': dataStoreService.configData.client_name == 'Cenomi'
+              cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
             }"
           >
             {{ more_text }}
@@ -889,17 +930,21 @@
       </div>
     </div>
 
-    <div class="d-flex align-items-center">
+    <div
+      class="d-flex align-items-center"
+      [ngStyle]="{ marginRight: !isDesktop ? '40px' : '' }"
+    >
       <div
         class="user_d f-13"
         *ngIf="
-          router.url.includes('ExceptionManagement') ||
-          router.url.includes('invoice') ||
-          router.url.includes('documentSummary') ||
-          router.url.includes('GRN_approvals') ||
-          router.url.includes('approvals') ||
-          router.url.includes('bulkUploadService') ||
-          router.url.includes('Create_GRN_inv_list') && isDesktop
+          (router.url.includes('ExceptionManagement') ||
+            router.url.includes('invoice') ||
+            router.url.includes('documentSummary') ||
+            router.url.includes('GRN_approvals') ||
+            router.url.includes('approvals') ||
+            router.url.includes('bulkUploadService') ||
+            router.url.includes('Create_GRN_inv_list')) &&
+          isDesktop
         "
       >
         Card
@@ -916,7 +961,16 @@
         Table
       </div>
       <div class="short_name f-12">{{ name_short }}</div>
-      <div class="f-12 mr-1" [ngClass]="dataStoreService.configData.client_name == 'Cenomi'? 'cenomiNavlink':''">{{ userDetails.userdetails.firstName }}</div>
+      <div
+        class="f-12 mr-1"
+        [ngClass]="
+          dataStoreService.configData.client_name == 'Cenomi'
+            ? 'cenomiNavlink'
+            : ''
+        "
+      >
+        {{ userDetails.userdetails.firstName }}
+      </div>
       <div (clickOutside)="onClickedOutside($event, 'logout')">
         <mat-icon
           class="sign_out dropdown"
@@ -933,7 +987,226 @@
         </div>
       </div>
     </div>
+    <div *ngIf="!isDesktop" class="menuIcon" (click)="openMenu()">
+      <span class="material-icons">
+        {{ isMenuOpen ? "close" : "menu" }}
+      </span>
+    </div>
   </nav>
+  <div *ngIf="isMenuOpen" class="mobile_menu">
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="'home'"
+      routerLinkActive="active_cls"
+    >
+      Dashboard
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="'uploadInvoices'"
+      routerLinkActive="active_cls"
+      *ngIf="uploadPermissionBoolean"
+    >
+      Upload
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="{
+        active_cls: router.url.includes('ExceptionManagement'),
+        cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+      }"
+      (click)="exceptionDrop()"
+      *ngIf="excpetionPageAccess"
+    >
+      <details *ngIf="vendorInvoiceAccess && serviceInvoiceAccess">
+        <summary>Exceptions</summary>
+        <div class="d-flex flex-column">
+          <a
+            [routerLink]="'ExceptionManagement'"
+            routerLinkActive="active_sub_cls"
+            (click)="exceptionMenu('vendor', 'exc')"
+            >Vendor</a
+          >
+          <a
+            [routerLink]="'ExceptionManagement/Service_ExceptionManagement'"
+            routerLinkActive="active_sub_cls"
+            (click)="exceptionMenu('service', 'exc')"
+            >Service</a
+          >
+          <a
+            [routerLink]="'ExceptionManagement/approvalPending'"
+            routerLinkActive="active_sub_cls"
+            (click)="exceptionMenu('service', 'exc')"
+            >Approval Pending</a
+          >
+        </div>
+      </details>
+
+      <span *ngIf="!(vendorInvoiceAccess && serviceInvoiceAccess)"
+        >Exceptions</span
+      >
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="'Create_GRN_inv_list'"
+      routerLinkActive="active_cls"
+      *ngIf="GRNCreationAccess && GRNPageAccess && vendorInvoiceAccess"
+    >
+      Create GRN
+    </div>
+    <div
+      class="nav_Link f-14"
+      [routerLink]="'invoice'"
+      (click)="doc_status_route()"
+      [ngClass]="{
+        active_cls: router.url.includes('invoice'),
+        cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+      }"
+      routerLinkActive="active_cls"
+    >
+      Document Status
+    </div>
+    <div
+      class="nav_Link f-14"
+      (click)="approvalDropdown()"
+      [ngClass]="{
+        active_cls: router.url.includes('approvals'),
+        cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+      }"
+      *ngIf="
+        financeapproveDisplayBoolean && vendorInvoiceAccess && approveBoolean
+      "
+    >
+      <span
+        *ngIf="
+          !(
+            vendorInvoiceAccess &&
+            serviceInvoiceAccess &&
+            serviceApprovalsEnabled
+          )
+        "
+        >Approvals</span
+      >
+      <details
+        *ngIf="
+          vendorInvoiceAccess && serviceInvoiceAccess && serviceApprovalsEnabled
+        "
+      >
+        <summary>Approvals</summary>
+        <div class="d-flex flex-column">
+          <a
+            [routerLink]="'approvals'"
+            routerLinkActive="active_sub_cls"
+            (click)="exceptionMenu('vendor', 'apr')"
+            >Vendor</a
+          >
+          <a
+            [routerLink]="'approvals/ServiceInvoices'"
+            routerLinkActive="active_sub_cls"
+            (click)="exceptionMenu('service', 'apr')"
+            >Service</a
+          >
+        </div>
+      </details>
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="'GRN_approvals'"
+      routerLinkActive="active_cls"
+      *ngIf="GRNApprovalAccess"
+    >
+      GRN Approvals
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="'documentSummary'"
+      routerLinkActive="active_sub_cls"
+      (click)="onMenuChange('Summary')"
+    >
+      Summary
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="supplier_route"
+      routerLinkActive="active_sub_cls"
+      (click)="onMenuChange(supplier_names)"
+      *ngIf="vendor_SP_PageAccess"
+    >
+      {{ supplier_names }}
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="'roles'"
+      routerLinkActive="active_sub_cls"
+      (click)="onMenuChange('Roles')"
+      *ngIf="addUsersBoolean"
+    >
+      Roles
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="'ERP_approvals'"
+      routerLinkActive="active_sub_cls"
+      (click)="onMenuChange('ERP Approvals')"
+      *ngIf="addUsersBoolean"
+    >
+      ERP Approvals
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      [routerLink]="'bulkUploadService'"
+      routerLinkActive="active_sub_cls"
+      (click)="onMenuChange('Service Bulk upload/ Batch trigger')"
+      *ngIf="serviceInvoiceAccess"
+    >
+      Service Bulk upload/ Batch trigger
+    </div>
+  </div>
 
   <section id="body_content">
     <router-outlet></router-outlet>

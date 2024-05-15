@@ -242,6 +242,69 @@
     .dropdown:hover .dropdown-content {
       display: block;
     }
+    .mobile_menu {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: $theme_color;
+      color: white;
+      z-index: 6;
+      padding: 10px;
+    }
+    .menuIcon {
+      position: absolute;
+      right: 0px;
+      padding: 0px 10px;
+      top: 15px;
+      border-left: 1px solid lightgray;
+      z-index: 129;
+      cursor: pointer;
+    }
+    .mobile_menu .nav_Link {
+      cursor: pointer;
+      color: white !important;
+      padding: 10px 16px;
+      text-decoration: none;
+      font-size: 13px;
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0 !important;
+      white-space: nowrap;
+      position: relative;
+      // border-bottom: 1px solid #ffffff;
+      transition: color 0.4s ease;
+      a {
+        color: white;
+      }
+    }
+    .mobile_menu .nav_Link::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background-color: #ffffff;
+      transition: width 0.4s ease, left 0.4s ease;
+      transform: translateX(-50%);
+  }
+  .mobile_menu .nav_Link:last-child {
+      border-bottom: 0;
+    }
+    .mobile_menu .nav_Link:hover {
+      background-color: #358dc033;
+      border-radius: 0;
+      color: $hover_color !important;
+      opacity: 1;
+    }
+    .mobile_menu .nav_Link:hover::after {
+      width: 100%;
+      left: 0;
+      transform: translateX(0);
+  }
+    // .dropdown:hover .dropdown-content {
+    //   display: block;
+    // }
     .center_absolute {
       position: absolute;
       top: 13px;

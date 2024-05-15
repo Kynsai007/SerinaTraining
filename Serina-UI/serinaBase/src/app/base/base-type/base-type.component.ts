@@ -80,6 +80,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   approveBoolean: boolean;
   serviceApprovalsEnabled:boolean = true;
   logoSrc: string;
+  isMenuOpen: boolean;
 
   constructor(
     public router: Router,
@@ -525,7 +526,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.isOpen_apr = false;
     if(this.vendorInvoiceAccess && this.serviceInvoiceAccess){
       this.isOpen = !this.isOpen;
-      if(this.isOpen){
+      if(this.isOpen && this.isDesktop){
         document.getElementById('body_content').style.opacity = '0.2';
       } else {
         document.getElementById('body_content').style.opacity = '1';
@@ -592,6 +593,9 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   onChangeUI(val){
     this.isTableView = val;
     this.dataStoreService.isTableView.next(this.isTableView);
+  }
+  openMenu(){
+    this.isMenuOpen = !this.isMenuOpen;
   }
   ngOnDestroy(): void {
     if (this.subscription) {

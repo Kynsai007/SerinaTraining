@@ -220,7 +220,7 @@ export class DataService {
   approvalPageNumber: any;
   approval_uniSearch: any;
   approvalPageNumberSP: any;
-  SP_aprve_uniSearch: string;
+  SP_aprve_uniSearch: string = '';
   statusId: any;
   constructor(
   ) { 

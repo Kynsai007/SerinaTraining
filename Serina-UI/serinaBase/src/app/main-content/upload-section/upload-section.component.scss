@@ -718,3 +718,12 @@ label {
     padding: 10px 20px;
   }
 } 
+@media screen and (width <= 786px){
+  .row .column1 {
+    width: 0;
+    display: none;
+  }
+  .row .column2 {
+    width: 100%;
+  }
+}

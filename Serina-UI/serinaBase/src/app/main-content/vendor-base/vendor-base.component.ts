@@ -41,6 +41,8 @@ export class VendorBaseComponent implements OnInit {
   isTableView: boolean;
   isNewVendorForERP:boolean;
   logoSrc: string;
+  isMenuOpen: any;
+  isnotTablet: boolean;
   
   constructor(private router:Router,
     private settingService : SettingsService,
@@ -114,14 +116,21 @@ export class VendorBaseComponent implements OnInit {
     
   }
   appendScript (){
-    if(window.screen.width >= 576){
-      this.sidebarMode = 'side';
+    if(window.screen.width <= 768){
+      this.sidebarMode = 'over';
+      this.isDesktop = false;
+      this.isnotTablet = false;
+      this.DS.isDesktop = false;
+      this.DS.isTableView.next(false);
+    } else if(window.screen.width >= 769 && window.screen.width < 1024) {
+      this.sidebarMode = 'over';
+      this.isnotTablet = false;
       this.isDesktop = true;
       this.DS.isDesktop = true;
     } else {
-      this.sidebarMode = 'over';
-      this.isDesktop = false;
-      this.DS.isDesktop = false;
+      this.sidebarMode = 'side';
+      this.isDesktop = true;
+      this.DS.isDesktop = true;
     }
     const script = this.renderer.createElement('script');
     script.type = 'text/javascript';
@@ -228,6 +237,9 @@ export class VendorBaseComponent implements OnInit {
   onChangeUI(val){
     this.isTableView = val;
     this.DS.isTableView.next(this.isTableView);
+  }
+  openMenu(){
+    this.isMenuOpen = !this.isMenuOpen;
   }
   logout(){
     this.authService.logout();

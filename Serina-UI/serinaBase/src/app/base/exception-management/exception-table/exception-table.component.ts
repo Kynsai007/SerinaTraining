@@ -127,7 +127,6 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.calculateCardCountPerPage();
     this.ap_boolean = this.ds.ap_boolean;
     this.initialData();
     this.dateFunc();
@@ -145,7 +144,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.calculateCardCountPerPage();
+    if(this.isDesktop){
+      this.calculateCardCountPerPage();
+    } 
   }
 
   calculateCardCountPerPage() {
@@ -236,6 +237,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.userType = this.authService.currentUserValue['user_type'];
     this.user_name = this.authService.currentUserValue['userdetails'].firstName;
     this.isDesktop = this.ds.isDesktop;
+    if(this.isDesktop){
+      this.calculateCardCountPerPage();
+    } 
     if (this.userType == 'vendor_portal') {
       this.portalName = 'vendorPortal';
     } else {
@@ -437,7 +441,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
           `/vendorPortal/invoice/${route}/${e.idDocument}`,
         ]);
       } else if (this.userType == 'customer_portal') {
-        if (e.documentsubstatusID != 30) {
+        if (e.documentsubstatusID != 30 && route == 'serviceDetails') {
           this.router.navigate([`customer/invoice/${route}/${e.idDocument}`]);
         } else {
           this.router.navigate([`customer/invoice/comparision-docs/${e.idDocument}`]);
@@ -498,9 +502,16 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
                     if (e.documentsubstatusID == 35) {
                       this.getPOLines(e);
                     } else {
-                      this.router.navigate([
-                        `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
-                      ]);
+                      if(this.router.url.includes('approvals/ServiceInvoices')){
+                        this.router.navigate([
+                          `${this.portalName}/invoice/serviceDetails/${e.idDocument}`,
+                        ]);
+                      } else {
+                        this.router.navigate([
+                          `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
+                        ]);
+                      }
+
                     }
 
                     let sessionData = {

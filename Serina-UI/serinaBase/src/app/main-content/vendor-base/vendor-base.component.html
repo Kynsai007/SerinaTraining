@@ -262,48 +262,65 @@
 
 <div class="layout">
   <nav class="desktop d-flex justify-content-between">
-    <div class="d-flex" style="gap: 60px;">
+    <div class="d-flex" style="gap: 60px">
       <div>
-        <img [src]="logoSrc" alt="Serina logo"  [ngClass]="DS.configData?.client_name == 'Cenomi'? 'otherBrand':'Serina'"/>
+        <img
+          [src]="logoSrc"
+          alt="Serina logo"
+          [ngClass]="
+            DS.configData?.client_name == 'Cenomi' ? 'otherBrand' : 'Serina'
+          "
+        />
       </div>
-      <div class="navLinks d-flex justify-content-between" *ngIf="!isNewVendorForERP">
-          <div
-            class="nav_Link f-14"
-            [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
-            routerLinkActive="active_cls"
-            [routerLink]="'home'"
-          >
-            Dashboard
-          </div>
-  
-          <div
-            class="nav_Link f-14"
-            [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
-            routerLinkActive="active_cls"
-            [routerLink]="'uploadInvoices'"
-          >
-            Upload
-          </div>
-  
-          <div
+      <div
+        class="navLinks d-flex justify-content-between"
+        *ngIf="!isNewVendorForERP && isDesktop"
+      >
+        <div
           class="nav_Link f-14"
-          [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
-            routerLinkActive="active_cls"
-            [routerLink]="'invoice'"
-          >
-            Document Status
-          </div>
-  
-          <div
+          [ngClass]="
+            DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''
+          "
+          routerLinkActive="active_cls"
+          [routerLink]="'home'"
+        >
+          Dashboard
+        </div>
+
+        <div
           class="nav_Link f-14"
-          [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
-            routerLinkActive="active_cls"
-            [routerLink]="'ExceptionManagement'"
-          >
-            Exceptions
-          </div>
-  
-          <!-- <div
+          [ngClass]="
+            DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''
+          "
+          routerLinkActive="active_cls"
+          [routerLink]="'uploadInvoices'"
+        >
+          Upload
+        </div>
+
+        <div
+          class="nav_Link f-14"
+          [ngClass]="
+            DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''
+          "
+          routerLinkActive="active_cls"
+          [routerLink]="'invoice'"
+        >
+          Document Status
+        </div>
+
+        <div
+          class="nav_Link f-14"
+          [ngClass]="
+            DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''
+          "
+          routerLinkActive="active_cls"
+          [routerLink]="'ExceptionManagement'"
+        >
+          Exceptions
+        </div>
+
+        <!-- <div
             class="navLink"
             routerLinkActive="active_cls"
             data-text="Payment Status"
@@ -311,50 +328,58 @@
           >
             Payment Status
           </div> -->
-  
-          <!-- <div *ngIf="addUsersBoolean" class="navLink" data-text="Roles" routerLinkActive="active_cls" [routerLink]="'vendorUsers'">
+
+        <!-- <div *ngIf="addUsersBoolean" class="navLink" data-text="Roles" routerLinkActive="active_cls" [routerLink]="'vendorUsers'">
                       <span class="material-icons f-18 ml-r-12" routerLinkActive="ml-9">
                           manage_accounts
                           </span>
                           Roles
                   </div> -->
-  
-          <div
-            *ngIf="addUsersBoolean"
-            class="nav_Link f-14"
-            [ngClass]="DS.configData.client_name == 'Cenomi'? 'cenomiNavlink':''"
-            routerLinkActive="active_cls"
-            [routerLink]="'vendorContacts'"
-          >
-            Contact Details
-          </div>
-          <div *ngIf="!isDesktop" class="navLink" data-text="Change Password" (click)="openDialog()">
-            <i
-              class="fa fa-lock f-18 ml-r-12"
-              aria-hidden="true"
-              routerLinkActive="ml-9"
-            ></i>
-            Change Password
-          </div>
-  
-          <div
-            *ngIf="!isDesktop"
-            class="navLink"
-            data-text="Logout"
-            (click)="confirm_pop()"
-          >
-            <i
-              class="fa fa-sign-out f-18 ml-r-12"
-              aria-hidden="true"
-              routerLinkActive="ml-9"
-            ></i>
-            Logout
-          </div>
+
+        <div
+          *ngIf="addUsersBoolean"
+          class="nav_Link f-14"
+          [ngClass]="
+            DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''
+          "
+          routerLinkActive="active_cls"
+          [routerLink]="'vendorContacts'"
+        >
+          Contact Details
+        </div>
+        <div
+          *ngIf="!isDesktop"
+          class="navLink"
+          data-text="Change Password"
+          (click)="openDialog()"
+        >
+          <i
+            class="fa fa-lock f-18 ml-r-12"
+            aria-hidden="true"
+            routerLinkActive="ml-9"
+          ></i>
+          Change Password
+        </div>
+
+        <div
+          *ngIf="!isDesktop"
+          class="navLink"
+          data-text="Logout"
+          (click)="confirm_pop()"
+        >
+          <i
+            class="fa fa-sign-out f-18 ml-r-12"
+            aria-hidden="true"
+            routerLinkActive="ml-9"
+          ></i>
+          Logout
+        </div>
       </div>
     </div>
- 
-    <div class="d-flex align-items-center " >
-      <div class="user_d f-13" *ngIf="!isNewVendorForERP">Card
+
+    <div class="d-flex align-items-center" [ngStyle]="{ marginRight: !isDesktop ? '40px' : '' }">
+      <div class="user_d f-13" *ngIf="!isNewVendorForERP && isDesktop">
+        Card
         <span class="portal">
           <label class="switch">
             <input
@@ -364,9 +389,10 @@
             />
             <span class="slider round"></span>
           </label>
-        </span> Table
+        </span>
+        Table
       </div>
-      <div class="short_name f-12">{{name_short}}</div>
+      <div class="short_name f-12">{{ name_short }}</div>
       <div class="f-12 mr-1">{{ userDetails.userdetails.firstName }}</div>
       <div (clickOutside)="onClickedOutside($event)">
         <mat-icon
@@ -384,8 +410,68 @@
         </div>
       </div>
     </div>
-  </nav>
 
+    <div *ngIf="!isDesktop" class="menuIcon" (click)="openMenu()">
+      <span class="material-icons">
+        {{ isMenuOpen ? "close" : "menu" }}
+      </span>
+    </div>
+  </nav>
+  <div *ngIf="isMenuOpen" class="mobile_menu">
+    <div
+      class="nav_Link f-14"
+      [ngClass]="DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''"
+      routerLinkActive="active_cls"
+      [routerLink]="'home'"
+    >
+      Dashboard
+    </div>
+
+    <div
+      class="nav_Link f-14"
+      [ngClass]="DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''"
+      routerLinkActive="active_cls"
+      [routerLink]="'uploadInvoices'"
+    >
+      Upload
+    </div>
+
+    <div
+      class="nav_Link f-14"
+      [ngClass]="DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''"
+      routerLinkActive="active_cls"
+      [routerLink]="'invoice'"
+    >
+      Document Status
+    </div>
+
+    <div
+      class="nav_Link f-14"
+      [ngClass]="DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''"
+      routerLinkActive="active_cls"
+      [routerLink]="'ExceptionManagement'"
+    >
+      Exceptions
+    </div>
+
+    <div
+      *ngIf="addUsersBoolean"
+      class="nav_Link f-14"
+      [ngClass]="DS.configData.client_name == 'Cenomi' ? 'cenomiNavlink' : ''"
+      routerLinkActive="active_cls"
+      [routerLink]="'vendorContacts'"
+    >
+      Contact Details
+    </div>
+    <!-- <div class="navLink" data-text="Change Password" (click)="openDialog()">
+            <i
+              class="fa fa-lock f-18 ml-r-12"
+              aria-hidden="true"
+              routerLinkActive="ml-9"
+            ></i>
+            Change Password
+          </div> -->
+  </div>
   <section>
     <div *ngIf="!isNewVendorForERP">
       <router-outlet></router-outlet>

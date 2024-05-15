@@ -262,11 +262,11 @@ columnLengthSOA:number;
     this.filterDataService = this.serviceinvoiceDispalyData;
     this.filterData = this.invoiceDisplayData;
     this.allInvoiceLength = this.ds.invoiceLoadedData.length;
-    if (this.allInvoiceLength > 10) {
+    if (this.allInvoiceLength > 10 && this.isDesktop) {
       this.showPaginatorAllInvoice = true;
     }
     this.serviceInvoiceLength = this.serviceinvoiceDispalyData.length;
-    if (this.serviceInvoiceLength > 10) {
+    if (this.serviceInvoiceLength > 10  && this.isDesktop) {
       this.showPaginatorServiceInvoice = true;
     }
     // this.filterForArchived();

@@ -36,7 +36,7 @@ export class ApproveComponent implements OnInit {
     { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
     { dbColumnname: 'ServiceProviderName', columnName: 'Service provider Name' },
     { dbColumnname: 'Account', columnName: 'Service provider A/C' },
-    { dbColumnname: 'documentdescription', columnName: 'Description' },
+    // { dbColumnname: 'documentdescription', columnName: 'Description' },
     { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
     { dbColumnname: 'documentdescription', columnName: 'Description' },
     { dbColumnname: 'totalAmount', columnName: 'Amount' },
@@ -83,7 +83,7 @@ export class ApproveComponent implements OnInit {
 
   ngOnInit(): void {
     this.init();
-    if (this.router.url.includes('serviceInvoices')) {
+    if (this.router.url.includes('ServiceInvoices')) {
       this.search_placeholder = 'Ex : By Service. By Entity';
       this.readServiceInvoiceData();
     } else {
@@ -190,7 +190,7 @@ export class ApproveComponent implements OnInit {
     this.sharedService.readApprovedSPInvoiceData().subscribe(
       (data: any) => {
         let approvedArray = [];
-        data?.approved?.forEach((element) => {
+        data?.result?.approved?.forEach((element) => {
           let mergeArray = {
             ...element.Entity,
             ...element.EntityBody,
@@ -205,6 +205,7 @@ export class ApproveComponent implements OnInit {
         this.approvedDataSP = approvedArray;
         this.approvedDataLengthSP = this.approvedDataSP.length;
         this.filterDataSP = this.approvedDataSP;
+        console.log(this.approvedDataSP )
         setTimeout(() => {
           this.searchTextSP = this.ds.SP_aprve_uniSearch;
           this.universalSearch(this.searchTextSP);
@@ -220,7 +221,7 @@ export class ApproveComponent implements OnInit {
     );
   }
   universalSearch(txt) {
-    if (this.router.url.includes('serviceInvoices')) {
+    if (this.router.url.includes('ServiceInvoices')) {
       this.ds.SP_aprve_uniSearch = txt;
       this.approvedDataSP = this.filterDataSP;
       this.approvedDataSP = this.ds.searchFilter(txt, this.filterDataSP);
@@ -248,7 +249,7 @@ export class ApproveComponent implements OnInit {
   }
   exportExcel() {
     let exportData = [];
-    if (this.router.url.includes('serviceInvoices')) {
+    if (this.router.url.includes('ServiceInvoices')) {
       exportData = this.approvedData;
     } else {
       exportData = this.approvedDataSP;
@@ -263,7 +264,7 @@ export class ApproveComponent implements OnInit {
   }
 
   paginate(event) {
-    if (this.router.url.includes('serviceInvoices')) {
+    if (this.router.url.includes('ServiceInvoices')) {
       this.pageNumberSP = event.pageNumber;
       this.ds.approvalPageNumberSP = event.pageNumber;
       this.paginateService(event);

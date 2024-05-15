@@ -31,7 +31,7 @@
       </div> -->
   </div>
   <div class="pt-1 mt-2">
-    <div *ngIf="!router.url.includes('serviceInvoices')">
+    <div *ngIf="!router.url.includes('ServiceInvoices')">
       <app-exception-table
         [invoiceColumns]="ApprovedColumn"
         [columnsToDisplay]="approvedColumnField"
@@ -45,7 +45,7 @@
       >
       </app-exception-table>
     </div>
-    <div *ngIf="router.url.includes('serviceInvoices')">
+    <div *ngIf="router.url.includes('ServiceInvoices')">
       <app-exception-table
         [invoiceColumns]="ApprovedColumnSP"
         [columnsToDisplay]="approvedColumnFieldSP"

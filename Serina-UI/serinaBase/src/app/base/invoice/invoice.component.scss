@@ -440,3 +440,13 @@ dialog .footer {
   max-height: 60svh;
   margin-top: 10px;
 }
+
+@media screen and (width <= 786px){
+  .filters {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .tabDiv {
+    padding-top: 80px !important;
+  }
+}

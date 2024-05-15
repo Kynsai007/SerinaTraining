@@ -66,6 +66,7 @@ $theme_color: var(--themeColor);
     z-index: 1;
     height: calc(100svh - 60px);
     margin-top: 2px;
+    overflow: auto;
   }
   .Serina{
     padding: 10px 0;
