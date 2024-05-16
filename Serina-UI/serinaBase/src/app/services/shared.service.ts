@@ -410,13 +410,19 @@ export class SharedService {
   }
   excelDownload(data){
     let blob: any = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
+
     let d = new Date();
     let datestring = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
       d.getHours() + ":" + d.getMinutes();
     fileSaver.saveAs(blob, `ERPReport-(${datestring})`);
   }
-
+  csvDownload(data){
+    let blob: any = new Blob([data], { type: 'text/csv; charset=utf-8' });
+    let d = new Date();
+    let datestring = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
+      d.getHours() + ":" + d.getMinutes();
+    fileSaver.saveAs(blob, `ERPReport-(${datestring})`);
+  }
 
     
   // view Invoice

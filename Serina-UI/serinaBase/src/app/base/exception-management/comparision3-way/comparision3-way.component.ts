@@ -390,6 +390,7 @@ export class Comparision3WayComponent
   // invoiceType: string = '';
   // disableButton: boolean = false;
   advanceAPIbody:any;
+  grnAttachmentString:any;
 
   constructor(
     fb: FormBuilder,
@@ -549,6 +550,7 @@ export class Comparision3WayComponent
     }
     // this.onResize();
     // this.Itype = this.tagService.type;
+    this.getGrnAttachment();
     this.editable = this.tagService.editable;
     this.fin_boolean = this.tagService.financeApprovePermission;
     this.submitBtn_boolean = this.tagService.submitBtnBoolean;
@@ -2925,6 +2927,62 @@ export class Comparision3WayComponent
         this.error("Server error");
       }
     );
+  }
+
+  grnAttachmentDoc(base64, type){
+    let blob: any = this.base64ToBlob(base64);
+    const url = window.URL.createObjectURL(blob);
+    if (type == 'view') {
+      const dailogRef: MatDialogRef<SupportpdfViewerComponent> = this.mat_dlg.open(SupportpdfViewerComponent, {
+        width: '90vw',
+        height: '95svh',
+        hasBackdrop: true,
+        data: { file: url }
+      })
+    } else {
+      fileSaver.saveAs(blob, `GRN attachment_invoice_number_${this.invoiceNumber}.pdf`);
+      this.success("Document downloaded successfully.");
+    }
+  }
+
+  getGrnAttachment(){
+    this.SharedService.getGRNAttachment().subscribe((data:any)=>{
+      this.grnAttachmentString = data?.base64;
+    },err=>{
+      this.error("Server error");
+    })
+  }
+
+   base64ToBlob(base64) {
+      // Extract the MIME type from the Base64 string if present
+      const base64Pattern = /^data:(.*);base64,(.*)$/;
+      const matches = base64.match(base64Pattern);
+
+      let mimeType;
+      let data;
+
+      if (matches) {
+          mimeType = matches[1]; // Extracted MIME type
+          data = matches[2]; // Base64 data
+      } else {
+          // Fallback MIME type if not specified in the Base64 string
+          mimeType = 'application/octet-stream';
+          data = base64;
+      }
+
+      // Decode the Base64 string
+      const byteCharacters = atob(data);
+
+      // Create an array for the byte characters
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      // Convert the byte numbers array into a Uint8Array
+      const byteArray = new Uint8Array(byteNumbers);
+      // Create a Blob from the Uint8Array
+      return new Blob([byteArray], {type: mimeType});
   }
 
   getEntity() {

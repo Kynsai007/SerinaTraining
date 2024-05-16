@@ -1568,11 +1568,11 @@
             <div
               *ngIf="
                 supportTabBoolean &&
-                support_doc_list?.length > 0 &&
+                support_doc_list?.length > 0 || grnAttachmentString &&
                 !approval_selection_boolean
               "
             >
-              <table class="table">
+              <table class="table" *ngIf="support_doc_list?.length > 0">
                 <tr class="f-12 lineName">
                   <th>S.No</th>
                   <th>Name</th>
@@ -1598,6 +1598,31 @@
                   </td>
                 </tr>
               </table>
+
+              <table class="table" *ngIf="grnAttachmentString">
+                <h6 class="f-14"> GRN Attachment</h6>
+                <tr class="f-12 lineName">
+                  <th>S.No</th>
+                  <th>Name</th>
+                  <th></th>
+                </tr>
+                <tr class="f-12">
+                  <td>1</td>
+                  <td
+                    class="break_word pointer f-12"
+                    (click)="grnAttachmentDoc(grnAttachmentString, 'view')"
+                  >
+                    GRN attachment file
+                  </td>
+                  <td>
+                    <i
+                      class="fa fa-download pointer"
+                      aria-hidden="true"
+                      (click)="grnAttachmentDoc(grnAttachmentString, 'down')"
+                    ></i>
+                  </td>
+                </tr>
+              </table>
               <p class="f-11">
                 *Supporting document is not being read by Serina, please check
                 and review manually.
@@ -1606,7 +1631,7 @@
             <div
               *ngIf="
                 supportTabBoolean &&
-                !(support_doc_list?.length > 0) &&
+                !(support_doc_list?.length > 0) && grnAttachmentString == undefined &&
                 !approval_selection_boolean
               "
             >

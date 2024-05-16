@@ -1547,7 +1547,7 @@ ERPReports(bool) {
        this.success("Dear User, The Report will be sent to your email shortly.");
        this.closeDialog();
      } else {
-      this.sharedService.excelDownload(data);
+      this.sharedService.csvDownload(data);
       this.success("Dear User, The Report downloaded successfully.");
       this.closeDialog();
       //  this.SOATableData = data;
