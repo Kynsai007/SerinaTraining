@@ -61,6 +61,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   labelsJson={};
   showtags:boolean = true;
   showtabletags:boolean = false;
+  loadingIndex: number | null = null;
+  loadingtableIndex: boolean = false;
   target:any;
   currentSelection:any[]=[];
   // currentwidth:any;
@@ -317,6 +319,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   }
 }
   async setTableCellTag(index,fieldKey){
+    this.loadingtableIndex = true;
       this.tabledetails[this.currenttable] = index;
       if(this.labelsJson["labels"].findIndex(v => v.label == this.currenttable+"/"+index+"/"+fieldKey) == -1){
         this.labelsJson["labels"].push({'label':this.currenttable+"/"+index+"/"+fieldKey,'key':null,'value':[]});
@@ -380,9 +383,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         'labelJson':this.labelsJson
       }
       this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
+        this.loadingtableIndex  = false;
       })
       this.currenttext =  this.labelsJson["labels"][tabindex]["value"].map(function(element){return element.text}).join(" ");
-      (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = this.currenttext;
+      (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = `${this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div>`;
       this.currentSelection = [];
       this.currenttext = "";
   }
@@ -602,7 +606,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
             let labelindex = this.labelsJson["labels"].findIndex(el => el.label === l.label);
             if((<HTMLDivElement>document.getElementById(l.label))){
               this.currenttext = this.labelsJson["labels"][labelindex]["value"].map(function(element){return element.text}).join(" ");
-              (<HTMLDivElement>document.getElementById(l.label)).innerHTML = this.currenttext;
+              (<HTMLDivElement>document.getElementById(l.label)).innerHTML = `${this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div>`;
             }
           }
         }
@@ -1194,6 +1198,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       document.addEventListener('keydown',async function(eve){
           const key = eve.key;
           if(key === 'Delete'){
+            _this.loadingtableIndex = true;
             let popdiv = (<HTMLDivElement>document.getElementById("hidden"+pagenum));
             if(popdiv){
               popdiv.style.display = 'none';
@@ -1219,6 +1224,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                     if(!_this.fieldid.startsWith(_this.currenttable)){
                       let fieldKey = _this.fieldid.split("-")[1]
                       index =  _this.labelsJson["labels"].findIndex(el => el.label == fieldKey);
+                      _this.loadingIndex = index;
                     }else{
                       index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
                     }
@@ -1229,6 +1235,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                       }
                     }
                     _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
+                    if(_this.fieldid.startsWith(_this.currenttable)){
+                      _this.currenttext = `${_this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;"> ${_this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div>`;
+                    }
                     (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
                   }
                 }
@@ -1244,6 +1253,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               'labelJson':_this.labelsJson
             }
             _this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
+              _this.loadingIndex = null;
+              _this.loadingtableIndex = false;
             })
             _this.currenttext = "";
             _this.currentSelection = [];
@@ -1408,6 +1419,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       document.addEventListener('keydown',async function(eve){
           const key = eve.key;
           if(key === 'Delete'){
+            _this.loadingtableIndex = true;
             let popdiv = (<HTMLDivElement>document.getElementById("hidden"+pagenum));
             if(popdiv){
               popdiv.style.display = 'none';
@@ -1433,6 +1445,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                     if(!_this.fieldid.startsWith(_this.currenttable)){
                       let fieldKey = _this.fieldid.split("-")[1]
                       index =  _this.labelsJson["labels"].findIndex(el => el.label == fieldKey);
+                      _this.loadingIndex = index;
                     }else{
                       index =  _this.labelsJson["labels"].findIndex(el => el.label == _this.fieldid);
                     }
@@ -1443,6 +1456,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                       }
                     }
                     _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
+                    if(_this.fieldid.startsWith(_this.currenttable)){
+                      _this.currenttext = `${_this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${_this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</i></div>`;
+                    }
                     (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
                   }
                 }
@@ -1458,6 +1474,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               'labelJson':_this.labelsJson
             }
             _this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
+              _this.loadingIndex = null;
+              _this.loadingtableIndex = false;
             })
             _this.currenttext = "";
             _this.currentSelection = [];
@@ -1648,6 +1666,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       res = res + 'scale('+this.zoomVal+')';
       (<HTMLDivElement>document.getElementById("parentcanvas"+this.currentindex)).style.transform = res;  
   }
+  getLabelIndex(field){
+    return this.labelsJson["labels"].findIndex(el => el.label == field.fieldKey);
+  }
   async setinitial(i,field){
     if(!field.fieldKey.startsWith(this.currenttable)){
       let index = this.labelsJson["labels"].findIndex(el => el.label == field.fieldKey);
@@ -1719,6 +1740,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     return false;
   }
   async SetField(i,field){
+    this.loadingIndex = i;
       if(field.fieldType == 'string'){
         let found = this.labelsJson["labels"].some(el => el.label === field.fieldKey);
         let index =  this.labelsJson["labels"].findIndex(el => el.label === field.fieldKey);
@@ -1784,7 +1806,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           'saveJson':null,
           'labelJson':this.labelsJson
         }
-        this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {    
+        this.sharedService.saveLabelsFile(frobj).subscribe((data:any) => {
+          this.loadingIndex = null; 
         })
         this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
         (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
