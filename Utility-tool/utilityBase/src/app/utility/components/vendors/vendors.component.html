@@ -111,6 +111,13 @@
                 >
                   Not-Onboarded
                 </div>
+                <div
+                  *ngIf="vendor.OnboardedStatus == 'In-Progress'"
+                  class="f-12 mt-1"
+                  style="color: rgb(112, 104, 30)"
+                >
+                  In-Progress
+                </div>
                 <div>
                   FR Update<button
                     class="btn btnbg f-13 ml-3"
