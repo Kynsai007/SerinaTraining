@@ -515,6 +515,9 @@ export class SharedService {
   downloadSupportDoc(doc_name) {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/DownloadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}?file_name=${doc_name}`, { responseType: 'blob' }).pipe(retry(3));
   }
+  getGRNAttachment(){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getGrnAttachment/${this.invoiceID}`).pipe(retry(3));
+  }
   // payment status
   getPaymentStatusData() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/readInvoicePaymentStatus/${this.userId}`).pipe(retry(2));
