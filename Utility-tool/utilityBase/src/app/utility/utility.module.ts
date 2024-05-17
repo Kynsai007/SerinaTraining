@@ -8,6 +8,7 @@ import {ChipsModule} from 'primeng/chips';
 import {CdkStepperModule} from '@angular/cdk/stepper';
 import {NgStepperModule} from 'angular-ng-stepper';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ToastModule } from 'primeng/toast';
 import { FileUploadModule } from 'ng2-file-upload';
 import { UtilityRoutingModule } from './utility-routing.module';
@@ -46,7 +47,8 @@ import { CustomersComponent } from './components/customers/customers.component';
     DragDropModule,
     ChipsModule,
     MultiSelectModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    AutoCompleteModule
   ],
   providers:[MessageService]
 })

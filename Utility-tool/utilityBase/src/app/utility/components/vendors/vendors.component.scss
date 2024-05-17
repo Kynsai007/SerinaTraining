@@ -123,3 +123,28 @@ small{
     opacity: 1;
   }
 }
+:host ::ng-deep {
+  .p-autocomplete {
+    height: 35px;
+  }
+  .p-autocomplete-dd .p-autocomplete-input {
+    font-size: 12px;
+    font-weight: 500;
+    border-right: 0;
+  }
+  .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
+    font-size: 12px;
+    font-weight: 500;
+    color: #272727;
+  }
+  .p-button.p-button-icon-only {
+    background: white;
+    color: black;
+    border-left: 0 !important;
+    border: 1px solid lightgray;
+  }
+  .p-button:enabled:hover {
+    background: #ffffff;
+    color: #000000;
+}
+}

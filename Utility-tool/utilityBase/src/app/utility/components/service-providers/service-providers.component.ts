@@ -30,7 +30,12 @@ export class ServiceProvidersComponent implements OnInit {
   scrollDistance = 7;
   offsetCount = 1;
   APIParams: string;
-  spNameForSearch: any;
+  spNameForSearch = 'ALL';
+  filteredEnt: any[];
+  selected_ent: any;
+  selected_sp: any;
+  filteredService: any;
+  serviceData: any;
 
   constructor(
     private sharedService: SharedService,
@@ -77,6 +82,8 @@ export class ServiceProvidersComponent implements OnInit {
       // }, 50);
       this.listLoading = true;
     }
+    this.selected_sp = this.sharedService.selected_sp;
+    this.selected_ent = this.sharedService.selected_ent;
     this.selectedEntityId = this.sharedService.selectedEntityId;
     this.onboard_status = this.sharedService.onboard_status;
     this.spNameForSearch = this.sharedService.spNameForSearch;
@@ -116,12 +123,20 @@ export class ServiceProvidersComponent implements OnInit {
 
   getEntitySummary() {
     this.sharedService.getSummaryEntity().subscribe((data: any) => {
-      this.entity = data.result;
+      let arr = [];
+      data?.result?.forEach(ele => {
+        ele.EntityName1 = `${ele.EntityName} ${ele.EntityCode ? '-' +ele.EntityCode : ""}`;
+        arr.push({ EntityName: ele.EntityName1, idEntity: ele.idEntity })
+      })
+      arr.unshift({ EntityName: 'ALL', idEntity: "ALL" })
+      this.entity = arr;
     });
   }
   selectEntity(value) {
-    this.selectedEntityId = value;
-    this.sharedService.selectedEntityId = value;
+    this.selectedEntityId = value.idEntity;
+    this.sharedService.selectedEntityId = value.idEntity;
+    this.sharedService.selected_ent = value;
+    this.getServiceList();
   }
   selectedType(val) {
     this.onboard_status = val;
@@ -196,7 +211,6 @@ export class ServiceProvidersComponent implements OnInit {
         pushArray.push(mergedData);
       });
       this.SPListDispaly = this.SPList.concat(pushArray);
-      console.log(data);
       
       this.listLoading = true;
       this.sharedService.storeServiceProviderList.next(this.SPListDispaly);
@@ -206,40 +220,86 @@ export class ServiceProvidersComponent implements OnInit {
   filter() {
     this.listLoading = false;
     this.SPList = [];
-    this.spNameForSearch = '';
-    this.sharedService.spNameForSearch = '';
     this.offsetCount = 1;
     this.filtersForAPI();
     this.listLoading = true;
   }
 
   filtersForAPI() {
-    if (this.selectedEntityId != 'ALL' && this.onboard_status == 'ALL') {
+    if (this.selectedEntityId == 'ALL'&& this.spNameForSearch == 'ALL' && this.onboard_status == 'ALL' ) {
+      this.APIParams = `?offset=${this.offsetCount}&limit=100`;
+      this.getSPData(this.APIParams);
+    } else if (this.selectedEntityId != 'ALL'&& this.spNameForSearch == 'ALL'&& this.onboard_status == 'ALL' ) {
       this.APIParams = `?ent_id=${this.selectedEntityId}&offset=${this.offsetCount}&limit=100`;
       this.getSPData(this.APIParams);
-    } else if (this.onboard_status != 'ALL' && this.selectedEntityId == 'ALL') {
-      this.APIParams = `?onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
+    } else if (this.selectedEntityId != 'ALL'&& this.spNameForSearch != 'ALL' && this.onboard_status == 'ALL') {
+      this.APIParams = `?ent_id=${this.selectedEntityId}&ven_code=${this.spNameForSearch}&offset=${this.offsetCount}&limit=100`;
       this.getSPData(this.APIParams);
-    } else if (this.selectedEntityId != 'ALL' && this.onboard_status != 'ALL') {
+    } else if (this.selectedEntityId != 'ALL' && this.spNameForSearch == 'ALL' && this.onboard_status != 'ALL') {
       this.APIParams = `?ent_id=${this.selectedEntityId}&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
       this.getSPData(this.APIParams);
-    } else if (this.spNameForSearch) {
+    } else if (this.selectedEntityId == 'ALL'&& this.spNameForSearch != 'ALL' && this.onboard_status != 'ALL') {
+      this.APIParams = `?ven_code=${this.spNameForSearch}&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
+      this.getSPData(this.APIParams);
+    } else if (this.selectedEntityId == 'ALL'&& this.spNameForSearch != 'ALL' && this.onboard_status == 'ALL') {
       this.APIParams = `?ven_code=${this.spNameForSearch}&offset=${this.offsetCount}&limit=100`;
-    } else {
-      this.APIParams = `?offset=${this.offsetCount}&limit=100`;
+      this.getSPData(this.APIParams);
+    } else if (this.selectedEntityId == 'ALL'&& this.spNameForSearch == 'ALL' && this.onboard_status != 'ALL') {
+      this.APIParams = `?onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
       this.getSPData(this.APIParams);
     }
   }
-  filteSP() {
-    this.onboard_status = 'ALL';
-    this.sharedService.onboard_status = 'ALL';
-    this.selectedEntityId = 'ALL';
-    this.sharedService.selectedEntityId = 'ALL';
-    this.SPList = [];
-    this.offsetCount = 1;
-    this.APIParams = `?ven_code=${this.spNameForSearch}&offset=${this.offsetCount}&limit=100`;
-    this.getSPData(this.APIParams);
-    this.sharedService.spNameForSearch = this.spNameForSearch;
+  // filteSP() {
+  //   this.onboard_status = 'ALL';
+  //   this.sharedService.onboard_status = 'ALL';
+  //   this.selectedEntityId = 'ALL';
+  //   this.sharedService.selectedEntityId = 'ALL';
+  //   this.SPList = [];
+  //   this.offsetCount = 1;
+  //   this.APIParams = `?ven_code=${this.spNameForSearch}&offset=${this.offsetCount}&limit=100`;
+  //   this.getSPData(this.APIParams);
+  //   this.sharedService.spNameForSearch = this.spNameForSearch;
+  // }
+
+  filterEntity(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+
+    if (this.entity?.length > 0) {
+      for (let i = 0; i < this.entity?.length; i++) {
+        let ent: any = this.entity[i];
+        if (ent.EntityName.toLowerCase().includes(query.toLowerCase())) {
+          filtered.push(ent);
+        }
+      }
+    }
+    this.filteredEnt = filtered;
+  }
+
+  getServiceList() {
+    let param = ''
+    if(this.selectedEntityId != 'ALL'){
+      param = `?ent_id=${this.selectedEntityId}`;
+    }
+    this.sharedService
+      .getServiceList(param)
+      .subscribe((data: any) => {
+        this.filteredService = data.map(element => element.ServiceProvider);
+        this.serviceData = data.map(element => element.ServiceProvider);
+
+      });
+  }
+
+  filterServices(value) {
+    let query = value.query.toLowerCase();
+    this.filteredService = this.serviceData.filter(
+      (service) => service.ServiceProviderName.toLowerCase().includes(query)
+    );
+  }
+  selectService(value) {
+    this.spNameForSearch = value.ServiceProviderName;
+    this.sharedService.spNameForSearch =  value.ServiceProviderName;
+    this.sharedService.selected_sp = value;
   }
 
 }

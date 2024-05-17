@@ -24,7 +24,7 @@
         </select>
       </div>
       <div class="selectFilter mr-2">
-        <select
+        <!-- <select
           class="form-control inputField f-12"
           [(ngModel)]="selectedEntityId"
           (change)="selectEntity($event.target.value)"
@@ -36,18 +36,47 @@
           <option *ngFor="let entity of entity" [value]="entity.idEntity">
             {{ entity.EntityName }}
           </option>
-        </select>
+        </select> -->
+        <p-autoComplete
+          placeholder="Search or select from dropdown"
+          id="entity_v"
+          (onSelect)="selectEntity($event)"
+          [group]="false"
+          [suggestions]="filteredEnt"
+          (completeMethod)="filterEntity($event)"
+          field="EntityName"
+          [dropdown]="true"
+          [completeOnFocus]="true"
+          [autofocus]="true"
+          name="EntityName"
+          [(ngModel)]="selected_ent"
+        >
+        </p-autoComplete>
       </div>
   
+      <p-autoComplete
+        placeholder="Search or select from dropdown"
+        id="vendr_ci"
+        (onSelect)="selectService($event)"
+        [group]="false"
+        [suggestions]="filteredService"
+        (completeMethod)="filterServices($event)"
+        field="ServiceProviderName"
+        [dropdown]="true"
+        name="vendor"
+        [(ngModel)]="selected_sp"
+      >
+      </p-autoComplete>
+
       <button
         type="button"
-        class="btn btnadd btn-sm"
-        style="flex: 68%; font-size: small"
+        class="btn btnadd btn-sm f-12 ml-2"
+        style="width: 120px;font-size: 12px;"
         (click)="filter()"
       >
         Filter
       </button>
-      <input
+      <!-- <input
         class="inputField form-control"
         style="margin-left: 1rem"
         type="text"
@@ -62,7 +91,7 @@
         (click)="filteSP()"
       >
         Filter
-      </button>
+      </button> -->
     </div>
   </div>
   

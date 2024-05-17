@@ -29,13 +29,17 @@ export class VendorsComponent implements OnInit {
     { name: 'ALL', value: 'ALL' },
     { name: 'Onboarded', value: true },
     { name: 'Not-Onboarded', value: false },
-    { name: 'In-Progress', value: false}
   ];
   throttle = 300;
   scrollDistance = 7;
   offsetCount = 1;
   APIParams: string;
-  vendorNameForSearch: any;
+  vendorNameForSearch= 'ALL';selected_Vendor: any;
+  selected_ent: any;
+;
+  filteredEnt: any[];
+  vendorAccount = [];
+  filteredVendors = [];
 
   constructor(
     private sharedService: SharedService,
@@ -84,6 +88,8 @@ export class VendorsComponent implements OnInit {
       // }, 50);
       this.listLoading = true;
     }
+    this.selected_Vendor = this.sharedService.selected_Vendor;
+    this.selected_ent = this.sharedService.selected_ent;
     this.selectedEntityId = this.sharedService.selectedEntityId;
     this.onboard_status = this.sharedService.onboard_status;
     this.vendorNameForSearch = this.sharedService.vendorNameForSearch;
@@ -123,12 +129,20 @@ export class VendorsComponent implements OnInit {
 
   getEntitySummary() {
     this.sharedService.getSummaryEntity().subscribe((data: any) => {
-      this.entity = data.result;
+      let arr = [];
+      data?.result?.forEach(ele => {
+        ele.EntityName1 = `${ele.EntityName} ${ele.EntityCode ? '-' +ele.EntityCode : ""}`;
+        arr.push({ EntityName: ele.EntityName1, idEntity: ele.idEntity })
+      })
+      arr.unshift({ EntityName: 'ALL', idEntity: "ALL" })
+      this.entity = arr;
     });
   }
   selectEntity(value) {
-    this.selectedEntityId = value;
-    this.sharedService.selectedEntityId = value;
+    this.selectedEntityId = value.idEntity;
+    this.sharedService.selectedEntityId = value.idEntity;
+    this.sharedService.selected_ent = value;
+    this.getCustomerVendors();
   }
   selectedType(val) {
     this.onboard_status = val;
@@ -212,8 +226,7 @@ export class VendorsComponent implements OnInit {
   filter() {
     this.listLoading = false;
     this.vendorsList = [];
-    this.vendorNameForSearch = '';
-    this.sharedService.vendorNameForSearch = '';
+
     // let booleanValue:boolean;
     // if(this.onboard_status == 'true'){
     //   booleanValue = true;
@@ -241,19 +254,26 @@ export class VendorsComponent implements OnInit {
   }
 
   filtersForAPI() {
-    if (this.selectedEntityId != 'ALL' && this.onboard_status == 'ALL') {
+    if (this.selectedEntityId == 'ALL'&& this.vendorNameForSearch == 'ALL' && this.onboard_status == 'ALL' ) {
+      this.APIParams = `?partyType=vendor&offset=${this.offsetCount}&limit=100`;
+      this.getVendorsData(this.APIParams);
+    } else if (this.selectedEntityId != 'ALL'&& this.vendorNameForSearch == 'ALL'&& this.onboard_status == 'ALL' ) {
       this.APIParams = `?partyType=vendor&ent_id=${this.selectedEntityId}&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
-    } else if (this.onboard_status != 'ALL' && this.selectedEntityId == 'ALL') {
-      this.APIParams = `?partyType=vendor&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
+    } else if (this.selectedEntityId != 'ALL'&& this.vendorNameForSearch != 'ALL' && this.onboard_status == 'ALL') {
+      this.APIParams = `?partyType=vendor&ent_id=${this.selectedEntityId}&ven_code=${this.vendorNameForSearch}&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
-    } else if (this.selectedEntityId != 'ALL' && this.onboard_status != 'ALL') {
+    } else if (this.selectedEntityId != 'ALL' && this.vendorNameForSearch == 'ALL' && this.onboard_status != 'ALL') {
       this.APIParams = `?partyType=vendor&ent_id=${this.selectedEntityId}&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
-    } else if (this.vendorNameForSearch) {
+    } else if (this.selectedEntityId == 'ALL'&& this.vendorNameForSearch != 'ALL' && this.onboard_status != 'ALL') {
+      this.APIParams = `?partyType=vendor&ven_code=${this.vendorNameForSearch}&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
+      this.getVendorsData(this.APIParams);
+    } else if (this.selectedEntityId == 'ALL'&& this.vendorNameForSearch != 'ALL' && this.onboard_status == 'ALL') {
       this.APIParams = `?partyType=vendor&ven_code=${this.vendorNameForSearch}&offset=${this.offsetCount}&limit=100`;
-    } else {
-      this.APIParams = `?partyType=vendor&offset=${this.offsetCount}&limit=100`;
+      this.getVendorsData(this.APIParams);
+     }else if (this.selectedEntityId == 'ALL'&& this.vendorNameForSearch == 'ALL' && this.onboard_status != 'ALL') {
+      this.APIParams = `?partyType=vendor&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
     }
   }
@@ -268,4 +288,44 @@ export class VendorsComponent implements OnInit {
     this.getVendorsData(this.APIParams);
     this.sharedService.vendorNameForSearch = this.vendorNameForSearch;
   }
+
+  filterEntity(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+
+    if (this.entity?.length > 0) {
+      for (let i = 0; i < this.entity?.length; i++) {
+        let ent: any = this.entity[i];
+        if (ent.EntityName.toLowerCase().includes(query.toLowerCase())) {
+          filtered.push(ent);
+        }
+      }
+    }
+    this.filteredEnt = filtered;
+  }
+  getCustomerVendors() {
+    this.sharedService
+      .getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}`)
+      .subscribe((data: any) => {
+        this.vendorAccount = data.vendorlist;
+        this.vendorAccount.unshift({ VendorName: 'ALL', idVendor: "ALL" })
+        // this.filteredVendors = arr;
+      });
+  }
+  filterVendor(event) {
+    let query = event.query.toLowerCase();
+    if (query != '') {
+      this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}&ven_name=${query}`).subscribe((data: any) => {
+        this.filteredVendors = data.vendorlist;
+      });
+    } else {
+      this.filteredVendors = this.vendorAccount;
+    }
+  }
+  selectedVendor(event){
+    this.vendorNameForSearch = event.VendorName;
+    this.sharedService.vendorNameForSearch = event.VendorName;
+    this.sharedService.selected_Vendor = event;
+  }
+
 }

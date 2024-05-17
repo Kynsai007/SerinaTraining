@@ -55,9 +55,12 @@ export class SharedService {
   customerList = [];
   selectedEntityId: any = 'ALL';
   onboard_status: any = 'ALL';
-  vendorNameForSearch: any;
+  vendorNameForSearch = 'ALL';
   customerNameForSearch:any;
-  spNameForSearch:any;
+  spNameForSearch = 'ALL';
+  selected_Vendor: any;
+  selected_ent: any;
+  selected_sp: any;
   constructor(private http: HttpClient) {
     if (sessionStorage.getItem('vendorData')) {
       this.vendorDataSubject = new BehaviorSubject<any>(JSON.parse(sessionStorage.getItem('vendorData')));
@@ -129,8 +132,15 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorlist/${this.userId}${data}`).pipe(retry(3));
   }
 
+  getVendorsListToCreateNewlogin(id) {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/vendorNameList/${this.userId}` + id).pipe(retry(3));
+  }
+
   getServiceProviders(data): Observable<any>{
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceproviderlist1/${this.userId}${data}`).pipe(retry(3));
+  }
+  getServiceList(param){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceproviderlist/${this.userId}${param}`).pipe(retry(3));
   }
 
   getOnboardedData():Observable<any>{
