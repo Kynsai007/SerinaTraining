@@ -120,6 +120,9 @@
   .table_scroll {
     max-height: 54vh;
   }
+  .p_head {
+    flex-wrap: wrap;
+  }
 }
 @media screen and (max-width: 800px) and (min-width: 577px) {
   .card-div {
@@ -127,5 +130,8 @@
   }
   .pt-55 {
     padding-top: 55px !important;
+  }
+  .p_head {
+    flex-wrap: wrap;
   }
 }

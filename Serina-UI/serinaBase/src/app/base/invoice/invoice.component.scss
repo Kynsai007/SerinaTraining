@@ -441,12 +441,21 @@ dialog .footer {
   margin-top: 10px;
 }
 
-@media screen and (width <= 786px){
+@media screen and (min-width:576px) and (max-width:786px){
+  .nav_sub {
+    width: 100%;
+  }
   .filters {
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    width: 100%;
   }
-  .tabDiv {
-    padding-top: 80px !important;
+
+}
+@media screen and ( width <= 575px ){
+  .nav_sub {
+    width: 100%;
   }
+  .filters {
+    width: 100%;
+  }
+
 }

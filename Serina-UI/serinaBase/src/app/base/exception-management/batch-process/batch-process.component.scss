@@ -37,6 +37,10 @@
     top: 11px;
     right: 0;
   }
+  .filters {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
   :host ::ng-deep {
     .searchBar {
       top: 93px !important;

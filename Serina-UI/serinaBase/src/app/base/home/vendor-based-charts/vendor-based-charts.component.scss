@@ -37,6 +37,9 @@ $theme_color: var(--themeColor);
   border-bottom: 1px solid #00000080 !important;
   padding: 0px 15px;
 }
+.mt_main {
+  margin-top: 10px;
+}
 @media screen and (max-width:1300px) {
   // .tableDataDiv {
   //   margin-top: 30px;
@@ -46,5 +49,12 @@ $theme_color: var(--themeColor);
   .dash_div {
     max-height: 82vh;
     overflow: auto;
+  }
+  .inv_nav_container {
+    position: relative;
+    top: 56px;
+  }
+  .mt_main {
+    margin-top: 60px;
   }
 }

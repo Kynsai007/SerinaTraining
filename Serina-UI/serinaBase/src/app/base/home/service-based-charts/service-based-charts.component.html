@@ -32,7 +32,7 @@ class="nav_pane_width1 d-flex justify-content-between flex-wrap inv_nav_containe
   </ul>
   </div>
 
-  <div class="tableDaDiv" [ngSwitch]="viewType" style="padding-top: 8px">
+  <div class="tableDaDiv mt_main" [ngSwitch]="viewType">
     <!-- Process invoices Tab -->
     <div *ngSwitchCase="'Process'">
       <app-process-reportservice></app-process-reportservice>

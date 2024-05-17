@@ -142,3 +142,6 @@ $theme_color: var(--themeColor);
 .cenomiNavlink.active_cls {
   border-bottom: 4px solid white !important;
 }
+details a {
+  padding: 10px 20px;
+}

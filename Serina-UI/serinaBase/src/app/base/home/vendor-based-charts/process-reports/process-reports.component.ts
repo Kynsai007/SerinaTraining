@@ -601,9 +601,13 @@ export class ProcessReportsComponent implements OnInit {
   }
 
   openFilterDialog(event){
-    console.log(event)
     let top = event.clientY + 10 + "px";
-    let left = "calc(55% + 100px)";
+    let left;
+    if(this.dataService.isDesktop){
+      left = "calc(55% + 100px)";
+    } else {
+      // left = "calc(55% + 100px)";
+    }
     const dialog = document.querySelector('dialog');
     dialog.style.top = top;
     dialog.style.left = left;

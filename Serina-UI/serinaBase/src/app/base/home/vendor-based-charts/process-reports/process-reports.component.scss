@@ -257,7 +257,7 @@ $theme_color: var(--themeColor);
   width: 15px;
 }
 .w-400 {
-  width: 400px;
+  width: 360px;
 }
 .w-500 {
   width: 500px;
@@ -366,6 +366,9 @@ dialog .inputBox {
   }
   .charts_height {
     max-height: fit-content;
+  }
+  .charts_box {
+    width: 100%;
   }
 }
 

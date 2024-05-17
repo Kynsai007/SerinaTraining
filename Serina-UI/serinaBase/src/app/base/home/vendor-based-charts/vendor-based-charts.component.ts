@@ -61,11 +61,11 @@ export class VendorBasedChartsComponent implements OnInit {
       // this.readExceptionData();
       this.prepareColumns();
       this.dateRange();
-      if (this.router.url == '/customer/home/vendorBasedReports/processReports') {
+      if (this.router.url.includes('/vendorBasedReports/processReports')) {
         this.viewType = 'Process';
-      } else if(this.router.url == '/customer/home/vendorBasedReports/exceptionReports'){
+      } else if(this.router.url.includes('/vendorBasedReports/exceptionReports')){
         this.viewType = 'Exception';
-      } else if(this.router.url == '/customer/home/vendorBasedReports/emailExceptionReports'){
+      } else if(this.router.url.includes('/vendorBasedReports/emailExceptionReports')){
         this.viewType = 'emailException';
         this.readEmailExceptionData('');
       }else {

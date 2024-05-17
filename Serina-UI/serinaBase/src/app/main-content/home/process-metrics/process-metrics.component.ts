@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChartsService } from 'src/app/services/dashboard/charts.service';
+import { DataService } from 'src/app/services/dataStore/data.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
 @Component({
@@ -73,6 +74,7 @@ export class ProcessMetricsComponent implements OnInit {
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
+    private dataService: DataService
   ) {}
   // ngOnChanges(changes: SimpleChanges): void {
   //   if (changes.exceptionData &&  changes.exceptionData.currentValue && changes.exceptionData.currentValue.data) {
@@ -286,7 +288,12 @@ export class ProcessMetricsComponent implements OnInit {
   }
   openFilterDialog(event){
     let top = event.clientY + 10 + "px";
-    let left = "calc(55% + 100px)";
+    let left;
+    if(this.dataService.isDesktop){
+      left = "calc(55% + 100px)";
+    } else {
+      // left = "calc(55% + 100px)";
+    }
     const dialog = document.querySelector('dialog');
     dialog.style.top = top;
     dialog.style.left = left;

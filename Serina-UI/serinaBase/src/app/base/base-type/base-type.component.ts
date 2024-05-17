@@ -541,7 +541,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.isOpen = false;
     if(this.vendorInvoiceAccess && this.serviceInvoiceAccess){
     this.isOpen_apr = !this.isOpen_apr;
-    if(this.isOpen_apr){
+    if(this.isOpen_apr && this.isDesktop){
       document.getElementById('body_content').style.opacity = '0.2';
     } else {
       document.getElementById('body_content').style.opacity = '1';

@@ -3,6 +3,7 @@ import { ChartsService } from 'src/app/services/dashboard/charts.service';
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { DataService } from 'src/app/services/dataStore/data.service';
 @Component({
   selector: 'detailed-reports',
   templateUrl: './detailed-reports.component.html',
@@ -19,7 +20,8 @@ export class DetailedReportsComponent implements OnInit {
   constructor(private chartsService : ChartsService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
-    private SpinnerService: NgxSpinnerService,) { }
+    private SpinnerService: NgxSpinnerService,
+  private dataService: DataService) { }
 
   ngOnInit(): void {
     this.chartsData();
@@ -176,9 +178,13 @@ export class DetailedReportsComponent implements OnInit {
     this.filterByDate('');
   }
   openFilterDialog(event){
-    console.log(event)
     let top = event.clientY + 10 + "px";
-    let left = "calc(55% + 100px)";
+    let left;
+    if(this.dataService.isDesktop){
+      left = "calc(55% + 100px)";
+    } else {
+      // left = "calc(55% + 100px)";
+    }
     const dialog = document.querySelector('dialog');
     dialog.style.top = top;
     dialog.style.left = left;
