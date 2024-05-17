@@ -29,6 +29,7 @@ export class VendorsComponent implements OnInit {
     { name: 'ALL', value: 'ALL' },
     { name: 'Onboarded', value: true },
     { name: 'Not-Onboarded', value: false },
+    { name: 'In-Progress', value: false },
   ];
   throttle = 300;
   scrollDistance = 7;
