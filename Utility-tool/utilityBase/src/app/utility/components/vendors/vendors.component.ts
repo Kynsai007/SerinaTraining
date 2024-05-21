@@ -276,6 +276,9 @@ export class VendorsComponent implements OnInit {
      }else if (this.selectedEntityId == 'ALL'&& this.vendorNameForSearch == 'ALL' && this.onboard_status != 'ALL') {
       this.APIParams = `?partyType=vendor&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
       this.getVendorsData(this.APIParams);
+    } else if (this.selectedEntityId != 'ALL'&& this.vendorNameForSearch != 'ALL' && this.onboard_status != 'ALL') {
+      this.APIParams = `?partyType=vendor&ent_id=${this.selectedEntityId}&ven_code=${this.vendorNameForSearch}&onb_status=${this.onboard_status}&offset=${this.offsetCount}&limit=100`;
+      this.getVendorsData(this.APIParams);
     }
   }
   filteVendor() {
