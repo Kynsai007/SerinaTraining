@@ -89,6 +89,17 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
               this.fields = this.previoustrainingres.trainResult.fields;
             }
           }else{
+            if(!this.previoustrainingres.docTypes){
+              if(this.previoustrainingres.status != "succeeded"){
+                this.successmsg = "Model training is in progress. To refresh status, please click on Check Status Button."
+                this.nottrained = false;
+                this.previoustrainingres = this.previoustrainingres.result;
+                return;
+              }else{
+                this.checkmodel = false;
+                this.previoustrainingres = this.previoustrainingres.result;
+              }
+            }
             let arr = [];
             let count = 0, total = 0;
             for(let f of Object.keys(this.previoustrainingres.docTypes[this.previoustrainingres.modelId].fieldConfidence)){
@@ -113,19 +124,24 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
   }
   checkModelStatus(){
     this.checkmodel = true;
-    this.sharedService.checkModelStatus(this.previoustrainingres['modelInfo']['modelId']).subscribe(data=>{
-      this.checkmodel = false;
-      if(data["modelInfo"]["status"] == "ready"){
-        let resultobj = {'fr_result':JSON.stringify(data),'docid':this.modelData.idDocumentModel,'modelName':this.previoustrainingres['modelInfo']['modelId']}
-          this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
-            this.resp = data;
-            if(this.resp['message'] == 'success'){
-              this.setup();
-              this.successmsg = "Model training successful";
-            }
-          })
-      }
-    });
+    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
+    if(ocr_engine_version == "Azure Form Recognizer 2.1"){
+      this.sharedService.checkModelStatus(this.previoustrainingres['modelInfo']['modelId']).subscribe(data=>{
+        this.checkmodel = false;
+        if(data["modelInfo"]["status"] == "ready"){
+          let resultobj = {'fr_result':JSON.stringify(data),'docid':this.modelData.idDocumentModel,'modelName':this.previoustrainingres['modelInfo']['modelId']}
+            this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
+              this.resp = data;
+              if(this.resp['message'] == 'success'){
+                this.setup();
+                this.successmsg = "Model training successful";
+              }
+            })
+        }
+      });
+    }else{
+      this.trainModel();
+    }
   }
   async trainModel(){
     const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
@@ -179,7 +195,11 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
             modelName = this.trainingresult["modelInfo"]["modelName"]
           }else{
             this.errors = [];
-            modelName = this.trainingresult["modelId"]
+            if(this.resp['result'].result){
+              modelName = this.trainingresult['result']["modelId"]
+            }else{
+              modelName = this.trainingresult["modelId"]
+            }
           }
           this.modelData.modelName = modelName;
           sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
