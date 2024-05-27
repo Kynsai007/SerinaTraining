@@ -81,6 +81,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   serviceApprovalsEnabled:boolean = true;
   logoSrc: string;
   isMenuOpen: boolean;
+  isMobile: boolean;
 
   constructor(
     public router: Router,
@@ -172,6 +173,9 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.sidebarMode = 'side';
       this.isDesktop = true;
       this.dataStoreService.isDesktop = true;
+    }
+    if(window.screen.width <= 576){
+      this.isMobile = true;
     }
     // const script = this.renderer.createElement('script');
     // script.type = 'text/javascript';

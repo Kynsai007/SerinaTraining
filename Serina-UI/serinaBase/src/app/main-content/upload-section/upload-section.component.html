@@ -28,7 +28,7 @@
     </div>
   </div>
   <div class="column2">
-    <div class="f-18 d-flex">
+    <div class="f-18 d-flex d_msg">
       Hey User,<img
         src="../../../assets/Serina Assets/new_theme/wave.png"
         alt=""
@@ -54,7 +54,7 @@
                 <span class="material-icons icon_span"> upload_file </span>
                 Ideal Upload
               </div>
-              <div class="shade_color primary_clr f-12">
+              <div class="shade_color primary_clr f-12 ul_msg">
                 We usually recommend uploading one invoice at a time for better
                 accuracy
               </div>
@@ -62,7 +62,7 @@
           </a>
         </li>
         <li
-          class="nav-item"
+          class="nav-item quick"
           *ngIf="vendorAccess && (bothOptBoolean || isQuickUploadbool)"
           (click)="chooseTab('quick')"
         >
@@ -81,7 +81,7 @@
                 <span class="material-icons icon_span"> upload_file </span>
                 Quick Upload
               </div>
-              <div class="shade_color primary_clr f-12">
+              <div class="shade_color primary_clr f-12 ul_msg">
                 We also support multiple uploads at one go
               </div>
             </div>

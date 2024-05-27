@@ -86,6 +86,7 @@ export class LoginPageComponent implements OnInit {
   instanceInfo:any;
   isVendorPortalRequired: boolean;
   vendorInvoiceAccess: any;
+  srcImg: any;
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
@@ -115,7 +116,13 @@ export class LoginPageComponent implements OnInit {
     });
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
-
+    if(window.screen.width <= 576){
+      this.srcImg = 'assets/Serina Assets/new_theme/logo.png';
+    } else if(this.dataStoreService?.configData?.client_name == 'Cenomi') {
+      this.srcImg = 'assets/Serina Assets/new_theme/cenomiLogo.png';
+    } else {
+      this.srcImg = 'assets/Serina Assets/new_theme/Group 27317.svg';
+    }
   }
 
   toggleFieldTextType() {

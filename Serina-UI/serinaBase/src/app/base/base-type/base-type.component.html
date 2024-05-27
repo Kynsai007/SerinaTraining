@@ -968,10 +968,11 @@
             ? 'cenomiNavlink'
             : ''
         "
+        *ngIf="!isMobile"
       >
         {{ userDetails.userdetails.firstName }}
       </div>
-      <div (clickOutside)="onClickedOutside($event, 'logout')">
+      <div (clickOutside)="onClickedOutside($event, 'logout')" *ngIf="!isMobile">
         <mat-icon
           class="sign_out dropdown"
           svgIcon="logout"
@@ -1206,11 +1207,41 @@
     >
       Service Bulk upload/ Batch trigger
     </div>
+    
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      (click)="openDialog()"
+      *ngIf="isMobile"
+    >
+      Change Password
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        dataStoreService.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      (click)="confirm_pop()"
+      *ngIf="isMobile"
+    >
+      Logout
+    </div>
   </div>
 
   <section id="body_content">
     <router-outlet></router-outlet>
   </section>
+
+  <footer class="f-12">
+    <!-- Copyrights@2024 -->
+    <div><a href="assets/Serina Assets/new_theme/DPA_template_-_updated.pdf" target="_blank">Terms & conditions</a></div>
+  </footer>
 </div>
 
 <!-- Cnfirmation Dialog -->

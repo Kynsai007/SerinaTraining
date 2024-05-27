@@ -308,8 +308,12 @@ export class VendorsComponent implements OnInit {
     this.filteredEnt = filtered;
   }
   getCustomerVendors() {
+    let param = ''
+    if(this.selectedEntityId != 'ALL'){
+      param = `&ent_id=${this.selectedEntityId}`
+    }
     this.sharedService
-      .getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}`)
+      .getVendorsListToCreateNewlogin(`?offset=1&limit=100`)
       .subscribe((data: any) => {
         this.vendorAccount = data.vendorlist;
         this.vendorAccount.unshift({ VendorName: 'ALL', idVendor: "ALL" })
@@ -318,8 +322,12 @@ export class VendorsComponent implements OnInit {
   }
   filterVendor(event) {
     let query = event.query.toLowerCase();
+    let param = ''
+    if(this.selectedEntityId != 'ALL'){
+      param = `&ent_id=${this.selectedEntityId}`
+    }
     if (query != '') {
-      this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}&ven_name=${query}`).subscribe((data: any) => {
+      this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&${param}&ven_name=${query}`).subscribe((data: any) => {
         this.filteredVendors = data.vendorlist;
       });
     } else {

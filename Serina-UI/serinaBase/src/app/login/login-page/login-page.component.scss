@@ -282,7 +282,7 @@ input::-webkit-input-placeholder {
   }
 @media screen and (max-width: 576px){
     .login-div {
-      width: 90vw;
+      width: 80vw;
       position: relative;
       right: 0;
   }
@@ -296,5 +296,15 @@ input::-webkit-input-placeholder {
     display: flex;
     justify-content: center;
 
+    }
+    .logo_black {
+        width: 165px;
+        height: 60px;
+        position: relative;
+        top: 25px;
+        left: 25px;
+    }
+    .nameHead img {
+        display: none;
     }
 }

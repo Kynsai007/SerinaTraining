@@ -393,8 +393,8 @@
         Table
       </div>
       <div class="short_name f-12">{{ name_short }}</div>
-      <div class="f-12 mr-1">{{ userDetails.userdetails.firstName }}</div>
-      <div (clickOutside)="onClickedOutside($event)">
+      <div *ngIf="!isMobile" class="f-12 mr-1">{{ userDetails.userdetails.firstName }}</div>
+      <div *ngIf="!isMobile" (clickOutside)="onClickedOutside($event)">
         <mat-icon
           class="sign_out dropdown"
           svgIcon="logout"
@@ -462,6 +462,30 @@
       [routerLink]="'vendorContacts'"
     >
       Contact Details
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        DS.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      (click)="openDialog()"
+      *ngIf="isMobile"
+    >
+      Change Password
+    </div>
+    <div
+      class="nav_Link f-14"
+      [ngClass]="
+        DS.configData.client_name == 'Cenomi'
+          ? 'cenomiNavlink'
+          : ''
+      "
+      (click)="confirm_pop()"
+      *ngIf="isMobile"
+    >
+      Logout
     </div>
     <!-- <div class="navLink" data-text="Change Password" (click)="openDialog()">
             <i

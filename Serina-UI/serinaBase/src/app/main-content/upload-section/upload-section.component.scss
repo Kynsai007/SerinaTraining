@@ -509,14 +509,15 @@ input[type="checkbox"] {
   .b-type {
     width: 87vw !important;
   }
-  :host ::ng-deep {
-    .p-autocomplete {
-      width: 87vw !important;
-    }
-    .p-multiselect {
-      width: 87vw !important;
-    }
-  }
+
+  // :host ::ng-deep {
+  //   .p-autocomplete {
+  //     width: 87vw !important;
+  //   }
+  //   .p-multiselect {
+  //     width: 87vw !important;
+  //   }
+  // }
 }
 // new theme
 .imgPlaceholder {
@@ -574,6 +575,7 @@ input[type="checkbox"] {
 .attachments {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
   padding-top: 10px;
   border-top: 1px solid #e1e1e1;
   span {
@@ -718,12 +720,40 @@ label {
     padding: 10px 20px;
   }
 } 
-@media screen and (width <= 786px){
+@media screen and (width <= 1036px){
   .row .column1 {
     width: 0;
     display: none;
   }
   .row .column2 {
+    width: 100%;
+  }
+}
+@media screen and (width < 768px){
+  .nav-item{
+    max-width: 100%;
+  }
+
+}
+@media screen and (width < 576px){
+  .mr_54 {
+    margin-right: 0;
+  }
+  .ul_msg {
+    max-height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .d_msg img, .quick{
+    display: none;
+  }
+  .selectFilter {
+    width: 100%;
+  }
+  .accountSelect {
+    width: 100%;
+  }
+  :host ::ng-deep .p-autocomplete {
     width: 100%;
   }
 }

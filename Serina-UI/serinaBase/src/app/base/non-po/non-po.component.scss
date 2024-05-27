@@ -37,41 +37,12 @@ th {
     border-top: 0 !important;
     border: none !important;
 }
-.mat-elevation-z8 {
-    box-shadow: none;
-    max-height: 78vh;
-    overflow: auto;
-    overflow-x: hidden;
-    position: relative;
-    top: 26px;
-}
+
 .table_max_height {
     max-height: 100vh !important;
     padding: 0px 0px 0px 10px;
 }
 
-.btnInvoiceType {
-    border: 1.95px solid black;
-    font-weight: 500;
-    font-size: 12px;
-    height: 30px;
-    background: white;
-    border-radius: 5px;
-    padding: 0px 8px !important;
-}
-.btnInvoiceType:focus {
-    background-color: #a9a9a9;
-    color: white;
-    border: 0;
-}
-.btnInvoiceType:hover {
-    background-color: #a9a9a9;
-    color: white;
-    border: 0;
-}
-.f-16 {
-    font-size: 16px;
-}
 .positionCreateUpload {
     position: absolute;
     right: 5px;
@@ -131,33 +102,7 @@ tbody {
 .was-validated .form-control:invalid {
     background-image: none;
 }
-.Cbody {
-    height: 100vh;
-    overflow: auto;
-    overflow-x: hidden;
-}
-.headNameDetails {
-    font-size: 17px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-.pdropdown {
-    width: 70% !important;
-    margin-bottom: 0px !important;
-}
-.statusType {
-    width: 100%;
-    padding: 4px !important;
-    display: inline-block;
-    border-radius: 20px;
-    text-align: center !important;
-    background: #107e3e;
-    margin: 4px;
-    font-size: 11px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
+
 .t-center {
     text-align: center !important;
 }
@@ -416,23 +361,7 @@ label {
     padding-left: 16px;
 }
 
-.quick_add_div {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-right: 13vw;
-    margin-top: 1vh;
-    font-size: 13px;
-    font-weight: 600;
-}
-.quick_add_btn {
-    border: 0;
-    width: 30px;
-    height: 30px;
-    border-radius: 25px;
-    background: #f2be42;
-    margin-left: 10px;
-}
+
 .relate {
     position: relative;
     top: 10px;
@@ -500,24 +429,12 @@ label {
     }
 }
 @media screen and (max-width: 1100px) and (min-width: 700px) {
-    .statusType {
-        margin: 4px;
-    }
-    // .searchBarServiceAc {
-    //     top: 143px;
-    //     left: 76%;
-    // }
+
     .searchBarInvoiceService {
         top: 111px;
         right: 69px;
     }
-    .pos-AddAcnt {
-        // height: 28px;
-        // position: relative;
-        top: 24px;
-        // right: -23px;
-        z-index: 500;
-    }
+
     .searchInputInvoce {
         position: relative;
         /* left: 24px; */

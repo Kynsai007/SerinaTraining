@@ -43,6 +43,7 @@ export class VendorBaseComponent implements OnInit {
   logoSrc: string;
   isMenuOpen: any;
   isnotTablet: boolean;
+  isMobile: boolean;
   
   constructor(private router:Router,
     private settingService : SettingsService,
@@ -132,9 +133,12 @@ export class VendorBaseComponent implements OnInit {
       this.isDesktop = true;
       this.DS.isDesktop = true;
     }
-    const script = this.renderer.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://datasemanticschatbots.in/bot_script/Serina Bot/cGluZWFwcGxl';
+    if(window.screen.width <= 576){
+      this.isMobile = true;
+    }
+    // const script = this.renderer.createElement('script');
+    // script.type = 'text/javascript';
+    // script.src = 'https://datasemanticschatbots.in/bot_script/Serina Bot/cGluZWFwcGxl';
 
   }
   readConfig(){

@@ -1,16 +1,16 @@
 
   <div class="row m-0" style="overflow: hidden;">
-    <div class="col-1 col-md-6 m-0 leftSide">
+    <div class="col-1 col-sm-5 col-md-6 m-0 leftSide">
       
         <div class="d-flex justify-content-between">
-          <img class="ml-3" *ngIf="dataStoreService.configData.client_name != 'Cenomi'"
-          src="assets/Serina Assets/new_theme/Group 27317.svg"
+          <img class="logo_black" [ngClass]="dataStoreService?.configData?.client_name != 'Cenomi' ? 'ml-3':'cenomiLogo'"
+          [src]="srcImg"
           alt="login"
         />
-        <img class="cenomiLogo" *ngIf="dataStoreService.configData.client_name == 'Cenomi'"
+        <!-- <img class="cenomiLogo" *ngIf="dataStoreService.configData.client_name == 'Cenomi'"
           src="assets/Serina Assets/new_theme/cenomiLogo.png"
           alt="login"
-        />
+        /> -->
         <div class="pos_rel">
           <img class="topRightImg1"
           src="assets/Serina Assets/new_theme/Group 1943.svg"
@@ -48,7 +48,7 @@
         </div>
       </div>
     </div>
-    <div class="col-11 col-md-6">
+    <div class="col-11 col-sm-7 col-md-6">
           <div class="login-div">
             <!-- Login page -->
             <div *ngIf="loginboolean && !loginsuccess">

@@ -1,8 +1,7 @@
-<h6 *ngIf="normalRole" class="headh6 text_color">User Management</h6>
+<h6 class="headh6 text_color">User Management</h6>
 
 <div class="rolespage">
-  <div *ngIf="normalRole">
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between main_tab">
       <ul class="nav nav-tabs tabBox pl-2">
         <li [routerLink]="['/customer/roles', 'createdUsers']">
           <a
@@ -828,7 +827,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <!-- create new Role -->
   <p-dialog
@@ -836,7 +834,7 @@
     [(visible)]="CreateNewRole"
     position="right"
     [modal]="true"
-    [style]="{ width: '55vw', height: '100vh' }"
+    [style]="{ height: '100vh' }"
     [baseZIndex]="10000"
     [draggable]="false"
     [resizable]="false"
@@ -1224,7 +1222,7 @@
     [(visible)]="editUserdata"
     position="right"
     [modal]="true"
-    [style]="{ width: '55vw', height: '100vh' }"
+    [style]="{ height: '100vh' }"
     [baseZIndex]="10000"
     [draggable]="false"
     [resizable]="false"
@@ -1647,7 +1645,7 @@
 </div>
 
 <!-- Delete Cnfirmation Dialog -->
-<p-dialog
+<!-- <p-dialog
   header=" "
   [(visible)]="displayResponsive"
   [breakpoints]="{ '960px': '75vw' }"
@@ -1708,7 +1706,7 @@
       </button>
     </div>
   </ng-template>
-</p-dialog>
+</p-dialog> -->
 
 <!-- add vendor super user Dialog -->
 <p-dialog
@@ -1716,7 +1714,7 @@
   [(visible)]="displayAddUserDialog"
   position="right"
   [modal]="true"
-  [style]="{ width: '55vw', height: '100vh' }"
+  [style]="{ height: '100vh' }"
   [baseZIndex]="10000"
   [draggable]="false"
   [resizable]="false"
@@ -1956,7 +1954,7 @@
   [(visible)]="approveDialog"
   position="right"
   [modal]="true"
-  [style]="{ width: '55vw', height: '100vh' }"
+  [style]="{ height: '100vh' }"
   [baseZIndex]="10000"
   [draggable]="false"
   [resizable]="false"

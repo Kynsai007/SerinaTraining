@@ -6,3 +6,94 @@
         margin-left: 0.5rem !important;
     }
 }
+
+.zoom {
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid #ffffff;
+    box-shadow: none ;
+    top: 72vh;
+    // left: -240px;
+    display: inline-block;
+  }
+  .zoom_pos_img {
+    position: fixed;
+    top: 82vh;
+  }
+  .zoom_pos_pdf {
+    position: absolute;
+    // top: 74vh;
+    // left: -240px;
+    z-index: 12;
+  }
+  .zoom-out {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+    padding: 0px 10px;
+    height: auto;
+  }
+  .zoom-in {
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+    border: none;
+    padding: 0px 10px ;
+    color: black ;
+    border-right: 1px solid lightgray;
+    border-bottom: 0 ;
+    height: auto ;
+  }
+  .rotate_text {
+    position: absolute;
+    top: 1px;
+    display: flex;
+    right: -95px;
+  }
+
+  
+.preBtn {
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    border: 0 !important;
+  }
+  .totalPages {
+    font-size: 13px;
+    margin: 5px;
+  }
+  .maxPage {
+    max-height: 87vh;
+    overflow: auto;
+    padding-right: 0px;
+    top: 40px;
+    max-height: 82vh !important;
+    overflow: hidden;
+  }
+  #parentDiv {
+    padding-left: 110px;
+    background: white;
+    overflow: auto;
+  }
+  .pdf_btns {
+    position: relative;
+    z-index: 100;
+    // justify-content: space-between;
+    width: fit-content;
+    background: white;
+    padding: 5px;
+    top: -35px;
+    left: 0;
+    // margin: auto;
+    border-radius: 5px;
+    height: 40px;
+  }
+  .navigatn {
+    padding: 0px 14px;
+    border: 1px solid lightgray;
+    border-top-width: 0;
+    border-bottom-width: 0;
+  }

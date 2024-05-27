@@ -246,7 +246,8 @@ export class RolesComponent implements OnInit {
   expandFull: boolean;
   isTableView:boolean;
   header_role: string;
-  is_grn_approval:boolean
+  is_grn_approval:boolean;
+  searchText:string;
 
   constructor(
     private dataService: DataService,

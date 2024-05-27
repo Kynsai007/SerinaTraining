@@ -10,33 +10,10 @@ $theme_color: var(--themeColor);
     border: 0;
     background: transparent;
 }
-// .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-//     color: #272727 !important;
-//     background-color: #f2be42 !important;
-// }
-
-// a{
-//     color: #272727 !important;
-// }
-// .nav-pills .nav-link {
-//     border-radius: 10px;
-//     font-weight: 600;
-//     font-size: 12px;
-//     padding: 4px 14px;
-//     border: none;
-//     cursor: pointer;
-// }
-
-
 table {
     width: 100%;
   }
 
-:host ::ng-deep .mat-elevation-z8 {
-    box-shadow: none;
-    max-height: 74vh;
-    overflow: auto;
-}
 .f-16{
     font-size: 16px;
     line-height: 1;
@@ -92,19 +69,8 @@ td{
     justify-content: space-between;
     gap: 10px;
   }
-  .header_div {
-    background: #a4db9e;
-    padding: 5px 30px;
-    display: inline-block;
-    border-radius: 6px;
-    text-align: center;
-  }
   .inputForm:focus {
       border: 1px solid #313971;
-  }
-  .f-13{
-      font-size: 12px;
-      font-weight: 600;
   }
 
 .inviteLabel{
@@ -151,12 +117,7 @@ td{
     position: absolute;
     bottom: -8px;
 }
-.hard_reset{
-    background: #f2be42;
-    font-size: 13px;
-    font-weight: 700;
-    width: 80%;
-}
+
 
 
 
@@ -180,10 +141,6 @@ td{
     width: clamp(20vw,330px,330px);
     height: 43px;
     background-color: #F7F6F2;
-    // white-space: nowrap;
-    // overflow: hidden;
-    // text-overflow: ellipsis;
-    /* border-radius: 0; */
     font-size: 12px;
     font-weight: 600;
     display: flex;
@@ -318,10 +275,6 @@ td{
     color: #a9a9a9;
 }
 
-.f-12{
-    font-size: 12px !important;
-    font-weight: 600;
-}
 .label-head{
     font-size: 12px;
     font-weight: 600;
@@ -348,19 +301,12 @@ td{
     font-weight: 700;
     margin-bottom: 8px;
 }
-.createDivht{
-    height: 84vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
 
 .b-btm {
     border-bottom: 1px solid #d3d3d3;
     border-radius: 0px 0px 10px 10px;
 }
-// .w-30{
-//     width: 30%;
-// }
+
 // confirm dailog
 :host ::ng-deep .p-dialog .p-dialog-header{
     padding: 0.5rem;
@@ -422,12 +368,6 @@ td{
 }
 
 @media screen and (max-width: 800px) {
-    // .searchBar {
-    //     position: fixed;
-    //     z-index: 10;
-    //     top: 55px;
-    //     left: 64%;
-    // }
     .ulTab{
         max-width: 67% !important;
     }
@@ -527,6 +467,20 @@ td{
         border-left: 4px solid white;
         margin-bottom: 6px;
     }
+    .tabBox {
+        width: 100% !important;
+    }
+    .main_tab {
+        flex-wrap: wrap;
+    }
+    .card {
+        width: 100% !important;
+    }
+    :host::ng-deep {
+        .p-dialog {
+            width: 90vw !important;
+        }
+    }
   }
   // new theme
 .head_m {
@@ -610,7 +564,8 @@ td{
     margin-right: 22px;
 }
 .tableDataDiv {
-    max-height: calc(100vh - 300px);
+    max-height: calc(80vh - 200px);
+    min-height: 66vh;
 }
 .mr-53 {
     margin-right: 53px;

@@ -415,7 +415,12 @@ nameShort(ele){
 }
 openFilterDialog(event){
   let top = event.clientY + 10 + "px";
-  let left = "calc(55% + 100px)";
+  let left;
+  if(this.dataStoreService.isDesktop){
+    left = "calc(55% + 100px)";
+  } else {
+    // left = "calc(55% + 100px)";
+  }
   const dialog = document.querySelector('dialog');
   dialog.style.top = top;
   dialog.style.left = left;

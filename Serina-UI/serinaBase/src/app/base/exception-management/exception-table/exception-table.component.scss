@@ -370,3 +370,8 @@ $theme_color: var(--themeColor);
   overflow: auto;
   min-height: 70vh;
 }
+@media screen and (max-width:426px) {
+  .card {
+    width: 100%;
+  }
+}
