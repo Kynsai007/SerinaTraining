@@ -865,6 +865,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     this.clearFields();
     if(Object.keys(data['labels']).length > 0){
       this.labelsJson = JSON.parse(data['labels'].blob);
+      this.labelsJson["document"] = this.currentfile;
     //customized labeling start
       this.labelsJson = await this.customMizeLabels(this.labelsJson);
     //customized labeling end
