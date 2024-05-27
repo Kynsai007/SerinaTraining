@@ -26,6 +26,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   top:number;
   activatedrw:boolean = false;
   currenttable:string="tab_1";
+  temp_lang:string="en";
   displayResponsivepopup:boolean=false;
   currenttableheaders:any[]=[];
   isFixed:boolean=false;
@@ -94,6 +95,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     this.options = {'rect':{'minWidth':10,'minHeight':10}}
     this.columnfields = [{'fieldKey':'','fieldType':'string','fieldFormat':'not-specified','itemType':null,'fields':null}]
     this.rows = [0];
+    this.temp_lang = sessionStorage.getItem("temp_lang");
     sessionStorage.setItem("layoutInfo",JSON.stringify({}));
     sessionStorage.removeItem("htmlInfo");
     sessionStorage.removeItem("htmlArray");
@@ -387,6 +389,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
       })
       this.currenttext =  this.labelsJson["labels"][tabindex]["value"].map(function(element){return element.text}).join(" ");
       (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = `${this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div>`;
+      if(this.temp_lang == "ar"){
+        (<HTMLDivElement>document.getElementById(this.currenttable+"/"+index+"/"+fieldKey)).innerHTML = `<div dir="rtl">${this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div></div>`;
+      }
       this.currentSelection = [];
       this.currenttext = "";
   }
@@ -607,6 +612,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
             if((<HTMLDivElement>document.getElementById(l.label))){
               this.currenttext = this.labelsJson["labels"][labelindex]["value"].map(function(element){return element.text}).join(" ");
               (<HTMLDivElement>document.getElementById(l.label)).innerHTML = `${this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div>`;
+              if(this.temp_lang == "ar"){
+                (<HTMLDivElement>document.getElementById(l.label)).innerHTML = `<div dir="rtl">${this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div></div>`;
+              }
             }
           }
         }
@@ -1238,6 +1246,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                     _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
                     if(_this.fieldid.startsWith(_this.currenttable)){
                       _this.currenttext = `${_this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;"> ${_this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div>`;
+                      if(_this.temp_lang == "ar"){
+                        _this.currenttext = `<div dir="rtl">${_this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;"> ${_this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</div></div>`;
+                      }
                     }
                     (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
                   }
@@ -1459,6 +1470,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
                     _this.currenttext = _this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
                     if(_this.fieldid.startsWith(_this.currenttable)){
                       _this.currenttext = `${_this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${_this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</i></div>`;
+                      if(_this.temp_lang == "ar"){
+                        _this.currenttext = `<div dir="rtl">${_this.currenttext} <div style="display: flex; justify-content: flex-end;margin-left: 150px;">${_this.currenttext != '' ? `<i class="fa fa-check" style="color: #27ae60;"></i>` : `<i class="fa fa-times" style="color: #e74c3c;"></i>`}</i></div></div>`;
+                      }
                     }
                     (<HTMLDivElement>document.getElementById(_this.fieldid)).innerHTML = _this.currenttext;
                   }
@@ -1724,6 +1738,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         }
         this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
         (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
+        if(this.temp_lang == "ar"){
+          (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = `<div dir="rtl">${this.currenttext}</div>`;
+        }
         this.currenttext = "";
         this.currentSelection = [];  
       }
@@ -1812,6 +1829,9 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         })
         this.currenttext = this.labelsJson["labels"][index]["value"].map(function(element){return element.text}).join(" ");
         (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = this.currenttext;
+        if(this.temp_lang == "ar"){
+          (<HTMLDivElement>document.getElementById("field-"+field.fieldKey)).innerHTML = `<div dir="rtl"> ${this.currenttext}</div>`;
+        }
         this.currenttext = "";
         this.currentSelection = [];
     }

@@ -969,6 +969,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     if(value['temp_language'] == ''){
       value['temp_language'] = (<HTMLInputElement>document.getElementById("temp_language")).value;
     }
+    sessionStorage.setItem("temp_lang",value['temp_language'])
      value['InvoiceFormat'] = this.selectedDocFormat;
      value['mandatoryheadertags'] = this.headerArray.toString();
      value['mandatorylinetags'] = this.LineArray.toString();

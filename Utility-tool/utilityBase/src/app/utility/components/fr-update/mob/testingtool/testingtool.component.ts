@@ -85,7 +85,9 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
     sessionStorage.setItem("configData",JSON.stringify(this.frConfigData));
   }
-
+  getTemplang(){
+    return sessionStorage.getItem("temp_lang");
+  }
   ngOnInit(): void {
     try {
       this.setup();

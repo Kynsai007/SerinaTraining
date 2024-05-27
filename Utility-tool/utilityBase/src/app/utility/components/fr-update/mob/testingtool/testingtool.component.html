@@ -184,7 +184,7 @@
             </thead>
             <tbody>
             <tr *ngFor="let r of rows;let i = index">
-                <td *ngFor="let c of rows[i]">{{c}}</td>
+                <td *ngFor="let c of rows[i]"><span *ngIf="getTemplang() == 'ar'" dir="rtl">{{c}}</span><span *ngIf="getTemplang() != 'ar'" dir="rtl">{{c}}</span></td>
             </tr>
             </tbody>
           </table>

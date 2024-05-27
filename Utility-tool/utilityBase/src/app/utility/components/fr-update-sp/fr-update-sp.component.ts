@@ -832,6 +832,7 @@ export class FrUpdateSpComponent implements OnInit {
     if(value['temp_language'] == ''){
       value['temp_language'] = (<HTMLInputElement>document.getElementById("temp_language")).value;
     }
+    sessionStorage.setItem("temp_lang",value['temp_language'])
     // if(value['InvoiceFormat'] == ''){
     //   value['InvoiceFormat'] = (<HTMLInputElement>document.getElementById("InvoiceFormat")).value;
     // }
