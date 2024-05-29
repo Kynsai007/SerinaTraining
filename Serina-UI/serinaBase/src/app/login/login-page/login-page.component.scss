@@ -285,6 +285,9 @@ input::-webkit-input-placeholder {
       width: 80vw;
       position: relative;
       right: 0;
+      height: max-content;
+      margin-top: 100px;
+      overflow: auto;
   }
   .loginContent {
     display: none;

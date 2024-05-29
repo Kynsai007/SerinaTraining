@@ -1783,7 +1783,7 @@ export class Comparision3WayComponent
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-      if ([8, 16, 17, 18, 19, 33, 21, 27,29,51,54,70, 75].includes(sub_status)) {
+      if ([8, 16, 17, 18, 19, 33, 21, 27,29,51,54,70, 75,101,102,104].includes(sub_status)) {
         this.processAlert(sub_status);
       } else if (sub_status == 34) {
         this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
@@ -1819,7 +1819,7 @@ export class Comparision3WayComponent
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
-    }else {
+    } else {
       this.getInvoiceFulldata('');
       this.update("Please check the values in invoice.");
     }

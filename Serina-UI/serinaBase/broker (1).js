@@ -16,7 +16,7 @@ const port = 1883;
 ws.createServer({ server: server }, aedes.handle)
 
 server.listen(port, function () {
-    console.log('websocket server listening on por ', port)
+    console.log('websocket server listening on port ', port)
 });
 
 // authenticate the connecting client
