@@ -290,6 +290,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     this.model_validate_msg = "Validating Model ..."
     this.uploadingFileBoolean = true;
     let validateModel = {
+      "folderPath": this.modelStatus.folderPath,
       "model_path": JSON.stringify(this.current_result),
       "model_id": Number(this.modelStatus.idDocumentModel),
       "fr_modelid":this.defaultmodel,
