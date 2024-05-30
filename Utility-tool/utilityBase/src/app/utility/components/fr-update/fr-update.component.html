@@ -512,7 +512,15 @@
 
                     <label class="f-14 mt-2">Template Name *</label>
                     <input type="text" class="form-control inputBox f-13" name="modelName" ngModel
-                        #modelName="ngModel" [(ngModel)]="templateName" (change)="removealert()" required>
+                        #modelName="ngModel" [(ngModel)]="templateName" (change)="removealert()" required pattern="^[a-zA-Z0-9_]{5,20}$">
+                        <div *ngIf="modelName.invalid && (modelName.dirty || modelName.touched)">
+                            <div *ngIf="modelName.errors?.required" style="font-size: smaller;color: red;">
+                                Template name is required.
+                            </div>
+                            <div *ngIf="modelName.errors?.pattern" style="font-size: smaller;color: red;">
+                                Template name must be alphanumeric (including underscores), should be atleast 5 charactes in length and not more than 20 characters long.
+                            </div>
+                        </div>
                     <label class="f-14 mt-2">Document Format *</label>
                     <select class="form-control f-13 inputBox selectpicker" name="docFormat" ngModel #docFormat="ngModel"
                             (change)="changeDocFormat($event.target.value)" required>

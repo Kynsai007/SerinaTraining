@@ -46,10 +46,18 @@
         <div class="item3 bg-white h-md-100 loginarea box">
             <div class="row" style="margin-top: 10%;">
                 <label for="modelname" class="form-label"><b>{{textmodel}}</b></label>
-                <input type="text" class="form-control form-control-sm"  id="modelname" value="{{modelData.modelName}}" [disabled]="apiversion == 'Azure Form Recognizer 2.1'">
+                <input type="text" class="form-control form-control-sm" name="modelname" id="modelname" value="{{modelData.modelName}}" [disabled]="apiversion == 'Azure Form Recognizer 2.1'" (change)="checkvalid($event)">
+                <div *ngIf="nameinvalid.haserror">
+                    <div *ngIf="nameinvalid.novalue" style="font-size: smaller;color: red;">
+                        Model name is required.
+                    </div>
+                    <div *ngIf="nameinvalid.patternerror" style="font-size: smaller;color: red;">
+                        Model name must be alphanumeric with at least 1 number, no special characters except for underscore (_), should be atleast 5 charactes in length and not more than 20 characters long.
+                    </div>
+                </div>
             </div>
             <div class="row" style="width: 100%;margin-top: 5%;">
-                <button type="button" class="btn btnbg btn-sm" (click)="trainModel()"><div *ngIf="training" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!training" class="fa fa-connectdevelop"></i> Train</button>
+                <button type="button" class="btn btnbg btn-sm" (click)="trainModel()" [disabled]="nameinvalid.haserror"><div *ngIf="training" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!training" class="fa fa-connectdevelop"></i> Train</button>
                 &nbsp;<button *ngIf="successmsg == 'Model training is in progress. To refresh status, please click on Check Status Button.'" type="button" class="btn btn-light btn-sm" (click)="checkModelStatus()"><div *ngIf="checkmodel" class="spinner-border spinner-border-sm" role="status"></div><i *ngIf="!checkmodel" class="fa fa-refresh"></i> Check Status</button>
             </div>
             

@@ -24,13 +24,20 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
   successmsg:string = "";
   exemsg:string= "";
   errors:any[]= [];
+  nameinvalid:any;
   pid:any;
   @Input() modelData:any;
   @Input() frConfigData:any;
   @Input() showtab:any;
   @Output() changeTab = new EventEmitter<{'show1':boolean,'show2':boolean,'show3':boolean,'show4':boolean}>();
   
-  constructor(private sharedService:SharedService) { }
+  constructor(private sharedService:SharedService) {
+    this.nameinvalid = {
+      haserror:false,
+      patternerror:false,
+      novalue: false
+    }
+   }
 
   ngOnInit(): void {
     try {
@@ -121,6 +128,31 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
         }
       }
     })
+  }
+  checkvalid(e:any){
+    console.log("hi")
+    let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
+    const regex = /^[a-zA-Z0-9_]+$/;
+    const hasNumber = /\d/;
+    const minLength = 5;
+    const maxLength = 20;
+    const isValidFormat = regex.test(modelName);
+    const containsNumber = hasNumber.test(modelName);
+    const isValidLength = modelName.length > minLength && modelName.length <= maxLength;
+    this.nameinvalid.haserror = false;
+    if(modelName == ""){
+      this.nameinvalid.haserror= true;
+      this.nameinvalid.novalue = true;
+      this.nameinvalid.patternerror = false;
+      return;
+    }
+    if(!isValidFormat || !containsNumber || !isValidLength){
+      this.nameinvalid.haserror = true;
+      this.nameinvalid.patternerror = true;
+      this.nameinvalid.novalue = false;
+      return;
+    }
+    
   }
   checkModelStatus(){
     this.checkmodel = true;
