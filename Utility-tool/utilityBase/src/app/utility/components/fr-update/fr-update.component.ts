@@ -1157,12 +1157,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
 
   removeHeaderTag(index,tag) {
-    if(this.headerMandetory.includes(tag)){
-      alert(`${tag} is mandetory field.`)
-    } else{
+    // if(this.headerMandetory.includes(tag)){
+    //   alert(`${tag} is mandetory field.`)
+    // } else{
       this.headerArray.splice(index,1);
       this.headerOptionalArray.push(tag)
-    }
+    // }
   }
 
   removeHeaderOptTag(index,tag) {
@@ -1222,12 +1222,12 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
 
   removeLineTag(index,tag) {
-    if(this.lineMandetory.includes(tag)){
-      alert(`${tag} is mandetory field.`);
-    } else{
+    // if(this.lineMandetory.includes(tag)){
+    //   alert(`${tag} is mandetory field.`);
+    // } else{
       this.LineArray.splice(index,1);
       this.LineArrayOptinal.push(tag)
-    }
+    // }
   }
   removeLineOptTag(index,tag) {
     this.LineOptTags.splice(index,1);
