@@ -14,6 +14,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   pid:any;
   resp:any;
   previoustraining:any[]=[];
+  ocr_engine:string="Azure Form Recognizer v2.1";
   models:any[]=[];
   nottrained:boolean=true;
   selectedmodels:any[]=[];
@@ -32,6 +33,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   constructor(private sharedService:SharedService) { }
   
   ngOnInit(): void {
+      this.ocr_engine = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
       try {
         this.setup();
       }catch(ex){
@@ -54,7 +56,12 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
     }
   }
   selectmodel(id,i){
-    let model = this.models.filter(v => v.modelInfo.modelId == id)[0];
+    let model;
+    if(this.ocr_engine == "Azure Form Recognizer v2.1")
+    model = this.models.filter(v => v.modelInfo.modelId == id)[0];
+    else
+    model = id;
+    console.log(model);
     let inp = (<HTMLInputElement>document.getElementById("model-"+i));
     if(inp.checked){
       inp.checked = false;
@@ -91,12 +98,17 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
     this.sharedService.getModelsByVendor(modeltype,result_id).subscribe((data:any) =>{
       this.resp = data;
       this.loaded = true;
-      console.log(this.resp);
       if(this.resp['message'] == 'success'){
         this.previoustraining = this.resp['result']
         if(this.previoustraining.length > 0){
           for(let p of this.previoustraining){
             let jsonobj = JSON.parse(p.training_result);
+            if(jsonobj.docTypes){
+              jsonobj.modelInfo = {"modelId":jsonobj.modelId,"modelName":jsonobj.modelId, "attributes":{"isComposed":false}}
+              if(Object.keys(jsonobj.docTypes).length > 1){
+                jsonobj.modelInfo["attributes"]["isComposed"] = true;
+              }
+            }
             this.models.push(jsonobj);
           }
           this.nottrained = false;
@@ -106,7 +118,6 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       }
     })
   }
-  
   async composeModels(){
     let modelIds:any[] = [];
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
@@ -131,9 +142,15 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       if(this.resp['message'] == 'success'){
         if(this.resp['result']['message'] == 'success'){
           this.composeresult = this.resp['result']['result'];
-          this.modelName = this.resp['result']['result']['modelInfo']['modelName'];
-          this.modelId = this.resp['result']['result']['modelInfo']['modelId'];
-          this.averageAccuracy = (Number(this.resp['result']['result']['composedTrainResults'][0]['averageModelAccuracy'] * 100)+ "%");
+          if(this.ocr_engine == "Azure Form Recognizer v2.1"){
+            this.modelName = this.resp['result']['result']['modelInfo']['modelName'];
+            this.modelId = this.resp['result']['result']['modelInfo']['modelId'];
+            this.averageAccuracy = (Number(this.resp['result']['result']['composedTrainResults'][0]['averageModelAccuracy'] * 100)+ "%");
+          }else{
+            this.modelName = this.resp['result']['result']['modelId'];
+            this.modelId = this.resp['result']['result']['modelId'];
+            // this.averageAccuracy = (Number(this.resp['result']['result']['composedTrainResults'][0]['averageModelAccuracy'] * 100)+ "%");
+          }
         }
       }
     })

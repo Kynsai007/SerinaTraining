@@ -112,7 +112,6 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     this.modelid = e.target.value;
     let isComposed = this.models.filter(v => v.modelInfo.modelId == this.modelid)[0].modelInfo.attributes.isComposed;
     this.modelname = this.models.filter(v => v.modelInfo.modelId == this.modelid)[0].modelInfo.modelName;
-    console.log(isComposed)
     if(!isComposed){
       this.defaultmodel = e.target.value;
     }
@@ -137,7 +136,14 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         this.previoustraining = this.resp['result']
         if(this.previoustraining.length > 0){
           for(let p of this.previoustraining){
-            this.models.push(JSON.parse(p.training_result));
+            let jsonobj = JSON.parse(p.training_result);
+            if(jsonobj.docTypes){
+              jsonobj.modelInfo = {"modelId":jsonobj.modelId,"modelName":jsonobj.modelId, "attributes":{"isComposed":false}}
+              if(Object.keys(jsonobj.docTypes).length > 1){
+                jsonobj.modelInfo["attributes"]["isComposed"] = true;
+              }
+            }
+            this.models.push(jsonobj);
           }
           let index = this.models.findIndex(v => v.modelInfo.modelName == this.modelData.modelName);
           this.modelid = JSON.parse(this.previoustraining[index].training_result).modelInfo.modelId;
