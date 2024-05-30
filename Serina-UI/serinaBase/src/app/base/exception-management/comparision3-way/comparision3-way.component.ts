@@ -3484,7 +3484,15 @@ export class Comparision3WayComponent
             this.docType = el;
         }
         if(this.docType == 'credit'){
-          this.docType = 'Single PO'
+          this.docType = 'Invoice'
+        }else if(this.docType == 'non-po'){
+          this.docType = 'Non PO Invoice'
+        }else if(this.docType == 'advance'){
+          this.docType = 'Advance Invoice'
+        }else if(this.docType == 'credit-note'){
+          this.docType = 'Credit Note'
+        }else if(this.docType == 'retention'){
+          this.docType = 'Retention Invoice'
         }
       })
     })
