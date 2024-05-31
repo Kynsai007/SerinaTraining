@@ -215,6 +215,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
             this.errors = this.resp['result']['trainResult']['errors'];
           }else{
             if(this.resp["result"]["error"]["message"]){
+              this.previoustrainingres = {"modelInfo":{"status":"failed","modelId":modelName,"modelName":modelName}}
               this.exemsg = `Model training Failed due to : ${this.resp["result"]["error"]["message"]}`
               this.successmsg = "Our Technical Team is checking on these issues! We will revert back to you soon. Thank you for your Patience!"
             }else{
