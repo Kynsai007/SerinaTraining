@@ -48,8 +48,8 @@
                                         <select  id="template" class="form-control f-13"
                                             (change)="selectTemplate($event.target.value)">
                                             <option value="selected" [selected]="checkselect" disabled>Select vendor Template</option>
-                                            <option [value]="modal.idDocumentModel" *ngFor="let modal of modalList">
-                                                {{modal.modelName}}</option>
+                                            <option [value]="modal.DocumentModel.idDocumentModel" *ngFor="let modal of modalList">
+                                                {{modal.DocumentModel.modelName}}</option>
                                         </select>
                                     </td>
                                 </tr>

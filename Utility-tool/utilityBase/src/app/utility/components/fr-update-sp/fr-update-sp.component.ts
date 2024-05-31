@@ -509,7 +509,7 @@ export class FrUpdateSpComponent implements OnInit {
     if(modal_id){
       this.enableTabsBoolean = true;
       let selected = this.modalList.filter(ele=>{
-        return modal_id == ele.idDocumentModel;
+        return modal_id == ele.DocumentModel.idDocumentModel;
       })
       this.modelData = selected[0];
       this.mobservice.setModelData(this.modelData);
@@ -728,7 +728,7 @@ export class FrUpdateSpComponent implements OnInit {
       if(this.modalList.length == 0){
         this.checkselect = true;
       }else{
-        this.selectTemplate(this.modalList[0].idDocumentModel);
+        this.selectTemplate(this.modalList[0].DocumentModel.idDocumentModel);
         this.checkselect = false;
       }
     })
@@ -744,7 +744,7 @@ export class FrUpdateSpComponent implements OnInit {
       return;
     }
     if(this.modalList && this.modalList.length > 0){
-      let checkexists = this.modalList.filter(v => v.modelName == value['modelName']);
+      let checkexists = this.modalList.filter(v => v.DocumentModel.modelName == value['modelName']);
       if(checkexists.length > 0){
         this.modaladderr = true;
         return;

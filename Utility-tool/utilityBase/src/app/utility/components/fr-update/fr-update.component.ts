@@ -585,7 +585,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
   
   selectTemplate(modal_id){
-    this.selectedDocFormat = this.modalList.filter(v => v.idDocumentModel == modal_id)[0].labels;
+    this.selectedDocFormat = this.modalList.filter(v => v.DocumentModel.idDocumentModel == modal_id)[0].labels;
     this.currentTemplate = modal_id;
     this.getAllTags(this.currentTemplate,this.selecteddocType);
     this.getTrainingTestingRes(modal_id);
@@ -594,7 +594,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     if(modal_id){
       this.enableTabsBoolean = true;
       let selected = this.modalList.filter(ele=>{
-        return modal_id == ele.idDocumentModel;
+        return modal_id == ele.DocumentModel.idDocumentModel;
       })
       this.modelData = selected[0];
       this.mobservice.setModelData(this.modelData);
@@ -854,7 +854,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       if(this.modalList.length == 0){
         this.checkselect = true;
       }else{
-        this.selectTemplate(this.modalList[0].idDocumentModel);
+        this.selectTemplate(this.modalList[0].DocumentModel.idDocumentModel);
         this.checkselect = false;
       }
     })
@@ -870,7 +870,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
       return;
     }
     if(this.modalList && this.modalList.length > 0){
-      let checkexists = this.modalList.filter(v => v.modelName == value['modelName']);
+      let checkexists = this.modalList.filter(v => v.DocumentModel.modelName == value['modelName']);
       if(checkexists.length > 0){
         this.modaladderr = true;
         return;
