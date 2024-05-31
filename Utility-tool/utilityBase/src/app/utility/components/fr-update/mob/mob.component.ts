@@ -88,7 +88,7 @@ export class MobComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.mobservice.setFrConfig(this.frConfigData);
     if (changes) {
-      this.modelStatus = this.modelData;
+      this.modelStatus = this.modelData.DocumentModel;
       if (this.modelStatus) {
         if (this.modelStatus.modelID) {
           this.getJson(this.modelStatus.modelID);
@@ -198,7 +198,7 @@ export class MobComponent implements OnInit, OnChanges {
       "cnx_str": this.frConfigData[0].ConnectionString,
       "cont_name": this.frConfigData[0].ContainerName,
       "local_path": this.pathFolder,
-      "folderpath": this.modelData.folderPath
+      "folderpath": this.modelData.DocumentModel.folderPath
     }
     // if(this.modelStatus.modelStatus > 2){
     //   blobData.local_path = this.modelStatus.folderPath;
