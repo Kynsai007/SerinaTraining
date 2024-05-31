@@ -194,24 +194,35 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
         this.training = false;
 
         if(this.resp["message"] == "failure"){
-          if(this.resp["result"]["modelInfo"]["status"] == "creating"){
-            this.previoustrainingres = {"modelInfo":{"status":this.resp["result"]["modelInfo"]["status"],"modelId":this.resp["result"]["modelInfo"]["modelId"],"modelName":this.resp["result"]["modelInfo"]["modelName"]}}
-            this.successmsg = "Model training is in progress. To refresh status, please click on Check Status Button."
-            this.nottrained = false;
-            let resultobj = {'fr_result':JSON.stringify(this.resp["result"]),'docid':this.modelData.idDocumentModel,'modelName':this.resp["result"]["modelInfo"]["modelName"]}
-            this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
-            this.resp = data;
-            if(this.resp['message'] == 'success'){
-              this.setup();
+          if(ocr_engine_version == "Azure Form Recognizer v2.1"){
+            if(this.resp["result"]["modelInfo"]["status"] == "creating"){
+              this.previoustrainingres = {"modelInfo":{"status":this.resp["result"]["modelInfo"]["status"],"modelId":this.resp["result"]["modelInfo"]["modelId"],"modelName":this.resp["result"]["modelInfo"]["modelName"]}}
+              this.successmsg = "Model training is in progress. To refresh status, please click on Check Status Button."
+              this.nottrained = false;
+              let resultobj = {'fr_result':JSON.stringify(this.resp["result"]),'docid':this.modelData.idDocumentModel,'modelName':this.resp["result"]["modelInfo"]["modelName"]}
+              this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
+              this.resp = data;
+              if(this.resp['message'] == 'success'){
+                this.setup();
+              }
+            })
+              return;
+            }else{
+              this.nottrained = true;
             }
-          })
-            return;
+            this.errors = this.resp["result"]["training"]
+            this.successmsg = "Model training failed";
+            this.errors = this.resp['result']['trainResult']['errors'];
           }else{
-            this.nottrained = true;
+            if(this.resp["result"]["error"]["message"]){
+              this.exemsg = `Model training Failed due to : ${this.resp["result"]["error"]["message"]}`
+              this.successmsg = "Our Technical Team is checking on these issues! We will revert back to you soon. Thank you for your Patience!"
+            }else{
+              this.exemsg = "";
+              this.successmsg = "";
+            }
           }
-          this.errors = this.resp["result"]["training"]
-          this.successmsg = "Model training failed";
-          this.errors = this.resp['result']['trainResult']['errors'];
+          
         }
         if('error' in this.resp){
           console.log(this.resp)
