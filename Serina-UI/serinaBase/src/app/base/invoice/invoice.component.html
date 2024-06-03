@@ -96,7 +96,7 @@
             >Posted({{ archivedLength }})</a
           >
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!isMobile">
           <a
             [ngClass]="route.url == rejectedTab ? 'active' : 'shade_color'"
             class="nav-link "
@@ -111,7 +111,7 @@
             [ngClass]="route.url == serviceInvoiceTab ? 'active' : 'shade_color'"
             class="nav-link ite "
             (click)="menuChange('ServiceInvoices')"
-            >Service Invoices({{ serviceInvoiceLength }})
+            >Service <span *ngIf="!isMobile">Invoices</span>({{ serviceInvoiceLength }})
             <i
               class="fa fa-refresh cursor"
               [ngClass]="resfrshBool ? 'rotate' : ''"
@@ -199,7 +199,7 @@
         <div class="filter_box export" style="max-width: 100px;" *ngIf="route.url.includes('ServiceInvoices') && ERPName == 'Dynamics AX' ">
           <button class="primary_btn f-12" (click)="openSOADialog('ERP')"> Report </button>
         </div>
-        <div class="filter_box status export">
+        <div *ngIf="!isMobile" class="filter_box status export">
           <button class="secondary_btn f-18" (click)="exportExcel()">
             <i class="fa fa-download"></i>
           </button>

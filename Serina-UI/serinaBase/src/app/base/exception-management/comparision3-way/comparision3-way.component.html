@@ -310,7 +310,7 @@
       </li>
       <li
         class="nav-item ml-2"
-        pTooltip="Cost allocation"
+        pTooltip="Fixed Cost allocation"
         tooltipPosition="top"
         (click)="changeTab('cost')"
         *ngIf="isServiceData"
@@ -324,7 +324,27 @@
           aria-controls="cost"
           aria-selected="true"
           [ngClass]="currentTab == 'cost' ? 'active' : ''"
-          >Allocation</a
+          >Fixed Allocation</a
+        >
+      </li>
+
+      <li
+        class="nav-item ml-2"
+        pTooltip="Dynamic cost allocation"
+        tooltipPosition="top"
+        (click)="changeTab('dynamic')"
+        *ngIf="isServiceData && dynamicdata.length>0"
+      >
+        <a
+          class="nav-link"
+          id="dynamic-tab"
+          data-toggle="tab"
+          href="#dynamic"
+          role="tab"
+          aria-controls="dynamic"
+          aria-selected="true"
+          [ngClass]="currentTab == 'dynamic' ? 'active' : ''"
+          >Dynamic Allocation</a
         >
       </li>
       <!-- <button class="raiseAlert" pTooltip="raise an alert" tooltipPosition="top"><i class="fa fa-exclamation-triangle"
@@ -344,6 +364,7 @@
           <ng-container *ngTemplateOutlet="header"></ng-container>
           <ng-container *ngTemplateOutlet="line"></ng-container>
           <ng-container *ngTemplateOutlet="cost"></ng-container>
+          <ng-container *ngTemplateOutlet="dynamic"></ng-container>
           <ng-container *ngTemplateOutlet="poline"></ng-container>
           <ng-container *ngTemplateOutlet="grn"></ng-container>
           <ng-container *ngTemplateOutlet="support"></ng-container>
@@ -1469,7 +1490,6 @@
             </div>
 
             <div *ngIf="!reqServiceprovider">
-              <div *ngIf="normalCostAllocation">
                 <div *ngFor="let a of costAllocation; let i = index">
                   <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
                   <div class="displayFlex">
@@ -1490,40 +1510,48 @@
                     </div>
                   </div>
                 </div>
-              </div>
-              <div *ngIf="!normalCostAllocation">
-                <div *ngFor="let dynamic of dynamicdata; let i = index">
-                  <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
-                  <div class="displayFlex">
-                    <div *ngFor="let item of dynamicAllocationFileds">
-                      <div style="position: relative" class="input_container">
-                        <label class="label-head" style="margin-bottom: -5px"
-                          >{{ item.header }}
-                        </label>
-                        <input
-                          type="text"
-                          [value]="dynamic[item.field]"
-                          [title]="dynamic[item.field]"
-                          (input)="
-                            updateEditedValue(
-                              dynamic.iddynamiccostallocation,
-                              item.field,
-                              $event.target.value
-                            )
-                          "
-                          class="form-control inv_inp_cls"
-                          [readonly]="
-                            item.field === 'iddynamiccostallocation' ||
-                            item.field === 'documentID'
-                          "
-                        />
-                      </div>
-                    </div>
+              <ngx-json-viewer [json]="JsonData" [depth]="3"></ngx-json-viewer>
+            </div>
+          </div>
+        </ng-template>
+
+        <!--Dynamic cost allocation-->
+        <ng-template #dynamic>
+          <div
+            class="tab-pane fade header_container"
+            [ngClass]="currentTab == 'dynamic' ? 'show active' : ''"
+            id="dynamic"
+            role="tabpanel"
+            aria-labelledby="dynamic-tab"
+          >
+            <div *ngFor="let dynamic of dynamicdata; let i = index">
+              <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
+              <div class="displayFlex">
+                <div *ngFor="let item of dynamicAllocationFileds">
+                  <div style="position: relative" class="input_container">
+                    <label class="label-head" style="margin-bottom: -5px"
+                      >{{ item.header }}
+                    </label>
+                    <input
+                      type="text"
+                      [value]="dynamic[item.field]"
+                      [title]="dynamic[item.field]"
+                      (input)="
+                        updateEditedValue(
+                          dynamic.iddynamiccostallocation,
+                          item.field,
+                          $event.target.value
+                        )
+                      "
+                      class="form-control inv_inp_cls"
+                      [readonly]="
+                        item.field === 'iddynamiccostallocation' ||
+                        item.field === 'documentID'
+                      "
+                    />
                   </div>
                 </div>
               </div>
-
-              <ngx-json-viewer [json]="JsonData" [depth]="3"></ngx-json-viewer>
             </div>
           </div>
         </ng-template>
@@ -1551,7 +1579,7 @@
             role="tabpanel"
             aria-labelledby="grn-tab"
           >
-            <mapped-grn></mapped-grn>
+            <mapped-grn [GRNTabData]="GRNTabData" [grnTabDatalength]="grnTabDatalength"></mapped-grn>
           </div>
         </ng-template>
 

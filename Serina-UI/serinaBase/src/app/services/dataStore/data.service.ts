@@ -222,6 +222,7 @@ export class DataService {
   approvalPageNumberSP: any;
   SP_aprve_uniSearch: string = '';
   statusId: any;
+  isMobile: boolean;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

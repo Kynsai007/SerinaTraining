@@ -25,6 +25,9 @@
   position: relative;
   top: 0 !important;
 }
+.w-49 {
+  width: 49%;
+}
 @media screen and (max-width:1300px) {
   .filter_inputDash {
     top: 50px;
@@ -55,4 +58,8 @@
     position: relative;
     top: 15px !important;
   }
+  .w-49 {
+    width: 100%;
+  }
 }
+

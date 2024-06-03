@@ -91,6 +91,7 @@ export class BatchProcessComponent implements OnInit {
   @ViewChild('datePicker') datePicker: Calendar;
   pageNumber: any;
   page_supplier: string;
+  isMobile: boolean;
 
   constructor(
     private tagService: TaggingService,
@@ -110,6 +111,7 @@ export class BatchProcessComponent implements OnInit {
     this.apprveBool = this.ds.configData?.enableApprovals;
     this.portalName = this.ds.portalName;
     this.isDesktop = this.ds.isDesktop;
+    this.isMobile = this.ds.isMobile;
     if(this.permissionService.excpetionPageAccess == true){
       if(this.ds.ap_boolean){
         this.invoceDoctype = true;

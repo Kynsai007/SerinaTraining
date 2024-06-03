@@ -351,21 +351,21 @@ export class Comparision3WayComponent
   costTabBoolean: boolean = false;
   isEditMode = false;
   dynamicAllocationFileds = [
-    { header: 'Amount', field: 'amount' },
-    { header: 'Business Unit Code', field: 'bu_code' },
-    { header: 'Company Code', field: 'company_code' },
-    { header: 'Created On', field: 'created_on' },
-    { header: 'Document ID', field: 'documentID' },
-    { header: 'Driver Name', field: 'driver_name' },
-    { header: 'Employ Code', field: 'emp_code' },
-    { header: 'Employ Name', field: 'emp_name' },
-    { header: 'Entity Name', field: 'entity_name' },
-    { header: 'G L Code', field: 'gl_code' },
+    // { header: 'Amount', field: 'amount' },
+    { header: 'Project Category', field: 'bu_code' },
+    // { header: 'Company Code', field: 'company_code' },
+    // { header: 'Created On', field: 'created_on' },
+    // { header: 'Document ID', field: 'documentID' },
+    // { header: 'Driver Name', field: 'driver_name' },
+    { header: 'Employee Code', field: 'emp_code' },
+    { header: 'Employee Name', field: 'emp_name' },
+    // { header: 'Entity Name', field: 'entity_name' },
+    { header: 'Project ID', field: 'gl_code' },
     // { header: 'Allocation ID', field: 'iddynamiccostallocation' },
-    { header: 'Item Number', field: 'item_number' },
-    { header: 'Object Account', field: 'object_account' },
-    { header: 'Period Month ', field: 'period_month' },
-    { header: 'Sub Ledger', field: 'subledger' },
+    { header: 'Service ID', field: 'item_number' },
+    // { header: 'Object Account', field: 'object_account' },
+    // { header: 'Period Month ', field: 'period_month' },
+    // { header: 'Sub Ledger', field: 'subledger' },
   ]
   // editedValues: { [key: string]: any } = {};
   // editedValues: { [iddynamiccostallocation: string]: { [key: string]: any } } = {};
@@ -539,7 +539,7 @@ export class Comparision3WayComponent
       // this.readPOLines();
       // this.readErrorTypes();
       // this.readMappingData();
-      // this.getGRNtabData()
+      this.getGRNtabData()
       if (this.tagService.editable == true && this.grnCreateBoolean == false) {
         this.updateSessionTime();
         this.idleTimer(180, 'Start');
@@ -676,7 +676,7 @@ export class Comparision3WayComponent
 
   changeTab(val) {
     this.currentTab = val;
-    if (val == 'header' || val == 'cost') {
+    if (val == 'header' || val == 'cost' || val == 'dynamic') {
       this.showPdf = true;
       this.btnText = 'Close';
 
@@ -699,7 +699,7 @@ export class Comparision3WayComponent
     if (this.currentTab == 'LCM') {
       this.isLCMTab = true;
     }
-    if (val == 'cost'){
+    if (val == 'cost' || val=='dynamic'){
       this.costTabBoolean = true;
     } else {
       this.costTabBoolean = false;
@@ -838,20 +838,20 @@ export class Comparision3WayComponent
         }
         // this.po_total = response.po_total;
         const pushedArrayHeader = [];
-        if(data?.ok?.cost_alloc != null){
-          this.normalCostAllocation = true;
+        // if(data?.ok?.cost_alloc != null){
+        //   this.normalCostAllocation = true;
           data?.ok?.cost_alloc.forEach(cost => {
             let merge = { ...cost.AccountCostAllocation }
             this.costAllocation.push(merge);
             })
 
-        }
-        else{
+        // }
+        // else{
           this.normalCostAllocation = false;
           data?.ok?.dynamic_cost_alloc?.forEach(dynamic =>{
               this.dynamicdata.push(dynamic);
             })
-        }
+        // }
         response?.headerdata?.forEach((element) => {
           this.mergedArray = {
             ...element.DocumentData,
@@ -1822,6 +1822,7 @@ export class Comparision3WayComponent
     } else {
       this.getInvoiceFulldata('');
       this.update("Please check the values in invoice.");
+      this.getGRNtabData();
     }
 
   }
@@ -2592,12 +2593,12 @@ export class Comparision3WayComponent
     }
   }
 
-  // getGRNtabData() {
-  //   this.SharedService.getGRNTabData().subscribe((data: any) => {
-  //     this.GRNTabData = data?.result;
-  //     this.grnTabDatalength = Object.keys(this.GRNTabData).length;
-  //   })
-  // }
+  getGRNtabData() {
+    this.SharedService.getGRNTabData().subscribe((data: any) => {
+      this.GRNTabData = data?.result;
+      this.grnTabDatalength = Object.keys(this.GRNTabData).length;
+    })
+  }
 
   setOpened(itemIndex) {
     this.currentlyOpenedItemIndex = itemIndex;

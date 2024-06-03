@@ -167,6 +167,7 @@ columnsForSOA = [
   { dbColumnname: 'Rejected BY', columnName: 'Rejected BY' },
 ];
 columnLengthSOA:number;
+isMobile:boolean;
 
   constructor(
     public route: Router,
@@ -189,6 +190,7 @@ columnLengthSOA:number;
     this.vendorInvoiceAccess = this.ds?.configData?.vendorInvoices;
     this.serviceInvoiceAccess = this.ds?.configData?.serviceInvoices;
     this.isDesktop = this.ds.isDesktop;
+    this.isMobile = this.ds.isMobile;
     this.ERPName = this.ds.configData?.erpname;
     if (this.userDetails.user_type == 'customer_portal') {
       this.usertypeBoolean = true;

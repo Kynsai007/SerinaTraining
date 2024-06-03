@@ -176,6 +176,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     }
     if(window.screen.width <= 576){
       this.isMobile = true;
+      this.dataStoreService.isMobile = true;
     }
     // const script = this.renderer.createElement('script');
     // script.type = 'text/javascript';

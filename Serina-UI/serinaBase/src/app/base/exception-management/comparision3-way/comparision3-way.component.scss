@@ -405,7 +405,7 @@ $theme_color: var(--themeColor);
   }
   .total_table{
     position: absolute;
-    bottom: 42px;
+    bottom: 0px;
     color: white;
     left: -2px;
 }
@@ -430,7 +430,7 @@ $theme_color: var(--themeColor);
 }
 .tabDiv {
   max-height: calc(100vh - 162px);
-  min-height: 60vh;
+  min-height: calc(100svh - 220px);
   overflow-y: auto;
   padding: 6px 10px;
 }
@@ -645,6 +645,10 @@ $theme_color: var(--themeColor);
   }
   .m_r_80 {
     margin-right: 10px;
+  }
+  .invType {
+    position: relative;
+    left: 30px;
   }
 }
 .label-head {

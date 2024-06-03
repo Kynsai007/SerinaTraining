@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
@@ -7,21 +7,21 @@ import { SharedService } from 'src/app/services/shared.service';
   styleUrls: ['./mapped-grn.component.scss','../../invoice/view-invoice/view-invoice.component.scss']
 })
 export class MappedGRNComponent implements OnInit {
-  grnTabDatalength:number;
-  GRNTabData: {};
+  @Input() grnTabDatalength:number;
+  @Input() GRNTabData: {};
   currentlyOpenedItemIndex = -1;
 
   constructor(private SharedService: SharedService) { }
 
   ngOnInit(): void {
-    this.getGRNtabData();
+    // this.getGRNtabData();
   }
-  getGRNtabData() {
-    this.SharedService.getGRNTabData().subscribe((data: any) => {
-      this.GRNTabData = data?.result;
-      this.grnTabDatalength = Object.keys(this.GRNTabData).length;
-    })
-  }
+  // getGRNtabData() {
+  //   this.SharedService.getGRNTabData().subscribe((data: any) => {
+  //     this.GRNTabData = data?.result;
+  //     this.grnTabDatalength = Object.keys(this.GRNTabData).length;
+  //   })
+  // }
 
   
   setOpened(itemIndex) {

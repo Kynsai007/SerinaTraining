@@ -83,7 +83,6 @@ export class PopupComponent implements OnInit {
     }
     this.POLineData = this.data?.resp?.podata;
     this.inv_total = this.data?.resp?.sub_total;
-    console.log(this.inv_total,this.POLineData)
     this.POLineData?.forEach(val => {
       val.isSelected = false;
       val.Quantity = val.PurchQty;
