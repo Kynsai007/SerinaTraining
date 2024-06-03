@@ -14,7 +14,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   pid:any;
   resp:any;
   previoustraining:any[]=[];
-  ocr_engine:string="Azure Form Recognizer v2.1";
+  ocr_engine:string="Azure Form Recognizer 2.1";
   models:any[]=[];
   nottrained:boolean=true;
   selectedmodels:any[]=[];
@@ -57,11 +57,12 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   }
   selectmodel(id,i){
     let model;
-    if(this.ocr_engine == "Azure Form Recognizer v2.1")
-    model = this.models.filter(v => v.modelInfo.modelId == id)[0];
-    else
-    model = id;
-    console.log(model);
+    if(this.ocr_engine == "Azure Form Recognizer 2.1"){
+      model = this.models.filter(v => v.modelInfo.modelId == id)[0];
+    }
+    else{
+      model = id;
+    }
     let inp = (<HTMLInputElement>document.getElementById("model-"+i));
     if(inp.checked){
       inp.checked = false;
@@ -122,7 +123,11 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
     let modelIds:any[] = [];
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
     for(let s of this.selectedmodels){
-      modelIds.push(s.modelInfo.modelId);
+      if(this.ocr_engine == "Azure Form Recognizer 2.1"){
+        modelIds.push(s.modelInfo.modelId);
+      }else{
+        modelIds.push(s);
+      }
     }
     if(modelIds.length == 0){
       return;
@@ -142,7 +147,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       if(this.resp['message'] == 'success'){
         if(this.resp['result']['message'] == 'success'){
           this.composeresult = this.resp['result']['result'];
-          if(this.ocr_engine == "Azure Form Recognizer v2.1"){
+          if(this.ocr_engine == "Azure Form Recognizer 2.1"){
             this.modelName = this.resp['result']['result']['modelInfo']['modelName'];
             this.modelId = this.resp['result']['result']['modelInfo']['modelId'];
             this.averageAccuracy = (Number(this.resp['result']['result']['composedTrainResults'][0]['averageModelAccuracy'] * 100)+ "%");

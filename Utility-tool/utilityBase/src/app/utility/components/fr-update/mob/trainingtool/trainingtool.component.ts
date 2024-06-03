@@ -194,7 +194,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
         this.training = false;
 
         if(this.resp["message"] == "failure"){
-          if(ocr_engine_version == "Azure Form Recognizer v2.1"){
+          if(ocr_engine_version == "Azure Form Recognizer 2.1"){
             if(this.resp["result"]["modelInfo"]["status"] == "creating"){
               this.previoustrainingres = {"modelInfo":{"status":this.resp["result"]["modelInfo"]["status"],"modelId":this.resp["result"]["modelInfo"]["modelId"],"modelName":this.resp["result"]["modelInfo"]["modelName"]}}
               this.successmsg = "Model training is in progress. To refresh status, please click on Check Status Button."
