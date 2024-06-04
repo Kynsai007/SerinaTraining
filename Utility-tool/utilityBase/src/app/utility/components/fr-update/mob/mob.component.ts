@@ -87,8 +87,8 @@ export class MobComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.mobservice.setFrConfig(this.frConfigData);
-    if (changes) {
-      this.modelStatus = this.modelData.DocumentModel;
+    if (changes && this.modelData) {
+     this.modelStatus = this.modelData.DocumentModel;
       if (this.modelStatus) {
         if (this.modelStatus.modelID) {
           this.getJson(this.modelStatus.modelID);

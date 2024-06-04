@@ -647,15 +647,19 @@ export class FrUpdateSpComponent implements OnInit {
         if(!this.FRMetaData['DateFormat'] || this.FRMetaData['DateFormat'] == ''){
           this.FRMetaData['DateFormat'] = 'dd/mm/yy';
         }
+        if((<HTMLSelectElement>document.getElementById("DateFormat")))
         (<HTMLSelectElement>document.getElementById("DateFormat")).value = this.FRMetaData['DateFormat'];
         if(!this.FRMetaData['AccuracyOverall'] || this.FRMetaData['AccuracyOverall'] == ''){
           this.FRMetaData['AccuracyOverall'] = '90';
         }
+        if((<HTMLInputElement>document.getElementById("AccuracyOverall")))
         (<HTMLInputElement>document.getElementById("AccuracyOverall")).value = this.FRMetaData['AccuracyOverall'];
         if(!this.FRMetaData['AccuracyFeild'] || this.FRMetaData['AccuracyFeild'] == ''){
           this.FRMetaData['AccuracyFeild'] = '90';
         }
+        if((<HTMLInputElement>document.getElementById("AccuracyFeild")))
         (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = this.FRMetaData['AccuracyFeild'];
+        if((<HTMLInputElement>document.getElementById("InvoiceFormat")))
         (<HTMLInputElement>document.getElementById("InvoiceFormat")).value = this.FRMetaData['InvoiceFormat'];
         
         //(<HTMLInputElement>document.getElementById("unitprice_tol")).value = this.FRMetaData['UnitPriceTol_percent'];

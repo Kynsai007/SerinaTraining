@@ -40,9 +40,10 @@
                 <div *ngIf="frLoadBoolean else spinner">
                     <div class="mt-4" *ngFor="let frData of FRConfigData;">
                         
-                        <form #updateFrConfig = "ngForm" (ngSubmit)="updateFr(updateFrConfig.value)">
-                            <table style="width: 80%;">
-                                <tr class="trHeight">
+                        <form class="form" #updateFrConfig = "ngForm" (ngSubmit)="updateFr(updateFrConfig.value)" style="display: flex;">
+                            <div style="width: 70%; ">
+                            <table >
+                                <tr class="trHeight" >
                                     <td class="tdLeft f-13">Template Name<span class="colon">:</span></td>
                                     <td class="tdRight">
                                         <select  id="template" class="form-control f-13"
@@ -158,13 +159,31 @@
                                         </div>
                                     </td>
                                 </tr>
-        
                             </table>
-        
+                            
                             <div class="mt-4 d-flex">
                                 <button class="btn btnbg f-13 mr-3" [disabled]="!(updateFrConfig.touched && updateFrConfig.valid && updateFrConfig.dirty)">Update Configurations</button>
                                 <button class="btn btncancel f-13" type="button" (click)="onCancel()">Cancel</button>
                             </div>
+                        </div>
+                        <!-- display user created and updated -->
+                        <div style="width: 30%;" *ngIf="modelData">
+                            <table>
+                                <tr class="trHeight" >
+                                    <td class="tdLeft f-13">Created By<span class="colon">:</span></td>
+                                    <td class="tdLeft" style="padding: 0;">
+                                        <input type="text" name="created_by_username" class="form-control f-13" [(ngModel)]="modelData.created_by_username" [value]="modelData.created_by_username" placeholder="Created by" readonly>
+                                    </td>
+                                </tr>
+                                <tr class="trHeight">
+                                    <td class="tdLeft f-13">Updated By<span class="colon">:</span></td>
+                                    <td class="tdLeft" style="padding: 0;">
+                                        <input type="text" name="updated_by_username" class="form-control f-13" [(ngModel)]="modelData.updated_by_username" [value]="modelData.updated_by_username" placeholder="Update by" readonly>
+                                    </td>
+                                </tr>
+                            </table> 
+                        </div>
+                        <!-- display user created and updated -->
                         </form>
                     </div>
                 </div>
