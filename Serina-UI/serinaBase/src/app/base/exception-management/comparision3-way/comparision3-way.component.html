@@ -408,8 +408,10 @@
                     "
                     [ngStyle]="{
                       border:
-                        value.isError >= 1
+                        value.isError >= 1 && !value.ErrorDesc.includes('Low')
                           ? '1px solid #D81616'
+                          :value.isError >= 1 && value.ErrorDesc.includes('Low')
+                          ? '1px solid #f7c83e'
                           : value.isError === 0 && value.IsUpdated === 0
                           ? '0px solid lightgray'
                           : value.IsUpdated === 1
@@ -711,8 +713,10 @@
                                   ? 'left'
                                   : 'center',
                               borderBottom:
-                                data2.invline[0]?.DocumentLineItems.isError >= 1
+                                data2.invline[0]?.DocumentLineItems.isError >= 1 && !data2?.invline[0]?.DocumentLineItems?.ErrorDesc?.includes('Low')
                                   ? ' 2px solid red'
+                                  : data2.invline[0]?.DocumentLineItems.isError >= 1 && data2?.invline[0]?.DocumentLineItems?.ErrorDesc?.includes('Low')
+                                  ? ' 2px solid #f7c83e'
                                   : ''
                             }"
                           />
@@ -736,7 +740,14 @@
                             "
                             tooltipPosition="top"
                             ><i
-                              style="color: red"
+                              [ngStyle]="{
+                                color:
+                                  data2?.invline[0]?.DocumentLineItems?.isError >= 1 && !data2?.invline[0]?.DocumentLineItems?.ErrorDesc.includes('Low')
+                                    ? '#D81616'
+                                    :data2?.invline[0]?.DocumentLineItems?.isError >= 1 && data2?.invline[0]?.DocumentLineItems?.ErrorDesc.includes('Low')
+                                    ? '#f7c83e'
+                                    : ''
+                              }"
                               class="fa fa-info-circle info_icon"
                               aria-hidden="true"
                             ></i

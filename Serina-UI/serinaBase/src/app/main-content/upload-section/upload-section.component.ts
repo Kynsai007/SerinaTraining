@@ -323,6 +323,12 @@ export class UploadSectionComponent implements OnInit {
     this.DocumentTypes = this.dataService.configData.documentTypes;
     this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
     this.vendorAccess = this.dataService?.configData?.vendorInvoices;
+    if(this.dataService.configData.client_name == 'Enova'){
+      this.invTypeArr = [
+        { name:'Invoice', value:'singlePO'},
+        { name:'Non PO Invoice', value:'nonPO'}
+      ];
+    }
     if (!this.vendorAccess && this.serviceInvoiceAccess) {
       this.selectedOption = 'Service';
     } else {
@@ -507,15 +513,15 @@ export class UploadSectionComponent implements OnInit {
         this.getCurrency(this.vendorAccountId);
       } else if(val == 'singlePO') {
         this.categoryArr = [
-          { name:'Credit', value:'credit'},
-          { name:'Returns', value:'returns'},
-          { name:'Advance', value:'advance'}
+          { name:'Credit Note', value:'credit'},
+          { name:'Retention Invoice', value:'returns'},
+          { name:'Advance Invoice', value:'advance'}
         ]
       } else if(val == 'nonPO') {
         this.categoryArr = [
-          { name:'Credit', value:'credit'},
+          { name:'Credit Note', value:'credit'},
           { name:'Debit', value:'debit'},
-          { name:'Advance', value:'advance'}
+          { name:'Advance Invoice', value:'advance'}
         ]
       }
     }

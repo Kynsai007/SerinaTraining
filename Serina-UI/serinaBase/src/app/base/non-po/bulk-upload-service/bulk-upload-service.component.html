@@ -28,7 +28,7 @@
                     inputId="monthpicker"></p-calendar>
                 </div>
                 <div class="erpSelectionBox">
-                    <label class="f-12 shade_color">Select allocation type</label> <br>
+                    <label class="f-12 shade_color">Allocation Type</label> <br>
                     <select class="form-control w-250 inputHeight mr-4" (change)="selectedErp($event.target.value)">
                         <option value="" selected disabled>Please Select Template</option>
                         <option *ngFor="let erp of ERPList" [value]="erp.erp">
@@ -36,7 +36,7 @@
                     </select>
                 </div>
                 <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate()">
-                    Download template
+                    Download Template
                     <div><i class="fa fa-download"></i></div>
                 </button>
                 <!-- <button *ngIf="erpSelectionBoolean" class="secondary_btn f-12" (click)="downloadTemplate('ca')">Cost allocation
@@ -45,7 +45,7 @@
             </div>
             <div class="uploadBox mt-3" *ngIf="selectedFileType">
                 <div class="d-i-block uploadDiv">
-                    <label class="f-12 shade_color">Template upload</label><br>
+                    <label class="f-12 shade_color">Template Upload</label><br>
                     <input type="file" id="custom-upload" (change)="onChange($event)" hidden [disabled]="btnEnabled" #inputFile>
                     <label for="custom-upload" class="custom-btn f-12 mr-2">Choose file</label>
         
@@ -71,7 +71,7 @@
                 </button>
             </div>
             <div>
-                <div class="f-12" *ngIf="progress">Upload progressbar</div>
+                <div class="f-12" *ngIf="progress">Upload Progressbar</div>
                 <div class="progress mb-2" *ngIf="progress">
                     <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" [style.width]="progress + '%'">
                         {{progress}}%</div>

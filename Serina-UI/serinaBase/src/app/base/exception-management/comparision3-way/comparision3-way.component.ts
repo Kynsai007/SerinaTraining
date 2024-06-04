@@ -726,7 +726,9 @@ export class Comparision3WayComponent
         } else if (tag.TagName == 'UnitPrice') {
           tag.linedata.push({ Value: ele.UnitPrice, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: 'Price', tagName: 'UnitPrice' })
         } else if (tag.TagName == 'AmountExcTax') {
-          let amount = (ele.UnitPrice * ele.PurchQty).toFixed(2)
+          let y = ele.UnitPrice.replace(/,/g, '');
+          y = parseFloat(y);
+          let amount = (y * ele.PurchQty).toFixed(2);
           this.GRN_line_total = this.GRN_line_total + Number(amount)
           tag.linedata.push({ Value: amount, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'AmountExcTax' })
         }
@@ -840,7 +842,7 @@ export class Comparision3WayComponent
         const pushedArrayHeader = [];
         // if(data?.ok?.cost_alloc != null){
         //   this.normalCostAllocation = true;
-          data?.ok?.cost_alloc.forEach(cost => {
+          data?.ok?.cost_alloc?.forEach(cost => {
             let merge = { ...cost.AccountCostAllocation }
             this.costAllocation.push(merge);
             })
@@ -1682,43 +1684,43 @@ export class Comparision3WayComponent
     );
   }
   serviceSubmit() {
-    if(!this.normalCostAllocation){
-      if(this.reqServiceprovider){
-        this.exceptionService.submitAllocationDetails(this.rows)
-        .subscribe((data: any) => {
-          this.success("submitted successfully.")
-          setTimeout(() => {
-            this._location.back();
-          }, 1000);
-        }, err => {
-          this.error("Server error");
-        })
-      } else {
-        const group: { iddynamiccostallocation: string, [key: string]: string }[] = [];
-        const groupedValues: { [key: string]: { [key: string]: string; iddynamiccostallocation: string } } = {};
-          for (const key in this.editedValues) {
-            const [iddynamiccostallocation, property] = key.split(',');
+    // if(!this.normalCostAllocation){
+    //   if(this.reqServiceprovider){
+    //     this.exceptionService.submitAllocationDetails(this.rows)
+    //     .subscribe((data: any) => {
+    //       this.success("submitted successfully.")
+    //       setTimeout(() => {
+    //         this._location.back();
+    //       }, 1000);
+    //     }, err => {
+    //       this.error("Server error");
+    //     })
+    //   } else {
+    //     const group: { iddynamiccostallocation: string, [key: string]: string }[] = [];
+    //     const groupedValues: { [key: string]: { [key: string]: string; iddynamiccostallocation: string } } = {};
+    //       for (const key in this.editedValues) {
+    //         const [iddynamiccostallocation, property] = key.split(',');
 
-            if (!groupedValues[iddynamiccostallocation]) {
-              groupedValues[iddynamiccostallocation] = {
-                iddynamiccostallocation: iddynamiccostallocation,
-              };
-            }
-            groupedValues[iddynamiccostallocation][property] = this.editedValues[key];
-          }
+    //         if (!groupedValues[iddynamiccostallocation]) {
+    //           groupedValues[iddynamiccostallocation] = {
+    //             iddynamiccostallocation: iddynamiccostallocation,
+    //           };
+    //         }
+    //         groupedValues[iddynamiccostallocation][property] = this.editedValues[key];
+    //       }
 
-          this.exceptionService.editedDynamicAllocationDetails(groupedValues)
-          .subscribe((data: any) => {
-            this.success("submitted successfully")
-            setTimeout(() => {
-              this._location.back();
-            }, 1000);
-          }, err => {
-            this.error("Server error");
-          })
-        }
-      }
-    else{
+    //       this.exceptionService.editedDynamicAllocationDetails(groupedValues)
+    //       .subscribe((data: any) => {
+    //         this.success("submitted successfully")
+    //         setTimeout(() => {
+    //           this._location.back();
+    //         }, 1000);
+    //       }, err => {
+    //         this.error("Server error");
+    //       })
+    //     }
+    //   }
+    // else{
     this.SharedService.serviceSubmit().subscribe((data: any) => {
       this.success("Sent to Batch Successfully!");
       setTimeout(() => {
@@ -1731,7 +1733,7 @@ export class Comparision3WayComponent
     }, err => {
       this.error("Server error");
     })
-    }
+    // }
   }
   syncBatch() {
     this.SpinnerService.show();

@@ -33,8 +33,8 @@ export class BulkUploadServiceComponent implements OnInit {
   uploadSectionBoolean: boolean;
   displayErpBoolean;
   ERPList = [
-    { erp: 'fixed' },
-    { erp: 'dynamic' },
+    { erp: 'Fixed'},
+    { erp: 'Dynamic' },
   ]
   progress: number;
   UploadDetails: string | Blob;
@@ -156,7 +156,7 @@ export class BulkUploadServiceComponent implements OnInit {
   }
 
   selectedErp(val) {
-    this.selectedFileType = val;
+    this.selectedFileType = val.toLowerCase();
     this.erpSelectionBoolean = true;
   }
   downloadTemplate() {

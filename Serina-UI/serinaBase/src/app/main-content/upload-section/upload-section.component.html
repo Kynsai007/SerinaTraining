@@ -262,9 +262,10 @@
               [value]="invoiceType"
               required
             >
-              <option value=""></option>
-              <option value="nonPO">Non-PO</option>
-              <option value="singlePO">Single PO</option>
+            <option value="" disabled></option>
+            <option *ngFor="let item of invTypeArr" [value]="item.value">
+              {{ item.name }}
+            </option>
             </select>
           </div>
           <div
