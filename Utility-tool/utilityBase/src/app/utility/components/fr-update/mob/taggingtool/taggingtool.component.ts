@@ -1571,13 +1571,18 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     return Object.keys(obj);
   }
   next(){
+    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
     this.currentindex = this.currentindex + 1;
     if(this.currentindex > this.maxpage){
       this.currentindex = 1;
     }
     let popdiv = (<HTMLDivElement>document.getElementById("hidden"+this.currentindex));
     popdiv.style.display = 'none';
-    let obj = this.readResults.filter(v => v.page == this.currentindex);
+    let obj;
+    if(ocr_engine_version == "Azure Form Recognizer 2.1")
+    obj = this.readResults.filter(v => v.page == this.currentindex);
+    else
+    obj = this.readResults.filter(v => v.pageNumber == this.currentindex);
     this.currentwidth = obj[0]['width'];
     this.currentheight = obj[0]['height'];
     this.currentangle = obj[0]['angle'];
@@ -1593,13 +1598,18 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
 
 
   previous(){
+    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
     this.currentindex = this.currentindex - 1
     if(this.currentindex < 1){
       this.currentindex = this.maxpage;
     }
     let popdiv = (<HTMLDivElement>document.getElementById("hidden"+this.currentindex));
     popdiv.style.visibility = 'none';
-    let obj = this.readResults.filter(v => v.page == this.currentindex);
+    let obj;
+    if(ocr_engine_version == "Azure Form Recognizer 2.1")
+    obj = this.readResults.filter(v => v.page == this.currentindex);
+    else
+    obj = this.readResults.filter(v => v.pageNumber == this.currentindex);
     this.currentwidth = obj[0]['width'];
     this.currentheight = obj[0]['height'];
     this.currentangle = obj[0]['angle'];
