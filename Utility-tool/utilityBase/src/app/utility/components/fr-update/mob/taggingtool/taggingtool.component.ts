@@ -78,6 +78,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   pid:any;
   htmlstring:string;
   sanitizedHtml: SafeHtml;
+  fuse:any;
   htmlArray: any[] = [];
   savedhtmltags: boolean = false;
   savedhtmlbtntext: string = "Save Tags Info";
@@ -106,12 +107,16 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     });
   }
   bestMatch(targetId:string){
-    const fuse = new Fuse(this.alldivs[this.currentindex], {
-      threshold: 0.3, // Adjust the threshold as needed
-      keys: [], // The keys to search for similarity
-    });
-    let result = fuse.search(targetId);
-    return result[0];
+    if(this.alldivs[this.currentindex]){
+      let result = this.fuse.search(targetId);
+      if (result.length > 0) {
+        return result[0];
+      } else {
+        console.warn("No matching result found");
+        return null;
+      }
+    }
+    return null;
   }  
   createRect(x:any, y:any, w:any, h:any) {
     return $('<div/>').css({
@@ -250,65 +255,70 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     }
     return comp;
   }
-  async setInitialTableCellTag(){
-    this.tabledetails = {}
-    for(let v of this.tablefields){
-      this.tabledetails[v.fieldKey] = 0;
-      for(let l of this.labelsJson["labels"]){
-        if(l.label.startsWith(v.fieldKey)){
-          let val = Number(l.label.split("/")[1]);
-          let highest = this.getHighest(val,this.tabledetails[v.fieldKey]);
-          this.tabledetails[v.fieldKey] = highest;
-        }
+  async setInitialTableCellTag() {
+    try {
+      // Pre-filter labelsJson based on tablefields
+      const filteredLabels = {};
+      for (const v of this.tablefields) {
+        const filtered = this.labelsJson["labels"].filter(l => l.label.startsWith(v.fieldKey));
+        filteredLabels[v.fieldKey] = filtered;
       }
-    }
-    for(let v of this.tablefields){
-      for(let l of this.labelsJson["labels"]){
-        if(l.label.startsWith(v.fieldKey)){
-          for(let ind = 0;ind<=this.tabledetails[v.fieldKey];ind++){
-            let index = this.labelsJson["labels"].findIndex(el => el.label == l.label);
-            let unsorted = this.labelsJson["labels"][index]["value"];
-            for(let o=0;o<unsorted.length;o++){
-              let boundingBox;
-              if(this.currentfiletype == 'application/pdf'){
-                boundingBox = this.convertInchToPixel(unsorted[o].boundingBoxes[0]);
-              }else{
-                boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
-              }
-              boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
-              boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-              let divid = "rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1];
-              let bestmatch = this.bestMatch(divid);
-              if(bestmatch && (<HTMLDivElement>document.getElementById(String(bestmatch["item"])))){
+      // Set initial table cell tags
+      for (const v of this.tablefields) {
+        for (const l of filteredLabels[v.fieldKey]) {
+          const index = this.labelsJson["labels"].findIndex(el => el.label == l.label);
+          let unsorted = this.labelsJson["labels"][index]["value"];
+
+          for (let o = 0; o < unsorted.length; o++) {
+            let boundingBox;
+            if (this.currentfiletype === 'application/pdf') {
+              boundingBox = this.convertInchToPixel(unsorted[o].boundingBoxes[0]);
+            } else {
+              boundingBox = this.convertImagePixelToPixel(unsorted[o].boundingBoxes[0]);
+            }
+            boundingBox[0] = Math.round(boundingBox[0] * this.currentwidth);
+            boundingBox[1] = Math.round(boundingBox[1] * this.currentheight);
+
+            if (!isNaN(boundingBox[0]) && !isNaN(boundingBox[1])) {
+              const divid = `rect${this.currentindex}${unsorted[o].text}${boundingBox[0]}${boundingBox[1]}`;
+              const bestmatch = await this.bestMatch(divid);
+
+              if (bestmatch && document.getElementById(String(bestmatch["item"]))) {
                 unsorted[o].line = Number((<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).getAttribute("line"));
               }
             }
-            unsorted = unsorted.sort((a:any,b:any) => {
-              return a.line - b.line || a.boundingBoxes[0][0] - b.boundingBoxes[0][0]; 
-            })
-            this.labelsJson["labels"][index]["value"] = unsorted.map(s => ({
-              page : s.page,
-              text : s.text,
-              boundingBoxes : s.boundingBoxes
-            }))
-            let arr = this.labelsJson["labels"][index]["value"];
-            for(let i=0;i<arr.length;i++){
-              let boundingBox;
-              if(this.currentfiletype == 'application/pdf'){
-                boundingBox = this.convertInchToPixel(arr[i].boundingBoxes[0]);
-              }else{
-                boundingBox = this.convertImagePixelToPixel(arr[i].boundingBoxes[0]);
-              }
-              boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
-              boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-              let divid = "rect"+arr[i].page+arr[i].text+boundingBox[0]+boundingBox[1];
-              let bestmatch = this.bestMatch(divid);
-              if(bestmatch){
-                let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
-                if(div){
+          }
+
+          // Sort the unsorted array
+          unsorted = unsorted.sort((a: any, b: any) => a.line - b.line || a.boundingBoxes[0][0] - b.boundingBoxes[0][0]);
+
+          // Update labelsJson
+          this.labelsJson["labels"][index]["value"] = unsorted.map(s => ({
+            page: s.page,
+            text: s.text,
+            boundingBoxes: s.boundingBoxes
+          }));
+
+          // Update DOM elements
+          for (let i = 0; i < unsorted.length; i++) {
+            let boundingBox;
+            if (this.currentfiletype === 'application/pdf') {
+              boundingBox = this.convertInchToPixel(unsorted[i].boundingBoxes[0]);
+            } else {
+              boundingBox = this.convertImagePixelToPixel(unsorted[i].boundingBoxes[0]);
+            }
+            boundingBox[0] = Math.round(boundingBox[0] * this.currentwidth);
+            boundingBox[1] = Math.round(boundingBox[1] * this.currentheight);
+
+            if (!isNaN(boundingBox[0]) && !isNaN(boundingBox[1])) {
+              const divid = `rect${unsorted[i].page}${unsorted[i].text}${boundingBox[0]}${boundingBox[1]}`;
+              const bestmatch = await this.bestMatch(divid);
+              if (bestmatch) {
+                const div = document.getElementById(String(bestmatch["item"]));
+                if (div) {
                   div.style.backgroundColor = 'transparent';
-                  div.setAttribute("selected","false");
-                  div.setAttribute("fieldid",l.label);
+                  div.setAttribute("selected", "false");
+                  div.setAttribute("fieldid", l.label);
                   div.style.borderColor = 'rgb(0, 121, 255)';
                   div.style.borderStyle = 'solid';
                   div.style.borderWidth = '2px';
@@ -316,10 +326,12 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
               }
             }
           }
+        }
       }
+    } catch (error) {
+      console.error("Error in setInitialTableCellTag:", error);
     }
   }
-}
   async setTableCellTag(index,fieldKey){
     this.loadingtableIndex = true;
       this.tabledetails[this.currenttable] = index;
@@ -865,153 +877,168 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     }
     return labelsJson
   }
-  async analyzeDocument(id:any,filename:string,data:Object){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
+  async analyzeDocument(id: any, filename: string, data: Object) {
+    const instanceConfig = JSON.parse(sessionStorage.getItem('instanceConfig'));
+    const ocrEngineVersion = instanceConfig?.InstanceModel?.ocr_engine || '';
+
     this.showtags = true;
     this.showtabletags = false;
-    (<HTMLDivElement>document.getElementById("tagdiv")).style.flex = '19%';
+    const tagDiv = document.getElementById("tagdiv") as HTMLDivElement;
+    tagDiv.style.flex = '19%';
+
     this.clearFields();
-    if(Object.keys(data['labels']).length > 0){
-      this.labelsJson = JSON.parse(data['labels'].blob);
-      this.labelsJson["document"] = this.currentfile;
-    //customized labeling start
-      this.labelsJson = await this.customMizeLabels(this.labelsJson);
-    //customized labeling end
-  }else{
-    if(ocr_engine_version === "Azure Form Recognizer 2.1"){
-      this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
-      this.labelsJson["document"] = this.currentfile;
-      this.labelsJson["labels"] = [];
-      this.labelsJson["labelingState"] = 2;
-    }else if(ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1"){
-      this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
-      this.labelsJson["document"] = this.currentfile;
-      this.labelsJson["labels"] = [];
+    this.labelsJson = {};
+
+    if (Object.keys(data['labels']).length > 0) {
+        this.labelsJson = JSON.parse(data['labels'].blob);
+        this.labelsJson["document"] = this.currentfile;
+        this.labelsJson = await this.customMizeLabels(this.labelsJson);
+    } else {
+        this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
+        this.labelsJson["document"] = this.currentfile;
+        this.labelsJson["labels"] = [];
+        if (ocrEngineVersion === "Azure Form Recognizer 2.1") {
+            this.labelsJson["labelingState"] = 2;
+        }
     }
-   
-  }
-  this.alldivs = {};
-  this.clearTableTags();
-  this.analyzing = true;
-  this.layouttext = "Running Layout. Please Wait!"
+
+    this.alldivs = {};
+    this.clearTableTags();
+    this.analyzing = true;
+    this.layouttext = "Running Layout. Please Wait!";
     this.ready = false;
-    (<HTMLDivElement>document.getElementById("sticky")).classList.remove("sticky-top")
-    let frobj = {
-      'container':this.frConfigData[0].ContainerName,
-      'account':this.frConfigData[0].ConnectionString.split("AccountName=")[1].split(";AccountKey")[0],
-      'connstr':this.frConfigData[0].ConnectionString,
-      'fr_endpoint':this.frConfigData[0].Endpoint,
-      'fr_key':this.frConfigData[0].Key1,
-      'filename':this.modelData.folderPath+"/"+filename
+
+    const stickyDiv = document.getElementById("sticky") as HTMLDivElement;
+    stickyDiv.classList.remove("sticky-top");
+
+    const frobj = {
+        container: this.frConfigData[0].ContainerName,
+        account: this.frConfigData[0].ConnectionString.split("AccountName=")[1].split(";AccountKey")[0],
+        connstr: this.frConfigData[0].ConnectionString,
+        fr_endpoint: this.frConfigData[0].Endpoint,
+        fr_key: this.frConfigData[0].Key1,
+        filename: `${this.modelData.folderPath}/${filename}`
+    };
+
+    const layoutInfo = sessionStorage.getItem("layoutInfo");
+    if (layoutInfo && this.modelData.folderPath + "/" + filename in JSON.parse(layoutInfo)) {
+        await this.processLayoutFromStorage(layoutInfo, filename, ocrEngineVersion);
+    } else {
+        this.sharedService.getAnalyzeResult(frobj).subscribe(async (data: any) => {
+            await this.processAnalyzeResult(data, filename, ocrEngineVersion);
+        });
     }
-    if(sessionStorage.getItem("layoutInfo") != null && this.modelData.folderPath+"/"+filename in JSON.parse(sessionStorage.getItem("layoutInfo"))){
-      this.analyzing = false;
-      this.ready = true;
-      let layout = JSON.parse(sessionStorage.getItem("layoutInfo"))
-      this.jsonresult = layout[this.modelData.folderPath+"/"+filename]["jsonresult"];
-      this.currentfiletype = layout[this.modelData.folderPath+"/"+filename]["currentfiletype"];
-      if(this.currentfiletype == 'application/pdf'){
-        this.zoomVal = 0.6;
-      }else{
-        this.zoomVal = 1;
-      } 
-      let obj;
-      if(ocr_engine_version === "Azure Form Recognizer 2.1"){
-        this.readResults = this.jsonresult['analyzeResult']['readResults']
-        obj = this.readResults.filter(v => v.page == 1);
-      }else{
-        this.readResults = this.jsonresult['analyzeResult']['pages']
-        obj = this.readResults.filter(v => v.pageNumber == 1);
-      }
-      this.currentwidth = obj[0]['width'];
-      this.currentheight = obj[0]['height'];
-      this.currentangle = obj[0]['angle'];
-      this.fileurl = layout[this.modelData.folderPath+"/"+filename]['file_url']
-      if(this.currentfiletype == 'application/pdf'){
-        await this.loadPDF(this.fileurl);
-      }else{
-        await this.loadImage(this.fileurl);
-      }
-      setTimeout(async () => {
-        for await(let obj of this.readResults){
-          if(ocr_engine_version === "Azure Form Recognizer 2.1"){
-            this.alldivs[obj["page"]] = [];
+}
+
+private async processLayoutFromStorage(layoutInfo: string, filename: string, ocrEngineVersion: string) {
+    this.analyzing = false;
+    this.ready = true;
+
+    const layout = JSON.parse(layoutInfo);
+    this.jsonresult = layout[this.modelData.folderPath + "/" + filename]["jsonresult"];
+    this.currentfiletype = layout[this.modelData.folderPath + "/" + filename]["currentfiletype"];
+
+    this.zoomVal = this.currentfiletype === 'application/pdf' ? 0.6 : 1;
+
+    const obj = this.getReadResults(ocrEngineVersion);
+    this.readResults = obj;
+    this.setCurrentDimensions(obj[0]);
+
+    this.fileurl = layout[this.modelData.folderPath + "/" + filename]['file_url'];
+    await this.loadFile(this.fileurl, this.currentfiletype);
+
+    setTimeout(async () => {
+        await this.drawAllCanvases(ocrEngineVersion);
+        this.fuse = new Fuse(this.alldivs[this.currentindex], {
+          threshold: 0.3, // Adjust the threshold as needed
+          keys: [], // The keys to search for similarity
+        });
+        this.initializeFields();
+    }, 500);
+}
+
+private async processAnalyzeResult(data: any, filename: string, ocrEngineVersion: string) {
+    this.resp = data;
+    this.analyzing = false;
+    this.ready = true;
+
+    if (this.resp['message'] === 'success') {
+        const stickyDiv = document.getElementById("sticky") as HTMLDivElement;
+        stickyDiv.classList.add("sticky-top");
+
+        this.jsonresult = this.resp['json_result'];
+        this.currentfiletype = this.resp['content_type'];
+        this.zoomVal = this.currentfiletype === 'application/pdf' ? 0.6 : 1;
+
+        const layout = JSON.parse(sessionStorage.getItem("layoutInfo") || '{}');
+        layout[this.modelData.folderPath + "/" + filename] = {
+            "jsonresult": this.resp['json_result'],
+            "file_url": this.resp["file_url"],
+            "currentfiletype": this.resp['content_type']
+        };
+        sessionStorage.setItem("layoutInfo", JSON.stringify(layout));
+
+        const obj = this.getReadResults(ocrEngineVersion);
+        this.readResults = obj;
+        this.setCurrentDimensions(obj[0]);
+
+        this.fileurl = this.resp['file_url'];
+        await this.loadFile(this.fileurl, this.currentfiletype);
+        setTimeout(async () => {
+            await this.drawAllCanvases(ocrEngineVersion);
+            this.fuse = new Fuse(this.alldivs[this.currentindex], {
+              threshold: 0.3, // Adjust the threshold as needed
+              keys: [], // The keys to search for similarity
+            });
+            this.initializeFields();
+        }, 500);
+    }
+}
+
+private getReadResults(ocrEngineVersion: string): any[] {
+    if (ocrEngineVersion === "Azure Form Recognizer 2.1") {
+        return this.jsonresult['analyzeResult']['readResults'];
+    } else {
+        return this.jsonresult['analyzeResult']['pages'];
+    }
+}
+
+private setCurrentDimensions(obj: any) {
+    this.currentwidth = obj['width'];
+    this.currentheight = obj['height'];
+    this.currentangle = obj['angle'];
+}
+
+private async loadFile(fileurl: string, filetype: string) {
+    if (filetype === 'application/pdf') {
+        await this.loadPDF(fileurl);
+    } else {
+        await this.loadImage(fileurl);
+    }
+}
+
+private async drawAllCanvases(ocrEngineVersion: string) {
+    for (const obj of this.readResults) {
+        this.alldivs[ocrEngineVersion === "Azure Form Recognizer 2.1" ? obj["page"] : obj["pageNumber"]] = [];
+        if (ocrEngineVersion === "Azure Form Recognizer 2.1") {
             await this.drawCanvas(obj);
-          }else{
-            this.alldivs[obj["pageNumber"]] = [];
+        } else {
             await this.drawCanvasv3(obj);
-          }
         }
-        let inc = 0;
-        for (let f of this.fields){
-          this.setinitial(inc,f);
-          inc++;
-        }
-        let div = (<HTMLDivElement>document.getElementById("newtag"));
-        div.style.display = 'none';
-        this.setInitialTableCellTag();
-      }, 500);
-    }else{
-      this.sharedService.getAnalyzeResult(frobj).subscribe(async (data:any) => {
-        this.resp = data;
-        this.analyzing = false;
-        this.ready = true;
-        if(this.resp['message'] == 'success'){
-          (<HTMLDivElement>document.getElementById("sticky")).classList.add("sticky-top")
-          this.jsonresult = this.resp['json_result'];
-          this.currentfiletype = this.resp['content_type']
-          if(this.currentfiletype == 'application/pdf'){
-            this.zoomVal = 0.6;
-          }else{
-            this.zoomVal = 1;
-          } 
-          let layout = JSON.parse(sessionStorage.getItem("layoutInfo"));
-          layout[this.modelData.folderPath+"/"+filename] = {"jsonresult":this.resp['json_result'],"file_url":this.resp["file_url"],"currentfiletype":this.resp['content_type']}
-          try{
-            sessionStorage.setItem("layoutInfo",JSON.stringify(layout));
-          }catch(ex){
-            console.log(ex);
-          }
-          let obj;
-          if(ocr_engine_version === "Azure Form Recognizer 2.1"){
-            this.readResults = this.jsonresult['analyzeResult']['readResults']
-            obj = this.readResults.filter(v => v.page == 1);
-          }else{
-            this.readResults = this.jsonresult['analyzeResult']['pages']
-            obj = this.readResults.filter(v => v.pageNumber == 1);
-          }
-          this.currentwidth = obj[0]['width'];
-          this.currentheight = obj[0]['height'];
-          this.currentangle = obj[0]['angle'];
-          this.fileurl = this.resp['file_url'];
-          if(this.currentfiletype == 'application/pdf'){
-            await this.loadPDF(this.fileurl);
-          }else{
-            await this.loadImage(this.fileurl);
-          }
-          setTimeout(async () => {
-            for await(let obj of this.readResults){
-              if(ocr_engine_version === "Azure Form Recognizer 2.1"){
-                this.alldivs[obj["page"]] = [];
-                await this.drawCanvas(obj);
-              }else{
-                this.alldivs[obj["pageNumber"]] = [];
-                await this.drawCanvasv3(obj);
-              }
-            }
-            let inc = 0;
-            for (let f of this.fields){
-              this.setinitial(inc,f);
-              inc++;
-            }
-            let div = (<HTMLDivElement>document.getElementById("newtag"));
-            div.style.display = 'none';
-            this.setInitialTableCellTag();
-          }, 500);
-        }
-      })
     }
-  }
+}
+
+private initializeFields() {
+    let inc = 0;
+    for (const f of this.fields) {
+        this.setinitial(inc, f);
+        inc++;
+    }
+
+    const div = document.getElementById("newtag") as HTMLDivElement;
+    div.style.display = 'none';
+    this.setInitialTableCellTag();
+}
   async loadPDF(pdfurl:string) {
     const loadingTask = await pdfjsLib.getDocument( pdfurl );
     let pdf = await loadingTask.promise;
@@ -1576,6 +1603,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     if(this.currentindex > this.maxpage){
       this.currentindex = 1;
     }
+    this.fuse = new Fuse(this.alldivs[this.currentindex], {
+      threshold: 0.3, // Adjust the threshold as needed
+      keys: [], // The keys to search for similarity
+    });
     let popdiv = (<HTMLDivElement>document.getElementById("hidden"+this.currentindex));
     popdiv.style.display = 'none';
     let obj;
@@ -1603,6 +1634,10 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     if(this.currentindex < 1){
       this.currentindex = this.maxpage;
     }
+    this.fuse = new Fuse(this.alldivs[this.currentindex], {
+      threshold: 0.3, // Adjust the threshold as needed
+      keys: [], // The keys to search for similarity
+    });
     let popdiv = (<HTMLDivElement>document.getElementById("hidden"+this.currentindex));
     popdiv.style.visibility = 'none';
     let obj;
@@ -1708,10 +1743,12 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
           boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          let divid = "rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1];
-          let bestmatch = this.bestMatch(divid);
-          if(bestmatch && (<HTMLDivElement>document.getElementById(String(bestmatch["item"])))){
-            unsorted[o].line = Number((<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).getAttribute("line"));
+          if(!isNaN(boundingBox[0]) && !isNaN(boundingBox[1])){
+            let divid = "rect"+this.currentindex+unsorted[o].text+boundingBox[0]+boundingBox[1];
+            let bestmatch = this.bestMatch(divid);
+            if(bestmatch && (<HTMLDivElement>document.getElementById(String(bestmatch["item"])))){
+              unsorted[o].line = Number((<HTMLDivElement>document.getElementById(String(bestmatch["item"]))).getAttribute("line"));
+            }
           }
         }
         unsorted = unsorted.sort((a:any,b:any) => {
@@ -1732,17 +1769,19 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
           }
           boundingBox[0] = Math.round(boundingBox[0]*this.currentwidth);
           boundingBox[1] = Math.round(boundingBox[1]*this.currentheight);
-          let divid = "rect"+arr[j].page+arr[j].text+boundingBox[0]+boundingBox[1];
-          let bestmatch = this.bestMatch(divid);
-          if(bestmatch){
-            let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
-            if(div){
-              div.style.backgroundColor = 'transparent';
-              div.setAttribute("selected","false");
-              div.setAttribute("fieldid","field-"+field.fieldKey);
-              div.style.borderColor = 'rgb(9, 179, 60)';
-              div.style.borderStyle = 'solid';
-              div.style.borderWidth = '2px';
+          if(!isNaN(boundingBox[0]) && !isNaN(boundingBox[1])){
+            let divid = "rect"+arr[j].page+arr[j].text+boundingBox[0]+boundingBox[1];
+            let bestmatch = this.bestMatch(divid);
+            if(bestmatch){
+              let div = (<HTMLDivElement>document.getElementById(String(bestmatch["item"])));
+              if(div){
+                div.style.backgroundColor = 'transparent';
+                div.setAttribute("selected","false");
+                div.setAttribute("fieldid","field-"+field.fieldKey);
+                div.style.borderColor = 'rgb(9, 179, 60)';
+                div.style.borderStyle = 'solid';
+                div.style.borderWidth = '2px';
+              }
             }
           }
         }
