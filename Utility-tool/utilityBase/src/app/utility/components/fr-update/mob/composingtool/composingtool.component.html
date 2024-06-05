@@ -37,7 +37,7 @@
             <div style="margin-top: 4%;"></div>
             <span class="headings-small">List of Selected Models</span>
             <ul class="list-group">
-                <li class="list-group-item list-group-item-dark headings-small" *ngFor="let m of selectedmodels">{{m.modelInfo.modelName}}</li>
+                <li class="list-group-item list-group-item-dark headings-small" *ngFor="let m of selectedmodels">{{m.modelInfo ? m.modelInfo.modelName: m}}</li>
             </ul>
             <div style="margin-top: 4%;"></div>
             <label for="modelname" class="headings">Master Model Name</label>

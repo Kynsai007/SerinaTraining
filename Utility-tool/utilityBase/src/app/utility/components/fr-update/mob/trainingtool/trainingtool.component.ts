@@ -86,7 +86,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
           this.previoustrainingres = JSON.parse(this.previoustraining[this.previoustraining.length - 1]);
           if(ocr_engine_version == "Azure Form Recognizer 2.1"){
             if(this.previoustrainingres.modelInfo.status == "creating"){
-              this.successmsg = "Model training is in progress. To refresh status, please click on Check Status Button."
+              this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button"
               this.nottrained = false;
               return;
             }
@@ -98,7 +98,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
           }else{
             if(!this.previoustrainingres.docTypes){
               if(this.previoustrainingres.status != "succeeded"){
-                this.successmsg = "Model training is in progress. To refresh status, please click on Check Status Button."
+                this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button"
                 this.nottrained = false;
                 this.previoustrainingres = this.previoustrainingres.result;
                 return;
@@ -130,7 +130,6 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
     })
   }
   checkvalid(e:any){
-    console.log("hi")
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
     const regex = /^[a-zA-Z0-9_]+$/;
     const hasNumber = /\d/;
@@ -197,7 +196,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
           if(ocr_engine_version == "Azure Form Recognizer 2.1"){
             if(this.resp["result"]["modelInfo"]["status"] == "creating"){
               this.previoustrainingres = {"modelInfo":{"status":this.resp["result"]["modelInfo"]["status"],"modelId":this.resp["result"]["modelInfo"]["modelId"],"modelName":this.resp["result"]["modelInfo"]["modelName"]}}
-              this.successmsg = "Model training is in progress. To refresh status, please click on Check Status Button."
+              this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button"
               this.nottrained = false;
               let resultobj = {'fr_result':JSON.stringify(this.resp["result"]),'docid':this.modelData.idDocumentModel,'modelName':this.resp["result"]["modelInfo"]["modelName"]}
               this.sharedService.updateTrainingResult(resultobj).subscribe((data:any) => {
@@ -214,16 +213,34 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
             this.successmsg = "Model training failed";
             this.errors = this.resp['result']['trainResult']['errors'];
           }else{
-            if(this.resp["result"]["error"]["message"]){
+            if(this.resp["result"]["status"] && this.resp["result"]["status"] == "running"){
+              this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button";
+              this.errors = [];
+              this.exemsg = "";
+            }else if(this.resp["result"]["error"] && this.resp["result"]["error"]["message"]){
               this.previoustrainingres = {"modelInfo":{"status":"failed","modelId":modelName,"modelName":modelName,"attributes":{"isComposed":false}}}
               this.exemsg = `Model training Failed due to : ${this.resp["result"]["error"]["message"]}`
               this.successmsg = "Our Technical Team is checking on these issues! We will revert back to you soon. Thank you for your Patience!"
+              this.errors = this.resp["result"]["error"]["details"]
             }else{
               this.exemsg = "";
               this.successmsg = "";
+              this.errors = [];
             }
           }
           
+        }
+        if(this.resp["message"] == "exception"){
+          if(this.resp["post_resp"] && this.resp["post_resp"] == "Model Training Failed"){
+            this.checkmodel = false;
+            this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button";
+            this.errors = [];
+            this.exemsg = "";
+          }else{
+            this.exemsg = "";
+            this.successmsg = "";
+            this.errors = [];
+          }
         }
         if('error' in this.resp){
           console.log(this.resp)
