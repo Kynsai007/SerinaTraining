@@ -257,6 +257,17 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   }
   async setInitialTableCellTag() {
     try {
+      this.tabledetails = {}
+      for(let v of this.tablefields){
+        this.tabledetails[v.fieldKey] = 0;
+        for(let l of this.labelsJson["labels"]){
+          if(l.label.startsWith(v.fieldKey)){
+            let val = Number(l.label.split("/")[1]);
+            let highest = this.getHighest(val,this.tabledetails[v.fieldKey]);
+            this.tabledetails[v.fieldKey] = highest;
+          }
+        }
+      }
       // Pre-filter labelsJson based on tablefields
       const filteredLabels = {};
       for (const v of this.tablefields) {
