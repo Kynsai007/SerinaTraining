@@ -1354,7 +1354,7 @@ private initializeFields() {
       if(transformdiv && this.currentfiletype == 'application/pdf'){
         transformdiv.style.transform = 'translate3d(-18px, -300px, 0px) scale('+this.zoomVal+')';
       }
-      for(let l of obj['lines']){
+      for(let l of obj['words']){
         let i = 0;
         let boundingbox = l.polygon;
         if(this.currentfiletype == 'application/pdf'){
