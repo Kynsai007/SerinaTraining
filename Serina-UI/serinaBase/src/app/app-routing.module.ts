@@ -21,6 +21,10 @@ const routes: Routes = [
   {
     path: 'registration-page',
     loadChildren: () => import('./registration-page/registration-page.module').then(m => m.RegistrationPageModule)
+  },  
+  {
+    path: 'static-content',
+    loadChildren: () => import('./shared-module/shared-module.module').then(m => m.SharedModuleModule)
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   // {
