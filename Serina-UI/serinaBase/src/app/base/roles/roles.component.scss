@@ -352,9 +352,9 @@ td{
     .p-auto .p-autocomplete {
         width: 100% !important;
     }
-    .p-autocomplete .p-autocomplete-panel{
-        width: 100% !important;
-    }
+    // .p-autocomplete .p-autocomplete-panel{
+    //     width: 100% !important;
+    // }
     .p-autocomplete-items{
         font-size: 12px !important;
         font-weight: 600 !important;
@@ -461,7 +461,10 @@ td{
     }
     .positionCreateUpload {
         right: 0px;
-        top: 110px;
+        top: 10px;
+    }
+    .mr-53 {
+        margin-right: 10px !important;
     }
     .mb_tr {
         border-left: 4px solid white;

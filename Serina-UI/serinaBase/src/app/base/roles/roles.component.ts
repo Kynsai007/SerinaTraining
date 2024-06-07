@@ -576,8 +576,20 @@ export class RolesComponent implements OnInit {
     this.entityList = [];
     this.fullList = [];
     this.sharedService.getEntityDept().subscribe((data: any) => {
-      this.entityList = data;
-      this.fullList = data;
+
+      let arr = [];
+      data?.forEach(ele => {
+        ele.EntityName1 = `${ele.EntityName} ${ele.EntityCode ? '-' +ele.EntityCode : ""}`;
+        arr.push({ EntityName: ele.EntityName1, 
+          idEntity: ele.idEntity, 
+          department:ele?.department,
+          entityTypeID:ele.entityTypeID,
+          sourceSystemType:ele.sourceSystemType,
+          EntityCode:ele.EntityCode
+           })
+      })
+      this.entityList = arr;
+      this.fullList = arr;
     });
   }
 

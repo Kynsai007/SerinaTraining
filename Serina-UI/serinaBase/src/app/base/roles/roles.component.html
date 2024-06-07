@@ -1418,7 +1418,7 @@
             >
               <ng-template let-country pTemplate="item">
                 <div class="country-item">
-                  <div>{{ country.EntityName }}</div>
+                  <div [title]="country.EntityName">{{ country.EntityName }}</div>
                 </div>
               </ng-template>
             </p-autoComplete>
