@@ -77,8 +77,8 @@ export class InvoiceComponent implements OnInit {
   columnstodisplayService = [];
   serviceColumns: any;
   showPaginatorServiceInvoice: boolean;
-  serviceinvoiceDispalyData = [];
-  serviceInvoiceLength: any;
+  serviceinvoiceDispalyData:any[];
+  serviceInvoiceLength: number;
   allInColumnLength: any;
   allPOColumnLength: any;
   allARCColumnLength: any;
@@ -264,10 +264,12 @@ isMobile:boolean;
     this.filterDataService = this.serviceinvoiceDispalyData;
     this.filterData = this.invoiceDisplayData;
     this.allInvoiceLength = this.ds.invoiceLoadedData.length;
+    if (this.allInvoiceLength == 0)  this.allInvoiceLength = undefined;
     if (this.allInvoiceLength > 10 && this.isDesktop) {
       this.showPaginatorAllInvoice = true;
     }
     this.serviceInvoiceLength = this.serviceinvoiceDispalyData.length;
+    if (this.serviceInvoiceLength == 0)  this.serviceInvoiceLength = undefined;
     if (this.serviceInvoiceLength > 10  && this.isDesktop) {
       this.showPaginatorServiceInvoice = true;
     }
@@ -284,6 +286,7 @@ isMobile:boolean;
     // }
     this.GRNDispalyData = this.ds.GRNLoadedData;
     this.GRNArrayLength = this.ds.GRNTableLength;
+    console.log(this.GRNArrayLength)
     if (this.GRNDispalyData.length > 10 && this.isDesktop) {
       this.showPaginatorGRNTable = true;
     }
