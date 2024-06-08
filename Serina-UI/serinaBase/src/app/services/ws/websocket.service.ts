@@ -18,7 +18,7 @@ export class WebSocketService {
   }
 
   connectWebsocket(){
-    this.socket = new WebSocket(`ws://${environment1.hostname}/ServiceInvoiceUpload/${this.userId}/AccountNumber/${this.service_account}`);
+    this.socket = new WebSocket(`ws://${environment1.hostname}/Invoice/ServiceInvoiceUpload/${this.userId}/AccountNumber/${this.service_account}`);
     // Replace 'wss://your-websocket-server-url' with the actual WebSocket server URL
 
     this.socket.onopen = () => {
