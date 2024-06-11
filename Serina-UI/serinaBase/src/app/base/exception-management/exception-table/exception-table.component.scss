@@ -374,4 +374,10 @@ $theme_color: var(--themeColor);
   .card {
     width: 100%;
   }
+  .doc_height {
+    max-height: calc(100svh - 297px) !important;
+  }
+  .exc_height {
+    max-height: calc(100svh - 294px) !important;
+  }
 }

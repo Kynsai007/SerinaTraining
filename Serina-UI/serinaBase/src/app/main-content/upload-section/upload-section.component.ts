@@ -254,6 +254,7 @@ export class UploadSectionComponent implements OnInit {
   selectedServiceAccount: any;
   accountsData: any;
   selectedInvoiceType: any;
+  selectedInvoiceType_quick: any;
   selectedEntity: string;
   returnmessage: boolean;
   event: string;
@@ -479,8 +480,8 @@ export class UploadSectionComponent implements OnInit {
   // }
 
   onSelectPOType(val, type) {
-    this.selectedInvoiceType = val ;
     if (type == 'ideal') {
+    this.selectedInvoiceType = val ;
       if(val == 'nonPO'){
         this.displaySelectPdfBoolean = true;
       } else if(val == 'singlePO'){
@@ -502,6 +503,7 @@ export class UploadSectionComponent implements OnInit {
       //   }
       // }
     } else {
+      this.selectedInvoiceType_quick = val ;
       this.LCMBoolean = 'No';
       if (val == 'multiPO') {
         this.poTypeBoolean = false;
@@ -1635,7 +1637,7 @@ export class UploadSectionComponent implements OnInit {
     this.multiPO_filepath = '';
     this.approversSendData = [];
     this.mutliplePOTableData = [];
-    this.selectedInvoiceType = '';
+    this.selectedInvoiceType_quick = '';
     this.selectedCurrency = '';
     this.flipPOData = [];
     this.selectedCategory = 'credit';

@@ -713,8 +713,8 @@
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
-              (selectedInvoiceType == 'singlePO' ||
-                selectedInvoiceType == 'nonPO')
+              (selectedInvoiceType_quick == 'singlePO' ||
+                selectedInvoiceType_quick == 'nonPO')
             "
           >
             <label class="f-12 mb-0">Select Category</label>
@@ -734,7 +734,7 @@
           <!-- select PO Number -->
           <div
             class="selectFilter"
-            *ngIf="viewType != 'ideal' && selectedInvoiceType == 'singlePO'"
+            *ngIf="viewType != 'ideal' && selectedInvoiceType_quick == 'singlePO'"
           >
             <label class="f-12 mb-0">Select PO Number</label><br />
             <p-autoComplete
@@ -763,7 +763,7 @@
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
-              selectedInvoiceType == 'singlePO' &&
+              selectedInvoiceType_quick == 'singlePO' &&
               selectedCategory == 'returns'
             "
           >
@@ -794,7 +794,7 @@
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
-              selectedInvoiceType == 'singlePO' &&
+              selectedInvoiceType_quick == 'singlePO' &&
               selectedCategory == 'credit'
             "
           >
@@ -819,7 +819,7 @@
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
-              selectedInvoiceType == 'singlePO' &&
+              selectedInvoiceType_quick == 'singlePO' &&
               selectedCategory == 'credit'
             "
           >
@@ -842,7 +842,7 @@
           <div
             *ngIf="
               viewType != 'ideal' &&
-              selectedInvoiceType == 'singlePO' &&
+              selectedInvoiceType_quick == 'singlePO' &&
               selectedCategory != 'returns'
             "
             class="selectFilter w-value"

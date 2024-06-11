@@ -369,6 +369,7 @@
                     'contains'
                   )
                 "
+                (keyup)="columnFilter($event.target.value,col.dbColumnname)"
                 [value]="allInvoice.filters[col.dbColumnname]?.value"
                 [placeholder]="'Search by ' + col.columnName"
                 class="tableSearchInput"

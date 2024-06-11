@@ -215,6 +215,7 @@
         (searchInvoiceData)="searchInvoiceDataV($event)"
         [columnsData]="invoiceDisplayData"
         [searchText]="searchText"
+        (filterDataEmit)="filterEmit($event)"
         (systemCheckEmit)="refreshInvoice($event)"
         (paginationEvent) = "paginate($event)"
         [pageNumber]="pageNumber"
@@ -295,6 +296,7 @@
       [columnsData]="rejectedDisplayData"
       [searchText]="searchText"
       (paginationEvent) = "paginate($event)"
+      (filterDataEmit)="filterEmit($event)"
       [pageId]="'reject'"
       [pageNumber]="pageNumber"
       (sideBarBoolean)="showSidebar($event)"
@@ -327,6 +329,7 @@
       (paginationEvent) = "paginate($event)"
       [pageId]="'service'"
       (sideBarBoolean)="showSidebar($event)"
+      (filterDataEmit)="filterEmit($event)"
       [pageNumber]="pageNumber"
       *ngIf="route.url == serviceInvoiceTab"
     >

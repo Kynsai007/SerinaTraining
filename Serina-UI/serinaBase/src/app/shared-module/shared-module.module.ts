@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { RouterModule,Routes } from '@angular/router';
-import { DPAComponent } from './dpa/dpa.component';
 
 const routes: Routes =[
   { path:'privacy-policy', component: PrivacyComponent },
@@ -12,7 +11,7 @@ const routes: Routes =[
 
 
 @NgModule({
-  declarations: [PrivacyComponent, DPAComponent],
+  declarations: [PrivacyComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes)

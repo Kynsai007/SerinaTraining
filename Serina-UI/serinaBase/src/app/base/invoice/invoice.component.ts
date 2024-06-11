@@ -1508,7 +1508,6 @@ soaSearch(bool){
       this.closeDialog();
     } else {
       this.SOATableData = data;
-      console.log(this.SOATableData);
     }
   },err=>{
     this.SpinnerService.hide();

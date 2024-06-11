@@ -2,9 +2,9 @@
   
   <h6 class="headh6 d-flex justify-content-between">
     <div>
-      <span class="pointer mr-2" (click)="backToInvoice()">
+      <!-- <span class="pointer mr-2" (click)="backToInvoice()">
         <mat-icon class="goBack_pos" svgIcon="back_arrow"></mat-icon>
-      </span>
+      </span> -->
       Invoice Status history -
       <span class="f-13">
         Invoice Number : <span style="color: #2b96e2">{{ invoiceNumber }}</span>
@@ -44,8 +44,9 @@
         <div
           class="circle-desc"
           [class.circle-desc-active]="
-            orderStatus == item.dochistorystatus && i == statusData.length - 1
+            orderStatus == item?.dochistorystatus && i == statusData.length - 1
           "
+          [ngStyle]="{color : item?.dochistorystatus.includes('Rejected')?'red':''}"
         >
           <div class="row">
             <div class="col-sm-4 status_text">{{ item.dochistorystatus }}</div>

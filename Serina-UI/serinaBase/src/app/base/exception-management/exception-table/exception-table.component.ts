@@ -415,7 +415,14 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.filterDataEmit.emit(this.columnsData);
     }
   }
-
+  columnFilter(text,c_name){
+    this.columnsData = this.FilterData;
+    this.columnsData = this.columnsData.filter(el=>{
+      return el[c_name].toLowerCase().includes(text.toLowerCase());
+    })
+    this.first = 0;
+    this.filterDataEmit.emit(this.columnsData);
+  }
   // edit invoice details if something wrong
   editInvoice(e) {
     this.tagService.approval_selection_boolean = false;

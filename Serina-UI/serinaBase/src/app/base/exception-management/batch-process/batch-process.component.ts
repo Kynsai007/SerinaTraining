@@ -26,6 +26,7 @@ export class BatchProcessComponent implements OnInit {
     { dbColumnname: 'CreatedOn', columnName: 'Uploaded Date' },
     { dbColumnname: 'PODocumentID', columnName: 'PO number' },
     { dbColumnname: 'sender', columnName: 'Sender' },
+    // { dbColumnname: 'UploadDocTypeCategory', columnName: 'Category' },
     { dbColumnname: 'status', columnName: 'Status' },
     { dbColumnname: 'totalAmount', columnName: 'Amount' },
   ];

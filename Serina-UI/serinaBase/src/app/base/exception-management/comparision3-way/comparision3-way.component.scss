@@ -324,6 +324,9 @@ $theme_color: var(--themeColor);
     position: relative;
     z-index: 2;
     top: -5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .selection_Div .input_box label{
     top: 0;
@@ -626,7 +629,7 @@ $theme_color: var(--themeColor);
   .doc_mobile {
     // display: none;
     position: absolute;
-    top: 50px;
+    top: 0px;
     z-index: 124;
     background: #272727;
   }
@@ -649,6 +652,9 @@ $theme_color: var(--themeColor);
   .invType {
     position: relative;
     left: 30px;
+  }
+  .large_input_box {
+    width: 85vw;
   }
 }
 .label-head {
