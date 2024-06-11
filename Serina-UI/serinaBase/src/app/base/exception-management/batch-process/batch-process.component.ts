@@ -93,6 +93,7 @@ export class BatchProcessComponent implements OnInit {
   pageNumber: any;
   page_supplier: string;
   isMobile: boolean;
+  tableImportData: any;
 
   constructor(
     private tagService: TaggingService,
@@ -391,12 +392,20 @@ export class BatchProcessComponent implements OnInit {
       }
     );
   }
+
+  filterEmit(event) {
+    this.tableImportData = event;
+  }
   exportExcel() {
     let exportData = [];
-    if (this.tagService.batchProcessTab == 'normal') {
-      exportData = this.columnsData;
-    } else if (this.tagService.batchProcessTab == 'editApproveBatch') {
-      exportData = this.columnsDataAdmin;
+    if(!this.tableImportData){
+      if (this.tagService.batchProcessTab == 'normal') {
+        exportData = this.columnsData;
+      } else if (this.tagService.batchProcessTab == 'editApproveBatch') {
+        exportData = this.columnsDataAdmin;
+      }
+    } else {
+      exportData = this.tableImportData;
     }
     if (this.allSearchInvoiceString && this.allSearchInvoiceString.length > 0) {
       this.ImportExcelService.exportExcel(this.allSearchInvoiceString);

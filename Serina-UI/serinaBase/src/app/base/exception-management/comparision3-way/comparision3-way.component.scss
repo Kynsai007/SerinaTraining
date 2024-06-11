@@ -236,7 +236,7 @@ $theme_color: var(--themeColor);
   }
   .linevalue button {
     padding: 3px 6px;
-    height: 32px;
+    height: 31px;
   }
   .trash_btn {
     border-color: transparent;
@@ -327,6 +327,11 @@ $theme_color: var(--themeColor);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+  }
+  .form-control {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .selection_Div .input_box label{
     top: 0;

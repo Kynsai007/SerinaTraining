@@ -61,6 +61,7 @@ export class CreateGRNComponent implements OnInit {
   pageNumber: any;
   entityFormatList = [
   ]
+  tableImportData: any;
   
   constructor(
     private tagService: TaggingService,
@@ -140,12 +141,20 @@ export class CreateGRNComponent implements OnInit {
     this.allSearchInvoiceString = value.filteredValue;
   }
 
+  filterEmit(event) {
+    this.tableImportData = event;
+  }
+
   exportExcel() {
     let exportData = [];
-    if (this.tagService.batchProcessTab == 'normal') {
-      exportData = this.columnsData;
-    } else if (this.tagService.batchProcessTab == 'editApproveBatch') {
-      exportData = this.columnsDataAdmin;
+    if(!this.tableImportData){
+      if (this.tagService.batchProcessTab == 'normal') {
+        exportData = this.columnsData;
+      } else if (this.tagService.batchProcessTab == 'editApproveBatch') {
+        exportData = this.columnsDataAdmin;
+      }
+    } else {
+      exportData = this.tableImportData;
     }
     if (this.allSearchInvoiceString && this.allSearchInvoiceString.length > 0) {
       this.ImportExcelService.exportExcel(this.allSearchInvoiceString);

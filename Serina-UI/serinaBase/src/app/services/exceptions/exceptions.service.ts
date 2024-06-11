@@ -95,8 +95,8 @@ export class ExceptionsService {
   updateDocumentLockInfo(data):Observable<any> {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/updateDocumentLockInfo/${this.userId}/idDocument/${this.invoiceID}`,data)
   }
-  checkInvStatus(){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/checkInvStatus/${this.userId}/${this.invoiceID}`).pipe(retry(3))
+  checkInvStatus(inv_number){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/checkInvStatus/3/?inv_number=${inv_number}`).pipe(retry(3))
   }
 
   // line related

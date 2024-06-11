@@ -156,6 +156,7 @@
       [searchText]="searchText"
       [pageId]="'exc_v'"
       [pageNumber]="pageNumber"
+      (filterDataEmit)="filterEmit($event)"
       (paginationEvent) = "paginate($event)"
     >
     </app-exception-table>
