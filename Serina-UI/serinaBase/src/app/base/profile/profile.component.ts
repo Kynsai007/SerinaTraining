@@ -26,7 +26,6 @@ export class ProfileComponent implements OnInit {
   constructor(private authService: AuthenticationService,
     private settingService: SettingsService,
     private alert: AlertService,
-    private ms: MessageService,
     private dataStoreService: DataService) { }
 
   ngOnInit(): void {
@@ -41,13 +40,11 @@ export class ProfileComponent implements OnInit {
   onSave(val) {
 
     this.settingService.update_profile(this.profile.value).subscribe((data: any) => {
-      this.alert.updateObject.detail = "Profile Updated, Please re-login to check the changes.";
-      this.ms.add(this.alert.updateObject);
+      this.alert.success_alert("Profile Updated, Please re-login to check the changes.");
       this.editable = false;
 
     }, err => {
-      this.alert.errorObject.detail = "Server error";
-      this.ms.add(this.alert.errorObject);
+      this.alert.error_alert("Server error");
     })
   }
   onCancel() {

@@ -6,6 +6,7 @@
     padding: 0px 10px;
     padding-top: 0!important;
     height: 33px;
+    background: #f3f3f3;
 }
 
 .editBtn{
@@ -19,8 +20,8 @@
     border: 0;
 }
 .onEditTrue{
-    background: white;
-    border: 1px solid lightgray;
+    // background: white;
+    border: 0px solid lightgray;
 }
 .colon{
     float: right;
@@ -38,4 +39,7 @@
 }
 .trHeight{
     height: 35px;
+}
+.bg-white {
+    background-color: #ffffff;
 }

@@ -174,7 +174,6 @@ isMobile:boolean;
     private AlertService: AlertService,
     private sharedService: SharedService,
     private SpinnerService: NgxSpinnerService,
-    private messageService: MessageService,
     private ds: DataService,
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
@@ -438,11 +437,13 @@ isMobile:boolean;
               ...element.ServiceProvider,
               ...element.ServiceAccount,
               ...element.VendorAccount,
-              ...element.Vendor,
+              ...element.Vendor
             };
             // invoiceData.append('docStatus',element.docStatus)
 
             invoiceData['docstatus'] = element.docstatus;
+            invoiceData['ITProjId'] = element?.Document.documentData?.ITProjId;
+            invoiceData['POTypeDescription'] = element?.Document?.documentData?.POTypeDescription;
             if (this.portal_name == 'vendorPortal') {
               if (invoiceData['docstatus'] == 'Need To Review') {
                 invoiceData['docstatus'] = 'Under Review';
@@ -985,9 +986,7 @@ isMobile:boolean;
     this.sharedService.updateColumnPOs(this.updateColumns, param).subscribe(
       (data: any) => {
         this[funName]();
-        this.AlertService.updateObject.detail =
-          'Columns updated successfully';
-        this.messageService.add(this.AlertService.updateObject);
+        this.AlertService.success_alert('Columns updated successfully')
       },
       (error) => {
         this.error(error.statusText);
@@ -1503,16 +1502,14 @@ soaSearch(bool){
   this.sharedService.SOASearch(apiParam).subscribe((data:any)=>{
     this.SpinnerService.hide();
     if(bool){
-      this.AlertService.addObject.detail = "Dear User, The Report will be sent to your email shortly."
-      this.messageService.add( this.AlertService.addObject);
+      this.AlertService.success_alert("Dear User, The Report will be sent to your email shortly.")
       this.closeDialog();
     } else {
       this.SOATableData = data;
     }
   },err=>{
     this.SpinnerService.hide();
-    this.AlertService.errorObject.detail = "Server error."
-    this.messageService.add( this.AlertService.errorObject);
+    this.AlertService.error_alert("Server error.");
   })
 }
 

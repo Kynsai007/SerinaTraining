@@ -204,9 +204,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
       })
       this.statusData = new Set(mergedStatus);
-      if (!this.isDesktop || this.columnsData?.length <= this.cardCount) {
+      if (!this.isTableView && this.columnsData?.length <= this.cardCount) {
         this.showPaginatorAllInvoice = false;
-      } else {
+      } else if(this.columnsData?.length > this.cardCount){
         this.showPaginatorAllInvoice = true;
       }
     }
@@ -412,6 +412,8 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         (val) => value == val.docstatus
       );
       this.first = 0
+      this.filterDataEmit.emit(this.columnsData);
+    } else {
       this.filterDataEmit.emit(this.columnsData);
     }
   }

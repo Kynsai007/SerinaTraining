@@ -1,13 +1,13 @@
-<div class="container-fluid">
+
   <h6 class="font_weight headh6">Account Settings</h6>
-  <div class="row bg-design-all m-2">
+  <div class="row bg-white m-0 mt-2">
     <div class="col-md-12 p-3">
       
       <!-- <div>
         <img src="/assets/maskGroup89.png" alt="Logo" />
       </div> -->
       <div class="editBtn" *ngIf="!editable">
-        <button class="btn btnVender bg-btn-success" (click)="onEdit()">
+        <button class="primary_btn f-12" (click)="onEdit()">
           Edit
         </button>
       </div>
@@ -54,7 +54,7 @@
             </tr>
             <tr class="trHeight">
               <td class="tdLeft">
-                <label for="username" class="f-13">User Name</label
+                <label for="username" class="f-13">User name</label
                 ><span class="colon">:</span>
               </td>
               <td class="tdRight">
@@ -70,7 +70,7 @@
             </tr>
             <tr class="trHeight">
               <td class="tdLeft">
-                <label for="email" class="f-13">Email ID</label
+                <label for="email" class="f-13">Email id</label
                 ><span class="colon">:</span>
               </td>
               <td class="tdRight">
@@ -87,7 +87,7 @@
             <h6 class="f-14 mt-3">App Settings</h6>
             <tr class="trHeight">
               <td class="tdLeft">
-                <label for="email" class="f-13">Landing Page</label
+                <label for="email" class="f-13">Landing page</label
                 ><span class="colon">:</span>
               </td>
               <td class="tdRight">
@@ -108,7 +108,7 @@
             <tr class="trHeight"
               [ngStyle]="{'visibility':vendorInvoiceAccess ? 'visible':'hidden'}">
               <td class="tdLeft">
-                <label for="email" class="f-13">Upload Option</label
+                <label for="email" class="f-13">Upload option</label
                 ><span class="colon">:</span>
               </td>
               <td class="tdRight">
@@ -130,9 +130,9 @@
         </div>
 
         <div *ngIf="editable" class="mt-4">
-          <button class="btn btnVender bg-btn-success mr-3" [disabled]="profile.invalid">Update</button>
+          <button class="primary_btn f-12 mr-3" [disabled]="profile.invalid">Update</button>
           <button
-            class="btn btnVender bg-btn-cancel"
+            class="secondary_btn f-12"
             type="button"
             (click)="onCancel()"
           >
@@ -142,4 +142,3 @@
       </form>
     </div>
   </div>
-</div>

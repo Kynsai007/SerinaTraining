@@ -18,23 +18,23 @@
       <span *ngFor="let item of statusData; let i = index">
         <span
           [ngStyle]="{
-            visibility: item.DocumentHistoryLogs.CreatedOn
+            visibility: item?.DocumentHistoryLogs?.CreatedOn
               ? 'visible'
               : 'hidden'
           }"
           class="date_box"
           [class.circle-desc-active]="
-            orderStatus == item.dochistorystatus && i == statusData.length - 1
+            orderStatus == item?.dochistorystatus && i == statusData?.length - 1
           "
         >
-          <span *ngIf="item.DocumentHistoryLogs.CreatedOn">{{
-            item.DocumentHistoryLogs?.CreatedOn + "Z"  | date: "medium"
+          <span *ngIf="item?.DocumentHistoryLogs?.CreatedOn">{{
+            item?.DocumentHistoryLogs?.CreatedOn + "Z"  | date: "medium"
           }}</span>
         </span>
         <span
           class="circles"
           [class.active]="
-            orderStatus == item.dochistorystatus && i == statusData.length - 1
+            orderStatus == item?.dochistorystatus && i == statusData?.length - 1
           "
         ></span>
         <!-- <span class="material-icons circles" [class.active]="((orderStatus == item.dochistorystatus) && (i == statusData.length-1))">
@@ -44,41 +44,41 @@
         <div
           class="circle-desc"
           [class.circle-desc-active]="
-            orderStatus == item?.dochistorystatus && i == statusData.length - 1
+            orderStatus == item?.dochistorystatus && i == statusData?.length - 1
           "
-          [ngStyle]="{color : item?.dochistorystatus.includes('Rejected')?'red':''}"
+          [ngStyle]="{color : item?.dochistorystatus?.includes('Rejected')?'red':''}"
         >
           <div class="row">
-            <div class="col-sm-4 status_text">{{ item.dochistorystatus }}</div>
+            <div class="col-sm-4 status_text">{{ item?.dochistorystatus }}</div>
             <div class="col-sm-7">
               <div>
                 <span class="f-12">Done by</span> :
                 <span style="font-weight: 500"
-                  >{{ item.firstName }} {{ item.lastName }}</span
+                  >{{ item?.firstName }} {{ item?.lastName }}</span
                 >
               </div>
-              <div *ngIf="item.DocumentHistoryLogs.documentdescription">
+              <div *ngIf="item?.DocumentHistoryLogs?.documentdescription">
                 <span class="f-12">Description</span> :
                 <span style="font-weight: 500">{{
-                  item.DocumentHistoryLogs.documentdescription
+                  item?.DocumentHistoryLogs?.documentdescription
                 }}</span>
               </div>
               <div
                 *ngIf="
-                  item.documentFinancialStatus &&
-                  item.documentFinancialStatus != 'UNKNOWN'
+                  item?.documentFinancialStatus &&
+                  item?.documentFinancialStatus != 'UNKNOWN'
                 "
               >
                 <span class="f-12">Finance Info</span> :
                 <span style="font-weight: 500">{{
-                  item.documentFinancialStatus
+                  item?.documentFinancialStatus
                 }}</span>
               </div>
             </div>
             <div class="f-12 rotateText col-sm-1">DONE</div>
           </div>
         </div>
-        <span class="bar" *ngIf="i != statusData.length - 1"></span>
+        <span class="bar" *ngIf="i != statusData?.length - 1"></span>
       </span>
     </div>
   </div>
@@ -90,30 +90,30 @@
       <div>
         <span class="f-13">Done by</span> :
         <span style="font-weight: 500"
-          >{{ comment.firstName }} {{ comment.lastName }}</span
+          >{{ comment?.firstName }} {{ comment?.lastName }}</span
         >
       </div>
-      <div *ngIf="comment.DocumentHistoryLogs.CreatedOn">
+      <div *ngIf="comment?.DocumentHistoryLogs?.CreatedOn">
         <span class="f-13">Time</span> :
         <span style="font-weight: 500">{{
-          comment.DocumentHistoryLogs.CreatedOn + "Z" | date: "medium"
+          comment?.DocumentHistoryLogs?.CreatedOn + "Z" | date: "medium"
         }}</span>
       </div>
-      <div *ngIf="comment.DocumentHistoryLogs.documentdescription">
+      <div *ngIf="comment?.DocumentHistoryLogs?.documentdescription">
         <span class="f-13">Description</span> :
         <span style="font-weight: 500">{{
-          comment.DocumentHistoryLogs.documentdescription
+          comment?.DocumentHistoryLogs?.documentdescription
         }}</span>
       </div>
       <div
         *ngIf="
-          comment.documentFinancialStatus &&
-          comment.documentFinancialStatus != 'UNKNOWN'
+          comment?.documentFinancialStatus &&
+          comment?.documentFinancialStatus != 'UNKNOWN'
         "
       >
         <span class="f-13">Finance Info</span> :
         <span style="font-weight: 500">{{
-          comment.documentFinancialStatus
+          comment?.documentFinancialStatus
         }}</span>
       </div>
     </div>
