@@ -285,7 +285,6 @@ isMobile:boolean;
     // }
     this.GRNDispalyData = this.ds.GRNLoadedData;
     this.GRNArrayLength = this.ds.GRNTableLength;
-    console.log(this.GRNArrayLength)
     if (this.GRNDispalyData.length > 10 && this.isDesktop) {
       this.showPaginatorGRNTable = true;
     }
@@ -442,8 +441,8 @@ isMobile:boolean;
             // invoiceData.append('docStatus',element.docStatus)
 
             invoiceData['docstatus'] = element.docstatus;
-            invoiceData['ITProjId'] = element?.Document.documentData?.ITProjId;
-            invoiceData['POTypeDescription'] = element?.Document?.documentData?.POTypeDescription;
+            invoiceData['ITProjId'] = element?.ITProjId;
+            invoiceData['POTypeDescription'] = element?.POTypeDescription;
             if (this.portal_name == 'vendorPortal') {
               if (invoiceData['docstatus'] == 'Need To Review') {
                 invoiceData['docstatus'] = 'Under Review';
@@ -455,6 +454,7 @@ isMobile:boolean;
           });
           this.invoiceDisplayData = invoicePushedArray;
           this.filterData = this.invoiceDisplayData;
+
           // this.filterForArchived();
           setTimeout(()=> {
             this.universalSearch(this.searchText);
