@@ -443,6 +443,7 @@ isMobile:boolean;
             invoiceData['docstatus'] = element.docstatus;
             invoiceData['ITProjId'] = element?.ITProjId;
             invoiceData['POTypeDescription'] = element?.POTypeDescription;
+            invoiceData['InvoiceType'] = element?.InvoiceType;
             if (this.portal_name == 'vendorPortal') {
               if (invoiceData['docstatus'] == 'Need To Review') {
                 invoiceData['docstatus'] = 'Under Review';
