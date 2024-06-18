@@ -420,7 +420,7 @@
                     }"
                   >
                     <label class="label-head" style="margin-bottom: -5px"
-                      >{{ value.TagLabel }}
+                      >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(req:YYYY-MM-DD)</span>
                       <span
                         *ngIf="value.isError >= 1"
                         [pTooltip]="value.ErrorDesc"
@@ -430,6 +430,15 @@
                           aria-hidden="true"
                         ></i
                       ></span>
+                      <!-- <span
+                        *ngIf="value.TagLabel.toLowerCase() == 'invoicedate'"
+                        pTooltip="Date format: "
+                        tooltipPosition="top"
+                        ><i
+                          class="fa fa-info-circle info_icon"
+                          aria-hidden="true"
+                        ></i
+                      ></span> -->
                       <span
                         *ngIf="value.TagLabel == 'PurchaseOrder' && editable"
                       >

@@ -508,7 +508,7 @@ export class Comparision3WayComponent
       if (this.permissionService.GRNPageAccess == true) {
         this.grnCreateBoolean = true;
         this.showPdf = false;
-        this.btnText = 'View PDF';
+        this.btnText = 'View invoice';
         this.currentTab = 'line';
         if (this.GRN_PO_Bool) {
           this.tagService.headerName = 'Create GRN with PO';
@@ -589,7 +589,7 @@ export class Comparision3WayComponent
       this.isLCMTab = true;
       this.readPONumbersLCM(this.dataService.entityID);
       this.showPdf = false;
-      this.btnText = 'View PDF';
+      this.btnText = 'View invoice';
       this.currentTab = "LCM";
 
       // this.selectionTabBoolean = true;
@@ -598,7 +598,7 @@ export class Comparision3WayComponent
       this.readDepartment();
       this.readCategoryData();
       this.showPdf = false;
-      this.btnText = 'View PDF';
+      this.btnText = 'View invoice';
       this.currentTab = "approver_selection";
       this.selectionTabBoolean = true;
       this.supportTabBoolean = true;
@@ -682,7 +682,7 @@ export class Comparision3WayComponent
 
     } else {
       this.showPdf = false;
-      this.btnText = 'View PDF';
+      this.btnText = 'View invoice';
     }
     if (this.currentTab === 'support') {
       this.supportTabBoolean = true;
@@ -1959,7 +1959,7 @@ export class Comparision3WayComponent
   viewPdf() {
     this.showPdf = !this.showPdf;
     if (this.showPdf != true) {
-      this.btnText = 'View PDF';
+      this.btnText = 'View invoice';
     } else {
       this.btnText = 'Close';
     }
