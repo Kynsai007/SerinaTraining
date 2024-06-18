@@ -1220,13 +1220,13 @@
                             [disabled]="!editable"
                             class="form-control f-12 input_disabled"
                             (change)="
-                            item.TagName == 'AdvancePercent'?onChangeAdvance(line.value,inputv.value): onChangeLineValue(
+                            documentType == 'advance' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?onChangeAdvance(line.value,inputv.value,item.TagName): onChangeLineValue(
                               item.TagName,
                               inputv.value,
                               line.value
                             )
                             "
-                            (blur)="item.TagName == 'AdvancePercent'?saveAdChanges():saveChanges()"
+                            (blur)="documentType == 'advance' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?saveAdChanges():saveChanges()"
                           />
                         </span>
                       </div>

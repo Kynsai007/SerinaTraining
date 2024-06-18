@@ -3562,31 +3562,40 @@ export class Comparision3WayComponent
     }
   }
 
-  onChangeAdvance(data,in_value){
-    let amount_old;
-    let lineNumber;
-    this.lineDisplayData.forEach(tag=>{
-      if(tag.TagName == 'AmountExcTax'){
-        tag.linedata.forEach(ele=>{
-          if(ele.DocumentLineItems.itemCode == data.itemCode){
-            amount_old = ele.DocumentLineItems.Value;
-            lineNumber = ele.DocumentLineItems.idDocumentLineItems;
-          }
-        })
-      }
-    })
-    this.advanceAPIbody = [{
-      "linenumber": data.itemCode,
-      "prev_value": amount_old.toString(),
-      "id_documentline": lineNumber,
-      "adv_percent": in_value
-    },
-    {
+  onChangeAdvance(data,in_value,tagName){
+    // let amount_old;
+    // let amt_line_id;
+    // let ad_line_id;
+    // let ad_percent_old;
+    // let prev_value_amt;
+    // let prev_value_ad;
+    // this.lineDisplayData.forEach(tag=>{
+    //   if(tag.TagName == 'AmountExcTax'){
+    //     prev_value_amt = data.Value.toString();
+    //     tag.linedata.forEach(ele=>{
+    //       if(ele.DocumentLineItems.itemCode == data.itemCode){
+    //         amount_old = ele.DocumentLineItems.Value;
+    //         amt_line_id = ele.DocumentLineItems.idDocumentLineItems;
+    //       }
+    //     })
+    //   }
+    //   if(tag.TagName == 'AdvancePercent'){
+    //     prev_value_ad = data.Value.toString();
+    //     tag.linedata.forEach(ele=>{
+    //       if(ele.DocumentLineItems.itemCode == data.itemCode){
+    //         ad_percent_old = ele.DocumentLineItems.Value;
+    //         ad_line_id = ele.DocumentLineItems.idDocumentLineItems;
+    //       }
+    //     })
+    //   }
+    // })
+    this.advanceAPIbody = {
       "linenumber": data.itemCode,
       "prev_value": data.Value.toString(),
       "id_documentline": data.idDocumentLineItems,
-      "adv_percent": in_value
-    }];
+      "value": in_value,
+      "tagname":tagName
+    };
   }
   saveAdChanges(){
     if(this.advanceAPIbody){
@@ -3597,14 +3606,23 @@ export class Comparision3WayComponent
           this.success("Updated succesfully");
           this.inv_line_total = 0;
           this.lineDisplayData.forEach(tag=>{
-            if(tag.TagName == 'AmountExcTax'){
-              tag.linedata.forEach(ele=>{
-                if(ele.DocumentLineItems.itemCode == this.advanceAPIbody[0].linenumber){
-                  ele.DocumentLineItems.Value = data?.result;
-                }
-                this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
-              })
+            let  tagName = 'AmountExcTax';
+            if(this.advanceAPIbody.tagname == 'AmountExcTax'){
+              tagName = 'AdvancePercent';
             }
+              tag.linedata.forEach(ele=>{
+                if(tag.TagName == tagName){
+                  if(ele.DocumentLineItems.itemCode == this.advanceAPIbody.linenumber){
+                    ele.DocumentLineItems.Value = data?.result?.value;
+                  }
+                }
+                // if(this.advanceAPIbody.tagname == 'AmountExcTax'){
+                //   this.inv_line_total = parseFloat(this.advanceAPIbody.value) + this.inv_line_total ;
+                // }
+                if(tag.TagName == 'AmountExcTax'){
+                  this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
+                }
+              })
           })
         } else {
           this.error(data?.msg);
