@@ -420,7 +420,7 @@
                     }"
                   >
                     <label class="label-head" style="margin-bottom: -5px"
-                      >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(req:YYYY-MM-DD)</span>
+                      >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
                         *ngIf="value.isError >= 1"
                         [pTooltip]="value.ErrorDesc"

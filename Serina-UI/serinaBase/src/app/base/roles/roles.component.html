@@ -1359,9 +1359,24 @@
             </div>
           </div>
 
-          <!-- <div class="inputDiv">
+          <div class="inputDiv">
             <label class="label-head">Select Department</label>
-            <select
+            <p-multiSelect
+              [options]="departmentData"
+              [(ngModel)]="selectedDept"
+              ngModel
+              #dept="ngModel"
+              (onChange)="onSelectDepartment($event)"
+              placeholder="Select department"
+              inputStyleClass="form-control inputBox inputForm selectpicker"
+              optionLabel="DepartmentName"
+              [maxSelectedLabels]="3"
+              [selectedItemsLabel]="'{0} items selected'"
+              name="dept"
+              required
+            >
+            </p-multiSelect>
+            <!-- <select
               class="form-control inputForm f-12 mb-1"
               name="dept"
               ngModel
@@ -1375,15 +1390,15 @@
               >
                 {{ item?.DepartmentName }}
               </option>
-            </select>
+            </select> -->
 
             <div
-              *ngIf="dept.invalid && (dept.touched || dept.dirty)"
+              *ngIf="dept?.invalid && (dept?.touched || dept?.dirty)"
               class="alertDiv"
             >
-              <div [hidden]="!dept.errors.required">**Required field</div>
+              <div [hidden]="!dept?.errors.required">**Required field</div>
             </div>
-          </div> -->
+          </div>
 
           <!-- <div *ngIf="editRoleName == 'Finance Controller'">
                   <label class="label-head">Amount</label>
@@ -1423,7 +1438,7 @@
               </ng-template>
             </p-autoComplete>
           </div>
-          <div class="inputDiv">
+          <!-- <div class="inputDiv">
             <div class="f-12 label-head">Select Department</div>
               <p-autoComplete
                 (onSelect)="onSelectEntityBody($event)"
@@ -1439,7 +1454,7 @@
                   </div>
                 </ng-template>
               </p-autoComplete>
-            </div>
+            </div> -->
 
             <!-- <div>
               <div class="f-13 label-head">Select Category</div>

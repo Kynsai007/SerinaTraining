@@ -322,6 +322,9 @@ export class SharedService {
   getDepartment() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readEntity_Dept/${this.userId}?en_id=${this.selectedEntityId}`).pipe(retry(3));
   }
+  getUserDepartment() {
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readUser_Dept`).pipe(retry(3));
+  }
   readCategory() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Customer/readEntityCategory/${this.userId}?ent_id=${this.selectedEntityId}`).pipe(retry(3));
   }

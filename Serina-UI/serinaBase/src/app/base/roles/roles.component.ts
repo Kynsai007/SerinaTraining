@@ -248,6 +248,8 @@ export class RolesComponent implements OnInit {
   header_role: string;
   is_grn_approval:boolean;
   searchText:string;
+  departmentData = [];
+  selectedDept = [];
 
   constructor(
     private dataService: DataService,
@@ -282,7 +284,7 @@ export class RolesComponent implements OnInit {
       this.party_type = 'Customer';
     }
     this.inIt();
-
+    this.readUserDepartment();
   }
 
   inIt() {
@@ -334,7 +336,6 @@ export class RolesComponent implements OnInit {
   }
 
   createRoles() {
-    console.log("hi");
     this.header_role = "Add new role";
     this.CreateNewRole = true;
     if (this.addRoleBoolean == true) {
@@ -699,7 +700,16 @@ export class RolesComponent implements OnInit {
 
     });
   }
-
+  readUserDepartment(){
+    this.departmentData = [];
+    this.sharedService.getUserDepartment().subscribe((data: any) => {
+      this.departmentData = data;
+    });
+  }
+  onSelectDepartment(event){
+    console.log(event)
+    this.selectedDept = event.value;
+  }
 
   readCategory(){
     this.sharedService.readCategory().subscribe((data:any)=>{
@@ -927,6 +937,12 @@ export class RolesComponent implements OnInit {
     this.toGetEntity();
     this.header_Ac = "Edit user";
     delete this.skip_approval_boolean;
+    this.selectedDept = [];
+    this.departmentData.filter(ele=>{
+      if(value?.dept_ids?.some(id=> ele.iduserdept ==id)){
+        this.selectedDept.push(ele)
+      };
+    })
     // this.router.navigate(['/customer/roles', `${value.idUser}editUser`]);
     if (value.isActive == 0) {
       this.resetBtnText = 'Resend Activation Link';
@@ -1014,12 +1030,14 @@ export class RolesComponent implements OnInit {
     this.toGetEntity();
   }
   UpdateUser() {
+    const dept_ids = this.getDept_ids();
     let editUser = {
       User: {
         firstName: this.firstName,
         lastName: this.lastName,
         UserName: this.userName,
         email: this.userEmail,
+        "dept_ids": dept_ids
       },
       userentityaccess: this.updateUsersEntityInfo,
     };
@@ -1130,13 +1148,20 @@ export class RolesComponent implements OnInit {
       });
     }
   }
-
+  getDept_ids(){
+    const dept_ids = []
+    this.selectedDept.forEach(ele=>{
+      dept_ids.push(ele.iduserdept);
+    })
+    return dept_ids
+  }
   toCreateUser() {
     if (
       this.updateUsersEntityInfo.length > 0 &&
       this.userName != '' &&
       this.userNotBoolean == false
     ) {
+      const dept_ids = this.getDept_ids();
 
       let createUserData = {
         n_cust: {
@@ -1145,6 +1170,7 @@ export class RolesComponent implements OnInit {
           lastName: this.lastName,
           userentityaccess: this.updateUsersEntityInfo,
           role_id: this.appied_permission_def_id,
+          "dept_ids": dept_ids
         },
         n_cred: {
           LogName: this.userName,
