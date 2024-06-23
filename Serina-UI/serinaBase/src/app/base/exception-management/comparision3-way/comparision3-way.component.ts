@@ -3598,7 +3598,7 @@ export class Comparision3WayComponent
     };
   }
   saveAdChanges(){
-    if(this.advanceAPIbody){
+    if(this.advanceAPIbody && this.advanceAPIbody.value != ''){
       this.SpinnerService.show();
       this.exceptionService.getAdPercentage(this.advanceAPIbody).subscribe((data:any)=>{
         this.SpinnerService.hide();
