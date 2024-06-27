@@ -1616,13 +1616,13 @@
             <div
               *ngIf="
                 supportTabBoolean &&
-                support_doc_list?.length > 0 || grnAttachmentString &&
+                support_doc_list?.length > 0 || grnAttachmentArray &&
                 !approval_selection_boolean
               "
             >
               <table class="table" *ngIf="support_doc_list?.length > 0">
                 <tr class="f-12 lineName">
-                  <th>S.No</th>
+                  <th style="width: 100px;">S.No</th>
                   <th>Name</th>
                   <th></th>
                 </tr>
@@ -1637,7 +1637,7 @@
                   >
                     {{ file }}
                   </td>
-                  <td>
+                  <td style="width: 100px;">
                     <i
                       class="fa fa-download pointer"
                       aria-hidden="true"
@@ -1646,27 +1646,26 @@
                   </td>
                 </tr>
               </table>
-
-              <table class="table" *ngIf="grnAttachmentString">
-                <h6 class="f-14"> GRN Attachment</h6>
+              <h6 class="f-14" *ngIf="grnAttachmentArray"> GRN Attachment</h6>
+              <table class="table" *ngIf="grnAttachmentArray">
                 <tr class="f-12 lineName">
-                  <th>S.No</th>
+                  <th style="width: 100px;">S.No</th>
                   <th>Name</th>
                   <th></th>
                 </tr>
-                <tr class="f-12">
-                  <td>1</td>
+                <tr class="f-12" *ngFor="let grn of grnAttachmentArray; let i=index">
+                  <td>{{i+1}}</td>
                   <td
                     class="break_word pointer f-12"
-                    (click)="grnAttachmentDoc(grnAttachmentString, 'view')"
+                    (click)="grnAttachmentDoc(grn.base64, 'view')"
                   >
-                    GRN attachment file
+                    GRN attachment file {{i+1}}
                   </td>
-                  <td>
+                  <td style="width: 100px;">
                     <i
                       class="fa fa-download pointer"
                       aria-hidden="true"
-                      (click)="grnAttachmentDoc(grnAttachmentString, 'down')"
+                      (click)="grnAttachmentDoc(grn.base64, 'down')"
                     ></i>
                   </td>
                 </tr>

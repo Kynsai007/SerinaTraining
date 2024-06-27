@@ -390,7 +390,7 @@ export class Comparision3WayComponent
   // invoiceType: string = '';
   // disableButton: boolean = false;
   advanceAPIbody:any;
-  grnAttachmentString:any;
+  grnAttachmentArray:any;
 
   constructor(
     fb: FormBuilder,
@@ -2950,7 +2950,7 @@ export class Comparision3WayComponent
 
   getGrnAttachment(){
     this.SharedService.getGRNAttachment().subscribe((data:any)=>{
-      this.grnAttachmentString = data?.base64;
+      this.grnAttachmentArray = data;
     },err=>{
       this.error("Server error");
     })

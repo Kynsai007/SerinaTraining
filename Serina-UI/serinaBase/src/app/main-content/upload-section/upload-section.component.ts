@@ -1756,14 +1756,14 @@ export class UploadSectionComponent implements OnInit {
             const lastreason = JSON.parse(this.messages[lastMessageIndex]).reason;
             const doc_id = JSON.parse(this.messages[lastMessageIndex]).doc_id;
             // Check if it's the last event.
-            if(lastreason != ''){
-              // this.messageService.add({
-              //     severity: 'error',
-              //     summary: 'error',
-              //     detail: lastreason,
-              //   });
-                this.error(lastreason)
-            }
+            // if(lastreason != ''){
+            //   // this.messageService.add({
+            //   //     severity: 'error',
+            //   //     summary: 'error',
+            //   //     detail: lastreason,
+            //   //   });
+            //     this.error(lastreason)
+            // }
             if(lastEvent == 'File Processed successfully.'){
               // this.messageService.add({
               //   severity: 'success',
