@@ -532,8 +532,8 @@ export class SharedService {
   // }
 
   // PO Related
-  getPoNumbers(vac_id,ent_id): Observable<any>{
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/VendorPortal/getponumbers/${vac_id}?ent_id=${ent_id}`).pipe(retry(3));
+  getPoNumbers(param): Observable<any>{
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/VendorPortal/getponumbers/${this.userId}${param}`).pipe(retry(3));
   }
   getCurrency(vId){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/VendorPortal/getcurrency/${vId}/?u_id=${this.userId}`).pipe(retry(2))

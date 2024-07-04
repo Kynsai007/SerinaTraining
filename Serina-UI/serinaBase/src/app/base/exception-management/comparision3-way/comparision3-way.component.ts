@@ -363,7 +363,7 @@ export class Comparision3WayComponent
     { header: 'Project ID', field: 'gl_code' },
     // { header: 'Allocation ID', field: 'iddynamiccostallocation' },
     { header: 'Service ID', field: 'item_number' },
-    // { header: 'Object Account', field: 'object_account' },
+    { header: 'VAT Group', field: 'segment' },
     // { header: 'Period Month ', field: 'period_month' },
     // { header: 'Sub Ledger', field: 'subledger' },
   ]
@@ -1497,10 +1497,11 @@ export class Comparision3WayComponent
       }
     }
     let updateValue = {
-      documentLineItemID: data.idDocumentLineItems,
+      documentLineItemID: data?.idDocumentLineItems,
       OldValue: data.Value || '',
       NewValue: value,
     };
+    console.log(updateValue)
     this.updateInvoiceData.push(updateValue);
   }
 

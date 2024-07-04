@@ -261,7 +261,10 @@
 </mat-drawer-container> -->
 
 <div class="layout">
-  <nav class="desktop d-flex justify-content-between">
+  <nav class="desktop d-flex justify-content-between"
+  [ngClass]="
+      DS.configData.client_name == 'Cenomi' ? 'cenomiBg' : ''
+    ">
     <div class="d-flex" style="gap: 60px">
       <div>
         <img
@@ -509,7 +512,8 @@
     <!-- Copyrights@2024 -->
     <div>
       <a href="static-content/DPA" target="_blank">{{isMobile? 'DPA':'Data Processing Agreement (DPA)'}}</a> | 
-      <a href="static-content/privacy-policy" target="_blank">Privacy policy</a>
+      <a href="static-content/privacy-policy" target="_blank">Privacy policy</a> | 
+      <a href="mailto:help.serina@datasemantics.co">Help</a>
     </div>
   </footer>
 </div>

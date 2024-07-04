@@ -83,7 +83,7 @@ export class UploadSectionComponent implements OnInit {
   poNumbersList: any[];
   filteredPO = [];
   displaySelectPdfBoolean: boolean;
-  vendorAccountId: number;
+  vendorAccountId: any;
   vendorAccountName: any;
   vendorAccount = [];
   vendorAccountByEntity = [];
@@ -262,14 +262,15 @@ export class UploadSectionComponent implements OnInit {
   serviceInvoiceAccess: boolean;
   vendorAccess: boolean;
   selectedCategory = 'credit';
+  selectedCategory_ideal:string;
   invNumbersList = [];
   filteredInv: any[];
   returnInvArr = [];
   invTypeArr = [
-    { name:'LCM', value:'LCM'},
+    // { name:'LCM', value:'LCM'},
     { name:'Non-PO', value:'nonPO'},
     { name:'Single PO', value:'singlePO'},
-    { name:'Multiple PO', value:'multiPO'}
+    // { name:'Multiple PO', value:'multiPO'}
   ];
   categoryArr = [];
   final: string;
@@ -297,7 +298,7 @@ export class UploadSectionComponent implements OnInit {
     private http: HttpClient,
     public route: Router,
     private docService: DocumentService,
-    private dataService: DataService,
+    public dataService: DataService,
     private spinnerService: NgxSpinnerService,
     private dateFilterService: DateFilterService,
     private alertService: AlertService,
@@ -324,12 +325,7 @@ export class UploadSectionComponent implements OnInit {
     this.DocumentTypes = this.dataService.configData.documentTypes;
     this.serviceInvoiceAccess = this.dataService?.configData?.serviceInvoices;
     this.vendorAccess = this.dataService?.configData?.vendorInvoices;
-    if(this.dataService.configData.client_name == 'Enova'){
-      this.invTypeArr = [
-        { name:'Invoice', value:'singlePO'},
-        { name:'Non PO Invoice', value:'nonPO'}
-      ];
-    }
+
     if (!this.vendorAccess && this.serviceInvoiceAccess) {
       this.selectedOption = 'Service';
     } else {
@@ -342,7 +338,23 @@ export class UploadSectionComponent implements OnInit {
     }
     this.isCustomerPortal = this.sharedService.isCustomerPortal;
     if (this.isCustomerPortal) {
-      this.portal_name = "customer"
+      this.portal_name = "customer";
+    } else {
+      this.getPONumbers('','');
+    }
+    if(this.dataService.configData.client_name == 'Enova'){
+      this.invTypeArr = [
+        { name:'Invoice', value:'singlePO'},
+        { name:'Non PO Invoice', value:'nonPO'}
+      ];
+    } else if (this.dataService.configData.client_name == 'Cenomi' && !this.isCustomerPortal) {
+      // this.onSelectPOType('singlePO','ideal');
+      this.invTypeArr = [
+        { name:'Invoice', value:'singlePO'},
+        { name:'Advance - Tax', value:'advance'},
+        { name:'Advance - Pro-forma', value:'proforma'},
+        { name:'Credit note', value:'credit'}
+      ];
     }
     if (this.PS.uploadPermissionBoolean) {
       this.permissions();
@@ -486,6 +498,7 @@ export class UploadSectionComponent implements OnInit {
         this.displaySelectPdfBoolean = true;
       } else if(val == 'singlePO'){
         this.displaySelectPdfBoolean = false;
+        this.getCategory();
       }
       // this.LCMBoolean = 'No';
       // if (val == 'singlePO' || val == "nonPO") {
@@ -514,11 +527,7 @@ export class UploadSectionComponent implements OnInit {
         this.LCMBoolean = 'Yes';
         this.getCurrency(this.vendorAccountId);
       } else if(val == 'singlePO') {
-        this.categoryArr = [
-          { name:'Credit Note', value:'credit'},
-          { name:'Retention Invoice', value:'returns'},
-          { name:'Advance Invoice', value:'advance'}
-        ]
+        this.getCategory();
       } else if(val == 'nonPO') {
         this.categoryArr = [
           { name:'Credit Note', value:'credit'},
@@ -526,6 +535,23 @@ export class UploadSectionComponent implements OnInit {
           { name:'Advance Invoice', value:'advance'}
         ]
       }
+    }
+  }
+
+  getCategory(){
+    if (this.dataService.configData.client_name == 'Cenomi') {
+      this.categoryArr = [
+        { name:'Invoice', value:'singlePO'},
+        { name:'Advance - Tax', value:'nonPO'},
+        { name:'Advance - Pro-forma', value:'nonPO'},
+        { name:'Credit note', value:'credit'}
+      ];
+    } else {
+      this.categoryArr = [
+        { name:'Credit Note', value:'credit'},
+        { name:'Retention Invoice', value:'returns'},
+        { name:'Advance Invoice', value:'advance'}
+      ]
     }
   }
 
@@ -770,6 +796,10 @@ export class UploadSectionComponent implements OnInit {
   selectedPO(event) {
     if(this.viewType == 'ideal'){
       this.selectedPONumber = event.PODocumentID;
+      if(!this.isCustomerPortal){
+        this.vendorAccountId = event.vendorAccountId;
+        this.selectedEntityId = event.entityID;
+      }
       this.displayUploadOpt();
       this.readPOLines(event.PODocumentID);
     } else {
@@ -1217,8 +1247,26 @@ export class UploadSectionComponent implements OnInit {
   }
 
   getPONumbers(v_id,ent_id) {
-    this.sharedService.getPoNumbers(v_id,ent_id).subscribe((data: any) => {
-      this.poNumbersList = data;
+    let param;
+    if(this.isCustomerPortal){
+      param = `?vendorAccountID=${v_id}&ent_id=${ent_id}`;
+    } else {
+      param = `?account=yes`;
+    }
+    this.sharedService.getPoNumbers(param).subscribe((data: any) => {
+      if(this.isCustomerPortal){
+        this.poNumbersList = data;
+      } else {
+        let poData = [];
+        for(const x in data){
+          this.vendorAccountId = x
+          data[x].forEach(ele=> {
+            ele['vendorAccountId'] = x;
+            poData.push(ele)
+          })
+        }
+        this.poNumbersList = poData;
+      }
     })
   }
 

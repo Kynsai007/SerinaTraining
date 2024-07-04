@@ -115,7 +115,7 @@
               <option value="Service">Service invoice</option>
             </select>
           </div>
-          <div class="selectFilter">
+          <div class="selectFilter" *ngIf="isCustomerPortal">
             <label class="f-12 mb-0">Select Entity</label>
             <p-autoComplete
               placeholder="Search or select from dropdown"
@@ -258,6 +258,7 @@
               class="form-control accountSelect f-12"
               (change)="onSelectPOType($event.target.value, 'ideal')"
               name="invoiceType"
+              [(ngModel)]="selectedInvoiceType"
               ngModel
               [value]="invoiceType"
               required
@@ -268,10 +269,31 @@
             </option>
             </select>
           </div>
+          <!-- <div
+            class="selectFilter"
+            *ngIf="
+              viewType == 'ideal' &&
+              (selectedInvoiceType == 'singlePO' ||
+              selectedInvoiceType == 'nonPO') && (dataService.configData.client_name == 'Cenomi' && !isCustomerPortal)
+            "
+          >
+            <label class="f-12 mb-0">Select Category</label>
+            <select
+              class="form-control accountSelect f-12"
+              [(ngModel)]="selectedCategory_ideal"
+              name="invoice_category"
+              ngModel
+            >
+              <option value="" disabled></option>
+              <option *ngFor="let item of categoryArr" [value]="item.value">
+                {{ item.name }}
+              </option>
+            </select>
+          </div> -->
           <div
             *ngIf="
               viewType == 'ideal' &&
-              selectedInvoiceType == 'singlePO'
+              selectedInvoiceType == 'singlePO' || (dataService.configData.client_name == 'Cenomi' && !isCustomerPortal)
             "
             class="selectFilter"
           >

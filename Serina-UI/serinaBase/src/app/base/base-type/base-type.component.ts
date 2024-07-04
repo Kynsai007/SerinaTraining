@@ -301,7 +301,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       if(this.userDetails.userdetails.show_updates){
         this.releaseDocs();
       }
-      if(this.userDetails?.userdetails?.lastName[0]){
+      if(this.userDetails?.userdetails?.lastName){
         this.name_short = this.userDetails?.userdetails?.firstName[0] + this.userDetails?.userdetails?.lastName[0];
       } else {
         this.name_short = this.userDetails?.userdetails?.firstName[0];

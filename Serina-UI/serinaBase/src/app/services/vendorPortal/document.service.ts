@@ -163,7 +163,7 @@ export class DocumentService {
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/Vendor/updateVendorUser/updateVendorUserID/${this.userId}?vu_id=${this.cuserID}`, data).pipe(retry(3));
   }
   readVendorAccountsData(ent_id){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorAccount/${this.userId}?ent_id=${ent_id}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Vendor/vendorAccount/${this.userId}`).pipe(retry(3));
   }
 
   // vendor contact detalis
