@@ -450,7 +450,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
           `/vendorPortal/invoice/${route}/${e.idDocument}`,
         ]);
       } else if (this.userType == 'customer_portal') {
-        if (e.documentsubstatusID != 30 && route == 'serviceDetails') {
+        if (e.documentsubstatusID != 30 && route != 'InvoiceDetails') {
           this.router.navigate([`customer/invoice/${route}/${e.idDocument}`]);
         } else {
           this.router.navigate([`customer/invoice/comparision-docs/${e.idDocument}`]);

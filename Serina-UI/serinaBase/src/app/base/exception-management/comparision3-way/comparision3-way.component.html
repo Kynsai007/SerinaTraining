@@ -1647,29 +1647,36 @@
                 </tr>
               </table>
               <h6 class="f-14" *ngIf="grnAttachmentArray"> GRN Attachment</h6>
-              <table class="table" *ngIf="grnAttachmentArray">
-                <tr class="f-12 lineName">
-                  <th style="width: 100px;">S.No</th>
-                  <th>Name</th>
-                  <th></th>
-                </tr>
-                <tr class="f-12" *ngFor="let grn of grnAttachmentArray; let i=index">
-                  <td>{{i+1}}</td>
-                  <td
-                    class="break_word pointer f-12"
-                    (click)="grnAttachmentDoc(grn.base64, 'view')"
-                  >
-                    GRN attachment file {{i+1}}
-                  </td>
-                  <td style="width: 100px;">
-                    <i
-                      class="fa fa-download pointer"
-                      aria-hidden="true"
-                      (click)="grnAttachmentDoc(grn.base64, 'down')"
-                    ></i>
-                  </td>
-                </tr>
-              </table>
+              <ng-container *ngIf="grnAttachmentArray">
+                <ng-container *ngFor="let attachment of grnAttachmentArray">
+                  <div class="f-12" *ngIf="attachment && attachment[0]">GRN number: {{ attachment[0]?.grnNumber }}</div>
+                  <table class="table" *ngIf="attachment && attachment[0]">
+                    <tr class="f-12 lineName">
+                      <th style="width: 100px;">S.No</th>
+                      <th>Name</th>
+                      <th></th>
+                    </tr>
+                    <tr class="f-12" *ngFor="let grn of attachment; let i=index">
+                      <td>{{i+1}}</td>
+                      <td
+                        class="break_word pointer f-12"
+                        (click)="grnAttachmentDoc(grn.base64, 'view')"
+                      >
+                        GRN attachment file {{i+1}}
+                      </td>
+                      <td style="width: 100px;">
+                        <i
+                          class="fa fa-download pointer"
+                          aria-hidden="true"
+                          (click)="grnAttachmentDoc(grn.base64, 'down')"
+                        ></i>
+                      </td>
+                    </tr>
+                  </table>
+                </ng-container>
+              </ng-container>
+
+
               <p class="f-11">
                 *Supporting document is not being read by Serina, please check
                 and review manually.
@@ -2014,7 +2021,7 @@
             <button
               *ngIf="fin_boolean"
               class="primary_btn f-12"
-              (click)="financeApprove()"
+              (click)="open_dialog('approve')"
             >
               Approve
             </button>

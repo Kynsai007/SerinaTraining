@@ -333,7 +333,7 @@ export class Comparision3WayComponent
   inv_line_total:number;
   entityList: any;
   entityName: any;
-  commentsBool: boolean = true;
+  commentsBool: boolean;
   selected_GRN_total: number;
 
   userList_approved = [];
@@ -1832,8 +1832,11 @@ export class Comparision3WayComponent
 
   financeApprove() {
     this.SpinnerService.show();
+    // this.rejectModalHeader = 'Add Approval Comments';
+    // this.displayrejectDialog = true;
+    // Document approved by ${this.userDetails['userdetails'].firstName} \n comments: 
     let desc = {
-      "desp": `Document approved by ${this.userDetails['userdetails'].firstName}`
+      "desp": `${this.rejectionComments}`
     }
     this.SharedService.financeApprovalPermission(desc).subscribe(
       (data: any) => {
@@ -2528,11 +2531,11 @@ export class Comparision3WayComponent
   }
   addComments(val) {
     this.rejectionComments = val;
-    if (this.rejectionComments.length > 9) {
-      this.commentsBool = false;
-    } else {
-      this.commentsBool = true;
-    }
+    // if (this.rejectionComments.length > 9) {
+    //   this.commentsBool = false;
+    // } else {
+    //   this.commentsBool = true;
+    // }
   }
   removeLine(itemCode) {
     this.exceptionService.removeLineData(itemCode).subscribe((data: any) => {
@@ -2962,7 +2965,7 @@ export class Comparision3WayComponent
    base64ToBlob(base64) {
       // Extract the MIME type from the Base64 string if present
       const base64Pattern = /^data:(.*);base64,(.*)$/;
-      const matches = base64.match(base64Pattern);
+      const matches = base64?.match(base64Pattern);
 
       let mimeType;
       let data;
