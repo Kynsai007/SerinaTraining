@@ -2154,12 +2154,14 @@ export class Comparision3WayComponent
     this.userList_approved = [];
     this.SpinnerService.show();
     this.exceptionService.getApprovedUsers().subscribe((data:any)=>{
-      this.userList_approved.push({firstName: "Vendor",idUser: 0,lastName: ""});
 
       if(typeof(data?.result) != "string"){
         data?.result?.forEach(el=>{
           this.userList_approved.push(el);
         });
+      } else {
+      this.userList_approved.push({firstName: "Vendor",idUser: 0,lastName: ""});
+
       }
       this.SpinnerService.hide();
     })
