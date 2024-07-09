@@ -1544,7 +1544,9 @@
             role="tabpanel"
             aria-labelledby="dynamic-tab"
           >
+            <div class="f-12 d-flex justify-content-end">Total Tax - {{totalTaxDynamic.toFixed(2)}}</div>
             <div *ngFor="let dynamic of dynamicdata; let i = index">
+
               <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
               <div class="displayFlex">
                 <div *ngFor="let item of dynamicAllocationFileds">
@@ -2007,7 +2009,7 @@
             </button>
 
             <button
-              *ngIf="submitBtn_boolean && editable && !fin_boolean"
+              *ngIf="submitBtn_boolean && editable && !fin_boolean && !isAprUser"
               class="primary_btn f-12"
               (click)="
                 approval_selection_boolean && isLCMCompleted
@@ -2019,7 +2021,7 @@
             </button>
 
             <button
-              *ngIf="fin_boolean"
+              *ngIf="fin_boolean || isAprUser"
               class="primary_btn f-12"
               (click)="open_dialog('approve')"
             >

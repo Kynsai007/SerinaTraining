@@ -391,6 +391,8 @@ export class Comparision3WayComponent
   // disableButton: boolean = false;
   advanceAPIbody:any;
   grnAttachmentArray:any;
+  isAprUser: boolean;
+  totalTaxDynamic = 0;
 
   constructor(
     fb: FormBuilder,
@@ -852,6 +854,7 @@ export class Comparision3WayComponent
           this.normalCostAllocation = false;
           data?.ok?.dynamic_cost_alloc?.forEach(dynamic =>{
               this.dynamicdata.push(dynamic);
+              this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic.calculatedtax);
             })
         // }
         response?.headerdata?.forEach((element) => {
@@ -863,6 +866,10 @@ export class Comparision3WayComponent
           pushedArrayHeader.push(this.mergedArray);
         });
         this.inputData = pushedArrayHeader;
+        let ap_id = response?.approverData?.to_approve_by[0];
+        if(ap_id == this.SharedService.userId) {
+          this.isAprUser = true;
+        }
         // let inv_num_data: any = this.inputData.filter(val => {
         //   return val.TagLabel == 'InvoiceId';
         // })
