@@ -186,7 +186,7 @@ export class RolesComponent implements OnInit {
   max_role_amount = 0;
   role_priority: number;
 
-  financeapproveDisplayBoolean: boolean;
+  financeApproveDisplayBoolean: boolean;
   addRoleBoolean: boolean;
   vendorsSubscription: Subscription;
   entitySubscription: Subscription;
@@ -250,7 +250,9 @@ export class RolesComponent implements OnInit {
   searchText:string;
   departmentData = [];
   selectedDept = [];
-
+  entitySelection_user = [];
+  serviceData: any[];
+  selectedService = [];
   constructor(
     private dataService: DataService,
     private sharedService: SharedService,
@@ -296,7 +298,7 @@ export class RolesComponent implements OnInit {
       this.getDisplayTotalRoles();
       this.getVendorsListTocreateNewVendorLogin();
       this.getVendorSuperUserList();
-      this.financeapproveDisplayBoolean =
+      this.financeApproveDisplayBoolean =
         this.settingsService.finaceApproveBoolean;
       this.addRoleBoolean = this.permissionService.addUserRoleBoolean;
       this.isVendorportalRequired = this.dataService?.configData?.enablevendorportal;
@@ -636,16 +638,42 @@ export class RolesComponent implements OnInit {
     }
   }
   onSelectEntity(value) {
-    delete this.skip_approval_boolean;
-    // this.newEntities = value;
-    this.entities.push({ idEntity: value.idEntity, EntityName: value.EntityName })
-    if (this.selectedEntitys?.length > 0 && this.AccessPermissionTypeId == 4 && this.entityBaseApproveBoolean) {
-      if (
-        this.selectedEntitys[this.selectedEntitys?.length - 1]?.entity &&
-        this.selectedEntitys[this.selectedEntitys?.length - 1]?.subRole &&
-        this.selectedEntitys[this.selectedEntitys?.length - 1]?.userPriority &&
-        this.selectedEntitys[this.selectedEntitys?.length - 1]?.preApprove
-      ) {
+    if(this.financeApproveDisplayBoolean){
+      delete this.skip_approval_boolean;
+      // this.newEntities = value;
+      this.entities.push({ idEntity: value.idEntity, EntityName: value.EntityName })
+      if (this.selectedEntitys?.length > 0 && this.AccessPermissionTypeId == 4 && this.entityBaseApproveBoolean) {
+        if (
+          this.selectedEntitys[this.selectedEntitys?.length - 1]?.entity &&
+          this.selectedEntitys[this.selectedEntitys?.length - 1]?.subRole &&
+          this.selectedEntitys[this.selectedEntitys?.length - 1]?.userPriority &&
+          this.selectedEntitys[this.selectedEntitys?.length - 1]?.preApprove
+        ) {
+          this.sharedService.selectedEntityId = value.idEntity;
+          this.selectedEntityId = value.idEntity;
+          this.readDeparment();
+          this.selectedEntitys.push({
+            entity: value.EntityName,
+            EntityID: value.idEntity,
+          });
+          this.updateUsersEntityInfo.push({
+            idUserAccess: null,
+            EntityID: value.idEntity,
+            DepartmentID : null,
+            categoryID :null,
+            subRole : this.appied_permission_def_id
+          });
+          this.selectedEntityName = value.EntityName;
+          this.isEvrythingGood =  true;
+          this.checkStatus(0,'approval');
+        } else {
+          // this.alertBoolean = true;
+          // this.displayResponsive = true;
+          // this.deleteBtnText = ;
+          this.alertFun('Please add all the mandatory fields')
+          this.isEvrythingGood =  false;
+        }
+      } else {
         this.sharedService.selectedEntityId = value.idEntity;
         this.selectedEntityId = value.idEntity;
         this.readDeparment();
@@ -656,41 +684,58 @@ export class RolesComponent implements OnInit {
         this.updateUsersEntityInfo.push({
           idUserAccess: null,
           EntityID: value.idEntity,
-          DepartmentID : null,
+          DepartmentID : null, 
           categoryID :null,
           subRole : this.appied_permission_def_id
         });
         this.selectedEntityName = value.EntityName;
-        this.isEvrythingGood =  true;
         this.checkStatus(0,'approval');
-      } else {
-        // this.alertBoolean = true;
-        // this.displayResponsive = true;
-        // this.deleteBtnText = ;
-        this.alertFun('Please add all the mandatory fields')
-        this.isEvrythingGood =  false;
       }
+      this.subRole = '';
+      this.getSkipList();
+      this.checkEntity();
     } else {
-      this.sharedService.selectedEntityId = value.idEntity;
-      this.selectedEntityId = value.idEntity;
-      this.readDeparment();
-      this.selectedEntitys.push({
-        entity: value.EntityName,
-        EntityID: value.idEntity,
-      });
-      this.updateUsersEntityInfo.push({
-        idUserAccess: null,
-        EntityID: value.idEntity,
-        DepartmentID : null,
-        categoryID :null,
-        subRole : this.appied_permission_def_id
-      });
-      this.selectedEntityName = value.EntityName;
-      this.checkStatus(0,'approval');
+      this.withoutApproval(value);
     }
-    this.subRole = '';
-    this.getSkipList();
-    this.checkEntity();
+    
+  }
+
+  withoutApproval(event){
+    if(event?.itemValue){
+      let bool,index,arr;
+      this.selectedEntitys.filter((x,i,array)=>{
+        if(event.itemValue.idEntity == x.EntityID){
+          index = i;
+          arr = x
+        }
+      })
+      if(event?.itemValue?.idEntity == arr?.EntityID){
+        this.selectedEntitys.splice(index,1);
+        this.updateUsersEntityInfo.push({ idUserAccess: arr?.idUserAccess, EntityID: arr.EntityID,DepartmentID : null,
+          categoryID :null,
+          subRole : this.appied_permission_def_id })
+      } else {
+        this.selectedEntitys.push({ entity: event?.itemValue?.EntityName, EntityID: event?.itemValue?.idEntity });
+        this.updateUsersEntityInfo.push({ idUserAccess: null, EntityID: event?.itemValue?.idEntity,DepartmentID : null,
+          categoryID :null,
+          subRole : this.appied_permission_def_id })
+      }
+    } else if(event.value.length>0){
+      event?.value?.forEach((obj1)=>{
+        let isIdPresent = this.selectedEntitys.some(obj=> obj1.idEntity == obj.EntityID);
+          if(!isIdPresent){
+            this.selectedEntitys.push({ entity: obj1.EntityName, EntityID: obj1.idEntity });
+            this.updateUsersEntityInfo.push({ 
+              idUserAccess: null, 
+              EntityID: obj1.idEntity,
+              DepartmentID : null,
+              categoryID :null,
+              subRole : this.appied_permission_def_id})
+            this.selectedEntityName = obj1.EntityName;
+          }
+
+      });
+    }
   }
 
   readDeparment(){
@@ -706,8 +751,24 @@ export class RolesComponent implements OnInit {
       this.departmentData = data;
     });
   }
+  readServiceData(){
+    this.serviceData = [];
+    this.sharedService.readserviceprovider().subscribe((data: any) => {
+      let arr = [];
+      data.forEach(element => {
+        let spData = { ...element.Entity, ...element.ServiceProvider };
+        arr.push(spData);
+      });
+      this.serviceData = arr.filter((el,i,array)=> 
+        i === array.findIndex(val=> el.ServiceProviderName === val.ServiceProviderName));      
+    });
+  }
+  onSelectService(event){
+    // this.serviceList = [];
+    // event.value.forEach(el=>this.serviceList.push(el.ServiceProviderName));
+    this.selectedService = event?.value;
+  }
   onSelectDepartment(event){
-    console.log(event)
     this.selectedDept = event.value;
   }
 
@@ -935,9 +996,11 @@ export class RolesComponent implements OnInit {
 
   editUser(value) {
     this.toGetEntity();
+    this.readServiceData();
     this.header_Ac = "Edit user";
     delete this.skip_approval_boolean;
     this.selectedDept = [];
+    this.selectedService = [];
     this.departmentData.filter(ele=>{
       if(value?.dept_ids?.some(id=> ele.iduserdept ==id)){
         this.selectedDept.push(ele)
@@ -968,6 +1031,14 @@ export class RolesComponent implements OnInit {
     this.sharedService
       .readEntityUserData(value.idUser)
       .subscribe((data: any) => {
+        let entityData = [];
+        this.entitySelection_user = [];
+        this.selectedService = []
+        this.serviceData.forEach(ser=>{
+          if(data?.service_providers?.some(id=> ser?.ServiceProviderName == id)){
+            this.selectedService.push(ser);
+          }
+        })
         data.result.forEach((element) => {
           // if (!element.EntityBody && !element.Department) {
           //   this.selectedEntitys.push({ entity: element.Entity.EntityName, entityBody: element.EntityBody, entityDept: element.DepartmentName, idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody, DepartmentID: element.idDepartment });
@@ -978,6 +1049,8 @@ export class RolesComponent implements OnInit {
           //   this.updateEntityUserDummy.push({ idUserAccess: element.UserAccess.idUserAccess, EntityID: element.Entity.idEntity, EntityBodyID: element.EntityBody.idEntityBody, DepartmentID: element.DepartmentName });
           // }
           // else {
+            let merge = { ...element.Entity,...element.EntityBody,...element.UserAccess,...element.Department};
+            entityData.push(merge);
             if (element.Entity) {
               // Push the Entity object into the entities array
               this.entities.push({ idEntity: element.Entity.idEntity, EntityName: element.Entity.EntityName }); 
@@ -1012,9 +1085,17 @@ export class RolesComponent implements OnInit {
             DepartmentID: element.Department?.idDepartment,
             subRole:element.UserAccess?.idUserAccess
           });
+          if(!this.financeApproveDisplayBoolean){
+              this.entitySelection_user = this.entityList.filter(ele=>{
+                return  entityData?.some(id => id.idEntity == ele.idEntity)
+              })
+          }
           // }
         });
-        this.checkEntity()
+        if(this.financeApproveDisplayBoolean){
+          this.checkEntity();
+        }
+
       });
   }
 
@@ -1031,14 +1112,17 @@ export class RolesComponent implements OnInit {
   }
   UpdateUser() {
     const dept_ids = this.getDept_ids();
+    const s_list = this.getServiceNames();
     let editUser = {
       User: {
         firstName: this.firstName,
         lastName: this.lastName,
         UserName: this.userName,
         email: this.userEmail,
-        "dept_ids": dept_ids
+        "dept_ids": dept_ids,
+        
       },
+      "service_access":s_list,
       userentityaccess: this.updateUsersEntityInfo,
     };
     if (this.selectedEntitys?.length > 0 && this.AccessPermissionTypeId == 4 && this.entityBaseApproveBoolean) {
@@ -1119,6 +1203,7 @@ export class RolesComponent implements OnInit {
 
   createCustomerUserPage() {
     this.toGetEntity();
+    this.readServiceData();
     // this.headerEdituserboolean = false;
     this.header_Ac = "Add new user";
     // this.normalRole = false;
@@ -1155,6 +1240,13 @@ export class RolesComponent implements OnInit {
     })
     return dept_ids
   }
+  getServiceNames(){
+    const serviceList = []
+    this.selectedService.forEach(ele=>{
+      serviceList.push(ele.ServiceProviderName);
+    })
+    return serviceList
+  }
   toCreateUser() {
     if (
       this.updateUsersEntityInfo.length > 0 &&
@@ -1162,7 +1254,7 @@ export class RolesComponent implements OnInit {
       this.userNotBoolean == false
     ) {
       const dept_ids = this.getDept_ids();
-
+      const s_list = this.getServiceNames();
       let createUserData = {
         n_cust: {
           email: this.userEmail,
@@ -1170,7 +1262,8 @@ export class RolesComponent implements OnInit {
           lastName: this.lastName,
           userentityaccess: this.updateUsersEntityInfo,
           role_id: this.appied_permission_def_id,
-          "dept_ids": dept_ids
+          "dept_ids": dept_ids,
+          "service_access": s_list
         },
         n_cred: {
           LogName: this.userName,

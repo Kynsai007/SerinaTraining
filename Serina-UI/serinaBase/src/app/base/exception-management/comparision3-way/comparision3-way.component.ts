@@ -393,6 +393,11 @@ export class Comparision3WayComponent
   grnAttachmentArray:any;
   isAprUser: boolean;
   totalTaxDynamic = 0;
+  ap_enabled_exc: boolean;
+  projectIdArr: any;
+  projectCArr: any;
+  filteredProject: any[];
+  temp_header_data: any[];
 
   constructor(
     fb: FormBuilder,
@@ -492,7 +497,9 @@ export class Comparision3WayComponent
     }
     if (this.router.url.includes('InvoiceDetails') || this.router.url.includes('comparision-docs')) {
       this.Itype = 'Invoice';
-      this.readLineItems();
+      if(this.editable){
+        this.readLineItems();
+      }
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
     } else if (this.router.url.includes('GRNDetails')) {
@@ -835,6 +842,9 @@ export class Comparision3WayComponent
           this.docType = response.doc_type;
           this.documentType = response.doc_type.toLowerCase();
         }
+        if(this.docType == 'Credit Note'){
+          this.getProjectData();
+        }
         this.getInvTypes();
         // this.lineDataConversion();
         if(this.pageType == "mapping"){
@@ -866,6 +876,7 @@ export class Comparision3WayComponent
           pushedArrayHeader.push(this.mergedArray);
         });
         this.inputData = pushedArrayHeader;
+        this.temp_header_data =  response?.headerdata?.slice();
         let ap_id = response?.approverData?.to_approve_by[0];
         if(ap_id == this.SharedService.userId) {
           this.isAprUser = true;
@@ -1508,7 +1519,6 @@ export class Comparision3WayComponent
       OldValue: data.Value || '',
       NewValue: value,
     };
-    console.log(updateValue)
     this.updateInvoiceData.push(updateValue);
   }
 
@@ -1752,7 +1762,14 @@ export class Comparision3WayComponent
       this.GRNDialogBool = false;
       this.batchData = data[this.invoiceID]?.complete_status;
       let last_msg = this.batchData[this.batchData.length - 1].msg;
+      let sub_status = this.batchData[this.batchData.length - 1]?.sub_status;
+      this.subStatusId = sub_status;
       this.isBatchFailed = false;
+      this.batchData.forEach(el=>{
+        if(el.msg.includes('Tax')){
+          this.getInvoiceFulldata('');
+        }
+      })
       if (last_msg == 'Batch ran to an Exception!' || last_msg == 'Matching Failed - Batch Failed' && this.batch_count <= 2) {
         this.batch_count++;
         this.isBatchFailed = true;
@@ -1776,6 +1793,7 @@ export class Comparision3WayComponent
     this.tagService.submitBtnBoolean = true;
     this.tagService.headerName = 'Edit Invoice';
     let sub_status = null;
+    let last_status = null;
     for (const el of this.batchData) {
       if (el.status == 0) {
         sub_status = el.sub_status;
@@ -1783,7 +1801,10 @@ export class Comparision3WayComponent
     };
     if (!sub_status) {
       sub_status = this.batchData[this.batchData.length - 1].sub_status;
+      last_status = this.batchData[this.batchData.length - 1].status;
     }
+    this.ap_enabled_exc = last_status;
+    
     this.subStatusId = sub_status;
     this.dataService.subStatusId = sub_status;
     if (this.portalName == 'vendorPortal') {
@@ -3645,6 +3666,52 @@ export class Comparision3WayComponent
         this.error("Server error");
       })
     }
+  }
+
+  getProjectData(){
+    this.SpinnerService.show();
+    this.exceptionService.readProjectData().subscribe((data:any)=>{
+      this.projectIdArr = data.result.value[0];
+      this.projectCArr = data.result.value[1];
+      this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+    })
+  }
+  filterProject(event,tag) {
+    let arr = [];
+    if(tag == 'Project'){
+      arr = this.projectIdArr;
+    } else {
+      arr = this.projectCArr;
+    }
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < arr?.length; i++) {
+      let str = arr[i];
+      if (
+        str.toLowerCase().indexOf(query.toLowerCase()) == 0
+      ) {
+        filtered.push(str);
+      }
+    }
+    this.filteredProject = filtered;
+  }
+
+  onSelectProject(event,value){
+  console.log(this.temp_header_data)
+    let old_val:any = this.temp_header_data.filter(el=>value.idDocumentData == el?.DocumentData?.idDocumentData);
+    let obj = {
+      tag_id: value.idDocumentData,
+      tag_name: value.TagLabel,
+      prev_value: old_val[0]?.DocumentData?.Value,
+      curr_value: event,
+    }
+    this.exceptionService.saveProjectData(obj).subscribe((data:any)=>{
+      this.success('Changes saved successfully')
+    },err=>{
+      this.error("Server error or Please check the data");
+    })
   }
 
   ngOnDestroy() {

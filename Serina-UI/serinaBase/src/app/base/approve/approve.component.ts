@@ -163,7 +163,7 @@ export class ApproveComponent implements OnInit {
             ...element.Vendor,
             ...element.VendorAccount,
           };
-          mergeArray.documentdescription = element.documentdescription;
+          mergeArray.documentdescription = element?.Document?.approverData?.ap_description;
           mergeArray.Approvaltype = element.Approvaltype;
           approvedArray.push(mergeArray);
         });
@@ -199,7 +199,7 @@ export class ApproveComponent implements OnInit {
             ...element.ServiceProvider,
             ...element.ServiceAccount,
           };
-          mergeArray.documentdescription = element.documentdescription;
+          mergeArray.documentdescription = element?.Document?.approverData?.ap_description;
           approvedArray.push(mergeArray);
         });
         this.approvedDataSP = approvedArray;

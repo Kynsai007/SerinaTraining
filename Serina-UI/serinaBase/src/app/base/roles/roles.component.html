@@ -1117,7 +1117,7 @@
               </div>
               <div
                 class="permisionDiv"
-                [ngClass]="financeapproveDisplayBoolean ? '' : 'b-btm'"
+                [ngClass]="financeApproveDisplayBoolean ? '' : 'b-btm'"
               >
                 <div>
                   <span class="f-13">Edit</span>
@@ -1146,9 +1146,9 @@
                   <div class="clrDes">Description</div>
                 </div> -->
               <div
-                *ngIf="financeapproveDisplayBoolean"
+                *ngIf="financeApproveDisplayBoolean"
                 class="permisionDiv"
-                [ngClass]="!financeapproveDisplayBoolean ? '' : 'b-btm'"
+                [ngClass]="!financeApproveDisplayBoolean ? '' : 'b-btm'"
               >
                 <div>
                   <span class="f-13">Approve</span>
@@ -1165,7 +1165,7 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="financeApproveBoolean && financeapproveDisplayBoolean">
+            <div *ngIf="financeApproveBoolean && financeApproveDisplayBoolean">
               <!-- <div class="permisionDiv12">
                   <div> 
                       <label ><span class="f-13">Priority</span>
@@ -1376,21 +1376,6 @@
               required
             >
             </p-multiSelect>
-            <!-- <select
-              class="form-control inputForm f-12 mb-1"
-              name="dept"
-              ngModel
-              #dept="ngModel"
-              [(ngModel)]="department"
-              required
-            >
-              <option
-                *ngFor="let item of departmentData"
-                [value]="item?.iduserdept"
-              >
-                {{ item?.DepartmentName }}
-              </option>
-            </select> -->
 
             <div
               *ngIf="dept?.invalid && (dept?.touched || dept?.dirty)"
@@ -1400,6 +1385,22 @@
             </div>
           </div>
 
+          <div class="inputDiv">
+            <label class="label-head">Select Service</label>
+            <p-multiSelect
+              [options]="serviceData"
+              [(ngModel)]="selectedService"
+              ngModel
+              (onChange)="onSelectService($event)"
+              placeholder="Service provider"
+              inputStyleClass="form-control inputBox inputForm selectpicker"
+              optionLabel="ServiceProviderName"
+              [maxSelectedLabels]="3"
+              [selectedItemsLabel]="'{0} items selected'"
+              name="ServiceProviderName"
+            >
+            </p-multiSelect>
+          </div>
           <!-- <div *ngIf="editRoleName == 'Finance Controller'">
                   <label class="label-head">Amount</label>
                   <input type="text" class="form-control inputForm mb-2 f-13" [(ngModel)]="Flevel" name="fLevel"
@@ -1424,19 +1425,32 @@
         <div *ngIf="!expandFull" class="d_flex_wrap">
           <div class="inputDiv">
             <div class="f-12 label-head">Select Entity</div>
-            <p-autoComplete
-              (onSelect)="onSelectEntity($event)"
-              [suggestions]="filteredEntities"
-              (completeMethod)="filterEntity($event)"
-              field="EntityName"
-              [dropdown]="true"
-            >
-              <ng-template let-country pTemplate="item">
-                <div class="country-item">
-                  <div [title]="country.EntityName">{{ country.EntityName }}</div>
-                </div>
-              </ng-template>
-            </p-autoComplete>
+            <div *ngIf="financeApproveDisplayBoolean">
+              <p-autoComplete
+                  (onSelect)="onSelectEntity($event)"
+                  [suggestions]="filteredEntities"
+                  (completeMethod)="filterEntity($event)"
+                  field="EntityName"
+                  [dropdown]="true"
+                >
+                  <ng-template let-country pTemplate="item">
+                    <div class="country-item">
+                      <div [title]="country.EntityName">{{ country.EntityName }}</div>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+            </div>
+            <div *ngIf="!financeApproveDisplayBoolean">
+              <p-multiSelect 
+                  [options]="entityList" 
+                  [(ngModel)]="entitySelection_user" 
+                  (onChange) = "onSelectEntity($event)"
+                  defaultLabel="Select entity" 
+                  inputStyleClass="form-control inputBox selectpicker"
+                  optionLabel="EntityName">
+              </p-multiSelect>
+            </div>
+            
           </div>
           <!-- <div class="inputDiv">
             <div class="f-12 label-head">Select Department</div>
@@ -1476,7 +1490,7 @@
               class="inputDiv"
               *ngIf="
                 AccessPermissionTypeId == 4 &&
-                financeapproveDisplayBoolean &&
+                financeApproveDisplayBoolean &&
                 entityBaseApproveBoolean
               "
             >
@@ -1511,7 +1525,7 @@
               class="inputDiv"
               *ngIf="
                 AccessPermissionTypeId == 4 &&
-                financeapproveDisplayBoolean &&
+                financeApproveDisplayBoolean &&
                 entityBaseApproveBoolean
               "
             >
@@ -1552,26 +1566,11 @@
             </div>
 
             <div
-              *ngIf="financeapproveDisplayBoolean && entityBaseApproveBoolean"
+              *ngIf="financeApproveDisplayBoolean && entityBaseApproveBoolean"
             >
               <div class="f-12 ">
                 Skip Approval Process <span style="color: #f35353">*</span> ? <span class="f-14 pointer" (click)="onSelectSkip(true)">Yes</span>  :  <span class="f-14 pointer" (click)="onSelectSkip(false)">No</span>
               </div>
-              <!-- <select
-                name="skip"
-                id="skip"
-                class="form-control inputForm f-12"
-                [(ngModel)]="skip_approval_boolean"
-                (change)="onSelectSkip(skip_approval_boolean)"
-              >
-                <option value=""></option>
-                <option
-                  *ngFor="let boolean of skipList"
-                  [value]="boolean.value"
-                >
-                  {{ boolean.text }}
-                </option>
-              </select> -->
             </div>
           </div>
           <hr>
@@ -1614,6 +1613,7 @@
                 </span>
                 <!-- <span><i class="fa fa-times "  aria-hidden="true"></i></span> -->
                 <span
+                *ngIf="financeApproveDisplayBoolean"
                   class="material-icons removeList"
                   (click)="onRemove(i, value)"
                 >

@@ -450,6 +450,7 @@
                       </span>
                     </label>
                     <input
+                      *ngIf="!value?.TagLabel?.includes('Project')"
                       #inputv
                       type="text"
                       [value]="value.Value"
@@ -461,6 +462,20 @@
                       (blur)="saveChanges()"
                       class="form-control inv_inp_cls"
                     />
+                    <div *ngIf="value?.TagLabel?.includes('Project')" class="project">
+                      <p-autoComplete
+                        [(ngModel)]="value.Value"
+                        (onSelect)="onSelectProject($event, value)"
+                        placeholder=""
+                        [suggestions]="filteredProject"
+                        (completeMethod)="filterProject($event,value.TagLabel,value.Value)"
+                        field=""
+                        [dropdown]="true"
+                        [name]="value.TagLabel"
+                        styleClass="project"
+                      >
+                      </p-autoComplete>
+                    </div>
                     <span *ngIf="value?.DocumentUpdates?.OldValue">
                       <span class="old_value"
                         >Prev :
@@ -911,7 +926,7 @@
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{ po_total }}</td>
+                  <td class="total_count">{{ po_total?.toFixed(2) }}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
               </table>
@@ -2009,7 +2024,7 @@
             </button>
 
             <button
-              *ngIf="submitBtn_boolean && editable && !fin_boolean && !isAprUser"
+              *ngIf="submitBtn_boolean && editable && !fin_boolean"
               class="primary_btn f-12"
               (click)="
                 approval_selection_boolean && isLCMCompleted
@@ -2021,7 +2036,7 @@
             </button>
 
             <button
-              *ngIf="fin_boolean || isAprUser"
+              *ngIf="fin_boolean"
               class="primary_btn f-12"
               (click)="open_dialog('approve')"
             >
@@ -2465,7 +2480,7 @@
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-end">
       <button
-        *ngIf="headerpop == 'Batch Progress'"
+        *ngIf="headerpop == 'Batch Progress' && !isAprUser"
         type="button"
         class="primary_btn f-12 mt-2"
         (click)="
@@ -2473,6 +2488,14 @@
         "
       >
         <span>{{ isBatchFailed && batch_count <= 2 ? "Re-try" : "Next" }}</span>
+      </button>
+      <button
+        *ngIf="headerpop == 'Batch Progress' && isAprUser && subStatusId == 71"
+        type="button"
+        class="primary_btn f-12 mt-2"
+        (click)="open_dialog('approve')"
+      >
+        Approve & Proceed
       </button>
       <button
         *ngIf="headerpop != 'Batch Progress'"

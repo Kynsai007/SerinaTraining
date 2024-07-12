@@ -385,6 +385,13 @@ $theme_color: var(--themeColor);
     border-radius: 6px;
     box-shadow: 1px 1px 6px #00000010;
   }
+  .project .p-autocomplete{
+    height: 28px;
+    width: 14svw;
+  }
+  .project .p-autocomplete-dd .p-autocomplete-input {
+    padding-left: 0;
+  }
   .p-dropdown {
       border:0 !important;
       font-weight: 500 !important;
