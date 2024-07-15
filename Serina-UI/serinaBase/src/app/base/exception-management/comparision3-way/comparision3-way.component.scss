@@ -129,7 +129,7 @@ $theme_color: var(--themeColor);
   max-width: 50px;
 }
 .large_input_box {
-  width: calc(100svw - 65.5svw);
+  width: calc(45.5svw - 103px);
 }
 #addLine {
   position: relative;
@@ -183,7 +183,7 @@ $theme_color: var(--themeColor);
   background: #F5F6F5;
   padding: 0px 10px;
   border-radius: 5px;
-  min-width: 17svw;
+  min-width: calc(23svw - 60px);
 }
 .inv_inp_cls {
   font-size: 12px;
@@ -207,6 +207,7 @@ $theme_color: var(--themeColor);
   height: 30px;
   top: 0;
   left: 0;
+  width: fit-content;
 }
 .m_r_80 {
   margin-right: 90px;
@@ -391,6 +392,7 @@ $theme_color: var(--themeColor);
   }
   .project .p-autocomplete-dd .p-autocomplete-input {
     padding-left: 0;
+    width: auto !important;
   }
   .p-dropdown {
       border:0 !important;

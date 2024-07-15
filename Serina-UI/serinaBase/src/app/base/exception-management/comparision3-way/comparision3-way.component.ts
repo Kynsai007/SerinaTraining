@@ -398,6 +398,8 @@ export class Comparision3WayComponent
   projectCArr: any;
   filteredProject: any[];
   temp_header_data: any[];
+  batch_id:number;
+  bulk_bool: boolean = false;
 
   constructor(
     fb: FormBuilder,
@@ -436,6 +438,7 @@ export class Comparision3WayComponent
     this.documentViewBool = this.isDesktop;
     this.enable_create_grn = this.permissionService.enable_create_grn;
     this.doc_status = this.dataService?.editableInvoiceData?.status;
+    this.batch_id = this.dataService?.editableInvoiceData?.batch_id;
     this.activatedRoute.queryParams.subscribe(params => {
       this.uploadtime = params.uploadtime;
     })
@@ -486,6 +489,8 @@ export class Comparision3WayComponent
   }
 
   initialData() {
+    this.editable = this.tagService.editable;
+
     if (
       this.router.url.includes('invoice/InvoiceDetails/vendorUpload') ||
       this.router.url.includes('invoice/InvoiceDetails/CustomerUpload')
@@ -843,7 +848,9 @@ export class Comparision3WayComponent
           this.documentType = response.doc_type.toLowerCase();
         }
         if(this.docType == 'Credit Note'){
-          this.getProjectData();
+          // this.getProjectData();
+          this.projectCArr = this.dataService.projectCArr;
+          this.projectIdArr = this.dataService.projectIdArr;
         }
         this.getInvTypes();
         // this.lineDataConversion();
@@ -1864,7 +1871,8 @@ export class Comparision3WayComponent
     // this.displayrejectDialog = true;
     // Document approved by ${this.userDetails['userdetails'].firstName} \n comments: 
     let desc = {
-      "desp": `${this.rejectionComments}`
+      "desp": `${this.rejectionComments}`,
+      "bulk_approval": this.bulk_bool
     }
     this.SharedService.financeApprovalPermission(desc).subscribe(
       (data: any) => {
@@ -2245,14 +2253,24 @@ export class Comparision3WayComponent
       this.grnLineCount = this.lineDisplayData[0]?.linedata;
     }
   }
-
-  delete_confirmation(id) {
-    const drf: MatDialogRef<ConfirmationComponent> = this.mat_dlg.open(ConfirmationComponent, {
+  confirmFun(body,type,head){
+    return this.mat_dlg.open(ConfirmationComponent, {
       width: '400px',
       height: '300px',
       hasBackdrop: false,
-      data: { body: 'Are you sure you want to delete this line?', type: 'confirmation', heading: 'Confirmation', icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
+      data: { body:body , type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
+  }
+  bulk_confirm(){
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Dear user, we found more invoice for the same batch, do you want to approve all the invoices for the batch?','confirmation','Confirmation')
+    drf.afterClosed().subscribe((bool) => {
+      this.bulk_bool = bool;
+      this.open_dialog('approve');
+
+    })
+  }
+  delete_confirmation(id) {
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?','confirmation','Confirmation')
 
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
@@ -2262,13 +2280,7 @@ export class Comparision3WayComponent
   }
 
   confirm_pop(grnQ, boolean, txt) {
-    const drf: MatDialogRef<ConfirmationComponent> = this.mat_dlg.open(ConfirmationComponent, {
-      width: '400px',
-      height: '300px',
-      hasBackdrop: false,
-      data: { body: 'Kindly confirm the number of GRN lines.', type: 'confirmation', heading: 'Confirmation', icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
-    })
-
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Kindly confirm the number of GRN lines.','confirmation','Confirmation')
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
         this.onSave_submit(grnQ, boolean, txt);
@@ -3668,16 +3680,7 @@ export class Comparision3WayComponent
     }
   }
 
-  getProjectData(){
-    this.SpinnerService.show();
-    this.exceptionService.readProjectData().subscribe((data:any)=>{
-      this.projectIdArr = data.result.value[0];
-      this.projectCArr = data.result.value[1];
-      this.SpinnerService.hide();
-    },err=>{
-      this.SpinnerService.hide();
-    })
-  }
+
   filterProject(event,tag) {
     let arr = [];
     if(tag == 'Project'){

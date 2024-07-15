@@ -69,7 +69,7 @@ export class ProcessReportsComponent implements OnInit {
   cardsArr = [
     { title: 'Total Uploaded' , count:0, image:'vendor_up' },
     { title: 'Invoiced in ERP' , count:0, image:'vendor_pr' },
-    { title: 'Create GRN' , count:0, image:'vendor_rm' },
+    { title: 'Pending' , count:0, image:'vendor_rm' },
     { title: 'Rejected' , count:0, image:'vendor_rej' },
     { title: 'Exceptions' , count:0, image:'vendor_err' },
     { title: 'Average Upload Time' , count:0, image:'vendor_rm' },]

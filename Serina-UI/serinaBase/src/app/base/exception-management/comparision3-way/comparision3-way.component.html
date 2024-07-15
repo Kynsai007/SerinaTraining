@@ -473,6 +473,7 @@
                         [dropdown]="true"
                         [name]="value.TagLabel"
                         styleClass="project"
+                        [disabled]="!editable || fin_boolean"
                       >
                       </p-autoComplete>
                     </div>
@@ -2038,7 +2039,7 @@
             <button
               *ngIf="fin_boolean"
               class="primary_btn f-12"
-              (click)="open_dialog('approve')"
+              (click)="batch_id ? 'bulk_confirm()':open_dialog('approve')"
             >
               Approve
             </button>
@@ -2695,6 +2696,9 @@
         cols="50"
         rows="2"
       ></textarea>
+    </div>
+    <div class="f-12" *ngIf="bulk_bool">
+      Note: Please add comment for the bulk approval for the same batch invoices.
     </div>
   </div>
 

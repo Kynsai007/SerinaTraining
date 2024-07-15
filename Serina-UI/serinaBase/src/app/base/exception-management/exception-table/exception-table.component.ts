@@ -137,6 +137,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     } else {
       this.isAdmin = false;
     }
+    if(!this.ds.projectIdArr){
+      this.getProjectData('12355');
+    }
     // if(this.columnsData?.length>10){
     //   this.showPaginatorAllInvoice = true;
     // }
@@ -425,10 +428,18 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.first = 0;
     this.filterDataEmit.emit(this.columnsData);
   }
+  getProjectData(id){
+    this.ExceptionsService.readProjectData(id).subscribe((data:any)=>{
+      this.ds.projectIdArr = data.result.value[0];
+      this.ds.projectCArr = data.result.value[1];
+    },err=>{
+    })
+  }
   // edit invoice details if something wrong
   editInvoice(e) {
     this.tagService.approval_selection_boolean = false;
     this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
+
     if (this.router.url.includes('invoice')) {
       this.tagService.submitBtnBoolean = false;
       let route: string;

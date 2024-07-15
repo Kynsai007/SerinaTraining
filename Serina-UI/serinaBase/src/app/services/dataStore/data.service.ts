@@ -223,6 +223,8 @@ export class DataService {
   SP_aprve_uniSearch: string = '';
   statusId: any;
   isMobile: boolean;
+  projectIdArr: any;
+  projectCArr: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
