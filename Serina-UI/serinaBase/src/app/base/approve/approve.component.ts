@@ -36,7 +36,7 @@ export class ApproveComponent implements OnInit {
     { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
     { dbColumnname: 'ServiceProviderName', columnName: 'Service provider Name' },
     { dbColumnname: 'Account', columnName: 'Service provider A/C' },
-    // { dbColumnname: 'documentdescription', columnName: 'Description' },
+    { dbColumnname: 'batch_id', columnName: 'Batch ID' },
     { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
     { dbColumnname: 'documentdescription', columnName: 'Description' },
     { dbColumnname: 'totalAmount', columnName: 'Amount' },

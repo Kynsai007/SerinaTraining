@@ -333,7 +333,7 @@ export class Comparision3WayComponent
   inv_line_total:number;
   entityList: any;
   entityName: any;
-  commentsBool: boolean;
+  commentsBool: boolean = true;
   selected_GRN_total: number;
 
   userList_approved = [];
@@ -1879,7 +1879,7 @@ export class Comparision3WayComponent
         this.dataService.invoiceLoadedData = [];
         this.success(data.result);
         this.displayrejectDialog = false;
-
+        this.closeDialog();
         setTimeout(() => {
           this.SpinnerService.hide();
           this._location.back();
@@ -2262,12 +2262,27 @@ export class Comparision3WayComponent
     })
   }
   bulk_confirm(){
-    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Dear user, we found more invoice for the same batch, do you want to approve all the invoices for the batch?','confirmation','Confirmation')
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('We found more invoices for the same batch, do you want to approve all the invoices for the batch?','confirmation','Confirmation')
     drf.afterClosed().subscribe((bool) => {
-      this.bulk_bool = bool;
-      this.open_dialog('approve');
+      const dialog = document.querySelector('dialog');
+      if (dialog) {
+        dialog.showModal();
+        this.bulk_bool = bool;
+        if(bool){
+          document.getElementById("cmt").style.display = "block";
+        } else {
+          document.getElementById("cmt").style.display = "none";
+        }
+      }
 
     })
+
+  }
+  closeDialog(){
+    const dialog = document.querySelector('dialog');
+    if(dialog){
+      dialog.close();
+    }
   }
   delete_confirmation(id) {
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?','confirmation','Confirmation')
@@ -2568,14 +2583,15 @@ export class Comparision3WayComponent
       this.rejectModalHeader = "Check Item code availability";
     }
     this.displayrejectDialog = true;
+    
   }
   addComments(val) {
     this.rejectionComments = val;
-    // if (this.rejectionComments.length > 9) {
-    //   this.commentsBool = false;
-    // } else {
-    //   this.commentsBool = true;
-    // }
+    if (this.rejectionComments.length > 1) {
+      this.commentsBool = false;
+    } else {
+      this.commentsBool = true;
+    }
   }
   removeLine(itemCode) {
     this.exceptionService.removeLineData(itemCode).subscribe((data: any) => {
@@ -3702,7 +3718,6 @@ export class Comparision3WayComponent
   }
 
   onSelectProject(event,value){
-  console.log(this.temp_header_data)
     let old_val:any = this.temp_header_data.filter(el=>value.idDocumentData == el?.DocumentData?.idDocumentData);
     let obj = {
       tag_id: value.idDocumentData,
