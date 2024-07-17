@@ -144,6 +144,12 @@ export class ExceptionsService {
   saveProjectData(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/saveProjectDetails/${this.userId}?inv_id=${this.invoiceID}`,data);
   }
+  sendToMore(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Permission/setToMoreInfo/${this.userId}/idInvoice/${this.invoiceID}`,data);
+  }
+  proceedMoreInfo(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Permission/proceedFromMoreInfo/${this.userId}/idInvoice/${this.invoiceID}`,data);
+  }
 
   get_grn_data(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_GRNSelected_lines/${this.userId}/${this.invoiceID}`)

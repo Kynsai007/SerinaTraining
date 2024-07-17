@@ -624,6 +624,12 @@ $theme_color: var(--themeColor);
   // .total_count {
   //   width: 10vw !important;
   // }
+  .input_container {
+    min-width: calc(22svw - 60px);
+  }
+  .large_input_box {
+    width: calc(44.5svw - 103px);
+  }
   .w-st {
     width: 11.5vw;
   }

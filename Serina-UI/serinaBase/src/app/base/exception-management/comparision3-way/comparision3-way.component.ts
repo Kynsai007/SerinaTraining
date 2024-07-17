@@ -351,7 +351,7 @@ export class Comparision3WayComponent
   costTabBoolean: boolean = false;
   isEditMode = false;
   dynamicAllocationFileds = [
-    // { header: 'Amount', field: 'amount' },
+    // 
     { header: 'Project Category', field: 'bu_code' },
     // { header: 'Company Code', field: 'company_code' },
     // { header: 'Created On', field: 'created_on' },
@@ -364,6 +364,7 @@ export class Comparision3WayComponent
     // { header: 'Allocation ID', field: 'iddynamiccostallocation' },
     { header: 'Service ID', field: 'item_number' },
     { header: 'VAT Group', field: 'segment' },
+    { header: 'Amount', field: 'amount' },
     // { header: 'Period Month ', field: 'period_month' },
     // { header: 'Sub Ledger', field: 'subledger' },
   ]
@@ -400,6 +401,9 @@ export class Comparision3WayComponent
   temp_header_data: any[];
   batch_id:number;
   bulk_bool: boolean = false;
+  client_name: string;
+  isMoreRequired: boolean;
+  moreInfoBool: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -428,6 +432,7 @@ export class Comparision3WayComponent
 
   ngOnInit(): void {
     this.ERP = this.dataService?.configData?.erpname;
+    this.client_name = this.dataService?.configData?.client_name
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
@@ -834,18 +839,18 @@ export class Comparision3WayComponent
     serviceName?.getInvoiceInfo().subscribe(
       (data: any) => {
         let response;
-        this.lineData = data.linedata;
+        this.lineData = data?.linedata;
         if (serviceName == this.SharedService) {
-          response = data.ok
+          response = data?.ok
         } else {
           response = data;
         }
         if (response?.uploadtime) {
-          this.uploadtime = response.uploadtime;
+          this.uploadtime = response?.uploadtime;
         }
         if(response.doc_type){
-          this.docType = response.doc_type;
-          this.documentType = response.doc_type.toLowerCase();
+          this.docType = response?.doc_type;
+          this.documentType = response?.doc_type?.toLowerCase();
         }
         if(this.docType == 'Credit Note'){
           // this.getProjectData();
@@ -871,7 +876,7 @@ export class Comparision3WayComponent
           this.normalCostAllocation = false;
           data?.ok?.dynamic_cost_alloc?.forEach(dynamic =>{
               this.dynamicdata.push(dynamic);
-              this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic.calculatedtax);
+              this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
             })
         // }
         response?.headerdata?.forEach((element) => {
@@ -879,15 +884,20 @@ export class Comparision3WayComponent
             ...element.DocumentData,
             ...element.DocumentTagDef,
           };
-          this.mergedArray.DocumentUpdates = element.DocumentUpdates;
+          this.mergedArray.DocumentUpdates = element?.DocumentUpdates;
           pushedArrayHeader.push(this.mergedArray);
         });
         this.inputData = pushedArrayHeader;
         this.temp_header_data =  response?.headerdata?.slice();
-        let ap_id = response?.approverData?.to_approve_by[0];
-        if(ap_id == this.SharedService.userId) {
-          this.isAprUser = true;
-        }
+        this.isMoreRequired = response?.approverData?.more_info_required;
+
+        if (response?.approverData?.to_approve_by){
+          let ap_id = response?.approverData?.to_approve_by[0];
+          if(ap_id == this.SharedService.userId) {
+            this.isAprUser = true;
+          }
+        } 
+        
         // let inv_num_data: any = this.inputData.filter(val => {
         //   return val.TagLabel == 'InvoiceId';
         // })
@@ -1870,10 +1880,7 @@ export class Comparision3WayComponent
     // this.rejectModalHeader = 'Add Approval Comments';
     // this.displayrejectDialog = true;
     // Document approved by ${this.userDetails['userdetails'].firstName} \n comments: 
-    let desc = {
-      "desp": `${this.rejectionComments}`,
-      "bulk_approval": this.bulk_bool
-    }
+    let desc = this.ap_api_body();
     this.SharedService.financeApprovalPermission(desc).subscribe(
       (data: any) => {
         this.dataService.invoiceLoadedData = [];
@@ -2574,13 +2581,16 @@ export class Comparision3WayComponent
     } else if (str == 'approve') {
       this.rejectModalHeader = 'Add Pre-approval Comments';
       if (this.preApproveBoolean == false) {
-        this.rejectModalHeader = 'Add Approval Comments';
+        this.rejectModalHeader = 'Please Add Comments';
         this.isRejectCommentBoolean = false;
         this.isApproveCommentBoolean = true;
         this.isLCMSubmitBoolean = false;
       }
+    } else if(str == 'more'){
+      this.rejectModalHeader = 'Please Add Comments';
+      this.moreInfoBool = true;
     } else {
-      this.rejectModalHeader = "Check Item code availability";
+      this.rejectModalHeader = "Check Item Code Availability";
     }
     this.displayrejectDialog = true;
     
@@ -3731,7 +3741,43 @@ export class Comparision3WayComponent
       this.error("Server error or Please check the data");
     })
   }
-
+  ap_api_body(){
+    return {
+      "desp": `${this.rejectionComments}`,
+      "bulk_approval": this.bulk_bool
+    }
+  }
+  moreInfoFun(){
+    this.SpinnerService.show();
+    let desc = this.ap_api_body();
+      this.exceptionService.sendToMore(desc).subscribe((data:any)=>{
+        if(data.result == 'success'){
+          this.success(data.message);
+          setTimeout(() => {
+            this.SpinnerService.hide();
+            this._location.back();
+          }, 1000);
+        } else {
+          this.error(data.message);
+        }
+        this.SpinnerService.hide();
+      })
+  }
+  proceedMoreInfo(){
+    this.SpinnerService.show();
+    let desc = this.ap_api_body();
+    this.exceptionService.proceedMoreInfo(desc).subscribe((data:any)=>{
+      if(data.result == 'success'){
+        this.success(data.message);
+        setTimeout(() => {
+          this._location.back();
+        }, 1000);
+      } else {
+        this.error(data.message);
+      }
+      this.SpinnerService.hide();
+    })
+  }
   ngOnDestroy() {
     let sessionData = {
       session_status: false,

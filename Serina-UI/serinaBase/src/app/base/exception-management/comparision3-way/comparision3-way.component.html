@@ -2035,13 +2035,28 @@
             >
               Next
             </button>
-
             <button
-              *ngIf="fin_boolean"
+              *ngIf="fin_boolean && client_name == 'Enova' && !isMoreRequired"
+              type="button"
+              class="primary_btn f-12 mr-3"
+              (click)="open_dialog('more')"
+            >
+              More info required
+            </button>
+            <button
+              *ngIf="fin_boolean && !isMoreRequired"
               class="primary_btn f-12"
               (click)="batch_id ? bulk_confirm() :open_dialog('approve')"
             >
               Approve
+            </button>
+            <button
+              *ngIf="fin_boolean &&  client_name == 'Enova' && isMoreRequired"
+              type="button"
+              class="primary_btn f-12 mr-3"
+              (click)="open_dialog('more')"
+            >
+              Proceed
             </button>
           </div>
 
@@ -2678,7 +2693,7 @@
     <div
       *ngIf="
         rejectModalHeader == 'Add Pre-approval Comments' ||
-        rejectModalHeader == 'Add Approval Comments'
+        rejectModalHeader == 'Please Add Comments'
       "
     >
       <label class="label-head mt-2 mb-0">Comments</label> <br />
@@ -2696,9 +2711,6 @@
         cols="50"
         rows="2"
       ></textarea>
-    </div>
-    <div class="f-12" *ngIf="bulk_bool">
-      Note: Please add comment for the bulk approval for the same batch invoices.
     </div>
   </div>
 
@@ -2741,6 +2753,7 @@
       >
         Ok
       </button>
+
       <button
         *ngIf="isApproveCommentBoolean"
         type="button"
@@ -2750,6 +2763,16 @@
         (click)="financeApprove()"
       >
         Approve
+      </button>
+      <button
+        *ngIf="moreInfoBool"
+        type="button"
+        class="primary_btn f-12"
+        [disabled]="commentsBool"
+        [ngStyle]="{ cursor: commentsBool ? 'not-allowed' : 'pointer' }"
+        (click)="isMoreRequired? proceedMoreInfo() : moreInfoFun() "
+      >
+        {{ !isMoreRequired? 'More info required':'Proceed' }}
       </button>
       <button
         *ngIf="isLCMSubmitBoolean && !preApproveBoolean"
