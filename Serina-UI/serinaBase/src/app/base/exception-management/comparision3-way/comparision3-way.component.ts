@@ -1760,7 +1760,7 @@ export class Comparision3WayComponent
       this.success("Sent to Batch Successfully!");
       setTimeout(() => {
         if(this.router.url.includes('CustomerUpload')){
-          this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
+          this.router.navigate([`${this.portalName}/invoice/ServiceInvoices`]);
         } else {
           this._location.back();
         }

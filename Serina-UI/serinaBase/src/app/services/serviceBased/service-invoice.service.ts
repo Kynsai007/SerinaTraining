@@ -112,7 +112,7 @@ export class ServiceInvoiceService {
   // bulk upload
   downloadTemplate(erp,type,query): Observable<any> {
     return this.http.get(
-      `${environment.apiUrl}/${environment.apiVersion}/SP/downloadTemplate/${erp}/${type}${query}`,
+      `${environment.apiUrl}/${environment.apiVersion}/SP/downloadTemplate/${erp}/${type}/${this.userId}${query}`,
       { responseType: 'blob' }
     ).pipe(retry(3));
   }
@@ -125,7 +125,7 @@ export class ServiceInvoiceService {
   }
 
   saveTemplate(data,type){
-    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/SP/savetemplate/${type}/${this.userId}`,data)
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/SP/savetemplate/${type}/${this.userId}?re_upload=false`,data)
   }
 
   // customer Summary

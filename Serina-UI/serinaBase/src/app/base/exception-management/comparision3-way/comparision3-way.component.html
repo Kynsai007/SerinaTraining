@@ -2496,7 +2496,7 @@
   <ng-template pTemplate="footer">
     <div class="d-flex justify-content-end">
       <button
-        *ngIf="headerpop == 'Batch Progress' && !isAprUser"
+        *ngIf="headerpop == 'Batch Progress' && (!isAprUser || subStatusId != 71)"
         type="button"
         class="primary_btn f-12 mt-2"
         (click)="
