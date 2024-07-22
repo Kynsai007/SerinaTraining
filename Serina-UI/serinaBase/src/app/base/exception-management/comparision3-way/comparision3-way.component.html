@@ -599,7 +599,7 @@
               <button
                 *ngIf="
                   portalName == 'customer' &&
-                  flipEnabled && [8,16,17,19,21,27,34].includes(subStatusId) || (documentType == 'advance' && [29,108].includes(subStatusId))
+                  flipEnabled && [8,16,17,18,19,21,27,34].includes(subStatusId) || (documentType == 'advance' && [29,108].includes(subStatusId))
                 "
                 class="secondary_btn f_12 m-t-neg ml-2"
                 (click)="open_dialog_comp('flip line', '')"

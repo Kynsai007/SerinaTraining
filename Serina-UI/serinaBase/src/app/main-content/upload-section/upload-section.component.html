@@ -293,7 +293,7 @@
           <div
             *ngIf="
               viewType == 'ideal' &&
-              selectedInvoiceType == 'singlePO' || (dataService.configData.client_name == 'Cenomi' && !isCustomerPortal)
+              selectedInvoiceType != 'nonPO'
             "
             class="selectFilter"
           >
@@ -318,7 +318,42 @@
               </ng-template>
             </p-autoComplete>
           </div>
-
+          <div
+            *ngIf="
+              viewType == 'ideal' &&
+              selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'Cenomi'
+            "
+            class="selectFilter"
+          >
+            <label class="f-12 mb-0">Credit type</label>
+            <p-dropdown
+              [options]="cenomi_cred_type"
+              placeholder="Select invoice type"
+              name="creditType"
+              optionLabel="tagName"
+            >
+            </p-dropdown>
+          </div>
+          <div
+          *ngIf="viewType == 'ideal' && selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'SRG' "
+          class="selectFilter ideal"
+        >
+          <label class="f-12 mb-0">Select Invoice Number</label>
+          <p-multiSelect
+            class="accountSelect"
+            [options]="po_grn_list"
+            placeholder="Number"
+            filter="false"
+            inputStyleClass="form-control"
+            optionLabel="PackingSlip"
+            [maxSelectedLabels]="3"
+            [selectedItemsLabel]="'{0} items selected'"
+            (onChange)="selectIdealGrn($event)"
+            name="PO_GRN_Number"
+            [(ngModel)]="selectedGRNNumber"
+          >
+          </p-multiSelect>
+        </div>
           <div
             *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO' && portal_name == 'customer'"
             class="selectFilter ideal"

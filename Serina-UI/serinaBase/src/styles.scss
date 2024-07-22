@@ -293,10 +293,11 @@ input:checked + .slider:before {
   text-overflow: ellipsis;
   // border: 0 !important;
   // border-right: 1px solid rgba(49, 57, 113, 0.2) !important;
-  text-align: center;
+  text-align: left !important;
   padding: 10px;
   border: 0 !important;
-  height: 34px;
+  height: 30px !important;
+  padding-left: 10px !important;
 }
 .p-datatable .p-datatable-tbody > tr:nth-child(odd) {
   background: #eaf3f9 !important;
@@ -311,6 +312,7 @@ input:checked + .slider:before {
   background: $theme_color !important;
   // width: 100%;
   padding: 0px !important;
+  padding-left: 10px !important;
   height: 34px;
   white-space: nowrap;
   overflow: hidden;
@@ -318,7 +320,7 @@ input:checked + .slider:before {
   position: sticky;
   top: 0px;
   z-index: 122;
-  text-align: center;
+  text-align: left !important;
   // border: 0 !important;
   // border-right: 1px solid rgba(49, 57, 113, 0.2) !important;
 }
@@ -331,6 +333,10 @@ input:checked + .slider:before {
 .p-datatable .p-datatable-thead > tr > th:last-child {
   border-top-right-radius: 9px !important;
 }
+.p-datatable table {
+  width: auto !important; 
+  min-width: 100%;
+}
 .tableSearchInput {
   width: 100%;
   height: 30px;
@@ -341,7 +347,7 @@ input:checked + .slider:before {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center;
+  text-align: left !important;
 }
 
 .sticky_top {

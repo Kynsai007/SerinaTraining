@@ -25,7 +25,9 @@ $theme_color: var(--themeColor);
     text-align: center;
   }
 }
-
+.t_right {
+  text-align: right !important;
+}
 // :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
 //   text-align: center;
 // }

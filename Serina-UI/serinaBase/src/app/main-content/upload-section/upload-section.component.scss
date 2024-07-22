@@ -425,24 +425,32 @@ input[type="checkbox"] {
   .p-multiselect-panel .p-multiselect-header {
     display: none;
   }
-  .p-multiselect {
+  .p-multiselect, .p-dropdown {
     width: clamp(260px, 23vw, 350px);
     top: -13px;
     font-size: 14px;
     font-weight: 600;
     height: 35px;
     background: inherit;
-    border: none;
+    border: none !important;
     padding: 0;
     left: -7px;
   }
-  .ideal .p-multiselect {
+  .p-dropdown:focus-visible {
+    outline: 0;
+    box-shadow: none !important;
+  }
+  .ideal .p-multiselect, .ideal .p-dropdown {
     top: -3px;
     left: 6px;
   }
-  .p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+  .p-multiselect-panel .p-multiselect-items .p-multiselect-item, .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
     font-size: 12px;
     font-weight: 600;
+    color: white;
+  }
+  .p-dropdown-items {
+    background-color: $theme_color;
   }
 }
 .numberRangeContainer {

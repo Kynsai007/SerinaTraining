@@ -388,7 +388,7 @@
       let-columns="columns"
     >
       <tr>
-        <td *ngFor="let col of columns" [title]="invoiceData[col.dbColumnname]">
+        <td *ngFor="let col of columns" [title]="invoiceData[col.dbColumnname]" >
           <ng-container [ngSwitch]="col.dbColumnname">
             <ng-container *ngSwitchCase="'docstatus'" style="z-index: 0">
               <!-- <td style="width: 20%;" class="statusTypeIcon"
@@ -476,7 +476,7 @@
                 </div>
               </ng-container>
             </ng-container>
-            <ng-container class="elipse" *ngSwitchDefault>
+            <div *ngSwitchDefault [ngClass] = "col.dbColumnname.includes('Amount')? 't_right':''">
               <span
                 *ngIf="col.dbColumnname == 'PODocumentID'"
                 (click)="openPOpage(invoiceData.PODocumentID)"
@@ -522,7 +522,7 @@
                 "
                 >{{ invoiceData[col.dbColumnname] }}</span
               >
-            </ng-container>
+            </div>
           </ng-container>
         </td>
         <td *ngIf="!router.url.includes('home') && 
@@ -533,7 +533,10 @@
             (click)="viewInvoiceDetails(invoiceData)"
           ></i>
           <i
-            *ngIf="!router.url.includes('invoice')"
+            *ngIf="!router.url.includes('invoice')&&      
+            !router.url.includes('documentSummary') &&
+            !router.url.includes('home') && 
+            !router.url.includes('service_batch_trigger')"
             class="fa fa-pencil-square-o f-13 showEye mr-2 font_weight_500"
             (click)="editInvoice(invoiceData)"
           ></i>
@@ -695,60 +698,10 @@
               : ''
         }"
       >
-        <td *ngFor="let col of columns" [title]="invoiceData[col.dbColumnname]">
-          <div [ngSwitch]="col.dbColumnname">
-            <!-- <div *ngSwitchCase="'docstatus'" style="z-index: 0;">
-        <div *ngFor="let color of bgColorCode">
-          <td
-            class="statusType"
-            *ngIf="invoiceData.documentStatusID == color.id"
-            [ngStyle]="{
-              'background-color':
-                invoiceData.documentStatusID == color.id
-                  ? color.bgcolor
-                  : '',
-              color:
-                invoiceData.documentStatusID == color.id
-                  ? color.textColor
-                  : ''
-            }"
+        <td *ngFor="let col of columns" [title]="invoiceData[col.dbColumnname]" 
           >
-            {{ invoiceData[col.dbColumnname] }}
-            <button
-              *ngIf="invoiceData.documentStatusID == 1"
-              pTooltip="Trigger Batch"
-              tooltipPosition="top"
-              class="f-13 b-0"
-              style="color: red; font-weight: 800"
-              (click)="triggerBatch(invoiceData.idDocument)"
-              [disabled]="
-                triggerBoolean && invoiceID == invoiceData.idDocument
-              "
-            >
-              <i class="fa fa-refresh" aria-hidden="true"></i>
-            </button>
-            <button
-              *ngIf="invoiceData.documentStatusID == 1 && isAdmin"
-              pTooltip="Status roll back"
-              tooltipPosition="top"
-              class="f-13 b-0"
-              style="color: red; font-weight: 800"
-              (click)="changeStatus(invoiceData.idDocument)"
-            >
-              <i class="fa fa-undo" aria-hidden="true"></i>
-            </button>
-            <i
-              *ngIf="invoiceData.docstatus == 'Need To Review'"
-              [pTooltip]="invoiceData?.status"
-              tooltipPosition="top"
-              class="f-13 ml-3"
-              style="color: red; font-weight: 800"
-            >
-              !</i
-            >
-          </td>
-        </div>
-      </div> -->
+          <div [ngSwitch]="col.dbColumnname" [ngClass] = "col.dbColumnname.includes('Amount')? 't_right':''">
+
             <div class="elipse" *ngSwitchDefault>
               <span
                 *ngIf="
