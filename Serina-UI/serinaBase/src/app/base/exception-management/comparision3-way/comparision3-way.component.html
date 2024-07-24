@@ -247,7 +247,7 @@
         class="nav-item ml-2"
         pTooltip="Supporting documents"
         tooltipPosition="top"
-        *ngIf="Itype == 'Invoice' && !approval_selection_boolean"
+        *ngIf="Itype == 'Invoice' && !approval_selection_boolean || tagService?.headerName?.includes('Create GRN')"
         (click)="changeTab('support')"
       >
         <a
@@ -409,6 +409,8 @@
                     [ngStyle]="{
                       border:
                         value.isError >= 1 && !value.ErrorDesc.includes('Low')
+                          ? '1px solid #D81616'
+                          :subStatusId == 110 && value?.TagLabel == 'Current Month VAT'
                           ? '1px solid #D81616'
                           :value.isError >= 1 && value.ErrorDesc.includes('Low')
                           ? '1px solid #f7c83e'
@@ -1566,7 +1568,7 @@
                 tooltipPosition="top">
                 <i class="fa fa-info-circle"></i>
               </span>
-              Total Tax - {{totalTaxDynamic.toFixed(2)}}
+              Total Calculated Tax - {{totalTaxDynamic.toFixed(2)}}
             </div>
             <div *ngFor="let dynamic of dynamicdata; let i = index">
 

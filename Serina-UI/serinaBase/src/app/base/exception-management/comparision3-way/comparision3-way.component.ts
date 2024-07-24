@@ -408,7 +408,7 @@ export class Comparision3WayComponent
 
   constructor(
     fb: FormBuilder,
-    private tagService: TaggingService,
+    public tagService: TaggingService,
     public router: Router,
     private authService: AuthenticationService,
     private _location: Location,
