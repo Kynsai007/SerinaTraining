@@ -35,7 +35,7 @@ export class BulkUploadServiceComponent implements OnInit {
   uploadSectionBoolean: boolean;
   displayErpBoolean;
   ERPList = [
-    { erp: 'Fixed'},
+    // { erp: 'Fixed'},
     { erp: 'Dynamic' },
   ]
   progress: number;

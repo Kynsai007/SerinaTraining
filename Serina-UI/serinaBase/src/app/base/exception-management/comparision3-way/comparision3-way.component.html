@@ -313,7 +313,7 @@
         pTooltip="Fixed Cost allocation"
         tooltipPosition="top"
         (click)="changeTab('cost')"
-        *ngIf="isServiceData"
+        *ngIf="isServiceData && client_name != 'Enova'"
       >
         <a
           class="nav-link"
