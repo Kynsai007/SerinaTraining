@@ -365,7 +365,7 @@ export class Comparision3WayComponent
     { header: 'Service ID', field: 'item_number' },
     { header: 'VAT Group', field: 'segment' },
     { header: 'Amount', field: 'amount' },
-    // { header: 'Period Month ', field: 'period_month' },
+    { header: 'Tax amount', field: 'calculatedtax' },
     // { header: 'Sub Ledger', field: 'subledger' },
   ]
   // editedValues: { [key: string]: any } = {};
@@ -394,6 +394,7 @@ export class Comparision3WayComponent
   grnAttachmentArray:any;
   isAprUser: boolean;
   totalTaxDynamic = 0;
+  totalAmountDynamic = 0;
   ap_enabled_exc: boolean;
   projectIdArr: any;
   projectCArr: any;
@@ -877,6 +878,7 @@ export class Comparision3WayComponent
           data?.ok?.dynamic_cost_alloc?.forEach(dynamic =>{
               this.dynamicdata.push(dynamic);
               this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
+              this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
             })
         // }
         response?.headerdata?.forEach((element) => {

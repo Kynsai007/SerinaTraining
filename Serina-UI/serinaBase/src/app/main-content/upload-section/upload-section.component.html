@@ -321,23 +321,28 @@
           <div
             *ngIf="
               viewType == 'ideal' &&
-              selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'Cenomi'
+              (selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'Cenomi') ||
+              (selectedInvoiceType == 'advance' && dataService.configData.client_name == 'SRG')
             "
             class="selectFilter"
           >
-            <label class="f-12 mb-0">Credit type</label>
+            <label class="f-12 mb-0">{{dataService.configData.client_name == 'SRG' ?'Pre-payment type':'Credit type'}}</label>
             <p-dropdown
-              [options]="cenomi_cred_type"
-              placeholder="Select invoice type"
-              name="creditType"
+              [options]="sub_type"
+              placeholder="Select type"
+              name="subType"
               optionLabel="tagName"
             >
             </p-dropdown>
           </div>
+          <div class="selectFilter ideal" *ngIf="selectedInvoiceType == 'advance' && dataService.configData.client_name == 'SRG'">
+            <label class="f-12 mb-0">Please add </label><br>
+            <input type="text" class="form-control accountSelect f-12">
+          </div>
           <div
-          *ngIf="viewType == 'ideal' && selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'SRG' "
-          class="selectFilter ideal"
-        >
+            *ngIf="viewType == 'ideal' && selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'SRG' "
+            class="selectFilter ideal"
+          >
           <label class="f-12 mb-0">Select Invoice Number</label>
           <p-multiSelect
             class="accountSelect"

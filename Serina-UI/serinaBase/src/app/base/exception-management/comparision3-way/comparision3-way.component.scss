@@ -72,7 +72,7 @@ $theme_color: var(--themeColor);
   background-color: #ded1e9;
 }
 .doc_height {
-  height: 35px;
+  height: 30px;
   display: flex;
 }
 .mapping_line {
@@ -150,7 +150,7 @@ $theme_color: var(--themeColor);
   width: 50px;
 }
 .count-h {
-  min-height: 66px;
+  min-height: 56px;
 }
 .count-h_normal {
   min-height: 29px;
@@ -183,13 +183,14 @@ $theme_color: var(--themeColor);
   background: #F5F6F5;
   padding: 0px 10px;
   border-radius: 5px;
+  height: 50px;
   min-width: calc(23svw - 60px);
 }
 .inv_inp_cls {
   font-size: 12px;
   font-weight: 500;
   color: black;
-  height: 30px;
+  height: 20px;
   /* margin-right: 5px; */
   width: 100%;
   background: inherit;

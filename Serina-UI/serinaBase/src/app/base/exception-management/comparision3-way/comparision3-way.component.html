@@ -1560,13 +1560,20 @@
             role="tabpanel"
             aria-labelledby="dynamic-tab"
           >
-            <div class="f-12 d-flex justify-content-end">Total Tax - {{totalTaxDynamic.toFixed(2)}}</div>
+            <div class="f-12 d-flex justify-content-end" [ngStyle]="{color: subStatusId == 110 ? 'red':''}">
+              <span *ngIf="subStatusId == 110"  class="mr-2"
+                pTooltip="Please compare the current month VAT in the header data"
+                tooltipPosition="top">
+                <i class="fa fa-info-circle"></i>
+              </span>
+              Total Tax - {{totalTaxDynamic.toFixed(2)}}
+            </div>
             <div *ngFor="let dynamic of dynamicdata; let i = index">
 
               <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
               <div class="displayFlex">
                 <div *ngFor="let item of dynamicAllocationFileds">
-                  <div style="position: relative" class="input_container">
+                  <div style="position: relative" class="input_container" [ngStyle]="{border: (subStatusId == 110 && item.header == 'Tax amount') ? '1px solid red':''}">
                     <label class="label-head" style="margin-bottom: -5px"
                       >{{ item.header }}
                     </label>

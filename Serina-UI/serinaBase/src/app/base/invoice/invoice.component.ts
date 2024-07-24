@@ -220,6 +220,7 @@ isMobile:boolean;
       // if (this.route.url == this.invoiceTab) {
         if (this.ds.invTabColumns) {
           this.invoiceColumns = this.ds.invTabColumns;
+          this.invTabAllColumns = this.ds.invTabColumns;
           this.allInColumnLength = this.invoiceColumns.length + 1;
           this.columnstodisplayInvoice = this.pushColumnsField(this.invoiceColumns);
         } else {
@@ -228,6 +229,7 @@ isMobile:boolean;
       // } else if (this.route.url == this.POTab) {
         if (this.ds.poTabColumns) {
           this.poColumns = this.ds.poTabColumns;
+          this.poTabAllColumns = this.ds.poTabColumns;
           this.allPOColumnLength = this.poColumns.length + 1;
           this.columnstodisplayPO = this.pushColumnsField(this.poColumns);
         } else {
@@ -236,6 +238,7 @@ isMobile:boolean;
       // } else if (this.route.url == this.archivedTab) {
         if (this.ds.arcTabColumns) {
           this.archivedColumns = this.ds.arcTabColumns;
+          this.arcTabAllColumns = this.ds.arcTabColumns
           this.allARCColumnLength = this.archivedColumns.length + 1;
           this.columnstodisplayArchived = this.pushColumnsField(this.archivedColumns);
         } else {
@@ -244,6 +247,7 @@ isMobile:boolean;
       // } else if (this.route.url == this.serviceInvoiceTab) {
         if (this.ds.serTabColumns) {
           this.serviceColumns = this.ds.serTabColumns;
+          this.invsTabAllColumns = this.ds.serTabColumns;
           this.allSRVColumnLength = this.serviceColumns.length + 1;
           this.columnstodisplayService = this.pushColumnsField(this.serviceColumns);
         } else {
@@ -764,7 +768,7 @@ isMobile:boolean;
         columnArray = columnArray.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
         );
-        this.ds[serviceTab_name] = columnArray
+        
         columnLength = columnArray.length + 1;
         this.allColumns = pushedColumnsArray.sort(
           (a, b) => a.documentColumnPos - b.documentColumnPos
@@ -782,6 +786,7 @@ isMobile:boolean;
             isActive: activeBoolean,
           });
         });
+        this.ds[serviceTab_name] = this.allColumns
         if(tabType == 'INV'){
           this.invoiceColumns = columnArray;
           this.columnstodisplayInvoice = columns_to_display;

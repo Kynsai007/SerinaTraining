@@ -294,10 +294,7 @@ export class UploadSectionComponent implements OnInit {
   errorMsg: string;
   displayTablebool: boolean;
   spinMsg = 'Please wait...';
-  cenomi_cred_type = [
-    { tagName:'Quantity', value:'credit-quantity'},
-    { tagName:'Discount', value:'credit-discount'}
-  ]
+  sub_type = [];
   constructor(
     private http: HttpClient,
     public route: Router,
@@ -359,14 +356,23 @@ export class UploadSectionComponent implements OnInit {
         { name:'Advance - Pro-forma', value:'proforma'},
         { name:'Credit Note', value:'creditNote'}
       ];
+      this.sub_type = [
+        { tagName:'Quantity', value:'credit-quantity'},
+        { tagName:'Discount', value:'credit-discount'}
+      ]
     } else if (this.dataService.configData.client_name == 'SRG') {
       // this.onSelectPOType('singlePO','ideal');
       this.invTypeArr = [
         { name:'Invoice', value:'singlePO'},
         { name:'Non PO Invoice', value:'nonPO'},
         { name:'Credit Note', value:'creditNote'},
-        { name:'Credit Note - Non PO', value:'creditNote-NonPO'}
+        { name:'Credit Note - Non PO', value:'creditNote-NonPO'},
+        { name:'Pre-Payment', value:'advance'}
       ];
+      this.sub_type = [
+        { tagName:'Percentage', value:'percentage'},
+        { tagName:'Amount', value:'amount'}
+      ]
     }
     if (this.PS.uploadPermissionBoolean) {
       this.permissions();

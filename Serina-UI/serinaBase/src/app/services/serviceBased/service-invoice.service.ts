@@ -124,8 +124,8 @@ export class ServiceInvoiceService {
     ).pipe(retry(3));
   }
 
-  saveTemplate(data,type){
-    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/SP/savetemplate/${type}/${this.userId}?re_upload=false`,data)
+  saveTemplate(data,type,bool){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/SP/savetemplate/${type}/${this.userId}?re_upload=${bool}`,data)
   }
 
   // customer Summary

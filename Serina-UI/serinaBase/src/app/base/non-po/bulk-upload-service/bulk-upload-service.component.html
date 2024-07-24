@@ -52,18 +52,14 @@
                     <!-- name of file chosen -->
                     <span class="f-12">{{fileChoosen}}</span>
                 </div>
-        
-                <!-- <div class="d-i-block uploadDiv">
-                    <label class="f-13">Cost allocation template upload</label><br>
-                    <input type="file" id="custom-upload" (change)="onChange($event,'ca')" hidden [disabled]="btnEnabled" #inputFile>
-                    <label for="custom-upload" class="custom-btn f-12 mr-2">Choose file</label>
-        
-                    <span class="f-12">{{fileChoosen}}</span>
-                </div> -->
+
     
     
             </div>
-            <div *ngIf="btnEnabled" class="mt-2" style="text-align: right;">
+            <div *ngIf="btnEnabled" class="mt-2 d-flex justify-content-between">
+                <div>
+                    <label for="reupload" class="f-12"><input type="checkbox" name="reupload" id="reupload" [(ngModel)]="isReupload" (change)="reuploadConfirm($event.target.checked)"> <span class="ml-2 check_label">Is it re-upload?</span></label>
+                </div>
                 <!-- <button  class="btnUpload mr-3 ml-3" (click)="removeData()">Remove Data</button> -->
                 <button [disabled]="progress && !uploadBool" class="btnUpload" (click)="uploadFiles()">
                     <span *ngIf="progress" class="spinner-border spinner-border-sm mr-1"></span>

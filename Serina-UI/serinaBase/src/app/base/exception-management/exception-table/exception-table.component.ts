@@ -320,6 +320,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   viewInvoiceDetails(e) {
     this.tagService.submitBtnBoolean = false;
+    this.ds.subStatusId = e.documentsubstatusID;
     this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
     let route: string;
     if (this.router.url.includes('PO')) {

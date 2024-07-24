@@ -13,6 +13,8 @@ import { AlertService } from 'src/app/services/alert/alert.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { DatePipe } from '@angular/common';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
+import { ConfirmationComponent } from '../../confirmation/confirmation.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 
 @Component({
@@ -69,6 +71,7 @@ export class BulkUploadServiceComponent implements OnInit {
   dataLength: number;
   showInvokeBtnBoolean: boolean;
   isTableView: boolean;
+  isReupload: boolean = false;
 
   constructor(private http: HttpClient,
     private spinner: NgxSpinnerService,
@@ -76,11 +79,10 @@ export class BulkUploadServiceComponent implements OnInit {
     private alert: AlertService,
     private dataService: DataService,
     private datePipe : DatePipe,
+    private mat_dlg: MatDialog,
     private exceptionService: ExceptionsService) {
       this.dataService.isTableView.subscribe(bool => {
         this.isTableView = bool;
-        console.log(this.isTableView)
-        // this.ngOnInit();
       });
      }
 
@@ -107,40 +109,6 @@ export class BulkUploadServiceComponent implements OnInit {
     if (this.isExcelFile) {
       this.uploadXlFile();
       this.spinnerEnabled = true;
-      const reader: FileReader = new FileReader();
-      // reader.onload = (e: any) => {
-      //   /* read workbook */
-      //   const bstr: string = e.target.result;
-      //   const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
-
-      //   /* grab first sheet */
-      //   let index = wb.SheetNames.findIndex(ele => {
-      //     return 'Master Template' == ele;
-      //   });
-      //   const wsname: string = wb.SheetNames[index];
-      //   const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-
-      //   /* grab second sheet */
-      //   let index1 = wb.SheetNames.findIndex(ele => {
-      //     return 'Cost Category Template' == ele;
-      //   });
-      //   const wsname1: string = wb.SheetNames[index1];
-      //   const ws1: XLSX.WorkSheet = wb.Sheets[wsname1];
-
-      //   /* save data */
-      //   data = XLSX.utils.sheet_to_json(ws);
-      //   data1 = XLSX.utils.sheet_to_json(ws1);
-      // };
-
-      reader.readAsBinaryString(target.files[0]);
-
-      // reader.onloadend = (e) => {
-      //   this.spinnerEnabled = false;
-      //   this.keys = Object.keys(data[0]);
-      //   this.keys1 = Object.keys(data1[0]);
-      //   this.dataSheet.next(data)
-      //   this.dataSheet1.next(data1)
-      // }
     } else {
       this.inputFile.nativeElement.value = '';
     }
@@ -168,10 +136,6 @@ export class BulkUploadServiceComponent implements OnInit {
     }
     this.spService.downloadTemplate(this.selectedERPType,this.selectedFileType,monthInfo).subscribe((data: any) => {
       this.excelDownload(data,'Service_template_serina');
-
-      // this.uploadSectionBoolean = true;
-      // this.displayErpBoolean = false;
-      // this.spService.displayErpBoolean = false;
       this.alert.success_alert('File Downloaded Successfully.');
     }, error => {
       this.alert.error_alert('Download failed, please try again.');
@@ -179,11 +143,7 @@ export class BulkUploadServiceComponent implements OnInit {
   }
   excelDownload(data,type){
     let blob: any = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8' });
-    // const url = window.URL.createObjectURL(blob);
-    // let d = new Date();
     let datestr = this.datePipe.transform(this.selectedMonth, "MMM-yyyy");
-    // let datestring = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " +
-    //   d.getHours() + ":" + d.getMinutes();
     fileSaver.saveAs(blob, `${type}-${this.selectedFileType}-(${datestr})`);
   }
   uploadXlFile() {
@@ -207,27 +167,6 @@ export class BulkUploadServiceComponent implements OnInit {
             this.sa_template_path = event.body.filepath;
             this.btnEnabled = true;
             this.uploadBool = true;
-
-            // let result = event.body.Result.result.split(" ");
-            // if(result[0] != "0"){
-            //   this.alert.success_alert(event.body.Result.result);
-            //   this.spService.downloadRejectRecords().subscribe(data => {
-            //     this.excelDownload(data,'Rejected_accounts_serina');
-            //   })
-            //   setTimeout(() => {
-            //     this.router.navigate([`/customer/serviceProvider`]);
-            //   }, 4000);
-            // } else if(result[0] == result[result.length-1]){
-            //   this.alert.success_alert(event.body.Result.result);
-            //   setTimeout(() => {
-            //     this.router.navigate([`/customer/serviceProvider`]);
-            //   }, 4000);
-            // } else if(result[0] == "0") {
-            //   this.spService.downloadRejectRecords().subscribe(data => {
-            //     this.excelDownload(data,'Rejected_accounts_serina');
-            //   })
-            //   this.alert.error_alert("Accounts having some issue, please try again");
-            // }
           }
           this.spinner.hide();
 
@@ -248,9 +187,13 @@ export class BulkUploadServiceComponent implements OnInit {
     let obj = {
       "sa_template_path": this.sa_template_path
     }
-    this.spService.saveTemplate(obj,this.selectedFileType).subscribe((data:any)=>{
+    this.spService.saveTemplate(obj,this.selectedFileType,this.isReupload).subscribe((data:any)=>{
       if(data.status == 'success'){
         this.alert.success_alert(data.message);
+        delete this.UploadDetails ;
+        delete this.fileChoosen;
+        this.btnEnabled = false;
+        this.inputFile.nativeElement.value = '';
       } else {
         this.alert.error_alert(data.message); 
       }
@@ -260,6 +203,23 @@ export class BulkUploadServiceComponent implements OnInit {
     })
   }
 
+  reuploadConfirm(bool){
+    if(bool){
+      const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to re-upload?','confirmation','Confirmation')
+
+      drf.afterClosed().subscribe((bool:boolean) => {
+        this.isReupload = bool;
+      })
+    }
+  }
+  confirmFun(body,type,head){
+    return this.mat_dlg.open(ConfirmationComponent, {
+      width: '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data: { body:body , type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
+    })
+  }
   getDate() {
     // this.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let today = new Date();
@@ -278,105 +238,6 @@ export class BulkUploadServiceComponent implements OnInit {
     this.maxDate.setMonth(month);
     this.maxDate.setFullYear(year);
   }
-
-  // uploadFile(e: any, filetype: any,type:string) {
-  //   let data = e;
-  //   if( type != 'drag'){
-  //     data = e.target.files[0];
-  //   }
-  //   if (filetype == 'sa')
-  //     this.uploadProgress = 0;
-  //   else if (filetype == 'ca')
-  //     this.uploadProgress1 = 0;
-  //   else
-  //     this.uploadProgress2 = 0;
-  //   const formData = new FormData();
-  //   formData.append('file', data);
-  //   if (filetype == 'sa') {
-  //     this.uploading = true;
-  //   } else if (filetype == 'ca') {
-  //     this.uploading1 = true;
-  //   } else if(filetype == 'va') {
-  //     this.uploading2 = true;
-  //   } else{
-  //     this.uploading3 = true;
-  //   }
-  //   this.http.post(
-  //     `${environment.apiURL}/${environment.apiVersion}/util/uploadTemplate/${this.active_user}/${filetype}`,
-  //     formData,
-  //     {
-  //       reportProgress: true,
-  //       observe: 'events',
-  //     }
-  //   )
-  //     .pipe(
-  //       map((event: any) => {
-  //         if (event.type == HttpEventType.UploadProgress) {
-  //           if (filetype == 'sa') {
-  //             this.uploadProgress = Math.round((100 / event.total) * event.loaded);
-  //           } else if (filetype == 'ca') {
-  //             this.uploadProgress1 = Math.round((100 / event.total) * event.loaded);
-  //           } else if (filetype == 'va') {
-  //             this.uploadProgress2 = Math.round((100 / event.total) * event.loaded);
-  //           }
-  //         } else if (event.type == HttpEventType.Response) {
-  //           if (filetype == 'sa') {
-  //             this.safilepath = event.body["filepath"];
-  //             this.uploading = false;
-  //           } else if (filetype == 'ca') {
-  //             this.cafilepath = event.body["filepath"];
-  //             this.uploading1 = false;
-  //           } else if(filetype == 'va') {
-  //             this.vafilepath = event.body["filepath"];
-  //             this.uploading2 = false;
-  //           } else if(filetype == 'ct'){
-  //             this.ctfilepath = event.body["filepath"];
-  //           }
-  //           if (this.templates[0].selected && !this.templates[1].selected) {
-  //             if (this.safilepath != '' && this.cafilepath != '') {
-  //               this.filesuploaded = true;
-  //             }
-  //           }
-  //           if (this.templates[1].selected && !this.templates[0].selected) {
-  //             if (this.vafilepath != '') {
-  //               this.filesuploaded = true;
-  //             }
-  //           }
-  //           if (this.templates[1].selected && !this.templates[0].selected && this.doctypes[0].selected && this.doctypes[1].selected) {
-  //             if (this.vafilepath != '' && this.ctfilepath != '') {
-  //               this.filesuploaded = true;
-  //             }
-  //           }
-  //           if (this.templates[1].selected && !this.templates[0].selected && !this.doctypes[0].selected && this.doctypes[1].selected) {
-  //             if (this.ctfilepath != '') {
-  //               this.filesuploaded = true;
-  //             }
-  //           }
-  //           if (this.templates[0].selected && this.templates[1].selected && this.doctypes[1].selected) {
-  //             if (this.safilepath != '' && this.cafilepath != '' && this.vafilepath != '' && this.ctfilepath != "") {
-  //               this.filesuploaded = true;
-  //             }
-  //           }
-  //           if (this.templates[0].selected && this.templates[1].selected && !this.doctypes[1].selected) {
-  //             if (this.safilepath != '' && this.cafilepath != '' && this.vafilepath != '') {
-  //               this.filesuploaded = true;
-  //             }
-  //           }
-  //           if(this.filesuploaded){
-  //             this.showcomplete = true;
-  //           }
-  //         }
-  //       }),
-  //       catchError((err: any) => {
-  //         this.uploading = false;
-  //         this.uploading1 = false;
-  //         this.uploading2 = false;
-  //         return throwError(err.message);
-  //       })
-  //     )
-  //     .toPromise();
-  // }
-
   changeTab(val:string){
     this.currentTab = val
   }
@@ -399,22 +260,6 @@ export class BulkUploadServiceComponent implements OnInit {
   
       this.ColumnLengthtotal = this.columnsForTotal.length;
     }
-
-    // searchInvoiceDataV(value) {
-    //   this.allSearchInvoiceString = [];
-    //   this.allSearchInvoiceString = value.filteredValue;
-    // }
-  
-    // exportExcel() {
-    //   if (this.allSearchInvoiceString && this.allSearchInvoiceString.length > 0) {
-    //     this.ImportExcelService.exportExcel(this.allSearchInvoiceString);
-    //   } else if (this.columnsData && this.columnsData.length > 0) {
-    //     this.ImportExcelService.exportExcel(this.columnsData);
-    //   } else {
-    //     alert('No Data to import');
-    //   }
-    // }
-  
     readBatchData() {
       this.spinner.show();
       this.exceptionService.readInvokeBatchData().subscribe(

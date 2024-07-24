@@ -140,6 +140,10 @@
     padding: 5px;
     height: 60vh;
   }
+  .check_label {
+    position: relative;
+    top: -2px;
+  }
 :host ::ng-deep {
     .p-calendar {
         width: 100%;
