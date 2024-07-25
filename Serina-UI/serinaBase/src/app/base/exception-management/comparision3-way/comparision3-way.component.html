@@ -424,7 +424,7 @@
                     <label class="label-head" style="margin-bottom: -5px"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
-                        *ngIf="value.isError >= 1"
+                        *ngIf="value.isError == 1 || value.IsUpdated === 1"
                         [pTooltip]="value.ErrorDesc"
                         tooltipPosition="top"
                         ><i
@@ -744,6 +744,8 @@
                                   ? ' 2px solid red'
                                   : data2.invline[0]?.DocumentLineItems.isError >= 1 && data2?.invline[0]?.DocumentLineItems?.ErrorDesc?.includes('Low')
                                   ? ' 2px solid #f7c83e'
+                                  : data2.invline[0]?.DocumentLineItems.IsUpdated === 1 && data2.invline[0]?.DocumentLineItems.isError == 0
+                                  ? '2px solid #37dcc7'
                                   : ''
                             }"
                           />
@@ -760,7 +762,7 @@
                           >
                           <span
                             *ngIf="
-                              data2?.invline[0]?.DocumentLineItems?.isError >= 1
+                              data2?.invline[0]?.DocumentLineItems?.isError >= 1 || data2.invline[0]?.DocumentLineItems.IsUpdated === 1
                             "
                             [pTooltip]="
                               data2?.invline[0]?.DocumentLineItems?.ErrorDesc

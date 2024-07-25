@@ -137,7 +137,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     } else {
       this.isAdmin = false;
     }
-    if(!this.ds.projectIdArr){
+    if(!this.ds.projectIdArr && this.ds.configData?.client_name == 'Enova'){
       this.getProjectData('12355');
     }
     // if(this.columnsData?.length>10){

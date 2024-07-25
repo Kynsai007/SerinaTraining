@@ -143,6 +143,7 @@ export class Comparision3WayComponent
     { TagName: 'AmountExcTax', linedata: [] },
     { TagName: 'GRN - Quantity', linedata: [] },
     { TagName: 'UnitPrice', linedata: [] },
+    { TagName: 'PurchUnit', linedata: [] },
     { TagName: 'Actions', linedata: [] }
   ];
   po_grn_list = [];
@@ -335,6 +336,7 @@ export class Comparision3WayComponent
   entityName: any;
   commentsBool: boolean = true;
   selected_GRN_total: number;
+  tagNameArr: any;
 
   userList_approved = [];
   rejectionUserId: number = 0;
@@ -751,6 +753,9 @@ export class Comparision3WayComponent
           let amount = (y * ele.PurchQty).toFixed(2);
           this.GRN_line_total = this.GRN_line_total + Number(amount)
           tag.linedata.push({ Value: amount, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'AmountExcTax' })
+        }
+        else if (tag.TagName == 'PurchUnit') {
+          tag.linedata.push({ Value: ele.PurchUnit, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PurchUnit' })
         }
         else if (tag.TagName == 'Actions') {
           tag.linedata.push({ Value: '', ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Actions' })
@@ -1394,6 +1399,10 @@ export class Comparision3WayComponent
         this.vendorId = this.vendorData['idVendor'];
         // this.selectedRule = data.ok.ruledata[0].Name;
         // this.poList = data.all_pos;
+        if(this.router.url.includes('GRN_approvals') ){
+          let index = this.lineDisplayData.findIndex(tag=> tag.TagName == 'Inv - Quantity');
+          this.lineDisplayData.splice(index,1)
+        }
         this.isGRNDataLoaded = true;
         setTimeout(() => {
           // document.getElementById('grnTable').style.display = 'block';
@@ -2221,6 +2230,7 @@ export class Comparision3WayComponent
     if (this.GRN_PO_Bool) {
       this.updateAmountExcTax(lineItem, val, 'UnitPrice', 'AmountExcTax', 'idDocumentLineItems');
     } else {
+      this.onChangeLineValue('Quantity',val,lineItem);
       this.updateAmountExcTax(lineItem, val, 'GRN - UnitPrice', 'GRN - AmountExcTax', 'invoice_itemcode');
     }
   }
@@ -2234,6 +2244,7 @@ export class Comparision3WayComponent
 
       if (amountExcTaxItem) {
         amountExcTaxItem.Value = amountExcTax;
+        amountExcTaxItem.ErrorDesc = "Quantity changed";
       }
       this.GRN_line_total = 0;
       this.lineDisplayData.forEach(ele => {
@@ -2315,7 +2326,7 @@ export class Comparision3WayComponent
   onSave_submit(grnQ, boolean, txt) {
     if (this.descrptonBool) {
       this.GRNObjectDuplicate = this.GRNObject;
-      if (this.GRN_PO_Bool) {
+      if (this.GRN_PO_Bool || this.router.url.includes("GRN_approvals")) {
         this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
         this.GRNObjectDuplicate.forEach((val, i) => {
           if (val.is_mapped == 'Price' && grnQ[val?.idDocumentLineItems] != 0) {
@@ -2376,7 +2387,11 @@ export class Comparision3WayComponent
             }
           } else {
             setTimeout(() => {
-              this.CreateGRNAPI(boolean, txt);
+              if(this.router.url.includes('GRN_approvals')){
+                this.grnDuplicateCheck();
+              } else {
+                this.CreateGRNAPI(boolean, txt);
+              }
             }, 1000);
           }
         } else {
@@ -2425,60 +2440,76 @@ export class Comparision3WayComponent
   }
 
   grnDuplicateCheck() {
-    if (this.GRNObjectDuplicate?.length > 0) {
-      let arr = []
+    if (this.GRNObjectDuplicate.length > 0) {
+      let arr = [];
       this.GRNObjectDuplicate.forEach((ele) => {
-        if (ele?.tagName == 'Quantity') {
-          let obj = {
-            line_id: ele?.idDocumentLineItems,
-            quantity: ele?.Value
+        if(this.router.url.includes("GRN_approvals")){
+          if (ele.is_quantity) {
+            let obj = {
+              line_id: ele.invoice_itemcode,
+              quantity: ele.Value
+            }
+            arr.push(obj)
           }
-          arr.push(obj)
+        } else {
+          if (ele.tagName == 'Quantity') {
+            let obj = {
+              line_id: ele.idDocumentLineItems,
+              quantity: ele.Value
+            }
+            arr.push(obj)
+          }
         }
+
       })
       // const uniqarr = arr.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.line_id == val.line_id && v.quantity == val.quantity));
       let duplicateAPI_response: string;
       let extra_param = '';
       if(this.router.url.includes('GRN_approvals')){
         extra_param = `&grn_id=${this.invoiceID}`
-      }
-      this.SharedService.duplicateGRNCheck(arr,extra_param).subscribe((data: any) => {
-        duplicateAPI_response = data?.result;
+      } 
+      this.SharedService.duplicateGRNCheck(JSON.stringify(arr),extra_param).subscribe((data: any) => {
+        duplicateAPI_response = data.result;
         this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
           let negativeData = [];
           let negKey = {};
-          let bool: boolean;
-          for (let key in data?.result) {
+          let bool:boolean;
+          for (let key in data?.result){
             let valuee = data.result[key];
             this.GRNObjectDuplicate.forEach((ele) => {
-              if (ele?.tagName == 'Quantity' && ele?.idDocumentLineItems == key && (+valuee < +ele?.Value)) {
+              if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && (+valuee < +ele.Value)  ) {
                 negKey[key] = valuee;
                 negativeData.push(valuee);
               }
             })
           }
-          if (negativeData.length <= 0) {
+          if (negativeData.length <= 0) {    
             if (duplicateAPI_response == 'successful') {
-              this.createGRNWithPO();
+              if(this.router.url.includes("GRN_approvals")){
+                this.Approve_grn();
+              } else {
+                this.createGRNWithPO();
+              }
+              
             } else {
+              this.AlertService.errorObject.detail = duplicateAPI_response;
               this.error(duplicateAPI_response);
             }
           } else {
-            let str: string = JSON.stringify(negKey);
+            let str:string = JSON.stringify(negKey);
             this.error(`Please check available quantity in the line numbers (${str})`);
           }
         }, err => {
-          this.error("Server error");
+          this.error('Server error')
         })
       }, err => {
-        this.error("Server error");
+        this.error('Server error')
       })
     } else {
-      alert('There are no lines to create GRN, if you are able to see the lines then please check the quantityy');
+      alert('There are no lines to create GRN, if you are able to see the lines then please check the quantity');
       this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter(val => val.tagName != 'AmountExcTax');
     }
   }
-
   CreateGRNAPI(boolean, txt) {
     if (this.validateUnitpriceBool) {
       if (confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
@@ -2920,6 +2951,11 @@ export class Comparision3WayComponent
       }
     }, err => {
       this.SpinnerService.hide();
+      if (err.status == 403) {
+        this.error(err.error.Error);
+      } else {
+        this.error('Server error');
+      }
     })
   }
   canDeactivate(): boolean {

@@ -522,7 +522,7 @@
                     : ''
                 "
 
-                >{{ col.dbColumnname == 'VendorName' ?invoiceData[col.dbColumnname].toLowerCase() : invoiceData[col.dbColumnname] }}</span
+                >{{ (col.dbColumnname == 'VendorName' || col.dbColumnname == 'ServiceProviderName' || col.dbColumnname == 'EntityName') ?invoiceData[col.dbColumnname].toLowerCase() : invoiceData[col.dbColumnname] }}</span
               >
             </div>
           </ng-container>
