@@ -22,6 +22,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   vendorAccountList = [];
   currencies = [];
   languages = [];
+  decimal_sep = [];
   select_vendorAccount: any;
   templateName: string;
   modaladderr:boolean=false;
@@ -108,6 +109,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     private router:Router,
     private mobservice:MobmainService,
     private _location: Location) { 
+      this.decimal_sep = [{"value":".","display":"Dot"},{"value":",","display":"Comma"}]
       this.currencies = [ 
         {"currency":"AED",
         "description":"United Arab Emirates Dirham"},
@@ -764,6 +766,11 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
           }else{
             (<HTMLInputElement>document.getElementById("temp_language")).value = this.FRMetaData['temp_language'];
           }
+          if(!this.FRMetaData['current_po_format'] || this.FRMetaData['current_po_format'] == ''){
+            this.FRMetaData['current_po_format'] = '.';
+          }else{
+            (<HTMLInputElement>document.getElementById("current_po_format")).value = this.FRMetaData['current_po_format'];
+          }
           this.selectedRuleId= this.FRMetaData['ruleID'];
 
           if(!this.FRMetaData['erprule']){
@@ -801,6 +808,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
           (<HTMLInputElement>document.getElementById("AccuracyOverall")).value = '90';
           (<HTMLInputElement>document.getElementById("AccuracyFeild")).value = '90';
           (<HTMLInputElement>document.getElementById("Units")).value = 'USD';
+          (<HTMLInputElement>document.getElementById("current_po_format")).value = '.';
           (<HTMLInputElement>document.getElementById("temp_language")).value = 'en';
           if((<HTMLSelectElement>document.getElementById("ruleID")))
           (<HTMLSelectElement>document.getElementById("ruleID")).value = '';
@@ -965,6 +973,9 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
 
     if(value['Units'] == ''){
       value['Units'] = (<HTMLInputElement>document.getElementById("Units")).value;
+    }
+    if(value['current_po_format'] == ''){
+      value['current_po_format'] = (<HTMLInputElement>document.getElementById("current_po_format")).value;
     }
     if(value['temp_language'] == ''){
       value['temp_language'] = (<HTMLInputElement>document.getElementById("temp_language")).value;
