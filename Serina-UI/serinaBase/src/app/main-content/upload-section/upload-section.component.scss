@@ -452,6 +452,9 @@ input[type="checkbox"] {
   .p-dropdown-items {
     background-color: $theme_color;
   }
+  .p-autocomplete.p-autocomplete-dd .p-autocomplete-loader {
+    display: none;
+  }
 }
 .numberRangeContainer {
   position: relative;
@@ -712,6 +715,11 @@ label {
   right: 10px;
   color: rgb(196, 61, 61);
   cursor: pointer;
+}
+.username {
+  text-transform: capitalize;
+  color: $theme_color;
+  margin-left: 5px;
 }
 :host::ng-deep{
   .p-dialog {

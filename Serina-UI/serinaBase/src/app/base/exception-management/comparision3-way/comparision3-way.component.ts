@@ -143,7 +143,7 @@ export class Comparision3WayComponent
     { TagName: 'AmountExcTax', linedata: [] },
     { TagName: 'GRN - Quantity', linedata: [] },
     { TagName: 'UnitPrice', linedata: [] },
-    { TagName: 'PurchUnit', linedata: [] },
+    // { TagName: 'PurchUnit', linedata: [] },
     { TagName: 'Actions', linedata: [] }
   ];
   po_grn_list = [];
@@ -407,6 +407,7 @@ export class Comparision3WayComponent
   client_name: string;
   isMoreRequired: boolean;
   moreInfoBool: boolean;
+  grnNumber_enova:string;
 
   constructor(
     fb: FormBuilder,
@@ -754,9 +755,9 @@ export class Comparision3WayComponent
           this.GRN_line_total = this.GRN_line_total + Number(amount)
           tag.linedata.push({ Value: amount, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'AmountExcTax' })
         }
-        else if (tag.TagName == 'PurchUnit') {
-          tag.linedata.push({ Value: ele.PurchUnit, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PurchUnit' })
-        }
+        // else if (tag.TagName == 'PurchUnit') {
+        //   tag.linedata.push({ Value: ele.PurchUnit, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PurchUnit' })
+        // }
         else if (tag.TagName == 'Actions') {
           tag.linedata.push({ Value: '', ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Actions' })
         }
@@ -2417,7 +2418,7 @@ export class Comparision3WayComponent
     if (this.invoiceNumber) {
       inv_number = `&inv_num=${this.invoiceNumber}`
     }
-    this.SharedService.createGRNWithPO(inv_number, JSON.stringify(this.GRNObjectDuplicate)).subscribe((data: any) => {
+    this.SharedService.createGRNWithPO(inv_number, this.GRNObjectDuplicate).subscribe((data: any) => {
       this.SpinnerService.hide();
       if (data.status == 'Posted') {
         this.success(data.message);
@@ -2468,7 +2469,7 @@ export class Comparision3WayComponent
       if(this.router.url.includes('GRN_approvals')){
         extra_param = `&grn_id=${this.invoiceID}`
       } 
-      this.SharedService.duplicateGRNCheck(JSON.stringify(arr),extra_param).subscribe((data: any) => {
+      this.SharedService.duplicateGRNCheck(arr,extra_param).subscribe((data: any) => {
         duplicateAPI_response = data.result;
         this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
           let negativeData = [];
@@ -2524,8 +2525,7 @@ export class Comparision3WayComponent
   grnAPICall(boolean, txt) {
     this.SpinnerService.show();
     this.SharedService.saveGRNData(
-      boolean,
-      JSON.stringify(this.GRNObject)
+      boolean,this.GRNObject
     ).subscribe(
       (data: any) => {
         this.SpinnerService.hide();

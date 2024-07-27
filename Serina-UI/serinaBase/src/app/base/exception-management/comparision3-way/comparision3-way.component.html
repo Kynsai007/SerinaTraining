@@ -32,9 +32,10 @@
         currentTab == 'line'
       "
     >
+      
       <button
         *ngIf="
-          portalName == 'customer' && (subStatusId == 75 || subStatusId == 17)
+          portalName == 'customer' && client_name == 'Enova'
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -590,8 +591,8 @@
             >
               <button
                 *ngIf="
-                  portalName == 'customer' &&
-                  (subStatusId == 75 || subStatusId == 17)
+                  portalName == 'customer'
+                  && client_name == 'Enova'
                 "
                 class="level_3_btn f-12 m-t-neg ml-2 mr-2"
                 (click)="opengrnDailog()"
@@ -881,7 +882,7 @@
                     </ng-container>
                   </td>
 
-                  <td *ngIf="editable">
+                  <td *ngIf="editable && !fin_boolean">
                     <span class="f-13 p-2 mapping_line hide">Act</span>
                     <div style="margin-top: -5px">
                       <div *ngFor="let data of lineCount">
@@ -1218,7 +1219,7 @@
                             {{ line.value.itemCode }}
                           </div>
                         </div>
-                        <div *ngIf="item.TagName == 'Actions' && editable">
+                        <div *ngIf="item.TagName == 'Actions' && editable && !fin_boolean">
                           <div class="linevalue invert_thtd">
                             <button
                               class="trash_btn"
@@ -1316,7 +1317,7 @@
                       <ng-container>
                         <div class="displayFlex">
                           <div *ngFor="let item of lined">
-                            <div *ngIf="item.TagName == 'Actions' && editable">
+                            <div *ngIf="item.TagName == 'Actions' && editable && !fin_boolean">
                               <div class="linevalue">
                                 <button
                                   class="trash_btn"
@@ -1746,7 +1747,7 @@
                 </tr>
               </table>
             </div>
-            <div *ngIf="supportTabBoolean && !approval_selection_boolean">
+            <div *ngIf="supportTabBoolean && !approval_selection_boolean && (editable || fin_boolean)">
               <label
                 for="img"
                 class="img-browse"
@@ -2047,7 +2048,7 @@
               Next
             </button>
             <button
-              *ngIf="fin_boolean && client_name == 'Enova' && !isMoreRequired"
+              *ngIf="fin_boolean && client_name == 'Enova' && !isMoreRequired && !isServiceData"
               type="button"
               class="primary_btn f-12 mr-3"
               (click)="open_dialog('more')"
@@ -2449,7 +2450,7 @@
       <ng-container *ngIf="headerpop == 'Select GRN'">
         <div *ngFor="let grnLine of selectedGRNLines">
           <div class="f-13">GRN : {{ grnLine?.grnNumber }}</div>
-          <table class="table f-12" *ngIf="grnLine?.linesData?.length > 0">
+          <table class="table f-12" style="border: 1px solid lightgray;" *ngIf="grnLine?.linesData?.length > 0">
             <tr>
               <th style="width: 60px">S.No</th>
               <th>Description</th>
@@ -2515,6 +2516,22 @@
         "
       >
         <span>{{ isBatchFailed && batch_count <= 2 ? "Re-try" : "Next" }}</span>
+      </button>
+      <!-- <button
+        *ngIf="headerpop == 'Batch Progress' && isAprUser && subStatusId == 71"
+        type="button"
+        class="secondary_btn f-12 mt-2 mr-2"
+        (click)="open_dialog('reject')"
+      >
+        Reject
+      </button> -->
+      <button
+        *ngIf="headerpop == 'Batch Progress' && isAprUser && subStatusId == 71 && !isServiceData"
+        type="button"
+        class="primary_btn f-12 mt-2 mr-2"
+        (click)="open_dialog('more')"
+      >
+        More info required
       </button>
       <button
         *ngIf="headerpop == 'Batch Progress' && isAprUser && subStatusId == 71"

@@ -295,6 +295,9 @@ export class UploadSectionComponent implements OnInit {
   displayTablebool: boolean;
   spinMsg = 'Please wait...';
   sub_type = [];
+  pre_type:string;
+  selectedInvNumber: any;
+
   constructor(
     private http: HttpClient,
     public route: Router,
@@ -383,7 +386,9 @@ export class UploadSectionComponent implements OnInit {
     }
 
   }
-
+  selectedSub(event){
+    this.pre_type = event?.value?.value
+  }
   permissions() {
     if (this.userDetails?.uploadOpt == 'Quick Upload' && this.isCustomerPortal) {
       this.viewType = 'quick';
@@ -804,11 +809,15 @@ export class UploadSectionComponent implements OnInit {
   }
 
   selectedInv(event){
-    this.sharedService.readInvLines(event.docheaderID).subscribe(data=>{
-      this.popupFun('flip returns',data,'');
-    }, err=>{
-      this.error("Server error");
-    })
+    if(this.viewType == 'quick'){
+      this.sharedService.readInvLines(event.docheaderID).subscribe(data=>{
+        this.popupFun('flip returns',data,'');
+      }, err=>{
+        this.error("Server error");
+      })
+    } else {
+      this.selectedInvNumber = event.docheaderID;
+    }
   }
 
   selectedPO(event) {
@@ -818,8 +827,11 @@ export class UploadSectionComponent implements OnInit {
         this.vendorAccountId = event.vendorAccountId;
         this.selectedEntityId = event.entityID;
       }
+      if(this.selectedInvoiceType.includes('creditNote') && this.dataService.configData.client_name == 'SRG'){
+        this.getVendorInvoices(event.PODocumentID);
+      }
       this.displayUploadOpt();
-      this.readPOLines(event.PODocumentID);
+      // this.readPOLines(event.PODocumentID);
     } else {
       if (this.selectedCategory == 'credit') {
         this.readPOLines(event.PODocumentID);
@@ -1364,6 +1376,7 @@ export class UploadSectionComponent implements OnInit {
               document_type: this.document_type,
               up_lt: this.upperLimit,
               low_lt: this.lowerLimit,
+              inv_number:this.selectedInvNumber
             };
             this.runEventSource(eventSourceObj);
             let count = 0;

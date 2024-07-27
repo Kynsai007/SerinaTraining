@@ -29,7 +29,7 @@
   </div>
   <div class="column2">
     <div class="f-18 d-flex d_msg">
-      Hey User,<img
+      Hey <span class="username">{{ userDetails.firstName}}</span>,<img
         src="../../../assets/Serina Assets/new_theme/wave.png"
         alt=""
       />
@@ -191,7 +191,7 @@
               field="VendorName"
               [dropdown]="true"
               name="vendor"
-              ngModel
+              [(ngModel)]="vendorName"
               required
             >
               <ng-template let-group pTemplate="group">
@@ -330,34 +330,34 @@
             <p-dropdown
               [options]="sub_type"
               placeholder="Select type"
+              (onChange)="selectedSub($event)"
               name="subType"
               optionLabel="tagName"
             >
             </p-dropdown>
           </div>
           <div class="selectFilter ideal" *ngIf="selectedInvoiceType == 'advance' && dataService.configData.client_name == 'SRG'">
-            <label class="f-12 mb-0">Please add </label><br>
+            <label class="f-12 mb-0">Please add {{pre_type}}</label><br>
             <input type="text" class="form-control accountSelect f-12">
           </div>
           <div
             *ngIf="viewType == 'ideal' && selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'SRG' "
             class="selectFilter ideal"
           >
-          <label class="f-12 mb-0">Select Invoice Number</label>
-          <p-multiSelect
-            class="accountSelect"
-            [options]="po_grn_list"
-            placeholder="Number"
-            filter="false"
-            inputStyleClass="form-control"
-            optionLabel="PackingSlip"
-            [maxSelectedLabels]="3"
-            [selectedItemsLabel]="'{0} items selected'"
-            (onChange)="selectIdealGrn($event)"
-            name="PO_GRN_Number"
-            [(ngModel)]="selectedGRNNumber"
+          <label class="f-12 mb-0">Select Invoice Number</label><br />
+          <p-autoComplete
+            placeholder="Select Invoice Number"
+            (onSelect)="selectedInv($event)"
+            [group]="false"
+            [forceSelection]="true"
+            [suggestions]="filteredInv"
+            (completeMethod)="filterInvnumber($event)"
+            field="docheaderID"
+            [dropdown]="true"
+            name="invNumber"
+            ngModel
           >
-          </p-multiSelect>
+          </p-autoComplete>
         </div>
           <div
             *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO' && portal_name == 'customer'"

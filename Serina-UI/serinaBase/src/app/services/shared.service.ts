@@ -606,7 +606,7 @@ export class SharedService {
   }
 
   readVenInvoices(po_num){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getVendorInvoices/{U_id}?u_id=${this.userId}&po_num=${po_num}`).pipe(retry(3));
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getVendorInvoices/${this.userId}?po_num=${po_num}`).pipe(retry(3));
   }
   readInvLines(inv){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/get_invoice_lines/${this.userId}?inv_num=${inv}`).pipe(retry(3));
