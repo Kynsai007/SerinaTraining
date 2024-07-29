@@ -35,7 +35,7 @@
       
       <button
         *ngIf="
-          portalName == 'customer' && client_name == 'Enova'
+          portalName == 'customer' && client_name == 'Enova' && !isServiceData && !fin_boolean && editable
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -592,7 +592,7 @@
               <button
                 *ngIf="
                   portalName == 'customer'
-                  && client_name == 'Enova'
+                  && client_name == 'Enova' && !isServiceData && !fin_boolean && editable
                 "
                 class="level_3_btn f-12 m-t-neg ml-2 mr-2"
                 (click)="opengrnDailog()"
