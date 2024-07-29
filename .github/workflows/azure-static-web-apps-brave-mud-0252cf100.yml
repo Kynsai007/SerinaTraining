@@ -20,7 +20,7 @@ jobs:
           submodules: true
       - uses: Azure/login@v1
         with:
-          creds: '{"clientId":"44e503fe-f768-46f8-99bf-803d4a2cf62d","clientSecret":"aDb8Q~gTHy6kyWZFUgCAGSZXV90QdAWKRuZSJa_H","subscriptionId":"ab1a7646-e1c2-42d7-a198-47e25afe5e5f","tenantId":"86fb359e-1360-4ab3-b90d-2a68e8c007b9"}'
+          creds: '{"clientId":${{ secrets.AZURE_CLIENT_ID }},"clientSecret":${{secrets.AZURE_CLIENT_SECRET}},"subscriptionId":${{secrets.AZURE_SUBSCRIPTION}},"tenantId":${{secrets.TENANT_ID}}}'
       - uses: Azure/get-keyvault-secrets@v1
         with:
           keyvault: "serinaplus-vault"
