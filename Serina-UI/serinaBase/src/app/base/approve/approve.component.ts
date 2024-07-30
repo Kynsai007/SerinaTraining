@@ -24,10 +24,11 @@ export class ApproveComponent implements OnInit {
   approvedDataSP: any[];
   ApprovedColumn = [
     { dbColumnname: 'docheaderID', columnName: 'Invoice Number' },
+    { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
     { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
     { dbColumnname: 'Account', columnName: 'Vendor A/C' },
     // { dbColumnname: 'documentdescription', columnName: 'Description' },
-    // { dbColumnname: 'Approvaltype', columnName: 'Approval type' },
+    
     { dbColumnname: 'documentDate', columnName: 'Invoice Date' },
     { dbColumnname: 'documentdescription', columnName: 'Description' },
     { dbColumnname: 'totalAmount', columnName: 'Amount' },

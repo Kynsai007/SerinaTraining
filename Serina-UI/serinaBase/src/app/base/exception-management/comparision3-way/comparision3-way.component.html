@@ -61,7 +61,7 @@
       </button>
     </div>
 
-    <div *ngIf="Itype == 'Invoice' && statusId != 10 && editable  && !fin_boolean" class="mr-2 invType">
+    <div *ngIf="Itype == 'Invoice' && statusId != 10 && editable && !fin_boolean" class="mr-2 invType">
       <p-autoComplete
         [(ngModel)]="entityName"
         (onSelect)="onSelectEntity($event, 'change')"
@@ -88,6 +88,9 @@
         [(ngModel)]="docType"
       >
       </p-dropdown>
+    </div>
+    <div class="f-12 mt-2 mr-2" *ngIf="!editable || fin_boolean">
+       <span class="status_btn">Invoice type - {{this.docType}}</span>
     </div>
     <button
       *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
@@ -640,7 +643,7 @@
                     <div class="f-12">Invoice</div>
                   </div> -->
                   <button
-                    *ngIf="editable"
+                    *ngIf="editable && !fin_boolean"
                     id="addLine"
                     class="level_3_btn f-12 mr-4"
                     (click)="open_dialog('AddLine')"
