@@ -61,7 +61,7 @@
       </button>
     </div>
 
-    <div *ngIf="Itype == 'Invoice' && statusId != 10 && editable" class="mr-2 invType">
+    <div *ngIf="Itype == 'Invoice' && statusId != 10 && editable  && !fin_boolean" class="mr-2 invType">
       <p-autoComplete
         [(ngModel)]="entityName"
         (onSelect)="onSelectEntity($event, 'change')"
