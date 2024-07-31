@@ -408,6 +408,7 @@ export class Comparision3WayComponent
   isMoreRequired: boolean;
   moreInfoBool: boolean;
   grnNumber_enova:string;
+  d_type: any;
 
   constructor(
     fb: FormBuilder,
@@ -3595,18 +3596,18 @@ export class Comparision3WayComponent
       data.data.forEach(el=>{
         if(el.toLowerCase() == this.docType ){
             this.docType = el;
-        }
-        if(this.docType == 'credit'){
+        } if(this.docType == 'credit'){
           this.docType = 'Invoice'
-        }else if(this.docType == 'non-po'){
+        } else if(this.docType == 'non-po'){
           this.docType = 'Non PO Invoice'
-        }else if(this.docType == 'advance'){
+        } else if(this.docType == 'advance'){
           this.docType = 'Advance Invoice'
-        }else if(this.docType == 'credit-note'){
+        } else if(this.docType == 'credit-note'){
           this.docType = 'Credit Note'
-        }else if(this.docType == 'retention'){
+        } else if(this.docType == 'retention'){
           this.docType = 'Retention Invoice'
         }
+        this.d_type = this.docType;
       })
     })
   }

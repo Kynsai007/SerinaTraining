@@ -91,6 +91,7 @@ export class DataService {
     { id:24, sub_id:70, name :'Set Approval', bgcolor: '#d0fbdd', textColor :'#14bb12'},
     { id:2, sub_id:37, name :'GRN successfully created in ERP', bgcolor: '#d0fbdd', textColor :'#14bb12'},
     { id:3, sub_id:70, name :'Approval Pending', bgcolor: '#d0fbdd', textColor :'#14bb12'},
+    { id:4, sub_id:81, name :'GRN Approval Pending', bgcolor: '#d0fbfb', textColor :'#128ebb'},
   ]
 
   // bgColorCode = [
