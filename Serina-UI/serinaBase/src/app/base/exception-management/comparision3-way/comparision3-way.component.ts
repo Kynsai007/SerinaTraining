@@ -409,6 +409,7 @@ export class Comparision3WayComponent
   moreInfoBool: boolean;
   grnNumber_enova:string;
   d_type: any;
+  ent_code:string;
 
   constructor(
     fb: FormBuilder,
@@ -441,6 +442,7 @@ export class Comparision3WayComponent
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
+    this.ent_code = this.dataService.ent_code;
     this.flipEnabled = true;
     // this.flipEnabled = this.dataService.configData.flipBool;
     this.userDetails = this.authService.currentUserValue;
@@ -700,7 +702,7 @@ export class Comparision3WayComponent
 
   changeTab(val) {
     this.currentTab = val;
-    if (val == 'header' || val == 'cost' || val == 'dynamic') {
+    if (val == 'header' || val == 'cost' || val == 'fixed') {
       this.showPdf = true;
       this.btnText = 'Close';
 
@@ -996,7 +998,7 @@ export class Comparision3WayComponent
                 this.linedata_mobile.push(transformedData);
               }
             }
-            if (this.editable) {
+            if (this.editable && !this.fin_boolean) {
               this.lineDisplayData.push({
                 TagName: 'Actions',
                 idDocumentLineItemTags: 1,
@@ -2445,6 +2447,7 @@ export class Comparision3WayComponent
     if (this.GRNObjectDuplicate.length > 0) {
       let arr = [];
       this.GRNObjectDuplicate.forEach((ele) => {
+        ele.Value = ele?.Value?.toString()
         if(this.router.url.includes("GRN_approvals")){
           if (ele.is_quantity) {
             let obj = {

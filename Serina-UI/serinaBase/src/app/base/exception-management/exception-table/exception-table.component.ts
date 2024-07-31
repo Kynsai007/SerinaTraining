@@ -321,6 +321,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   viewInvoiceDetails(e) {
     this.tagService.submitBtnBoolean = false;
     this.ds.subStatusId = e.documentsubstatusID;
+    this.ds.ent_code = e.EntityCode;
     this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
     let route: string;
     if (this.router.url.includes('PO')) {
@@ -440,7 +441,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   editInvoice(e) {
     this.tagService.approval_selection_boolean = false;
     this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
-
+    this.ds.ent_code = e.EntityCode;
     if (this.router.url.includes('invoice')) {
       this.tagService.submitBtnBoolean = false;
       let route: string;

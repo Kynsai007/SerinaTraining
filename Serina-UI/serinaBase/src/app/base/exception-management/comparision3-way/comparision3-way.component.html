@@ -90,7 +90,7 @@
       </p-dropdown>
     </div>
     <div class="f-12 mt-2 mr-2" *ngIf="!editable || fin_boolean">
-       <span class="status_btn">Invoice type - {{this.d_type}}</span>
+       <span *ngIf="ent_code || d_type" class="status_btn"><span *ngIf="ent_code">Entity code - {{ent_code}}</span> <span *ngIf="d_type">& Invoice type - {{d_type}}</span></span>
     </div>
     <button
       *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
@@ -1252,7 +1252,7 @@
                             "
                             [value]="line.value.Value"
                             [title]="line.value.Value"
-                            [disabled]="!editable"
+                            [disabled]="!editable || fin_boolean"
                             class="form-control f-12 input_disabled"
                             (change)="
                             documentType == 'advance' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?onChangeAdvance(line.value,inputv.value,item.TagName): onChangeLineValue(

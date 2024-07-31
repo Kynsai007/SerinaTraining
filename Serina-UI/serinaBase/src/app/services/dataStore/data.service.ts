@@ -226,6 +226,7 @@ export class DataService {
   isMobile: boolean;
   projectIdArr: any;
   projectCArr: any;
+  ent_code: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
