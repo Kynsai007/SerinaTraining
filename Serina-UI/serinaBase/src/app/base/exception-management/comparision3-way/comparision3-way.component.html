@@ -1578,35 +1578,39 @@
               </span>
               Total Calculated Tax - {{totalTaxDynamic.toFixed(2)}}
             </div>
-            <div *ngFor="let dynamic of dynamicdata; let i = index">
+            <div>
 
-              <h6 class="f-12 cost_head">Cost Allocation - {{ i + 1 }}</h6>
-              <div class="displayFlex">
-                <div *ngFor="let item of dynamicAllocationFileds">
-                  <div style="position: relative" class="input_container" [ngStyle]="{border: (subStatusId == 110 && item.header == 'Tax amount') ? '1px solid red':''}">
-                    <label class="label-head" style="margin-bottom: -5px"
-                      >{{ item.header }}
-                    </label>
-                    <input
-                      type="text"
-                      [value]="dynamic[item.field]"
-                      [title]="dynamic[item.field]"
-                      (input)="
-                        updateEditedValue(
-                          dynamic.iddynamiccostallocation,
-                          item.field,
-                          $event.target.value
-                        )
-                      "
-                      class="form-control inv_inp_cls"
-                      [readonly]="
-                        item.field === 'iddynamiccostallocation' ||
-                        item.field === 'documentID'
-                      "
-                    />
-                  </div>
-                </div>
-              </div>
+              <table class="dynamic">
+                <tr>
+                  <th class="f-12 lineName s_count">S.No</th>
+                  <th *ngFor="let item of dynamicAllocationFileds" class="f-12 lineName"> {{ item.header }} </th>
+                </tr>
+                <tr class="invert_tr" *ngFor="let dynamic of dynamicdata; let i = index">
+                  <!-- <div style="position: relative" class="input_container" [ngStyle]="{border: (subStatusId == 110 && item.header == 'Tax amount') ? '1px solid red':''}"> -->
+                    <td class="s_count f-12 linevalue invert_th_td">{{ i + 1 }}</td>
+                    <td class="linevalue invert_th_td"  *ngFor="let item of dynamicAllocationFileds">
+                      <input
+                        type="text"
+                        [value]="dynamic[item.field]"
+                        [title]="dynamic[item.field]"
+                        (input)="
+                          updateEditedValue(
+                            dynamic.iddynamiccostallocation,
+                            item.field,
+                            $event.target.value
+                          )
+                        "
+                        class="form-control inv_inp_cls"
+                        [readonly]="
+                          item.field === 'iddynamiccostallocation' ||
+                          item.field === 'documentID' || !editable
+                        "
+                        [ngStyle]="{border: (subStatusId == 110 && item.header == 'Tax amount') ? '1px solid red':''}"
+                      />
+                    </td>
+                  <!-- </div> -->
+                </tr>
+              </table>
             </div>
           </div>
         </ng-template>

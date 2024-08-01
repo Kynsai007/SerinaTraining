@@ -839,7 +839,7 @@ export class Comparision3WayComponent
     this.inputDisplayArray = [];
     // this.lineData = [];
     let serviceName;
-    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance' || this.dataService.documentType == 'non-po') {
+    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note') {
       this.pageType = "normal";
       serviceName = this.SharedService;
     } else {
@@ -1007,9 +1007,9 @@ export class Comparision3WayComponent
             this.inv_line_total = 0 ;
             this.lineDisplayData.forEach((ele) => {
               if (ele.TagName == 'S.No') {
-                ele.linedata = this.lineDisplayData[1]?.linedata;
+                ele.linedata = this.lineDisplayData[2]?.linedata;
               } else if (ele.TagName == 'Actions') {
-                ele.linedata = this.lineDisplayData[1]?.linedata;
+                ele.linedata = this.lineDisplayData[2]?.linedata;
               }
               if(ele.TagName == 'AmountExcTax'){
                   ele.linedata.forEach(ele=>{

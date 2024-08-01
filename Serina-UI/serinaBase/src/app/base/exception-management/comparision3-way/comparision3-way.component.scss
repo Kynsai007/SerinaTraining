@@ -230,6 +230,37 @@ $theme_color: var(--themeColor);
   top: -11px;
   z-index: 0;
 }
+.dynamic {
+  .invert_th_td {
+    display: table-cell;
+  }
+  .invert_thtd {
+    display: table-cell;
+  }
+  .invert_tr {
+    display: table-row;
+    float: none;
+  }
+  tr:nth-child(even) {
+    background-color: #ffffff;
+  }
+  tr:nth-child(odd) {
+    background-color: #358cd01a;
+  }
+  .invert_tr td:nth-child(even) {
+    background-color: inherit;
+  }
+ .invert_tr td:nth-child(odd) {
+    background-color: inherit;
+  }
+  input {
+    background-color: initial;
+    padding: 13px 4px;
+  }
+  .s_count {
+    min-width: 50px;
+  }
+}
 .invert_tr td:nth-child(even) {
     background-color: #ffffff;
   }
@@ -391,10 +422,15 @@ $theme_color: var(--themeColor);
   .project .p-autocomplete{
     height: 28px;
     width: 14svw;
+    position: relative;
+    top: -5px;
   }
   .project .p-autocomplete-dd .p-autocomplete-input {
     padding-left: 0;
     width: auto !important;
+    font-size: 12px;
+    color: #000000;
+    font-weight: 600;
   }
   .p-dropdown {
       border:0 !important;
