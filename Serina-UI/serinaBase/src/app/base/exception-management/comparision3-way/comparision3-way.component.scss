@@ -337,6 +337,9 @@ $theme_color: var(--themeColor);
     font-size: 12px;
     height: 30px;
   }
+  #grnTable .linevalue {
+    height: auto;
+  }
   .disable_div {
     background: #358dc01a 0% 0% no-repeat padding-box;
   }

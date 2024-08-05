@@ -502,6 +502,21 @@ export class Comparision3WayComponent
 
   initialData() {
     this.editable = this.tagService.editable;
+    this.fin_boolean = this.tagService.financeApprovePermission;
+    this.submitBtn_boolean = this.tagService.submitBtnBoolean;
+    this.approveBtn_boolean = this.tagService.approveBtnBoolean;
+    this.approval_selection_boolean =
+      this.tagService.approval_selection_boolean;
+    this.isLCMInvoice = this.tagService.LCM_boolean;
+    this.documentType = this.dataService.documentType;
+    this.documentInvType = this.tagService.documentType;
+    this.documentTypeId = this.dataService.idDocumentType;
+    this.userDetails = this.authService.currentUserValue;
+    // this.approvalType = this.tagService.approvalType;
+    this.financeapproveDisplayBoolean =
+      this.settingService.finaceApproveBoolean;
+    this.subStatusId = this.dataService.subStatusId;
+    this.statusId = this.dataService.statusId;
 
     if (
       this.router.url.includes('invoice/InvoiceDetails/vendorUpload') ||
@@ -514,7 +529,7 @@ export class Comparision3WayComponent
     }
     if (this.router.url.includes('InvoiceDetails') || this.router.url.includes('comparision-docs')) {
       this.Itype = 'Invoice';
-      if(this.editable){
+      if(this.editable && !['advance invoice','non po invoice','credit note'].includes(this.documentType)){
         this.readLineItems();
       }
     } else if (this.router.url.includes('PODetails')) {
@@ -565,7 +580,12 @@ export class Comparision3WayComponent
       // this.readPOLines();
       // this.readErrorTypes();
       // this.readMappingData();
-      this.getGRNtabData()
+      if(!['advance invoice'].includes(this.documentType)){
+        this.getGRNtabData();
+        this.getGrnAttachment();
+      }
+
+
       if (this.tagService.editable == true && this.grnCreateBoolean == false) {
         this.updateSessionTime();
         this.idleTimer(180, 'Start');
@@ -576,28 +596,13 @@ export class Comparision3WayComponent
     }
     // this.onResize();
     // this.Itype = this.tagService.type;
-    this.getGrnAttachment();
-    this.editable = this.tagService.editable;
-    this.fin_boolean = this.tagService.financeApprovePermission;
-    this.submitBtn_boolean = this.tagService.submitBtnBoolean;
-    this.approveBtn_boolean = this.tagService.approveBtnBoolean;
-    this.approval_selection_boolean =
-      this.tagService.approval_selection_boolean;
-    this.isLCMInvoice = this.tagService.LCM_boolean;
-    this.documentType = this.dataService.documentType;
-    this.documentInvType = this.tagService.documentType;
-    this.documentTypeId = this.dataService.idDocumentType;
-    this.headerName = this.tagService.headerName;
-    this.userDetails = this.authService.currentUserValue;
-    // this.approvalType = this.tagService.approvalType;
-    this.financeapproveDisplayBoolean =
-      this.settingService.finaceApproveBoolean;
-    this.subStatusId = this.dataService.subStatusId;
-    this.statusId = this.dataService.statusId;
+
     this.routeOptions();
     if(this.fin_boolean){
       this.getRejectionComments();
     }
+    this.headerName = this.tagService.headerName;
+
     // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
   }
 
@@ -839,7 +844,7 @@ export class Comparision3WayComponent
     this.inputDisplayArray = [];
     // this.lineData = [];
     let serviceName;
-    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note') {
+    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non po invoice' || this.dataService.documentType == 'credit note') {
       this.pageType = "normal";
       serviceName = this.SharedService;
     } else {
@@ -862,7 +867,7 @@ export class Comparision3WayComponent
           this.docType = response?.doc_type;
           this.documentType = response?.doc_type?.toLowerCase();
         }
-        if(this.docType == 'Credit Note'){
+        if(this.documentType == 'credit note'){
           // this.getProjectData();
           this.projectCArr = this.dataService.projectCArr;
           this.projectIdArr = this.dataService.projectIdArr;
@@ -3601,13 +3606,13 @@ export class Comparision3WayComponent
             this.docType = el;
         } if(this.docType == 'credit'){
           this.docType = 'Invoice'
-        } else if(this.docType == 'non-po'){
+        } else if(this.docType == 'non po invoice'){
           this.docType = 'Non PO Invoice'
-        } else if(this.docType == 'advance'){
+        } else if(this.docType == 'advance invoice'){
           this.docType = 'Advance Invoice'
-        } else if(this.docType == 'credit-note'){
+        } else if(this.docType == 'credit note'){
           this.docType = 'Credit Note'
-        } else if(this.docType == 'retention'){
+        } else if(this.docType == 'retention invoice'){
           this.docType = 'Retention Invoice'
         }
         this.d_type = this.docType;

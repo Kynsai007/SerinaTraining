@@ -268,8 +268,8 @@ export class UploadSectionComponent implements OnInit {
   returnInvArr = [];
   invTypeArr = [
     // { name:'LCM', value:'LCM'},
-    { name:'Non-PO', value:'nonPO'},
-    { name:'Single PO', value:'singlePO'},
+    { name:'Non-PO', value:'non po invoice'},
+    { name:'Single PO', value:'invoice'},
     // { name:'Multiple PO', value:'multiPO'}
   ];
   categoryArr = [];
@@ -348,28 +348,32 @@ export class UploadSectionComponent implements OnInit {
     }
     if(this.dataService.configData.client_name == 'Enova'){
       this.invTypeArr = [
-        { name:'Invoice', value:'singlePO'},
-        { name:'Non PO Invoice', value:'nonPO'}
+        { name:'Invoice', value:'invoice'},
+        { name:'Non PO Invoice', value:'non po invoice'},
+        { name:'Advance', value:'advance invoice'},
+        { name:'Credit Note', value:'credit note'},
+        { name:'Retention', value:'retention invoice'},
+        { name:'Returns', value:'returns'}
       ];
     } else if (this.dataService.configData.client_name == 'Cenomi') {
-      // this.onSelectPOType('singlePO','ideal');
+      // this.onSelectPOType('invoice','ideal');
       this.invTypeArr = [
-        { name:'Invoice', value:'singlePO'},
-        { name:'Advance - Tax', value:'advance'},
+        { name:'Invoice', value:'invoice'},
+        { name:'Advance - Tax', value:'advance invoice'},
         { name:'Advance - Pro-forma', value:'proforma'},
-        { name:'Credit Note', value:'creditNote'}
+        { name:'Credit Note', value:'credit note'}
       ];
       this.sub_type = [
         { tagName:'Quantity', value:'credit-quantity'},
         { tagName:'Discount', value:'credit-discount'}
       ]
     } else if (this.dataService.configData.client_name == 'SRG') {
-      // this.onSelectPOType('singlePO','ideal');
+      // this.onSelectPOType('invoice','ideal');
       this.invTypeArr = [
-        { name:'Invoice', value:'singlePO'},
-        { name:'Non PO Invoice', value:'nonPO'},
-        { name:'Credit Note', value:'creditNote'},
-        { name:'Credit Note - Non PO', value:'creditNote-NonPO'},
+        { name:'Invoice', value:'invoice'},
+        { name:'Non PO Invoice', value:'non po invoice'},
+        { name:'Credit Note', value:'credit note'},
+        { name:'Credit Note - Non PO', value:'credit note-NonPO'},
         { name:'Pre-Payment', value:'advance'}
       ];
       this.sub_type = [
@@ -517,14 +521,14 @@ export class UploadSectionComponent implements OnInit {
   onSelectPOType(val, type) {
     if (type == 'ideal') {
     this.selectedInvoiceType = val ;
-      if(val == 'nonPO'){
+      if(val == 'non po invoice'){
         this.displaySelectPdfBoolean = true;
-      } else if(val == 'singlePO'){
+      } else if(val == 'invoice'){
         this.displaySelectPdfBoolean = false;
         this.getCategory();
       }
       // this.LCMBoolean = 'No';
-      // if (val == 'singlePO' || val == "nonPO") {
+      // if (val == 'invoice' || val == "non po invoice") {
       //   this.poTypeBoolean = true;
       // } else if (val == 'LCM') {
       //   this.poTypeBoolean = true;
@@ -549,14 +553,14 @@ export class UploadSectionComponent implements OnInit {
       } else if (val == 'LCM') {
         this.LCMBoolean = 'Yes';
         this.getCurrency(this.vendorAccountId);
-      } else if(val == 'singlePO') {
+      } else if(val == 'invoice') {
         this.getCategory();
-      } else if(val == 'nonPO') {
-        this.categoryArr = [
-          { name:'Credit Note', value:'credit'},
-          { name:'Debit', value:'debit'},
-          { name:'Advance Invoice', value:'advance'}
-        ]
+      } else if(val == 'non po invoice') {
+        // this.categoryArr = [
+        //   { name:'Credit Note', value:'credit'},
+        //   { name:'Debit', value:'debit'},
+        //   { name:'Advance Invoice', value:'advance'}
+        // ]
       }
     }
   }
@@ -564,7 +568,7 @@ export class UploadSectionComponent implements OnInit {
   getCategory(){
     if (this.dataService.configData.client_name == 'Cenomi') {
       this.categoryArr = [
-        { name:'Invoice', value:'singlePO'},
+        { name:'Invoice', value:'invoice'},
         { name:'Advance - Tax', value:'nonPO'},
         { name:'Advance - Pro-forma', value:'nonPO'},
         { name:'Credit note', value:'credit'}
@@ -827,13 +831,13 @@ export class UploadSectionComponent implements OnInit {
         this.vendorAccountId = event.vendorAccountId;
         this.selectedEntityId = event.entityID;
       }
-      if(this.selectedInvoiceType.includes('creditNote') && this.dataService.configData.client_name == 'SRG'){
+      if(this.selectedInvoiceType.includes('credit note') && this.dataService.configData.client_name == 'SRG'){
         this.getVendorInvoices(event.PODocumentID);
       }
       this.displayUploadOpt();
       // this.readPOLines(event.PODocumentID);
     } else {
-      if (this.selectedCategory == 'credit') {
+      if (this.selectedInvoiceType_quick == 'invoice') {
         this.readPOLines(event.PODocumentID);
         } else {
           this.getVendorInvoices(event.PODocumentID);
@@ -1427,7 +1431,8 @@ export class UploadSectionComponent implements OnInit {
                   }, 2000);
                   // this.tagService.createInvoice = true;
                   // this.tagService.invoicePathBoolean = true;
-                  this.tagService.documentType = this.progressEvent.UploadDocType;
+                  this.tagService.documentType = this.selectedInvoiceType;
+                  this.dataService.documentType = this.selectedInvoiceType;
                   let id: number
                   if (this.document_type == 'Purchase Orders') {
                     id = 1;

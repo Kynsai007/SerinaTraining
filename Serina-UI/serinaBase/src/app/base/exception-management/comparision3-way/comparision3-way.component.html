@@ -35,7 +35,7 @@
       
       <button
         *ngIf="
-          portalName == 'customer' && client_name == 'Enova' && !isServiceData && !fin_boolean && editable
+          portalName == 'customer' && client_name == 'Enova' && !isServiceData && !fin_boolean && editable && !['advance invoice','non po invoice','credit note'].includes(documentType)
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -44,7 +44,7 @@
       </button>
       <button
         *ngIf="
-          portalName == 'customer' && [8,16,17,19,21,27,34].includes(subStatusId) || (documentType == 'advance' && [29,108].includes(subStatusId))
+          portalName == 'customer' && [8,16,17,19,21,27,34].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId))
         "
         class="secondary_btn f-12 mr-2"
         (click)="open_dialog_comp('flip line')"
@@ -90,7 +90,7 @@
       </p-dropdown>
     </div>
     <div class="f-12 mt-2 mr-2" *ngIf="!editable || fin_boolean">
-       <span *ngIf="ent_code || d_type" class="status_btn"><span *ngIf="ent_code">Entity code - {{ent_code}}</span> <span *ngIf="d_type">& Invoice type - {{d_type}}</span></span>
+       <span *ngIf="ent_code || d_type" class="status_btn"><span *ngIf="ent_code">Entity code - {{ent_code}}</span> <span *ngIf="d_type"><span *ngIf="ent_code">&</span> Invoice type - {{d_type}}</span></span>
     </div>
     <button
       *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
@@ -385,7 +385,7 @@
             role="tabpanel"
             aria-labelledby="header-tab"
           >
-          <!-- <span class="boxopen" *ngIf="documentType == 'advance'" >
+          <!-- <span class="boxopen" *ngIf="documentType == 'advance invoice'" >
             <div class="button-container">
               <button class="advSettingsButton" (click)="openBox()"> Pre Payment </button>
             </div>
@@ -598,6 +598,7 @@
                 *ngIf="
                   portalName == 'customer'
                   && client_name == 'Enova' && !isServiceData && !fin_boolean && editable
+                  && !['advance invoice'].includes(documentType)
                 "
                 class="level_3_btn f-12 m-t-neg ml-2 mr-2"
                 (click)="opengrnDailog()"
@@ -607,7 +608,7 @@
               <button
                 *ngIf="
                   portalName == 'customer' &&
-                  flipEnabled && [8,16,17,18,19,21,27,34].includes(subStatusId) || (documentType == 'advance' && [29,108].includes(subStatusId))
+                  flipEnabled && [8,16,17,18,19,21,27,34].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId))
                 "
                 class="secondary_btn f_12 m-t-neg ml-2"
                 (click)="open_dialog_comp('flip line', '')"
@@ -668,7 +669,7 @@
                     <span class="f-12 p-2" style="margin-top: -6px">S.No</span>
                     <div
                       class="f-12 mb-1 "
-                      [ngClass]="(documentType == 'advance' || documentType == 'non-po')? 'count-h_normal':'count-h' "
+                      [ngClass]="(documentType == 'advance invoice' || documentType == 'non po invoice')? 'count-h_normal':'count-h' "
 
                       *ngFor="let tagName of lineCount; let i = index"
                     >
@@ -699,7 +700,7 @@
                       >
                         <div
                           class="f-12 td_padding invoice_color doc_height"
-                          [ngStyle]="{ borderBottom:(documentType == 'advance' || documentType == 'non-po')? '1px solid lightgray':'' }"
+                          [ngStyle]="{ borderBottom:(documentType == 'advance invoice' || documentType == 'non po invoice')? '1px solid lightgray':'' }"
                           data-text="IN"
                           [ngClass]="
                             tagName.tagname == 'Description'
@@ -789,7 +790,7 @@
                           ></span>
                         </div>
                         <div
-                          *ngIf="documentType != 'advance' && documentType != 'non-po'"
+                          *ngIf="documentType != 'advance invoice' && documentType != 'non po invoice'"
                           class="f-12 td_padding po_color doc_height"
                           data-text="PO"
                           [ngClass]="
@@ -893,7 +894,7 @@
                       <div *ngFor="let data of lineCount">
                         <div *ngFor="let data2 of data.linedetails" class="mb1">
                           <div class="f-12 td_padding invoice_color doc_height"
-                          [ngStyle]="{ borderBottom:(documentType == 'advance' || documentType == 'non-po')? '1px solid lightgray':'' }">
+                          [ngStyle]="{ borderBottom:(documentType == 'advance invoice' || documentType == 'non po invoice')? '1px solid lightgray':'' }">
                             <button
                               class="trash_btn"
                               (click)="
@@ -906,7 +907,7 @@
                               <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </button>
                           </div>
-                          <div *ngIf="documentType != 'advance' && documentType != 'non-po'" class="f-12 td_padding po_color doc_height">
+                          <div *ngIf="documentType != 'advance invoice' && documentType != 'non po invoice'" class="f-12 td_padding po_color doc_height">
                             <div
                               class="f-12 d-flex"
                               *ngIf="submitBtn_boolean"
@@ -930,7 +931,7 @@
                   <td class="total_count">{{ invoice_subTotal }}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
-                <tr *ngIf="documentType != 'advance' && documentType != 'non-po'">
+                <tr *ngIf="documentType != 'advance invoice' && documentType != 'non po invoice'">
                   <td></td>
                   <td class="total_txt">Purchase Total</td>
                   <td></td>
@@ -1151,12 +1152,12 @@
 
             <div *ngIf="pageType == 'normal'">
               <div
-                *ngIf="!isDesktop && editable && editPermissionBoolean"
+                *ngIf=" editable && editPermissionBoolean"
                 class="d-flex mb-1"
                 style="gap: 5px"
               >
                 <button
-                  *ngIf="portalName == 'customer' && subStatusId == 34 || (documentType == 'advance' && [29,108].includes(subStatusId))"
+                  *ngIf="portalName == 'customer' && subStatusId == 34 || (documentType == 'advance invoice' && [29,108].includes(subStatusId))"
                   class="secondary_btn f-12 mr-2"
                   (click)="open_dialog_comp('flip')"
                 >
@@ -1173,13 +1174,53 @@
                   <span *ngIf="subStatusId == 78">Set</span
                   ><span *ngIf="subStatusId == 77">Edit</span> Approvers
                 </button>
-                <button
-                  class="level_3_btn f-12"
-                  (click)="open_dialog('AddLine')"
-                >
-                  <i class="fa fa-plus" aria-hidden="true"></i> Add Line
-                </button>
               </div>
+              <div class="d-flex justify-content-between flex-wrap">
+                <div class="d-flex">
+                  <div class="f-14 mr-3">
+                    Invoice Line/Purchase Line Details
+                  </div>
+                  <div class="f-12 status_btn" *ngIf="doc_status">
+                    {{ doc_status }}
+                  </div>
+                </div>
+
+                <div class="d-flex f-12 basic_details text_color">
+                  <div class="mr-2">{{ vendorName }}</div>
+                  <div class="pipe mr-2">|</div>
+                  <div class="mr-2">{{ po_num }}</div>
+                  <div class="pipe mr-2">|</div>
+                  <div>{{ invoiceNumber }}</div>
+                </div>
+
+                <div
+                  class="d-flex"
+                  [ngClass]="
+                    isDesktop ? 'justify-content-end' : 'justify-content-start'
+                  "
+                >
+                  <!-- <div class="d-flex mr-3">
+                    <div class="represent_color invoice_color"></div>
+                    <div class="f-12">Invoice</div>
+                  </div> -->
+                  <button
+                    *ngIf="editable && !fin_boolean"
+                    id="addLine"
+                    class="level_3_btn f-12 mr-4"
+                    (click)="open_dialog('AddLine')"
+                  >
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add Line
+                  </button>
+                  <!-- <div class="d-flex mr-3">
+                    <div
+                      class="represent_color"
+                      style="background-color: red"
+                    ></div>
+                    <div class="f-12">Mis-matched</div>
+                  </div> -->
+                </div>
+              </div>
+
               <table
                 *ngIf="isDesktop"
                 id="linesdata"
@@ -1255,13 +1296,13 @@
                             [disabled]="!editable || fin_boolean"
                             class="form-control f-12 input_disabled"
                             (change)="
-                            documentType == 'advance' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?onChangeAdvance(line.value,inputv.value,item.TagName): onChangeLineValue(
+                            documentType == 'advance invoice' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?onChangeAdvance(line.value,inputv.value,item.TagName): onChangeLineValue(
                               item.TagName,
                               inputv.value,
                               line.value
                             )
                             "
-                            (blur)="documentType == 'advance' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?saveAdChanges():saveChanges()"
+                            (blur)="documentType == 'advance invoice' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?saveAdChanges():saveChanges()"
                           />
                         </span>
                       </div>
@@ -1270,7 +1311,7 @@
                 </tr>
               </table>
 
-              <table class="f-13 total_table" *ngIf="documentType == 'advance'">
+              <table class="f-13 total_table" *ngIf="documentType == 'advance invoice'">
                 <tr class="mb-1">
                   <td></td>
                   <td class="total_txt">Invoice Total</td>
@@ -2705,7 +2746,7 @@
       />
     </div>
 
-    <div *ngIf="rejectModalHeader == 'Check Item code availability'">
+    <div *ngIf="rejectModalHeader == 'Check Item Code Availability'">
       <div class="input_box">
         <label class="f-12 mb-0"
           >Please enter Item code number and Check is it available or

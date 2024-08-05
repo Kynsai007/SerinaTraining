@@ -735,6 +735,9 @@ label {
   .p-dialog .p-dialog-content {
     padding: 10px 20px;
   }
+  .p-multiselect-items {
+    background-color: $theme_color;
+  }
 } 
 @media screen and (width <= 1036px){
   .row .column1 {

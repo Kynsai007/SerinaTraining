@@ -273,7 +273,7 @@
             class="selectFilter"
             *ngIf="
               viewType == 'ideal' &&
-              (selectedInvoiceType == 'singlePO' ||
+              (selectedInvoiceType == 'invoice' ||
               selectedInvoiceType == 'nonPO') && (dataService.configData.client_name == 'Cenomi' && !isCustomerPortal)
             "
           >
@@ -293,7 +293,7 @@
           <div
             *ngIf="
               viewType == 'ideal' &&
-              selectedInvoiceType != 'nonPO'
+              selectedInvoiceType != 'non po invoice'
             "
             class="selectFilter"
           >
@@ -321,8 +321,8 @@
           <div
             *ngIf="
               viewType == 'ideal' &&
-              (selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'Cenomi') ||
-              (selectedInvoiceType == 'advance' && dataService.configData.client_name == 'SRG')
+              (selectedInvoiceType == 'credit note' && dataService.configData.client_name == 'Cenomi') ||
+              (selectedInvoiceType == 'advance invoice' && dataService.configData.client_name == 'SRG')
             "
             class="selectFilter"
           >
@@ -336,12 +336,12 @@
             >
             </p-dropdown>
           </div>
-          <div class="selectFilter ideal" *ngIf="selectedInvoiceType == 'advance' && dataService.configData.client_name == 'SRG'">
+          <div class="selectFilter ideal" *ngIf="selectedInvoiceType == 'advance invoice' && dataService.configData.client_name == 'SRG'">
             <label class="f-12 mb-0">Please add {{pre_type}}</label><br>
             <input type="text" class="form-control accountSelect f-12">
           </div>
           <div
-            *ngIf="viewType == 'ideal' && selectedInvoiceType == 'creditNote' && dataService.configData.client_name == 'SRG' "
+            *ngIf="viewType == 'ideal' && selectedInvoiceType == 'credit note' && dataService.configData.client_name == 'SRG' "
             class="selectFilter ideal"
           >
           <label class="f-12 mb-0">Select Invoice Number</label><br />
@@ -360,7 +360,7 @@
           </p-autoComplete>
         </div>
           <div
-            *ngIf="viewType == 'ideal' && selectedInvoiceType == 'singlePO' && portal_name == 'customer'"
+            *ngIf="viewType == 'ideal' && selectedInvoiceType == 'invoice' && portal_name == 'customer'"
             class="selectFilter ideal"
           >
             <label class="f-12 mb-0">Select GRN</label>
@@ -771,11 +771,11 @@
             </select>
           </div>
 
-          <div
+          <!-- <div
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
-              (selectedInvoiceType_quick == 'singlePO' ||
+              (selectedInvoiceType_quick == 'invoice' ||
                 selectedInvoiceType_quick == 'nonPO')
             "
           >
@@ -791,12 +791,12 @@
                 {{ item.name }}
               </option>
             </select>
-          </div>
+          </div> -->
 
           <!-- select PO Number -->
           <div
             class="selectFilter"
-            *ngIf="viewType != 'ideal' && selectedInvoiceType_quick == 'singlePO'"
+            *ngIf="viewType != 'ideal' && selectedInvoiceType_quick != 'non po invoice'"
           >
             <label class="f-12 mb-0">Select PO Number</label><br />
             <p-autoComplete
@@ -810,7 +810,6 @@
               [dropdown]="true"
               name="PONumber"
               ngModel
-              required
             >
               <ng-template let-group pTemplate="group">
                 <div class="flex align-items-center">
@@ -825,7 +824,7 @@
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
-              selectedInvoiceType_quick == 'singlePO' &&
+              selectedInvoiceType_quick == 'invoice' &&
               selectedCategory == 'returns'
             "
           >
@@ -856,8 +855,7 @@
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
-              selectedInvoiceType_quick == 'singlePO' &&
-              selectedCategory == 'credit'
+              selectedInvoiceType_quick == 'invoice'
             "
           >
             <label class="f-12 mb-0">Select GRN</label>
@@ -881,8 +879,7 @@
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
-              selectedInvoiceType_quick == 'singlePO' &&
-              selectedCategory == 'credit'
+              selectedInvoiceType_quick == 'invoice'
             "
           >
             <label class="f-12 mb-0">Select GRN Line</label>
@@ -904,7 +901,7 @@
           <div
             *ngIf="
               viewType != 'ideal' &&
-              selectedInvoiceType_quick == 'singlePO' &&
+              selectedInvoiceType_quick == 'invoice' &&
               selectedCategory != 'returns'
             "
             class="selectFilter w-value"
@@ -929,7 +926,7 @@
             </button>
           </div>
 
-          <div class="selectFilter">
+          <!-- <div class="selectFilter">
             <label class="f-12 mb-0">Select Department</label>
             <select
               class="form-control accountSelect f-12"
@@ -945,7 +942,7 @@
                 {{ name.DepartmentName }}
               </option>
             </select>
-          </div>
+          </div> -->
 
           <!--hiding pdf not to view-->
           <!-- <div #hiddenContainer style="position: absolute; left: -9999px; top: -9999px;">
