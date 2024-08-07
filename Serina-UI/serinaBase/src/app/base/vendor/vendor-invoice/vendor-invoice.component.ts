@@ -3,10 +3,10 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { SharedService } from 'src/app/services/shared.service';
+import * as fileSaver from 'file-saver';
 
 @Component({
   selector: 'vendor-invoice',
@@ -707,5 +707,18 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   onScroll(){
     this.offsetCount++
     this.SPAccountDetails(`&offset=${this.offsetCount}&limit=50`);
+  }
+  downloadAllAccounts(){
+    this.SpinnerService.show();
+    this.sharedService.downloadSPAccounts().subscribe((data:any)=>{
+      let blob: any = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8' });
+      fileSaver.saveAs(blob, `ServiceAccounts`);
+      this.SpinnerService.hide();
+
+      this.alertService.success_alert("The Report downloaded successfully.")
+    },err=>{
+      this.SpinnerService.hide();
+      this.alertService.error_alert("Server error")
+    })
   }
 }

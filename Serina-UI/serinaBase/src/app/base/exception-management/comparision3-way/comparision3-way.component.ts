@@ -402,6 +402,7 @@ export class Comparision3WayComponent
   projectCArr: any;
   filteredProject: any[];
   temp_header_data: any[];
+  temp_line_data: any[];
   batch_id:number;
   bulk_bool: boolean = false;
   client_name: string;
@@ -410,6 +411,9 @@ export class Comparision3WayComponent
   grnNumber_enova:string;
   d_type: any;
   ent_code:string;
+  filteredPreData: any[];
+  invNumbersList: any;
+  mappingForCredit = false;
 
   constructor(
     fb: FormBuilder,
@@ -438,7 +442,10 @@ export class Comparision3WayComponent
 
   ngOnInit(): void {
     this.ERP = this.dataService?.configData?.erpname;
-    this.client_name = this.dataService?.configData?.client_name
+    this.client_name = this.dataService?.configData?.client_name;
+    if(this.client_name == 'SRG'){
+      this.mappingForCredit = true;
+    }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
     this.GRN_PO_Bool = this.dataService.grnWithPOBoolean;
@@ -529,7 +536,7 @@ export class Comparision3WayComponent
     }
     if (this.router.url.includes('InvoiceDetails') || this.router.url.includes('comparision-docs')) {
       this.Itype = 'Invoice';
-      if(this.editable && !['advance invoice','non po invoice','credit note'].includes(this.documentType)){
+      if(this.editable && !['advance invoice','non po invoice','credit note'].includes(this.documentType) || this.mappingForCredit){
         this.readLineItems();
       }
     } else if (this.router.url.includes('PODetails')) {
@@ -576,7 +583,6 @@ export class Comparision3WayComponent
     } else {
       this.getInvoiceFulldata('');
       // this.getRulesData();
-      // this.getPOs();
       // this.readPOLines();
       // this.readErrorTypes();
       // this.readMappingData();
@@ -844,7 +850,7 @@ export class Comparision3WayComponent
     this.inputDisplayArray = [];
     // this.lineData = [];
     let serviceName;
-    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non po invoice' || this.dataService.documentType == 'credit note') {
+    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non po invoice' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
       this.pageType = "normal";
       serviceName = this.SharedService;
     } else {
@@ -867,11 +873,7 @@ export class Comparision3WayComponent
           this.docType = response?.doc_type;
           this.documentType = response?.doc_type?.toLowerCase();
         }
-        if(this.documentType == 'credit note'){
-          // this.getProjectData();
-          this.projectCArr = this.dataService.projectCArr;
-          this.projectIdArr = this.dataService.projectIdArr;
-        }
+
         this.getInvTypes();
         // this.lineDataConversion();
         if(this.pageType == "mapping"){
@@ -926,6 +928,13 @@ export class Comparision3WayComponent
         if (this.po_num) {
           this.getPODocId(this.po_num);
           this.getGRNnumbers(this.po_num);
+        }
+        if(this.documentType == 'credit note'){
+          // this.getProjectData();
+          this.getPOs();
+          this.getVendorInvoices(this.po_num)
+          this.projectCArr = this.dataService.projectCArr;
+          this.projectIdArr = this.dataService.projectIdArr;
         }
         let vendorData;
         if (this.pageType == 'normal') {
@@ -1026,6 +1035,7 @@ export class Comparision3WayComponent
         } else {
           vendorData = response?.Vendordata;
           this.lineDisplayData = response.linedata.Result;
+          this.temp_line_data = JSON.parse(JSON.stringify(response.linedata.Result));
           this.lineDisplayData.forEach((element, index, arr) => {
             this.lineCount = arr[0].items
             if (element.tagname == 'Description') {
@@ -1200,9 +1210,20 @@ export class Comparision3WayComponent
     this.sampleLineData = convertedData;
   }
   getPOs() {
+    this.poList = [];
     this.exceptionService.getInvoicePOs().subscribe(((data: any) => {
-      this.poList = data;
+      data.forEach(ele=>{
+        this.poList.push(ele.PODocumentID);
+      })
     }))
+  }
+  getVendorInvoices(po_num){
+    this.invNumbersList =[]
+    this.SharedService.readVenInvoices(po_num).subscribe((data:any)=>{
+      data.forEach(ele=>{
+        this.invNumbersList.push(ele.docheaderID);
+      })
+    })
   }
 
   headerDataOrder() {
@@ -3753,6 +3774,44 @@ export class Comparision3WayComponent
     }
   }
 
+  filterPreDrop(event,tag){
+    let arr = [];
+    if(tag == 'PurchaseOrder'){
+      arr = this.poList;
+    } else {
+      arr = this.invNumbersList;
+    }
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < arr?.length; i++) {
+      let str = arr[i];
+      if (
+        str.toLowerCase().indexOf(query.toLowerCase()) == 0
+      ) {
+        filtered.push(str);
+      }
+    }
+    this.filteredPreData = filtered;
+  }
+  onSelectPrePay(event,value,tagname, index){
+    let old_value
+    this.temp_line_data.forEach(tag=>{
+      if(tag.tagname == tagname){
+        old_value = tag.items[index].linedetails[0].invline[0].DocumentLineItems.Value
+      }
+    })
+    let obj = {
+      tag_id: value.idDocumentLineItems,
+      tag_name: tagname,
+      prev_value: old_value,
+      curr_value: event,
+    }
+    this.exceptionService.savePreData(obj).subscribe((data:any)=>{
+      this.success('Changes saved successfully')
+    },err=>{
+      this.error("Server error or Please check the data");
+    })
+  }
 
   filterProject(event,tag) {
     let arr = [];

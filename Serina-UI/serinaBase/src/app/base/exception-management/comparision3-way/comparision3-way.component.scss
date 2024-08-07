@@ -187,8 +187,8 @@ $theme_color: var(--themeColor);
   min-width: calc(23svw - 60px);
 }
 .inv_inp_cls {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 400;
   color: black;
   height: 20px;
   /* margin-right: 5px; */
@@ -433,7 +433,7 @@ $theme_color: var(--themeColor);
     width: auto !important;
     font-size: 12px;
     color: #000000;
-    font-weight: 600;
+    // font-weight: 600;
   }
   .p-dropdown {
       border:0 !important;
@@ -454,8 +454,8 @@ $theme_color: var(--themeColor);
     font-weight: 600;
   }
     .p-autocomplete-dd .p-autocomplete-input {
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 500;
       border: 0;
       background: transparent;
     }

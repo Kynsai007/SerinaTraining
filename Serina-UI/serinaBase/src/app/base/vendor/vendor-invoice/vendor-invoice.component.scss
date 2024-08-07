@@ -123,6 +123,15 @@
     right: 20px;
     cursor: pointer;
 }
+.acc_down {
+    position: fixed;
+    top: 82px;
+    right: 50px;
+    cursor: pointer;
+}
+.primary_btn {
+    padding: 8px 10px;
+  }
 @media (max-width: 1260px){
     .wild_search_all {
         width: auto !important;

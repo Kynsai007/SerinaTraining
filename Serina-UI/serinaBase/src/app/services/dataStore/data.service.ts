@@ -73,6 +73,7 @@ export class DataService {
     { id:2, sub_id:2, name :'Processing Document', bgcolor: '#d2d5f4', textColor :'#000000'},
     { id:3, sub_id:3, name :'Finance Approval Completed', bgcolor: '#E0FFEF', textColor :'#1EAC60'},
     { id:4, sub_id:4, name :'Need To Review', bgcolor: '#FEDD58', textColor :'#000000'},
+    { id:4, sub_id:4, name :'Under Review', bgcolor: '#FEDD58', textColor :'#000000'},
     { id:4, sub_id:35, name :'Waiting For GRN Creation', bgcolor: '#FEFFD6', textColor :'#CDD160'},
     { id:4, sub_id:39, name :'GRN Created in Serina', bgcolor: '#8F00FF', textColor :'#ffffff'},
     { id:4, sub_id:100, name :'GRN Attachment not Found', bgcolor: '#79a2b4', textColor :'#ffffff'},
@@ -227,6 +228,7 @@ export class DataService {
   projectIdArr: any;
   projectCArr: any;
   ent_code: any;
+  isCoordinator: boolean;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

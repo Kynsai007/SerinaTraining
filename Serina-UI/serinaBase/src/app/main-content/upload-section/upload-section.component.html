@@ -338,7 +338,7 @@
           </div>
           <div class="selectFilter ideal" *ngIf="selectedInvoiceType == 'advance invoice' && dataService.configData.client_name == 'SRG'">
             <label class="f-12 mb-0">Please add {{pre_type}}</label><br>
-            <input type="text" class="form-control accountSelect f-12">
+            <input type="number" class="form-control accountSelect f-12" (change)="pre_type_value($event.target.value,pre_type)">
           </div>
           <div
             *ngIf="viewType == 'ideal' && selectedInvoiceType == 'credit note' && dataService.configData.client_name == 'SRG' "

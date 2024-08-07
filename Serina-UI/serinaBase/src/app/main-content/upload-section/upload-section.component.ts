@@ -297,6 +297,7 @@ export class UploadSectionComponent implements OnInit {
   sub_type = [];
   pre_type:string;
   selectedInvNumber: any;
+  pre_type_val: any;
 
   constructor(
     private http: HttpClient,
@@ -359,8 +360,8 @@ export class UploadSectionComponent implements OnInit {
       // this.onSelectPOType('invoice','ideal');
       this.invTypeArr = [
         { name:'Invoice', value:'invoice'},
-        { name:'Advance - Tax', value:'advance invoice'},
-        { name:'Advance - Pro-forma', value:'proforma'},
+        { name:'Advance - Tax', value:'prepayment-tax'},
+        { name:'Advance - Pro-forma', value:'prepayment-proforma'},
         { name:'Credit Note', value:'credit note'}
       ];
       this.sub_type = [
@@ -374,11 +375,11 @@ export class UploadSectionComponent implements OnInit {
         { name:'Non PO Invoice', value:'non po invoice'},
         { name:'Credit Note', value:'credit note'},
         { name:'Credit Note - Non PO', value:'credit note-NonPO'},
-        { name:'Pre-Payment', value:'advance'}
+        { name:'Pre-Payment', value:'advance invoice'}
       ];
       this.sub_type = [
         { tagName:'Percentage', value:'percentage'},
-        { tagName:'Amount', value:'amount'}
+        { tagName:'Fixed', value:'fixed'}
       ]
     }
     if (this.PS.uploadPermissionBoolean) {
@@ -391,7 +392,16 @@ export class UploadSectionComponent implements OnInit {
 
   }
   selectedSub(event){
-    this.pre_type = event?.value?.value
+    this.pre_type = event?.value?.value;
+  }
+  pre_type_value(val,type){
+    if(type == 'amount'){
+      this.pre_type_val = val;
+    } else if(type == 'percentage' && val >= 0 && val <= 100){
+      this.pre_type_val = val;
+    } else {
+      this.error("Please add a valid percentage.")
+    }
   }
   permissions() {
     if (this.userDetails?.uploadOpt == 'Quick Upload' && this.isCustomerPortal) {
@@ -1380,7 +1390,9 @@ export class UploadSectionComponent implements OnInit {
               document_type: this.document_type,
               up_lt: this.upperLimit,
               low_lt: this.lowerLimit,
-              inv_number:this.selectedInvNumber
+              inv_number:this.selectedInvNumber,
+              Pre_pay_type: this.pre_type,
+              Pre_pay_value: this.pre_type_val
             };
             this.runEventSource(eventSourceObj);
             let count = 0;

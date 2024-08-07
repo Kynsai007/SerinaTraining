@@ -746,6 +746,7 @@
           class="nav_Link f-14"
           [routerLink]="'invoice'"
           (click)="doc_status_route()"
+          *ngIf="!isCoordinator"
           [ngClass]="{
             active_cls: router.url.includes('invoice'),
             cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'

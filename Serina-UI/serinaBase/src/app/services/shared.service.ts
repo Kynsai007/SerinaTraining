@@ -405,7 +405,9 @@ export class SharedService {
   SOASearch(api_param){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/downloadReport/${this.userId}${api_param}`).pipe(retry(2))
   }
-
+  downloadSPAccounts(){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/DownloadServiceAccountsInfo/${this.userId}`,{ responseType: 'blob' }).pipe(retry(2))
+  }
   ERPReportDownload(api_param){
     return this.http.post(`${this.apiUrl}/${this.apiVersion}/SP/DownloaderpExcel${api_param}`,'',
     { responseType: 'blob' }

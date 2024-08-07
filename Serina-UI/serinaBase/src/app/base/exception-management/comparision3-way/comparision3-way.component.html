@@ -35,7 +35,7 @@
       
       <button
         *ngIf="
-          portalName == 'customer' && client_name == 'Enova' && !isServiceData && !fin_boolean && editable && !['advance invoice','non po invoice','credit note'].includes(documentType)
+          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non po invoice','credit note'].includes(documentType) || mappingForCredit
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -61,7 +61,7 @@
       </button>
     </div>
 
-    <div *ngIf="Itype == 'Invoice' && statusId != 10 && editable && !fin_boolean" class="mr-2 invType">
+    <div *ngIf="Itype == 'Invoice' && statusId != 10 && editable && !fin_boolean && !headerName.includes('Create')" class="mr-2 invType">
       <p-autoComplete
         [(ngModel)]="entityName"
         (onSelect)="onSelectEntity($event, 'change')"
@@ -666,7 +666,7 @@
               <table class="w-100 mt-2">
                 <tr>
                   <td class="count_line">
-                    <span class="f-12 p-2" style="margin-top: -6px">S.No</span>
+                    <span class="f-13 p-2" style="margin-top: -6px">S.No</span>
                     <div
                       class="f-12 mb-1 "
                       [ngClass]="(documentType == 'advance invoice' || documentType == 'non po invoice')? 'count-h_normal':'count-h' "
@@ -695,7 +695,7 @@
                       *ngFor="let data of tagName.items; let l_i = index"
                     >
                       <ng-container
-                        *ngFor="let data2 of data.linedetails"
+                        *ngFor="let data2 of data.linedetails; let x = index"
                         class="mb-1"
                       >
                         <div
@@ -721,6 +721,7 @@
                               tooltipPosition="top"
                             ></div> -->
                           <input
+                            *ngIf="!['PurchaseOrder','InvoiceNumber'].includes(tagName.tagname)"
                             type="text"
                             #lineInput
                             [title]="data2.invline[0]?.DocumentLineItems.Value"
@@ -756,6 +757,21 @@
                                   : ''
                             }"
                           />
+                          <div *ngIf="['PurchaseOrder','InvoiceNumber'].includes(tagName.tagname)">
+                            <p-autoComplete
+                              [(ngModel)]="data2.invline[0]?.DocumentLineItems.Value"
+                              (onSelect)="onSelectPrePay($event, data2.invline[0]?.DocumentLineItems,tagName.tagname,x)"
+                              placeholder=""
+                              [suggestions]="filteredPreData"
+                              (completeMethod)="filterPreDrop($event,tagName.tagname)"
+                              field=""
+                              [dropdown]="true"
+                              styleClass="f-12"
+                              [name]="tagName.tagname"
+                              [disabled]="!editable || fin_boolean"
+                            >
+                            </p-autoComplete>
+                          </div>
                           <span
                             *ngIf="data2?.invline[0]?.DocumentUpdates"
                             class="prev_value"

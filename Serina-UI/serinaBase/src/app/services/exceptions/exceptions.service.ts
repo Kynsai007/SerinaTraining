@@ -144,6 +144,9 @@ export class ExceptionsService {
   saveProjectData(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/saveProjectDetails/${this.userId}?inv_id=${this.invoiceID}`,data);
   }
+  savePreData(data){
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Exception/customLinedatasave/${this.userId}?inv_id=${this.invoiceID}`,data);
+  }
   sendToMore(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Permission/setToMoreInfo/${this.userId}/idInvoice/${this.invoiceID}`,data);
   }

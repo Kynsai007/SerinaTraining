@@ -82,6 +82,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   logoSrc: string;
   isMenuOpen: boolean;
   isMobile: boolean;
+  isCoordinator:boolean;
 
   constructor(
     public router: Router,
@@ -225,6 +226,10 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.financeapproveDisplayBoolean =
     this.dataStoreService.configData?.enableApprovals;
     let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
+    if(userRole == 'coordinator'){
+      this.isCoordinator = true;
+      this.dataStoreService.isCoordinator = true;
+    }
     if(userRole == 'customer super admin' || userRole == 'ds it admin'){
       this.dataStoreService.isAdmin = true;
     } else {

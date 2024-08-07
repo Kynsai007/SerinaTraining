@@ -183,35 +183,40 @@ isMobile:boolean;
   }
 
   ngOnInit(): void {
-    this.userDetails = this.authService.currentUserValue;
-    this.userEmailID = this.userDetails.userdetails.email;
-    this.GRNCreateBool = this.ds.configData?.enableGRN;
-    this.vendorInvoiceAccess = this.ds?.configData?.vendorInvoices;
-    this.serviceInvoiceAccess = this.ds?.configData?.serviceInvoices;
-    this.isDesktop = this.ds.isDesktop;
-    this.isMobile = this.ds.isMobile;
-    this.ERPName = this.ds.configData?.erpname;
-    if (this.userDetails.user_type == 'customer_portal') {
-      this.usertypeBoolean = true;
-      this.portal_name = 'customer';
-    } else if (this.userDetails.user_type == 'vendor_portal') {
-      this.usertypeBoolean = false;
-      this.portal_name = 'vendorPortal';
+    if(!this.ds.isCoordinator){
+      this.userDetails = this.authService.currentUserValue;
+      this.userEmailID = this.userDetails.userdetails.email;
+      this.GRNCreateBool = this.ds.configData?.enableGRN;
+      this.vendorInvoiceAccess = this.ds?.configData?.vendorInvoices;
+      this.serviceInvoiceAccess = this.ds?.configData?.serviceInvoices;
+      this.isDesktop = this.ds.isDesktop;
+      this.isMobile = this.ds.isMobile;
+      this.ERPName = this.ds.configData?.erpname;
+      if (this.userDetails.user_type == 'customer_portal') {
+        this.usertypeBoolean = true;
+        this.portal_name = 'customer';
+      } else if (this.userDetails.user_type == 'vendor_portal') {
+        this.usertypeBoolean = false;
+        this.portal_name = 'vendorPortal';
+      }
+      this.ds.portalName = this.portal_name;
+      this.columnLengthSOA = this.columnsForSOA.length;
+      this.APIParams = `?offset=1&limit=50`;
+  
+      this.routeForTabs();
+      this.dateRange();
+      this.restoreData();
+      this.findActiveRoute();
+      // this.readGRNExceptionData();
+      // this.getInvoiceData();
+      // this.getDisplayPOData();
+      // this.getDisplayGRNdata();
+      // this.getDisplayReceiptdata();
+      this.deviceColumns();
+    } else {
+      this.route.navigate(['/customer/approvals'])
     }
-    this.ds.portalName = this.portal_name;
-    this.columnLengthSOA = this.columnsForSOA.length;
-    this.APIParams = `?offset=1&limit=50`;
 
-    this.routeForTabs();
-    this.dateRange();
-    this.restoreData();
-    this.findActiveRoute();
-    // this.readGRNExceptionData();
-    // this.getInvoiceData();
-    // this.getDisplayPOData();
-    // this.getDisplayGRNdata();
-    // this.getDisplayReceiptdata();
-    this.deviceColumns();
   }
   
 
@@ -1057,7 +1062,6 @@ isMobile:boolean;
     } else {
       this.first = event.pageNumber;
     }
-    console.log(this.first)
     if (this.route.url == this.invoiceTab) {
       this.ds.allPaginationFirst = this.first;
       this.ds.allPaginationRowLength = event.rows;

@@ -582,8 +582,8 @@ export class RolesComponent implements OnInit {
 
       let arr = [];
       data?.forEach(ele => {
-        ele.EntityName1 = `${ele.EntityName} ${ele.EntityCode ? '-' +ele.EntityCode : ""}`;
-        arr.push({ EntityName: ele.EntityName1, 
+        ele.EntityName = `${ele.EntityName} ${ele.EntityCode ? '-' +ele.EntityCode : ""}`;
+        arr.push({ EntityName: ele.EntityName, 
           idEntity: ele.idEntity, 
           department:ele?.department,
           entityTypeID:ele.entityTypeID,
@@ -641,7 +641,11 @@ export class RolesComponent implements OnInit {
     if(this.financeApproveDisplayBoolean){
       delete this.skip_approval_boolean;
       // this.newEntities = value;
-      this.entities.push({ idEntity: value.idEntity, EntityName: value.EntityName })
+      let clubedEnt = value.EntityName
+      if(value?.EntityCode){
+        clubedEnt = `${value?.EntityName}-${value?.EntityCode}`
+      }
+      this.entities.push({ idEntity: value.idEntity, EntityName: clubedEnt })
       if (this.selectedEntitys?.length > 0 && this.AccessPermissionTypeId == 4 && this.entityBaseApproveBoolean) {
         if (
           this.selectedEntitys[this.selectedEntitys?.length - 1]?.entity &&
@@ -1053,7 +1057,7 @@ export class RolesComponent implements OnInit {
             entityData.push(merge);
             if (element.Entity) {
               // Push the Entity object into the entities array
-              this.entities.push({ idEntity: element.Entity.idEntity, EntityName: element.Entity.EntityName }); 
+              this.entities.push({ idEntity: element.Entity.idEntity, EntityName: `${element.Entity.EntityName}-${element?.Entity?.EntityCode}` }); 
             }
             let preApproveBool = false;
             if(element.UserAccess?.preApprove == 1){
@@ -1065,8 +1069,12 @@ export class RolesComponent implements OnInit {
             let roleName = this.subroleList?.filter(el=>{
               return el.idAccessPermissionDef == element.UserAccess?.subRole
             })
+            let clubedEnt = element.Entity?.EntityName
+            if(element?.Entity?.EntityCode){
+              clubedEnt = `${element.Entity?.EntityName}-${element?.Entity?.EntityCode}`
+            }
           this.selectedEntitys.push({
-            entity: element.Entity?.EntityName,
+            entity: clubedEnt,
             entityBody: element.EntityBody?.EntityBodyName,
             entityDept: element.Department?.DepartmentName,
             idUserAccess: element.UserAccess?.idUserAccess,
