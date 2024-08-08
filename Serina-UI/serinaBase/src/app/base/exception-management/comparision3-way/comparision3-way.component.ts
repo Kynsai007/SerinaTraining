@@ -2722,6 +2722,7 @@ export class Comparision3WayComponent
     if (this.selectedGRNList.length > 0) {
       this.progressDailogBool = false;
       this.SharedService.updateGRNnumber(this.selectedGRNList).subscribe(data => {
+        this.getGRNtabData();
         this.success("GRN Data Updated. Kindly click 'Next' button to send the invoice to the batch")
 
       }, err => {

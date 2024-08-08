@@ -43,29 +43,6 @@
       </div>
     </div>
 
-    <div class="charts_box w-400">
-      <div class="chart_title f-12 ">PO info</div>
-      <button *ngIf="poinfoTabledata?.length>0" class="btnUpload btnD pos_ab_20" (click)="downloadReport(poinfoTabledata)">
-        <i class="fa fa-download" aria-hidden="true"></i>
-      </button>
-      <div class="chart_div1">
-        <!-- <div [ngStyle]="{'visibility': !noDataSourceEntityboolean ? 'visible':'hidden'}" id="column_chart_entity"></div>
-        <div [ngStyle]="{'visibility': noDataSourceEntityboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
-          No Data Available
-        </div> -->
-        <div class="mt-4 tableD">
-          <app-table
-            [tableData]="poinfoTabledata"
-            [invoiceColumns]="columnsForPoInfo"
-            [showPaginator]="showPaginatorPOinfo"
-            [columnsToFilter]="poInfoColumnField"
-            [columnLength]="ColumnLengthPoInfo"
-          >
-          </app-table>
-        </div>
-      </div>
-    </div>
-
     <div class="charts_box w-500">
       <div class="chart_title f-12">Invoice Pending by Amount</div>
       <div  class="chart_div1">
@@ -85,6 +62,29 @@
         <div [ngStyle]="{'visibility':!noDataVndrCountboolean ? 'visible':'hidden'}" id="stack_chart"></div>
         <div [ngStyle]="{'visibility': noDataVndrCountboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
           No Data Available
+        </div>
+      </div>
+    </div>
+
+    <div class="charts_box w-400">
+      <div class="chart_title f-12 ">PO info</div>
+      <button *ngIf="poinfoTabledata?.length>0" class="btnUpload btnD pos_ab_20" (click)="downloadReport(poinfoTabledata)">
+        <i class="fa fa-download" aria-hidden="true"></i>
+      </button>
+      <div class="chart_div1">
+        <!-- <div [ngStyle]="{'visibility': !noDataSourceEntityboolean ? 'visible':'hidden'}" id="column_chart_entity"></div>
+        <div [ngStyle]="{'visibility': noDataSourceEntityboolean ? 'visible':'hidden'}"  class="f-13 center-card-text">
+          No Data Available
+        </div> -->
+        <div class="mt-4 tableD">
+          <app-table
+            [tableData]="poinfoTabledata"
+            [invoiceColumns]="columnsForPoInfo"
+            [showPaginator]="showPaginatorPOinfo"
+            [columnsToFilter]="poInfoColumnField"
+            [columnLength]="ColumnLengthPoInfo"
+          >
+          </app-table>
         </div>
       </div>
     </div>

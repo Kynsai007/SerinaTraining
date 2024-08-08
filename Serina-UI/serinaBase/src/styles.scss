@@ -1156,8 +1156,8 @@ option:hover {
   position: relative;
 }
 .charts_box {
-  width: 430px;
-  height: 230px;
+  width: 49%;
+  height: 235px;
   border-radius: 6px !important;
   padding: 10px;
   position: relative;
@@ -1458,6 +1458,12 @@ dialog::backdrop {
   // .tableDatDiv {
   //  margin-top: 27px;
   // }
+}
+
+@media screen and (min-width: 1590px){
+  .charts_box{
+    width: 32%;
+  }
 }
 
 /* Importing Bootstrap SCSS file. */
