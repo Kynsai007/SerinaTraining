@@ -227,7 +227,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.dataStoreService.configData?.enableApprovals;
     let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
     let roleId = this.authService.currentUserValue['permissioninfo'].idAccessPermissionDef;
-    if(this.dataStoreService.configData.client_name == 'Enova' && (roleId == 22 || roleId == 26)){
+    if(this.dataStoreService.configData.client_name == 'Enova' && roleId == 26){
       this.isCoordinator = true;
       this.dataStoreService.isCoordinator = true;
     }

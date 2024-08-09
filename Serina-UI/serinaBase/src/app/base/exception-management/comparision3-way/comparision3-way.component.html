@@ -2183,91 +2183,13 @@
     </div>
   </div>
   <div
-    *ngIf="showPdf"
+    *ngIf="showPdf && !['PO','GRN'].includes(Itype)"
     class="col-lg-7 col-12 maxPage ShowInvoiceTypeSize doc_mobile"
     [ngStyle]="{
       display: documentViewBool || (isDesktop && showPdf) ? 'block' : 'none'
     }"
   >
     <section *ngIf="isDesktop">
-      <!--
-          <div *ngIf="isImgBoolean" class="canvasConatiner_height">
-          <div id="parentDiv">
-            <canvas #canvas id="canvas1" style="height: 87vh"></canvas>
-          </div>
-          <span class="zoom zoom_pos_img">
-            <span class="zoom-in" (click)="zoomin()"
-              ><i class="fa fa-plus" aria-hidden="true"></i></span
-            ><br />
-            <span class="zoom-out" (click)="zoomout()"
-              ><i class="fa fa-minus" aria-hidden="true"></i
-            ></span>
-          </span>
-        </div>
-        <div *ngIf="!isImgBoolean" style="position: relative">
-          <div *ngIf="isLoaded">
-            <div class="btnspdf">
-              <div>
-                <button
-                  (click)="prevPage()"
-                  [disabled]="page === 1"
-                  class="preBtn"
-                >
-                  Prev
-                </button>
-                <span class="totalPages">{{ page }} / {{ totalPages }}</span>
-                <button
-                  (click)="nextPage()"
-                  [disabled]="page === totalPages"
-                  class="preBtn"
-                >
-                  Next
-                </button>
-              </div>
-
-              <div class="d-flex">
-                <button class="preBtn" (click)="rotate(-90)">
-                  <i class="fa fa-undo" aria-hidden="true"></i>
-                </button>
-                <div class="f-12 ml-1 p-r-t">Rotate</div>
-                <button class="preBtn mr-1" (click)="rotate(90)">
-                  <i class="fa fa-repeat" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <span class="zoom zoom_pos_pdf">
-                <span class="zoom-in" (click)="zoomIn()"
-                  ><i class="fa fa-plus" aria-hidden="true"></i></span
-                ><br />
-                <span class="zoom-out" (click)="zoomOut()"
-                  ><i class="fa fa-minus" aria-hidden="true"></i
-                ></span>
-              </span>
-            </div>
-          </div>
-
-          <pdf-viewer
-            #pdfviewer
-            [src]="showInvoice"
-            style="width: 100%; overflow: auto"
-            [show-all]="true"
-            [zoom]="zoomdata"
-            [original-size]="false"
-            [fit-to-page]="true"
-            [page]="page"
-            [rotation]="rotation"
-            [render-text]="true"
-            [render-text-mode]="2"
-            (after-load-complete)="afterLoadComplete($event)"
-            (text-layer-rendered)="textLayerRendered($event)"
-            (mouseup)="selectedText()"
-          >
-          </pdf-viewer>
-        </div>
-          -->
-
       <app-pdfview
         [vendorName]="vendorName"
         [invoiceNumber]="invoiceNumber"
@@ -2358,7 +2280,7 @@
   [style]="{ width: p_width, maxHeight: '80svh' }"
   [baseZIndex]="10000"
   [draggable]="true"
-  [resizable]="true"
+  [resizable]="false"
   [closeIcon]="false"
 >
   <div *ngIf="headerpop == 'Batch Progress'">
