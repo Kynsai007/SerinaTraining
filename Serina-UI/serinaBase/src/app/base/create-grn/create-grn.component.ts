@@ -425,6 +425,7 @@ export class CreateGRNComponent implements OnInit {
   routeToGRN(val){
     this.ds.GRN_PO_Data = [];
     this.ds.grnWithPOBoolean = true;
+    this.tagService.editable = true;
     this.ds.GRN_PO_Data = val.PO_GRN_Number_line;
     this.router.navigate([
       `customer/Create_GRN_inv_list/Inv_vs_GRN_details/${this.sharedService.po_doc_id}`,
