@@ -104,6 +104,10 @@ const routes: Routes = [
             component: Comparision3WayComponent,
           },
           {
+            path: 'approvals/serviceDetails/:id',
+            component: Comparision3WayComponent,
+          },
+          {
             path: 'invoice/InvoiceDetails/CustomerUpload/:id',
             component: Comparision3WayComponent,canDeactivate: [UnsavedChangesGuard]
           },
@@ -165,6 +169,10 @@ const routes: Routes = [
           },
           {
             path: 'ExceptionManagement/batchProcess/comparision-docs/:id',
+            component: Comparision3WayComponent,canDeactivate: [CanDeactivateGuard]
+          },
+          {
+            path: 'approvals/comparision-docs/:id',
             component: Comparision3WayComponent,canDeactivate: [CanDeactivateGuard]
           },
           {

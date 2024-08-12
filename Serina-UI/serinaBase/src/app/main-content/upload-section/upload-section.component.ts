@@ -281,7 +281,13 @@ export class UploadSectionComponent implements OnInit {
     "OCR is like a multilingual genius: It can read and understand text in multiple languages, making it a polyglot of the digital world",
     "OCR is used in various applications, including digitizing books, automating data entry, and reading text from scanned documents.",
     "The first commercial OCR system was introduced in the 1950s by David Shepard, which could read numbers on electric utility bills.",
-    'Do you ever play "guess the font" when you see text in a fancy or unique style? OCR technology can identify fonts, making it the ultimate font detective.'
+    'Do you ever play "guess the font" when you see text in a fancy or unique style? OCR technology can identify fonts, making it the ultimate font detective.',
+    "The real question is, when will we draft an artificial intelligence bill of rights? What will that consist of? And who will get to decide that?",
+    "Automation is no longer just an enhancement; it’s a necessity for businesses to keep pace with the modern world.",
+    "The measure of intelligence is the ability to change.",
+    "The human spirit must prevail over technology.",
+    "Automation is cost-cutting by tightening the corners and not cutting them.",
+    "Automation applied to an inefficient operation will magnify the inefficiency. Automation applied to an efficient operation will magnify the efficiency."
   ];
   showFunFactsComponent = false;
   PONumber:any;
@@ -395,7 +401,7 @@ export class UploadSectionComponent implements OnInit {
     this.pre_type = event?.value?.value;
   }
   pre_type_value(val,type){
-    if(type == 'amount'){
+    if(type == 'fixed'){
       this.pre_type_val = val;
     } else if(type == 'percentage' && val >= 0 && val <= 100){
       this.pre_type_val = val;

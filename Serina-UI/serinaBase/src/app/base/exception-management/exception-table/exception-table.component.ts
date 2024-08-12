@@ -320,6 +320,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   viewInvoiceDetails(e) {
     this.tagService.submitBtnBoolean = false;
+    this.tagService.editable = false;
     this.ds.subStatusId = e.documentsubstatusID;
     this.ds.ent_code = e.EntityCode;
     this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
@@ -524,10 +525,17 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
                     if (e.documentsubstatusID == 35) {
                       this.getPOLines(e);
                     } else {
-                      if(this.router.url.includes('approvals/ServiceInvoices')){
-                        this.router.navigate([
-                          `${this.portalName}/invoice/serviceDetails/${e.idDocument}`,
-                        ]);
+                      if(this.router.url.includes('approvals')){
+                        if(!this.router.url.includes('ServiceInvoices')){
+                          this.router.navigate([
+                            `${this.portalName}/approvals/comparision-docs/${e.idDocument}`,
+                          ]);
+                        } else {
+                          this.router.navigate([
+                            `${this.portalName}/approvals/serviceDetails/${e.idDocument}`,
+                          ]);
+                        }
+
                       } else {
                         this.router.navigate([
                           `${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
