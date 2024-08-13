@@ -974,12 +974,17 @@
         {{ userDetails.userdetails.firstName }}
       </div>
       <div (clickOutside)="onClickedOutside($event, 'logout')" *ngIf="!isMobile">
-        <mat-icon
+        <!-- <mat-icon
           class="sign_out dropdown"
           svgIcon="logout"
           title="Sign Out"
           (click)="isActive()"
-        ></mat-icon>
+        ></mat-icon> -->
+        <span class="material-icons sign_out dropdown"  
+          title="Sign Out"
+          (click)="isActive()">
+          logout
+          </span>
         <div
           [ngStyle]="{ display: showLogout ? 'block' : 'none' }"
           class="dropdown-content"

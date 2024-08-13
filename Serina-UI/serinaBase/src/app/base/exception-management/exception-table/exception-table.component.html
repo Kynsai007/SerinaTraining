@@ -295,7 +295,7 @@
           {{ col.columnName }}
         </th>
         <th
-          class="action_Zindex"
+          class="action_Zindex sticky_right"
           *ngIf="
             isDesktop &&
             !router.url.includes('documentSummary') &&
@@ -527,7 +527,7 @@
             </div>
           </ng-container>
         </td>
-        <td *ngIf="!router.url.includes('home') && 
+        <td class="sticky_right" *ngIf="!router.url.includes('home') && 
         !router.url.includes('bulkUploadService')">
           <i
             *ngIf="router.url.includes('invoice')"

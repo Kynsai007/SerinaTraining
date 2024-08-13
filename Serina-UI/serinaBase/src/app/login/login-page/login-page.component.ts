@@ -424,6 +424,7 @@ export class LoginPageComponent implements OnInit {
       } else {
         alert('The instance is inactive. Please contact Service Admin.');
         sessionStorage.clear();
+        window.location.reload();
       }
   }
 

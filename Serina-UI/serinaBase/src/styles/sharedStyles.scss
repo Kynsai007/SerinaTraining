@@ -362,12 +362,11 @@
     }
     .sign_out {
       margin-left: 10px;
-      color: #f2be42;
+      color: $hover_color;
       cursor: pointer;
       position: relative;
-      width: 16px;
-      height: 16px;
-      top: -3px;
+      font-size: 18px;
+      top: 5px;
     }
     .route_mobile {
       width: 46%;

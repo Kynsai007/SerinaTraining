@@ -372,6 +372,11 @@ $theme_color: var(--themeColor);
   overflow: auto;
   min-height: 70vh;
 }
+.sticky_right {
+  position: sticky !important;
+  right: 0;
+  background-color: inherit;
+}
 @media screen and (max-width:426px) {
   .card {
     width: 100%;

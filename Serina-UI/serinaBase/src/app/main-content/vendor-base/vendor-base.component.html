@@ -398,12 +398,17 @@
       <div class="short_name f-12">{{ name_short }}</div>
       <div *ngIf="!isMobile" class="f-12 mr-1">{{ userDetails.userdetails.firstName }}</div>
       <div *ngIf="!isMobile" (clickOutside)="onClickedOutside($event)">
-        <mat-icon
+        <!-- <mat-icon
           class="sign_out dropdown"
           svgIcon="logout"
           title="Sign Out"
           (click)="isActive()"
-        ></mat-icon>
+        ></mat-icon> -->
+        <span class="material-icons sign_out dropdown"  
+          title="Sign Out"
+          (click)="isActive()">
+          logout
+          </span>
         <div
           [ngStyle]="{ display: showLogout ? 'block' : 'none' }"
           class="dropdown-content"
