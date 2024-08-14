@@ -2088,7 +2088,7 @@
         <div class="btnFooter">
           <div class="m_r_80" *ngIf="!grnCreateBoolean">
             <button
-              *ngIf="submitBtn_boolean && editable"
+              *ngIf="submitBtn_boolean && editable &&  !isMoreRequired "
               class="level_3_btn f-12 mr-3"
               (click)="open_dialog('reject')"
             >
