@@ -788,10 +788,12 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     })
   }
   vendorInvoiceBatch(query) {
+    this.SpinnerService.show()
     this.sharedService.syncBatchTrigger(query).subscribe((data: any) => {
       let sub_status = null;
 
       if (data) {
+        this.SpinnerService.hide()
         this.triggerBoolean = false;
         for (const el of data[this.invoiceID]?.complete_status) {
           if (el.status == 0) {
@@ -807,15 +809,19 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       }
     }, (error => {
       this.triggerBoolean = false;
+      this.SpinnerService.hide()
     }))
   }
   serviceBatch() {
+    this.SpinnerService.show()
     this.sharedService.serviceSubmit().subscribe((data: any) => {
       this.triggerBoolean = false;
       this.systemCheckEmit.emit("ser");
+      this.SpinnerService.hide()
     }, err => {
       this.error("Server error");
       this.triggerBoolean = false;
+      this.SpinnerService.hide()
     })
   }
 
