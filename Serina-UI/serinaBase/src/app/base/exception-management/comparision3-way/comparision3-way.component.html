@@ -1312,7 +1312,7 @@
                             [disabled]="!editable || fin_boolean"
                             class="form-control f-12 input_disabled"
                             (change)="
-                            documentType == 'advance invoice' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?onChangeAdvance(line.value,inputv.value,item.TagName): onChangeLineValue(
+                            client_name == 'Enova' && documentType == 'advance invoice' && (item.TagName == 'AdvancePercent' || item.TagName == 'AmountExcTax' )?onChangeAdvance(line.value,inputv.value,item.TagName): onChangeLineValue(
                               item.TagName,
                               inputv.value,
                               line.value

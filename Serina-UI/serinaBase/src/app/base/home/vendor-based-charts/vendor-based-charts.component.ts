@@ -97,28 +97,28 @@ export class VendorBasedChartsComponent implements OnInit {
 
   prepareColumns() {
     this.columnsForException = [
-      { field: 'Filename', header: 'File Name' },
-      { field: 'EmailSender', header: 'Sender' },
-      { field: 'Exception', header: 'Exception Type' },
-      // { field: 'EntityName', header: 'Entity' },
-      { field: 'UploadedDate', header: 'Upload Date' },
+      { dbColumnname: 'Filename', columnName: 'File Name' },
+      { dbColumnname: 'EmailSender', columnName: 'Sender' },
+      { dbColumnname: 'Exception', columnName: 'Exception Type' },
+      // { dbColumnname: 'EntityName', columnName: 'Entity' },
+      { dbColumnname: 'UploadedDate', columnName: 'Upload Date' },
     ];
 
     this.columnsForonboard = [
-      { field: 'VendorName', header: 'Vendor Name' },
-      { field: 'EntityName', header: 'Entity' },
-      { field: 'CreatedOn', header: 'Onboarded Date' },
-      { field: 'UpdatedOn', header: 'Last updated' },
+      { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
+      { dbColumnname: 'EntityName', columnName: 'Entity' },
+      { dbColumnname: 'CreatedOn', columnName: 'Onboarded Date' },
+      { dbColumnname: 'UpdatedOn', columnName: 'Last updated' },
     ];
 
     this.columnsForException.forEach((e) => {
-      this.exceptionColumnHeader.push(e.header);
-      this.exceptionColumnField.push(e.field);
+      this.exceptionColumnHeader.push(e.columnName);
+      this.exceptionColumnField.push(e.dbColumnname);
     });
 
     this.columnsForonboard.forEach((e) => {
-      this.onboardColumnHeader.push(e.header);
-      this.onboardColumnField.push(e.field);
+      this.onboardColumnHeader.push(e.columnName);
+      this.onboardColumnField.push(e.dbColumnname);
     });
 
     this.ColumnLengthException = this.columnsForException.length;

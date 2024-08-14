@@ -558,11 +558,7 @@ export class Comparision3WayComponent
       this.Itype = 'Service';
     }
 
-    this.routeIdCapture = this.activatedRoute.params.subscribe((params) => {
-      this.SharedService.invoiceID = params['id'];
-      this.exceptionService.invoiceID = params['id'];
-      this.invoiceID = params['id'];
-    });
+
     if (this.router.url.includes('Create_GRN_inv_list') || this.router.url.includes('GRN_approvals') || this.GRN_PO_Bool) {
       if (this.permissionService.GRNPageAccess == true) {
         this.grnCreateBoolean = true;

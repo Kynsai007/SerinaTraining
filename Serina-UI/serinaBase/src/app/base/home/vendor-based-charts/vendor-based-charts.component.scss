@@ -42,6 +42,21 @@ $theme_color: var(--themeColor);
   overflow: auto;
   max-height: calc(100svh - 174px);
 }
+:host ::ng-deep {
+  .onboarded .p-calendar {
+    border-radius: 6px;
+    background: white;
+    height: 30px;
+    input {
+      width: 170px !important;
+    }
+  }
+  .onboarded .p-monthpicker-month {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+  }
+}
 @media screen and (max-width:1300px) {
   // .tableDataDiv {
   //   margin-top: 30px;
