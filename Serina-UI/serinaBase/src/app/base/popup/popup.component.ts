@@ -2,9 +2,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/dataStore/data.service';
+import { DatePipe } from '@angular/common';
+import { DateFilterService } from 'src/app/services/date/date-filter.service';
+import { Calendar } from 'primeng/calendar';
 
 @Component({
   selector: 'app-popup',
@@ -28,7 +31,11 @@ export class PopupComponent implements OnInit {
   inv_total:number;
   select_all_bool:boolean;
   approversSendData: any;
-  lineTable = [ 'Description','Unit','Price','Quantity'];
+  lineTable = [
+    { name: 'Description', data:[]},
+    { name: 'PO Quantity', data:[]},
+    { name: 'Balance Qty', data:[]}
+  ];
   orderHistoryData: any;
   masterData: any;
   orderData: any;
@@ -37,6 +44,14 @@ export class PopupComponent implements OnInit {
   line_num:number;
   v_a_id: any;
   so_id: any;
+  minDate: Date;
+  maxDate: Date;
+  rangeDates: Date[];
+  @ViewChild('datePicker') datePicker: Calendar;
+  manPowerData = [];
+  grnLineCount:any
+  timeSheet: any[];
+
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -45,6 +60,8 @@ export class PopupComponent implements OnInit {
     private spin: NgxSpinnerService,
     private ds : DataService,
     private mat_dlg: MatDialog,
+    private datePipe: DatePipe,
+    private dateFilterService :DateFilterService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
@@ -68,21 +85,19 @@ export class PopupComponent implements OnInit {
     } else if (this.type == 'editApprover'){
       this.approveBool = true;
       this.flipApproverlist();
-    } else if(this.type == 'poMaster'){
-      this.v_a_id = this.data.resp.v_a_id;
-      this.line_num = this.data.resp.itemCode;
-      this.so_id = this.data.resp.so_id;
-      if(!this.ds.arenaMasterData){
-        this.getPOMasterData(this.v_a_id);
-      } else {
-        this.orderHistoryData = this.ds.arenaMasterData;
-      }
+    } else if(this.type == 'manpower'){
+      this.dateRange()
     }
     if (this.data.comp == 'upload') {
       this.uploadBool = true;
     }
     this.POLineData = this.data?.resp?.podata;
     this.inv_total = this.data?.resp?.sub_total;
+    this.manPowerData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po));
+    this.manPowerData = this.manPowerData.filter(el=>{
+    return el.TagName == 'Description' || el.TagName == 'PO Qty' || el.TagName == 'Actions' 
+    })
+    this.grnLineCount = this.manPowerData[0].linedata;
     this.POLineData?.forEach(val => {
       val.isSelected = false;
       val.Quantity = val.PurchQty;
@@ -271,16 +286,7 @@ export class PopupComponent implements OnInit {
     })
   }
 
-  getPOMasterData(v_id){
-    this.ES.readMasterData(v_id).subscribe((data:any)=>{
-      this.ds.arenaMasterData = data;
-      this.orderHistoryData = data;
-      this.orderData = data.order_history;
-      this.masterData = data.master_data;
-    },err=>{
 
-    })
-  }
 
   onSelectMaster(des) {
     this.updateSOObj = {
@@ -327,5 +333,65 @@ export class PopupComponent implements OnInit {
   }
   error(msg) {
    this.alert.error_alert(msg);
+  }
+  dateRange() {
+    this.dateFilterService.dateRange();
+    this.minDate = this.dateFilterService.minDate;
+    this.maxDate = this.dateFilterService.maxDate;
+  }
+  filterByDate(date) {
+    if (date != '') {
+      const frmDate = this.datePipe.transform(date[0], 'MMM d, y');
+      const toDate = this.datePipe.transform(date[1], 'MMM d, y');
+      if(frmDate && toDate){
+        if (this.datePicker.overlayVisible) {
+          this.datePicker.hideOverlay();
+        }
+        let month = frmDate?.split(',')[0]?.split(' ')[0]
+        let date:any = frmDate?.split(',')[0]?.split(' ')[1]
+        let date1:any = toDate?.split(',')[0]?.split(' ')[1]
+        this.timeSheet = []
+        this.grnLineCount.forEach((el,index)=>{
+          this.timeSheet.push({
+                      Value : '',
+                      tagName: `timeSheet${index}`,
+                      ErrorDesc: '',
+                      idDocumentLineItems: null,
+                      is_mapped:'',
+                      old_value:'',
+          })
+        })
+        this.manPowerData.splice(2,0,{ TagName:`Shift`,linedata: this.timeSheet})
+        let index = 3
+        for(let i = Number(date); i<= Number(date1); i++){
+          let data =  []
+          let sheet = JSON.parse(JSON.stringify(this.timeSheet))
+          sheet.forEach((el,index)=>{
+            el.tagName = `${month}-${i}-${index}`
+            data.push(el)
+          })
+          this.manPowerData.splice(index,0,{ TagName:`${month} ${i}`,linedata: data})
+          index++
+        }
+      }
+    }
+  }
+  clearDates() {
+    this.filterByDate('');
+  }
+  addNewShift(str,index){
+    this.manPowerData.forEach(el=>{
+      el.linedata.splice(index+1,0,JSON.parse(JSON.stringify(el.linedata[index])))
+    })
+    this.manPowerData.forEach(el=>{
+      el.linedata.forEach((v,i)=>{
+        if( index+1 == i && el.TagName != 'Description' && el.TagName != "PO Qty"){
+          
+          v.tagName = `shift${index+1}-${el.TagName}`
+          console.log(v.tagName)
+        }
+      })
+    })
+    console.log(this.manPowerData)
   }
 }

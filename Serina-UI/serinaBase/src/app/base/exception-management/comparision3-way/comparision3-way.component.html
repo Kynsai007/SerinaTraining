@@ -90,7 +90,7 @@
       </p-dropdown>
     </div>
     <div class="f-12 mt-2 mr-2" *ngIf="!editable || fin_boolean">
-       <span *ngIf="ent_code || d_type" class="status_btn"><span *ngIf="ent_code">Entity code - {{ent_code}}</span> <span *ngIf="d_type"><span *ngIf="ent_code">&</span> Invoice type - {{d_type}}</span></span>
+       <span *ngIf="ent_code || d_type" class="status_btn" style="text-transform: capitalize;"><span *ngIf="ent_code">Entity Code - {{ent_code}} </span> <span *ngIf="d_type"><span *ngIf="ent_code">&</span> Invoice type - {{d_type}}</span></span>
     </div>
     <button
       *ngIf="!isPdfAvailable && isDesktop && currentTab != 'header'"
@@ -422,7 +422,7 @@
                           ? '1px solid #f7c83e'
                           : value.isError === 0 && value.IsUpdated === 0
                           ? '0px solid lightgray'
-                          : value.IsUpdated === 1
+                          : value.IsUpdated > 0
                           ? '1px solid #37dcc7'
                           : ''
                     }"
@@ -430,7 +430,7 @@
                     <label class="label-head" style="margin-bottom: -5px"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
-                        *ngIf="value.isError == 1 || value.IsUpdated === 1"
+                        *ngIf="value.isError == 1 || value.IsUpdated > 0"
                         [pTooltip]="value.ErrorDesc"
                         tooltipPosition="top"
                         ><i
@@ -752,7 +752,7 @@
                                   ? ' 2px solid red'
                                   : data2.invline[0]?.DocumentLineItems.isError >= 1 && data2?.invline[0]?.DocumentLineItems?.ErrorDesc?.includes('Low')
                                   ? ' 2px solid #f7c83e'
-                                  : data2.invline[0]?.DocumentLineItems.IsUpdated === 1 && data2.invline[0]?.DocumentLineItems.isError == 0
+                                  : data2.invline[0]?.DocumentLineItems.IsUpdated > 0 && data2.invline[0]?.DocumentLineItems.isError == 0
                                   ? '2px solid #37dcc7'
                                   : ''
                             }"
@@ -785,7 +785,7 @@
                           >
                           <span
                             *ngIf="
-                              data2?.invline[0]?.DocumentLineItems?.isError >= 1 || data2.invline[0]?.DocumentLineItems.IsUpdated === 1
+                              data2?.invline[0]?.DocumentLineItems?.isError >= 1 || data2.invline[0]?.DocumentLineItems.IsUpdated > 0
                             "
                             [pTooltip]="
                               data2?.invline[0]?.DocumentLineItems?.ErrorDesc
@@ -1000,22 +1000,10 @@
                   </div>
                 </div>
 
-                <div class="hide">
-                  <button
-                    *ngIf="editable"
-                    id="addLine"
-                    class="level_3_btn f-12 mr-4"
-                    (click)="open_dialog('AddLine')"
-                  >
-                    <i class="fa fa-plus" aria-hidden="true"></i> Add Line
-                  </button>
-                  <div class="d-flex mr-3">
-                    <div
-                      class="represent_color"
-                      style="background-color: red"
-                    ></div>
-                    <div class="f-12">Mis-matched</div>
-                  </div>
+                <div [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
+                    <label class="f-12">Time sheet
+                      <input type="checkbox" (change)="onChecked($event.target.checked)">
+                    </label>
                 </div>
               </div>
               <table class="invert mt-2 w-100" id="grnTable">
@@ -1042,21 +1030,22 @@
                     class="invert_tr"
                     [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
                     *ngIf="
-                      !item.TagName.includes('UnitPrice') &&
+                      (GRN_PO_Bool || !item.TagName.includes('UnitPrice'))  &&
                       item.TagName != 'Inv - AmountExcTax'
                     "
                   >
                     <td
                       class="lineName invert_th_td"
                       *ngIf="
-                        !item.TagName.includes('UnitPrice') &&
+                        (GRN_PO_Bool || !item.TagName.includes('UnitPrice')) &&
                         item.TagName != 'Inv - AmountExcTax'
                       "
                       [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
                     >
-                      <span *ngIf="item.TagName != 'GRN - AmountExcTax'">{{
-                        item.TagName
-                      }}</span>
+                      <div *ngIf="item.TagName != 'GRN - AmountExcTax'" class="d-flex justify-content-between">
+                        <div>{{ item.TagName }}</div>
+                        <div *ngIf="item.TagName == 'Description' && isManpower" class="calendar" (click)="open_dialog_comp('manpower')"> <i class="pi pi-calendar"></i> </div>
+                      </div>
                       <span *ngIf="item.TagName == 'GRN - AmountExcTax'"
                         >AmountExcTax</span
                       >
@@ -1073,7 +1062,8 @@
                           item.TagName == 'Description' ||
                           item.TagName == 'PO Qty' ||
                           item.TagName == 'GRN - AmountExcTax' ||
-                          item.TagName == 'AmountExcTax'
+                          item.TagName == 'AmountExcTax' ||
+                          (GRN_PO_Bool && item.TagName.includes('UnitPrice'))
                         "
                       >
                         <span class="d-flex">
@@ -1433,7 +1423,7 @@
                                           .IsUpdated === 0
                                       ? '1px solid lightgray'
                                       : item.linedata.DocumentLineItems
-                                          .IsUpdated === 1
+                                          .IsUpdated > 0
                                       ? '2px solid #37dcc7'
                                       : ''
                                 }"
@@ -1786,7 +1776,7 @@
               "
             >
               <div class="no_doc_div f-14">
-                No Supporting Document available, please upload if you have any.
+                No Supporting Document available <span *ngIf="!(editable || fin_boolean)">, please upload it in exception screen if you have any</span>.<span *ngIf="editable || fin_boolean">, please upload if you have any</span>.
               </div>
             </div>
             <div class="file_table" *ngIf="uploadFileList.length > 0">

@@ -414,6 +414,8 @@ export class Comparision3WayComponent
   filteredPreData: any[];
   invNumbersList: any;
   mappingForCredit = false;
+  rectData: any;
+  isManpower:boolean;
 
   constructor(
     fb: FormBuilder,
@@ -2624,6 +2626,10 @@ export class Comparision3WayComponent
         console.error('Error fetching PO lines:', error);
         return;
       }
+    } else if (str == 'manpower') {
+      w = '80%';
+      h = '72vh';
+      response = { "grnData_po" : this.lineDisplayData}
     }
     this.SpinnerService.show();
     const matdrf: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
@@ -3891,6 +3897,14 @@ export class Comparision3WayComponent
       }
       this.SpinnerService.hide();
     })
+  }
+  onHighlight(data){
+    console.log(data)
+    this.rectData = data;
+  }
+  onChecked(value){
+    console.log(value)
+    this.isManpower = value
   }
   ngOnDestroy() {
     let sessionData = {

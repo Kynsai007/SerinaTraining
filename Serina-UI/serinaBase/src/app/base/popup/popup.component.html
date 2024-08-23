@@ -6,7 +6,7 @@
       >
       <span *ngIf="type == 'Amend'">Please change the template body</span>
       <span *ngIf="type == 'editApprover'">Please add the approvers</span>
-      <span *ngIf="type == 'poMaster'">Select line to match</span>
+      <span *ngIf="type == 'manpower'">Please add</span>
     </h6>
 
     <!-- <h6 class="f-14" *ngIf="approveBool">
@@ -314,159 +314,167 @@
     </div>
   </div>
 
-  <div *ngIf="type == 'poMaster'">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="nav-item mr-2">
-        <a
-          class="nav-link active"
-          id="order-tab"
-          data-toggle="tab"
-          href="#order"
-          role="tab"
-          aria-controls="order"
-          aria-selected="true"
-          >Order History
-        </a>
-      </li>
-      <li class="nav-item mr-2">
-        <a
-          class="nav-link"
-          id="alternate-tab"
-          data-toggle="tab"
-          href="#alternate"
-          role="tab"
-          aria-controls="alternate"
-          aria-selected="false"
-          >Alternative Items</a
-        >
-      </li>
-      <li class="nav-item">
-        <a
-          class="nav-link"
-          id="master-tab"
-          data-toggle="tab"
-          href="#master"
-          role="tab"
-          aria-controls="master"
-          aria-selected="false"
-          >Arena Master Data</a
-        >
-      </li>
-    </ul>
-
-    <div class="tabDiv tab-content" id="myTabContent">
-      <div
-        class="tab-pane fade show active"
-        id="order"
-        role="tabpanel"
-        aria-labelledby="order-tab"
-      >
-        <div>
-          <input
-            type="text"
-            class="form-control f-12"
-            placeholder="Search"
-            (keyup)="onSearch($event.target.value, 'order')"
-          />
-        </div>
-        <table class="table f-12">
-          <tr class="tHead">
-            <th *ngFor="let head of lineTable">{{ head }}</th>
-          </tr>
-          <tr
-            *ngFor="
-              let poLine of orderHistoryData?.order_history;
-              let i = index
-            "
-            class="tbdytr"
-          >
-            <td>
-              <input
-                type="radio"
-                class="pos-r mr-1"
-                style="top: 4px"
-                name="SOMap"
-                [id]="poLine.idDocumentLineItems"
-                (change)="onSelectMaster(poLine.Description)"
-              />
-              <label [for]="poLine.idDocumentLineItems">{{
-                poLine.Description
-              }}</label>
-            </td>
-            <td>{{ poLine.Unit }}</td>
-            <td>{{ poLine.UnitPrice }}</td>
-            <td>{{ poLine.Quantity }}</td>
-          </tr>
-        </table>
-      </div>
-
-      <div
-        class="tab-pane fade"
-        id="alternate"
-        role="tabpanel"
-        aria-labelledby="alternate-tab"
-      ></div>
-
-      <div
-        class="tab-pane fade"
-        id="master"
-        role="tabpanel"
-        aria-labelledby="master-tab"
-      >
-        <div>
-          <input
-            type="text"
-            class="form-control f-12"
-            placeholder="Search"
-            (keyup)="onSearch($event.target.value, 'master')"
-          />
-        </div>
-        <table class="table f-12">
-          <tr class="tHead">
-            <th *ngFor="let head of lineTable">{{ head }}</th>
-          </tr>
-          <tr
-            *ngFor="let poLine of orderHistoryData?.master_data; let i = index"
-            class="tbdytr"
-          >
-            <td>
-              <input
-                type="radio"
-                class="pos-r mr-1"
-                style="top: 4px"
-                name="SOMap"
-                [id]="poLine.iditemmetadata"
-                (change)="onSelectMaster(poLine.description)"
-              />
-              <label [for]="poLine.iditemmetadata">{{
-                poLine.description
-              }}</label>
-            </td>
-            <!-- <td>{{ poLine.Unit }}</td>
-            <td>{{ poLine.UnitPrice }}</td>
-            <td>{{ poLine.Quantity }}</td> -->
-          </tr>
-        </table>
+  <div *ngIf="type == 'manpower'">
+ 
+    <div class="d-flex justify-content-end">
+      <div class="calender_div">
+        <p-calendar
+          #datePicker
+          [(ngModel)]="rangeDates"
+          selectionMode="range"
+          [minDate]="minDate"
+          [maxDate]="maxDate"
+          placeholder=""
+          [readonlyInput]="true"
+          [showIcon]="true"
+          showButtonBar="true"
+          (onClearClick)="clearDates()"
+          (onSelect)="filterByDate(rangeDates)"
+          inputId="range"
+        ></p-calendar>
       </div>
     </div>
+
+    <div class="tabDiv">
+       
+      <!-- <table class="table f-12">
+        <tr class="tHead">
+          <th *ngFor="let head of manPowerData">{{ head.TagName }}</th>
+        </tr>
+        <tr
+          *ngFor="
+            let poLine of orderHistoryData?.order_history;
+            let i = index
+          "
+          class="tbdytr"
+        >
+          <td>
+            <input
+              type="text"
+              class="pos-r mr-1"
+              style="top: 4px"
+              name="SOMap"
+              [id]="poLine.idDocumentLineItems"
+              (change)="onSelectMaster(poLine.Description)"
+            />
+            <label [for]="poLine.idDocumentLineItems">{{
+              poLine.Description
+            }}</label>
+          </td>
+          <td>{{ poLine.Unit }}</td>
+          <td>{{ poLine.UnitPrice }}</td>
+          <td>{{ poLine.Quantity }}</td>
+        </tr>
+      </table> -->
+      <table class="invert mt-2 w-100" id="grnTable">
+        <tr class="invert_tr" style="width: 50px">
+          <td
+            class="lineName invert_th_td text-center"
+            style="min-width: 50px"
+          >
+            S.No
+          </td>
+          <td
+            class="count_line"
+            *ngFor="let item2 of grnLineCount; let ind = index"
+          >
+            <div class="s-no">
+              {{ ind + 1 }}
+            </div>
+          </td>
+        </tr>
+        <ng-container
+          *ngFor="let item of manPowerData; let i = index"
+        >
+          <tr
+            class="invert_tr"
+            [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
+            *ngIf="
+              item.TagName != 'Inv - AmountExcTax'
+            "
+          >
+            <td
+              class="lineName invert_th_td"
+              *ngIf="
+                item.TagName != 'Inv - AmountExcTax'
+              "
+              [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
+            >
+              <div *ngIf="item.TagName != 'GRN - AmountExcTax'" class="d-flex justify-content-between">
+                <div>{{ item.TagName }}</div>
+              </div>
+              <span *ngIf="item.TagName == 'GRN - AmountExcTax'"
+                >AmountExcTax</span
+              >
+            </td>
+            <td
+              class="linevalue invert_th_td"
+              *ngFor="let line1 of item.linedata; let i = index"
+              [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
+            >
+              <div *ngIf="['Description','PO Qty'].includes(item.TagName)  && item.TagName != 'Actions'">
+                <input
+                  #inputval
+                  type="text"
+                  [name]="line1.idDocumentLineItems"
+                  [value]="line1.Value"
+                  [title]="line1.Value"
+                  class="form-control inputHeight w-sm"
+                  [(ngModel)]="line1.Value"
+                  [ngClass]="item.TagName == 'Description'?'w-des':''"
+                />
+              </div>
+              <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
+                <input
+                  #inputval
+                  type="text"
+                  [name]="line1.tagName"
+                  [value]="line1.Value"
+                  [title]="line1.Value"
+                  class="form-control inputHeight w-sm"
+                  [(ngModel)]="line1.Value"
+                  [ngClass]="item.TagName == 'Description'?'w-des':''"
+                  
+                />
+              </div>
+              <div *ngIf="item.TagName === 'Actions'" class="linevalue invert_thtd act_div">
+                  <button
+                    class="trash_btn"
+                    (click)="addNewShift(line1.Value,i)"
+                  >
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    class="trash_btn"
+                    (click)="addNewShift(line1.Value,i)"
+                  >
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                  </button>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
     <div
-      class="mt-4 d-flex justify-content-center mb-3"
+      class="mt-4 d-flex justify-content-end mb-2"
     >
       <button
-        class="btn btnVender bg-btn-success mr-3"
-        type="submit"
-        [disabled]="!updateSOObj"
-        (click)="updateMapping()"
-      >
-        Update
-      </button>
-      <button
-        class="btn btnVender bg-btn-cancel"
+        class="secondary_btn f-12 mr-3"
         type="button"
         mat-dialog-close
       >
         Cancel
       </button>
+      <button
+        class="primary_btn f-12"
+        type="submit"
+        [disabled]="!updateSOObj"
+        (click)="updateMapping()"
+      >
+        Save
+      </button>
+
     </div>
   </div>
 </section>

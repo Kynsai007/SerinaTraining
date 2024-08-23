@@ -781,3 +781,7 @@ dialog::backdrop {
   background-color: rgb(247 247 255 / 80%);
   opacity: 0;
 }
+.calendar {
+  display: inherit;
+  cursor: pointer;
+}

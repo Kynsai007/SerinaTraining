@@ -378,10 +378,10 @@ export class UploadSectionComponent implements OnInit {
       // this.onSelectPOType('invoice','ideal');
       this.invTypeArr = [
         { name:'Invoice', value:'invoice'},
-        { name:'Non PO Invoice', value:'non po invoice'},
+        // { name:'Non PO Invoice', value:'non po invoice'},
+        { name:'Pre-Payment', value:'advance invoice'},
         { name:'Credit Note', value:'credit note'},
-        { name:'Credit Note - Non PO', value:'credit note-NonPO'},
-        { name:'Pre-Payment', value:'advance invoice'}
+        // { name:'Credit Note - Non PO', value:'credit note-NonPO'},
       ];
       this.sub_type = [
         { tagName:'Percentage', value:'percent'},
