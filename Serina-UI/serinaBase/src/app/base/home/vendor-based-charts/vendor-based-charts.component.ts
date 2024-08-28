@@ -107,7 +107,9 @@ export class VendorBasedChartsComponent implements OnInit {
     this.columnsForonboard = [
       { dbColumnname: 'VendorName', columnName: 'Vendor Name' },
       { dbColumnname: 'EntityName', columnName: 'Entity' },
+      { dbColumnname: 'EntityCode', columnName: 'Entity Code' },
       { dbColumnname: 'CreatedOn', columnName: 'Onboarded Date' },
+      { dbColumnname: 'firstName', columnName: 'Created by' },
       { dbColumnname: 'UpdatedOn', columnName: 'Last updated' },
     ];
 
