@@ -289,10 +289,10 @@
           *ngFor="let col of columns"
           [pTooltip]="col.columnDescription"
           tooltipPosition="top"
-          [ngStyle]="{ width: col.columnName === 'Status' ? '18%' : '' }"
           [pSortableColumn]="col.dbColumnname"
+          
         >
-          {{ col.columnName }}
+          <div [ngClass] = "col.columnName.includes('Amount')? 't_right':''">{{ col.columnName }}</div>
         </th>
         <th
           class="action_Zindex sticky_right"
@@ -371,7 +371,7 @@
                 "
                 (keyup)="columnFilter($event.target.value,col.dbColumnname)"
                 [value]="allInvoice.filters[col.dbColumnname]?.value"
-                [placeholder]="'Search by ' + col.columnName"
+                [placeholder]="'Filter by ' + col.columnName"
                 class="tableSearchInput"
                 [ngClass] = "col.dbColumnname.includes('Amount')? 't_right':''"
               />

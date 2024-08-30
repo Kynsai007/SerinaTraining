@@ -633,19 +633,26 @@
   <nav
     class="desktop d-flex justify-content-between"
     [ngClass]="
-      dataStoreService.configData.client_name == 'Cenomi' ? 'cenomiBg' : ''
+    ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name) ? 'cenomiBg' : ''
     "
   >
     <div class="d-flex" style="gap: 64px">
       <div>
         <img
+        *ngIf="dataStoreService?.configData?.client_name != 'AGI'"
           [src]="logoSrc"
           alt="Serina logo"
           [ngClass]="
-            dataStoreService.configData.client_name == 'Cenomi'
+          ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
               ? 'otherBrand'
               : 'Serina'
           "
+        />
+        <img
+          *ngIf="dataStoreService?.configData?.client_name == 'AGI'"
+          [src]="logoSrc"
+          alt="Serina logo"
+          class="AGI"
         />
       </div>
       <!-- <div  *ngIf="dataStoreService.configData.client_name != 'Cenomi'">
@@ -655,7 +662,7 @@
         <div
           class="nav_Link f-14"
           [ngClass]="
-            dataStoreService.configData.client_name == 'Cenomi'
+          ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
               ? 'cenomiNavlink'
               : ''
           "
@@ -668,7 +675,7 @@
         <div
           class="nav_Link f-14"
           [ngClass]="
-            dataStoreService.configData.client_name == 'Cenomi'
+            ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
               ? 'cenomiNavlink'
               : ''
           "
@@ -685,7 +692,7 @@
             class="nav_Link f-14"
             [ngClass]="{
               active_cls: router.url.includes('ExceptionManagement'),
-              cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+              cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
             }"
             (click)="exceptionDrop()"
             *ngIf="excpetionPageAccess"
@@ -731,7 +738,7 @@
         <div
           class="nav_Link f-14"
           [ngClass]="
-            dataStoreService.configData.client_name == 'Cenomi'
+            ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
               ? 'cenomiNavlink'
               : ''
           "
@@ -744,12 +751,12 @@
         </div>
         <div
           class="nav_Link f-14"
-          [routerLink]="'invoice'"
+          [routerLink]=" vendorInvoiceAccess ? 'invoice/allInvoices':'invoice/ServiceInvoices'"
           (click)="doc_status_route()"
           *ngIf="!isCoordinator"
           [ngClass]="{
             active_cls: router.url.includes('invoice'),
-            cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+            cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           }"
           routerLinkActive="active_cls"
         >
@@ -768,7 +775,7 @@
             (click)="approvalDropdown()"
             [ngClass]="{
               active_cls: router.url.includes('approvals'),
-              cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+              cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
             }"
           >
             Approvals
@@ -817,7 +824,7 @@
         <div
           class="nav_Link f-14"
           [ngClass]="
-            dataStoreService.configData.client_name == 'Cenomi'
+            ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
               ? 'cenomiNavlink'
               : ''
           "
@@ -844,7 +851,7 @@
                 router.url.includes('service_batch_trigger') ||
                 router.url.includes('bulkUploadService') ||
                 router.url.includes('ERP_approvals'),
-              cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+              cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
             }"
           >
             {{ more_text }}
@@ -965,7 +972,7 @@
       <div
         class="f-12 mr-1"
         [ngClass]="
-          dataStoreService.configData.client_name == 'Cenomi'
+          ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
             ? 'cenomiNavlink'
             : ''
         "
@@ -1005,7 +1012,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+        ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1017,7 +1024,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+        ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1031,7 +1038,7 @@
       class="nav_Link f-14"
       [ngClass]="{
         active_cls: router.url.includes('ExceptionManagement'),
-        cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+        cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
       }"
       (click)="exceptionDrop()"
       *ngIf="excpetionPageAccess"
@@ -1067,7 +1074,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+        ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1083,7 +1090,7 @@
       (click)="doc_status_route()"
       [ngClass]="{
         active_cls: router.url.includes('invoice'),
-        cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+        cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
       }"
       routerLinkActive="active_cls"
     >
@@ -1094,7 +1101,7 @@
       (click)="approvalDropdown()"
       [ngClass]="{
         active_cls: router.url.includes('approvals'),
-        cenomiNavlink: dataStoreService.configData.client_name == 'Cenomi'
+        cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
       }"
       *ngIf="
         financeapproveDisplayBoolean && vendorInvoiceAccess && approveBoolean
@@ -1135,7 +1142,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+        ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1148,7 +1155,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+        ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1161,7 +1168,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+        ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1175,7 +1182,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+        ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1189,7 +1196,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+      ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1203,7 +1210,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+      ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1218,7 +1225,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+      ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
@@ -1232,7 +1239,7 @@
     <div
       class="nav_Link f-14"
       [ngClass]="
-        dataStoreService.configData.client_name == 'Cenomi'
+      ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
           ? 'cenomiNavlink'
           : ''
       "
