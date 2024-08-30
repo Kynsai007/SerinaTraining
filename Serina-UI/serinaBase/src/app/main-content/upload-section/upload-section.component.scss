@@ -537,10 +537,15 @@ input[type="checkbox"] {
   background-color: $theme_color;
   border-radius: 6px;
   padding: 30px;
-  background-image: url("../../../assets/Serina Assets/new_theme/Group 933.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+}
+.bg-default {
+  background-image: url("../../../assets/Serina Assets/new_theme/Group 933.svg");
+}
+.bg-agi {
+  background-image: url("../../../assets/Serina Assets/new_theme/AGI/agi_upload.png");
 }
 // .imgPlaceholder img{
 //   height: 40vh;

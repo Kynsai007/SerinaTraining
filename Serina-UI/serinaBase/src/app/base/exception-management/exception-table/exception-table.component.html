@@ -355,7 +355,7 @@
                 (onChange)="filter($event.value, col.dbColumnname)"
                 placeholder="Select Status"
                 [showClear]="false"
-                styleClass="w-100 text-center f-11"
+                styleClass="w-100 f-11"
               ></p-dropdown>
             </div>
             <div *ngSwitchDefault [ngClass] = "col.dbColumnname.includes('Amount')? 't_right':''">

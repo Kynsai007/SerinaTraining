@@ -3,7 +3,7 @@
     <div class="col-1 col-sm-5 col-md-6 m-0 leftSide">
       
         <div class="d-flex justify-content-between">
-          <img class="logo_black" [ngClass]="dataStoreService?.configData?.client_name != 'Cenomi' ? 'ml-3':'cenomiLogo'"
+          <img class="logo_black" [ngClass]="!['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name) ? 'ml-3':'cenomiLogo'"
           [src]="srcImg"
           alt="login"
         />

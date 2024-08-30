@@ -3,7 +3,7 @@
 <div class="row m-0">
   <div class="column1">
     <div *ngIf="!displayTablebool">
-      <div class="imgPlaceholder">
+      <div class="imgPlaceholder" [ngClass]="dataService.configData.client_name == 'AGI' ?'bg-agi':'bg-default'">
       </div>
       <div class="welcomtext">
         <h6 class="f-16 mt-4 text-center">Welcome. Let's get you settled in.</h6>

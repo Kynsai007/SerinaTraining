@@ -1,7 +1,7 @@
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { SettingsService } from 'src/app/services/settings/settings.service';
 // import { environment } from './../../../../../../Utility-tool/utilityBase/src/environments/environment';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SocialAuthService } from "angularx-social-login";
@@ -13,6 +13,7 @@ import { MsalService } from '@azure/msal-angular';
 import { AuthenticationResult } from '@azure/msal-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { SignUpComponent } from 'src/app/registration-page/sign-up/sign-up.component';
+import { Title } from '@angular/platform-browser';
 interface IPData {
   ip: string;
 }
@@ -95,7 +96,11 @@ export class LoginPageComponent implements OnInit {
     private settingService: SettingsService,
     public dataStoreService: DataService,
     private matDialog: MatDialog,
-    private authenticationService: AuthenticationService,private msalService: MsalService,private googleService: SocialAuthService) {
+    private titleService: Title,
+    private authenticationService: AuthenticationService,
+    private msalService: MsalService,
+    private googleService: SocialAuthService,
+    private renderer: Renderer2) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
       let prev_route = JSON.parse(sessionStorage.getItem("prev_URL"));
@@ -118,11 +123,7 @@ export class LoginPageComponent implements OnInit {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
     if(window.screen.width <= 576){
       this.srcImg = 'assets/Serina Assets/new_theme/logo.png';
-    } else if(this.dataStoreService?.configData?.client_name == 'Cenomi') {
-      this.srcImg = 'assets/Serina Assets/new_theme/cenomiLogo.png';
-    } else {
-      this.srcImg = 'assets/Serina Assets/new_theme/Group 27317.svg';
-    }
+    } 
   }
 
   toggleFieldTextType() {
@@ -213,10 +214,32 @@ export class LoginPageComponent implements OnInit {
       this.vendorInvoiceAccess = this.instanceInfo?.vendorInvoices;
       if(this.dataStoreService?.configData?.client_name == 'Cenomi'){
         this.dataStoreService.changeTheme("#20113E",'#ffffff');
+        this.srcImg = 'assets/Serina Assets/new_theme/cenomiLogo.png';
+      } else if(this.dataStoreService?.configData?.client_name == 'AGI'){
+        this.titleService.setTitle('Finance Shared Service Invoice Portal');
+        this.setFavicon('assets/Serina Assets/new_theme/AGI/fav_AGI.png');
+        this.dataStoreService.changeTheme("#482464",'#ffffff');
+        this.srcImg = 'assets/Serina Assets/new_theme/AGI/agi_login.png';
       } else {
         this.dataStoreService.changeTheme("#358dc0",'#140101');
+        this.srcImg = 'assets/Serina Assets/new_theme/Group 27317.svg';
       }
+
     })
+  }
+  setFavicon(iconUrl: string) {
+    const link: HTMLLinkElement = this.renderer.createElement('link');
+    link.rel = 'icon';
+    link.href = iconUrl;
+
+    const head = document.getElementsByTagName('head')[0];
+    const oldLink = document.querySelector("link[rel*='icon']");
+    
+    if (oldLink) {
+      this.renderer.removeChild(head, oldLink);
+    }
+    
+    this.renderer.appendChild(head, link);
   }
   loginMS(){
     this.msalService.loginPopup().subscribe((response: AuthenticationResult) => {

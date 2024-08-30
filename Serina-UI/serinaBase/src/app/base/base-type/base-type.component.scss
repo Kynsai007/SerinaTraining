@@ -133,7 +133,12 @@ $theme_color: var(--themeColor);
   margin: 0px 10px;
 }
 .cenomiBg {
-  background-color: #20113E !important;
+  background-color: $theme_color !important;
+}
+.AGI {
+    width: 180px;
+    height: 40px;
+    margin-top: 10px;
 }
 .cenomiNavlink {
   color: #ffffff !important;
