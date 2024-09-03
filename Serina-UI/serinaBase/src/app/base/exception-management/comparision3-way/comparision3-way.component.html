@@ -28,14 +28,14 @@
           changeApproveBoolean ||
           financeApproveBoolean) &&
         submitBtn_boolean &&
-        isDesktop &&
+        isDesktop && !isServiceData &&
         currentTab == 'line'
       "
     >
       
       <button
         *ngIf="
-          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non po invoice','credit note'].includes(documentType) || mappingForCredit
+          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -627,7 +627,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color">
+                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
@@ -669,7 +669,7 @@
                     <span class="f-13 p-2" style="margin-top: -6px">S.No</span>
                     <div
                       class="f-12 mb-1 "
-                      [ngClass]="(documentType == 'advance invoice' || documentType == 'non po invoice')? 'count-h_normal':'count-h' "
+                      [ngClass]="(documentType == 'advance invoice' || documentType == 'non-po')? 'count-h_normal':'count-h' "
 
                       *ngFor="let tagName of lineCount; let i = index"
                     >
@@ -700,7 +700,7 @@
                       >
                         <div
                           class="f-12 td_padding invoice_color doc_height"
-                          [ngStyle]="{ borderBottom:(documentType == 'advance invoice' || documentType == 'non po invoice')? '1px solid lightgray':'' }"
+                          [ngStyle]="{ borderBottom:(documentType == 'advance invoice' || documentType == 'non-po')? '1px solid lightgray':'' }"
                           data-text="IN"
                           [ngClass]="
                             tagName.tagname == 'Description'
@@ -806,7 +806,7 @@
                           ></span>
                         </div>
                         <div
-                          *ngIf="documentType != 'advance invoice' && documentType != 'non po invoice'"
+                          *ngIf="documentType != 'advance invoice' && documentType != 'non-po'"
                           class="f-12 td_padding po_color doc_height"
                           data-text="PO"
                           [ngClass]="
@@ -910,7 +910,7 @@
                       <div *ngFor="let data of lineCount">
                         <div *ngFor="let data2 of data.linedetails" class="mb1">
                           <div class="f-12 td_padding invoice_color doc_height"
-                          [ngStyle]="{ borderBottom:(documentType == 'advance invoice' || documentType == 'non po invoice')? '1px solid lightgray':'' }">
+                          [ngStyle]="{ borderBottom:(documentType == 'advance invoice' || documentType == 'non-po')? '1px solid lightgray':'' }">
                             <button
                               class="trash_btn"
                               (click)="
@@ -923,7 +923,7 @@
                               <i class="fa fa-trash-o" aria-hidden="true"></i>
                             </button>
                           </div>
-                          <div *ngIf="documentType != 'advance invoice' && documentType != 'non po invoice'" class="f-12 td_padding po_color doc_height">
+                          <div *ngIf="documentType != 'advance invoice' && documentType != 'non-po'" class="f-12 td_padding po_color doc_height">
                             <div
                               class="f-12 d-flex"
                               *ngIf="submitBtn_boolean"
@@ -947,7 +947,7 @@
                   <td class="total_count">{{ invoice_subTotal }}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
-                <tr *ngIf="documentType != 'advance invoice' && documentType != 'non po invoice'">
+                <tr *ngIf="documentType != 'advance invoice' && documentType != 'non-po'">
                   <td></td>
                   <td class="total_txt">Purchase Total</td>
                   <td></td>
@@ -982,7 +982,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color">
+                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
@@ -1191,7 +1191,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex f-12 basic_details text_color">
+                <div class="d-flex f-12 basic_details text_color" *ngIf="!isServiceData">
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
@@ -1776,7 +1776,7 @@
               "
             >
               <div class="no_doc_div f-14">
-                No Supporting Document available <span *ngIf="!(editable || fin_boolean)">, please upload it in exception screen if you have any</span>.<span *ngIf="editable || fin_boolean">, please upload if you have any</span>.
+                No Supporting Document available, <span *ngIf="!(editable || fin_boolean)"> please upload it in exception screen if you have any.</span><span *ngIf="editable || fin_boolean"> please upload if you have any.</span>
               </div>
             </div>
             <div class="file_table" *ngIf="uploadFileList.length > 0">

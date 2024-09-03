@@ -1227,435 +1227,442 @@
     [draggable]="false"
     [resizable]="false"
   >
-      <div *ngIf="!expandFull">
-        <div class="f-14 mb-1">User Details</div>
-        <div class="d_flex_wrap">
-          <div class="inputDiv" *ngIf="header_Ac != 'Edit user'">
-            <label class="label-head">User Name</label>
-            <input
-              type="text"
-              class="form-control inputForm mb-1 f-14"
-              name="username"
-              ngModel
-              #UserName="ngModel"
-              [(ngModel)]="userName"
-              (keyup)="userCheck($event.target.value)"
-              [ngStyle]="{
-                'border-left': userBoolean
-                  ? '5px solid green'
-                  : userNotBoolean
-                  ? '5px solid red'
-                  : ''
-              }"
-              placeholder="User name"
-              minlength="6"
-              required
-            />
-            <!-- <span *ngIf="userBoolean" class="f-13 mt-10" style="color: green;">
-                    <i class="fa fa-check-circle" aria-hidden="true"></i>
-                  </span>
-                  <span *ngIf="userNotBoolean" class="f-13 mt-10" style="color: #f35353;">
-                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                  </span> -->
-            <div
-              *ngIf="UserName.errors && (UserName.touched || UserName.dirty)"
-              class="alertDiv"
-            >
-              <div [hidden]="!UserName.errors.minlength">
-                UserName should contains at least 6 letters.
-              </div>
-              <div [hidden]="!UserName.errors.required">**Required field</div>
-            </div>
-          </div>
-
-          <div class="inputDiv">
-            <label class="label-head">First Name</label>
-            <input
-              type="text"
-              class="form-control inputForm mb-1 f-14"
-              name="FirstName"
-              ngModel
-              #firstname="ngModel"
-              [(ngModel)]="firstName"
-              placeholder="First name"
-              required
-            />
-            <div
-              *ngIf="
-                firstname.invalid && (firstname.touched || firstname.dirty)
-              "
-              class="alertDiv"
-            >
-              <div [hidden]="!firstname.errors.required">**Required field</div>
-            </div>
-          </div>
-
-          <div class="inputDiv">
-            <label class="label-head">Last Name</label>
-            <input
-              type="text"
-              class="form-control inputForm mb-1 f-14"
-              name="Lastname"
-              ngModel
-              #LastName="ngModel"
-              [(ngModel)]="lastName"
-              placeholder="Last name"
-            />
-
-            <!-- <div
-                  *ngIf="LastName.invalid && (LastName.touched || LastName.dirty)"
-                  class="alertDiv"
-                >
-                  <div [hidden]="!LastName.errors.required">**Required field</div>
-                </div> -->
-          </div>
-
-          <div class="inputDiv">
-            <label class="label-head">User Email</label>
-            <input
-              type="email"
-              name="email"
-              ngModel
-              #mail="ngModel"
-              class="form-control inputForm mb-1 f-14"
-              [(ngModel)]="userEmail"
-              placeholder="Email"
-              pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-              required
-            />
-            <div
-              *ngIf="mail.invalid && (mail.touched || mail.dirty)"
-              class="alertDiv"
-            >
-              <div [hidden]="!mail.errors?.pattern">Not a valid email</div>
-              <div [hidden]="!mail.errors.required">**Required field</div>
-            </div>
-          </div>
-
-          <div class="inputDiv">
-            <label class="label-head">Role Name</label>
-            <select
-              class="form-control inputForm f-12 mb-1"
-              name="editrole"
-              ngModel
-              #editRole="ngModel"
-              [(ngModel)]="editRoleName"
-              (change)="selectRole(editRoleName)"
-              required
-            >
-              <option
-                *ngFor="let role of DisplayRoleName"
-                [value]="role.NameOfRole"
+      <form #createUser="ngForm">
+        <div *ngIf="!expandFull">
+          <div class="f-14 mb-1">User Details</div>
+          <div class="d_flex_wrap">
+            <div class="inputDiv" *ngIf="header_Ac != 'Edit user'">
+              <label class="label-head">User Name <span style="color: #f35353">*</span></label>
+              <input
+                type="text"
+                class="form-control inputForm mb-1 f-14"
+                name="username"
+                ngModel
+                #UserName="ngModel"
+                [(ngModel)]="userName"
+                (keyup)="userCheck($event.target.value)"
+                [ngStyle]="{
+                  'border-left': userBoolean
+                    ? '5px solid green'
+                    : userNotBoolean
+                    ? '5px solid red'
+                    : ''
+                }"
+                placeholder="User name"
+                minlength="6"
+                required
+              />
+              <!-- <span *ngIf="userBoolean" class="f-13 mt-10" style="color: green;">
+                      <i class="fa fa-check-circle" aria-hidden="true"></i>
+                    </span>
+                    <span *ngIf="userNotBoolean" class="f-13 mt-10" style="color: #f35353;">
+                      <i class="fa fa-times-circle" aria-hidden="true"></i>
+                    </span> -->
+              <div
+                *ngIf="UserName.invalid && (UserName.touched || UserName.dirty) || userBoolean == false"
+                class="alertDiv"
               >
-                {{ role.NameOfRole }}
-              </option>
-            </select>
-
-            <div
-              *ngIf="editRole.invalid && (editRole.touched || editRole.dirty)"
-              class="alertDiv"
-            >
-              <div [hidden]="!editRole.errors.required">**Required field</div>
+                <div *ngIf="userName.length < 6 && !userBoolean">
+                  Username should contains at least 6 letters.
+                </div>
+                <div *ngIf="userName.length > 5 && !userBoolean">
+                  this username is not available, please try any other one.
+                </div>
+                <!-- <div *ngIf="!userName">**Required field</div> -->
+              </div>
             </div>
-          </div>
-
-          <div class="inputDiv">
-            <label class="label-head">Select Department</label>
-            <p-multiSelect
-              [options]="departmentData"
-              [(ngModel)]="selectedDept"
-              ngModel
-              #dept="ngModel"
-              (onChange)="onSelectDepartment($event)"
-              placeholder="Select department"
-              inputStyleClass="form-control inputBox inputForm selectpicker"
-              optionLabel="DepartmentName"
-              [maxSelectedLabels]="3"
-              [selectedItemsLabel]="'{0} items selected'"
-              name="dept"
-              required
-            >
-            </p-multiSelect>
-
-            <div
-              *ngIf="dept?.invalid && (dept?.touched || dept?.dirty)"
-              class="alertDiv"
-            >
-              <div [hidden]="!dept?.errors.required">**Required field</div>
+  
+            <div class="inputDiv">
+              <label class="label-head">First Name <span style="color: #f35353">*</span></label>
+              <input
+                type="text"
+                class="form-control inputForm mb-1 f-14"
+                name="FirstName"
+                ngModel
+                #firstname="ngModel"
+                [(ngModel)]="firstName"
+                placeholder="First name"
+                required
+              />
+              <div
+                *ngIf="
+                  firstname.invalid && (firstname.touched || firstname.dirty)
+                "
+                class="alertDiv"
+              >
+                <div [hidden]="!firstname.errors.required">**Required field</div>
+              </div>
             </div>
-          </div>
-
-          <div class="inputDiv">
-            <label class="label-head">Select Service</label>
-            <p-multiSelect
-              [options]="serviceData"
-              [(ngModel)]="selectedService"
-              ngModel
-              (onChange)="onSelectService($event)"
-              placeholder="Service provider"
-              inputStyleClass="form-control inputBox inputForm selectpicker"
-              optionLabel="ServiceProviderName"
-              [maxSelectedLabels]="3"
-              [selectedItemsLabel]="'{0} items selected'"
-              name="ServiceProviderName"
-            >
-            </p-multiSelect>
-          </div>
-          <!-- <div *ngIf="editRoleName == 'Finance Controller'">
-                  <label class="label-head">Amount</label>
-                  <input type="text" class="form-control inputForm mb-2 f-13" [(ngModel)]="Flevel" name="fLevel"
-                    placeholder="Financial Level" >
-                </div> -->
-
-          <!-- <div>
-                <button
-                  *ngIf="headerEdituserboolean"
-                  class="f-12 bg-btn inputForm"
-                  (click)="resetPassword()"
+  
+            <div class="inputDiv">
+              <label class="label-head">Last Name</label>
+              <input
+                type="text"
+                class="form-control inputForm mb-1 f-14"
+                name="Lastname"
+                ngModel
+                #LastName="ngModel"
+                [(ngModel)]="lastName"
+                placeholder="Last name"
+              />
+  
+              <!-- <div
+                    *ngIf="LastName.invalid && (LastName.touched || LastName.dirty)"
+                    class="alertDiv"
+                  >
+                    <div [hidden]="!LastName.errors.required">**Required field</div>
+                  </div> -->
+            </div>
+  
+            <div class="inputDiv">
+              <label class="label-head">User Email <span style="color: #f35353">*</span></label>
+              <input
+                type="email"
+                name="email"
+                ngModel
+                #mail="ngModel"
+                class="form-control inputForm mb-1 f-14"
+                [(ngModel)]="userEmail"
+                placeholder="Email"
+                pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                required
+              />
+              <div
+                *ngIf="mail.invalid && (mail.touched || mail.dirty)"
+                class="alertDiv"
+              >
+                <div [hidden]="!mail.errors?.pattern">Not a valid email</div>
+                <div [hidden]="!mail.errors.required">**Required field</div>
+              </div>
+            </div>
+  
+            <div class="inputDiv">
+              <label class="label-head">Role Name <span style="color: #f35353">*</span></label>
+              <select
+                class="form-control inputForm f-12 mb-1"
+                name="editrole"
+                ngModel
+                #editRole="ngModel"
+                [(ngModel)]="editRoleName"
+                (change)="selectRole(editRoleName)"
+                required
+              >
+                <option
+                  *ngFor="let role of DisplayRoleName"
+                  [value]="role.NameOfRole"
                 >
-                  {{ resetBtnText }}
-                </button>
+                  {{ role.NameOfRole }}
+                </option>
+              </select>
+  
+              <div
+                *ngIf="editRole.invalid && (editRole.touched || editRole.dirty)"
+                class="alertDiv"
+              >
+                <div [hidden]="!editRole.errors.required">**Required field</div>
+              </div>
+            </div>
+  
+            <div class="inputDiv">
+              <label class="label-head">Select Department</label>
+              <p-multiSelect
+                [options]="departmentData"
+                [(ngModel)]="selectedDept"
+                ngModel
+                #dept="ngModel"
+                (onChange)="onSelectDepartment($event)"
+                placeholder="Select department"
+                inputStyleClass="form-control inputBox inputForm selectpicker"
+                optionLabel="DepartmentName"
+                [maxSelectedLabels]="3"
+                [selectedItemsLabel]="'{0} items selected'"
+                name="dept"
+              >
+              </p-multiSelect>
+  
+              <div
+                *ngIf="dept?.invalid && (dept?.touched || dept?.dirty)"
+                class="alertDiv"
+              >
+                <div [hidden]="!dept?.errors.required">**Required field</div>
+              </div>
+            </div>
+  
+            <div class="inputDiv">
+              <label class="label-head">Select Service</label>
+              <p-multiSelect
+                [options]="serviceData"
+                [(ngModel)]="selectedService"
+                ngModel
+                (onChange)="onSelectService($event)"
+                placeholder="Service provider"
+                inputStyleClass="form-control inputBox inputForm selectpicker"
+                optionLabel="ServiceProviderName"
+                [maxSelectedLabels]="3"
+                [selectedItemsLabel]="'{0} items selected'"
+                name="ServiceProviderName"
+              >
+              </p-multiSelect>
+            </div>
+            <!-- <div *ngIf="editRoleName == 'Finance Controller'">
+                    <label class="label-head">Amount</label>
+                    <input type="text" class="form-control inputForm mb-2 f-13" [(ngModel)]="Flevel" name="fLevel"
+                      placeholder="Financial Level" >
+                  </div> -->
+  
+            <!-- <div>
+                  <button
+                    *ngIf="headerEdituserboolean"
+                    class="f-12 bg-btn inputForm"
+                    (click)="resetPassword()"
+                  >
+                    {{ resetBtnText }}
+                  </button>
+                </div> -->
+          </div>
+          <div class="f-12">
+            Note: Please add all the mandatory fields(*)
+          </div>
+        </div>
+        <div class="mt-1 mb-1">
+          <div *ngIf="!expandFull" class="f-14 mb-1 mt-2">
+            Entity access related details
+          </div>
+          <div *ngIf="!expandFull" class="d_flex_wrap">
+            <div class="inputDiv">
+              <div class="f-12 label-head">Select Entity <span style="color: #f35353">*</span></div>
+              <div *ngIf="financeApproveDisplayBoolean">
+                <p-autoComplete
+                    (onSelect)="onSelectEntity($event)"
+                    [suggestions]="filteredEntities"
+                    (completeMethod)="filterEntity($event)"
+                    field="EntityName"
+                    [dropdown]="true"
+                    ngModel
+                    #entityName="ngModel"
+                    name="entityName"
+                    required
+                  >
+                    <ng-template let-country pTemplate="item">
+                      <div class="country-item">
+                        <div [title]="country.EntityName">{{ country.EntityName }}</div>
+                      </div>
+                    </ng-template>
+                  </p-autoComplete>
+              </div>
+              <div *ngIf="!financeApproveDisplayBoolean">
+                <p-multiSelect 
+                    [options]="entityList" 
+                    [(ngModel)]="entitySelection_user" 
+                    (onChange) = "onSelectEntity($event)"
+                    defaultLabel="Select entity" 
+                    inputStyleClass="form-control inputBox selectpicker"
+                    optionLabel="EntityName"
+                    ngModel
+                    #entityName="ngModel"
+                    name="entityName"
+                    required>
+                </p-multiSelect>
+              </div>
+              
+            </div>
+            <!-- <div class="inputDiv">
+              <div class="f-12 label-head">Select Department</div>
+                <p-autoComplete
+                  (onSelect)="onSelectEntityBody($event)"
+                  [suggestions]="filterDentityBody"
+                  (completeMethod)="filterEntityBody($event)"
+                  field="DepartmentName"
+                  [dropdown]="true"
+                  [(ngModel)]="selectedEntityDeptName"
+                >
+                  <ng-template let-country pTemplate="item">
+                    <div class="country-item">
+                      <div>{{ country.DepartmentName }}</div>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
               </div> -->
-        </div>
-      </div>
-      <div class="mt-1 mb-1">
-        <div *ngIf="!expandFull" class="f-14 mb-1 mt-2">
-          Entity access related details
-        </div>
-        <div *ngIf="!expandFull" class="d_flex_wrap">
-          <div class="inputDiv">
-            <div class="f-12 label-head">Select Entity</div>
-            <div *ngIf="financeApproveDisplayBoolean">
-              <p-autoComplete
-                  (onSelect)="onSelectEntity($event)"
-                  [suggestions]="filteredEntities"
-                  (completeMethod)="filterEntity($event)"
-                  field="EntityName"
+  
+              <!-- <div>
+                <div class="f-13 label-head">Select Category</div>
+                <p-autoComplete
+                  (onSelect)="onSelectEntityDept($event)"
+                  [suggestions]="filterDentityDept"
+                  (completeMethod)="filterEntityDept($event)"
+                  field="DepartmentName"
                   [dropdown]="true"
                 >
                   <ng-template let-country pTemplate="item">
                     <div class="country-item">
-                      <div [title]="country.EntityName">{{ country.EntityName }}</div>
+                      <div>{{ country.DepartmentName }}</div>
                     </div>
                   </ng-template>
                 </p-autoComplete>
-            </div>
-            <div *ngIf="!financeApproveDisplayBoolean">
-              <p-multiSelect 
-                  [options]="entityList" 
-                  [(ngModel)]="entitySelection_user" 
-                  (onChange) = "onSelectEntity($event)"
-                  defaultLabel="Select entity" 
-                  inputStyleClass="form-control inputBox selectpicker"
-                  optionLabel="EntityName">
-              </p-multiSelect>
-            </div>
-            
-          </div>
-          <!-- <div class="inputDiv">
-            <div class="f-12 label-head">Select Department</div>
-              <p-autoComplete
-                (onSelect)="onSelectEntityBody($event)"
-                [suggestions]="filterDentityBody"
-                (completeMethod)="filterEntityBody($event)"
-                field="DepartmentName"
-                [dropdown]="true"
-                [(ngModel)]="selectedEntityDeptName"
+              </div> -->
+              <!-- <div
+                class="inputDiv"
+                *ngIf="
+                  AccessPermissionTypeId == 4 &&
+                  financeApproveDisplayBoolean &&
+                  entityBaseApproveBoolean
+                "
               >
-                <ng-template let-country pTemplate="item">
-                  <div class="country-item">
-                    <div>{{ country.DepartmentName }}</div>
-                  </div>
-                </ng-template>
-              </p-autoComplete>
-            </div> -->
-
-            <!-- <div>
-              <div class="f-13 label-head">Select Category</div>
-              <p-autoComplete
-                (onSelect)="onSelectEntityDept($event)"
-                [suggestions]="filterDentityDept"
-                (completeMethod)="filterEntityDept($event)"
-                field="DepartmentName"
-                [dropdown]="true"
-              >
-                <ng-template let-country pTemplate="item">
-                  <div class="country-item">
-                    <div>{{ country.DepartmentName }}</div>
-                  </div>
-                </ng-template>
-              </p-autoComplete>
-            </div> -->
-            <div
-              class="inputDiv"
-              *ngIf="
-                AccessPermissionTypeId == 4 &&
-                financeApproveDisplayBoolean &&
-                entityBaseApproveBoolean
-              "
-            >
-              <div class="f-12 label-head">
-                Select Sub-Role <span style="color: #f35353">*</span>
-              </div>
-              <!-- <input
-                type="text"
-                maxlength="1"
-                class="form-control inputForm f-12"
-                [(ngModel)]="subRole"
-                (change)="onSelectsubRole(subRole)"
-              /> -->
-              <select
-                name="subRole"
-                id="subRole"
-                class="form-control inputForm f-14"
-                [(ngModel)]="subRole"
-                (change)="onSelectsubRole(subRole)"
-              >
-                <option value=""></option>
-                <option
-                  *ngFor="let val of subroleList"
-                  [value]="val.idAccessPermissionDef"
+                <div class="f-12 label-head">
+                  Select Sub-Role <span style="color: #f35353">*</span>
+                </div>
+                <select
+                  name="subRole"
+                  id="subRole"
+                  class="form-control inputForm f-14"
+                  [(ngModel)]="subRole"
+                  (change)="onSelectsubRole(subRole)"
                 >
-                  {{ val.NameOfRole }}
-                </option>
-              </select>
-            </div>
-
-            <div
-              class="inputDiv"
-              *ngIf="
-                AccessPermissionTypeId == 4 &&
-                financeApproveDisplayBoolean &&
-                entityBaseApproveBoolean
-              "
-            >
-              <label class="f-12 label-head">
-                Select Priority <span style="color: #f35353">*</span>
-              </label>
-              <input
-                type="text"
-                maxlength="1"
-                class="form-control inputForm f-14"
-                [(ngModel)]="approval_priority"
-                (change)="onSelectPriority(approval_priority)"
-              />
-              <!-- <select #priority name="priority" id="prior" class="form-control inputForm f-12" (change)="onSelectPriority(priority.value)">
-                <option value=""></option>
-                <option *ngFor="let val of priorityList" [value]="val.value">{{val.value}}</option>
-              </select> -->
-            </div>
-
-            <div
-              class="inputDiv"
-              *ngIf="
-                AccessPermissionTypeId == 4 &&
-                isAmountBasedON &&
-                entityBaseApproveBoolean
-              "
-            >
-                <label class="f-12 label-head"
-                  >Max Approval Amount
-                  <!-- <span style="color: #f35353">*</span> -->
-                  <input
-                    type="number"
-                    [(ngModel)]="max_role_amount"
-                    class="inputForm form-control f-14"
-                    (change)="onSelectAmount(max_role_amount)"
-                  />
+                  <option value=""></option>
+                  <option
+                    *ngFor="let val of subroleList"
+                    [value]="val.idAccessPermissionDef"
+                  >
+                    {{ val.NameOfRole }}
+                  </option>
+                </select>
+              </div> -->
+  
+              <div
+                class="inputDiv"
+                *ngIf="
+                  AccessPermissionTypeId == 4 &&
+                  financeApproveDisplayBoolean &&
+                  entityBaseApproveBoolean
+                "
+              >
+                <label class="f-12 label-head">
+                  Select Priority <span style="color: #f35353">*</span>
                 </label>
-            </div>
-
-            <div
-              *ngIf="financeApproveDisplayBoolean && entityBaseApproveBoolean"
-            >
-              <div class="f-12 ">
-                Skip Approval Process <span style="color: #f35353">*</span> ? <span class="f-14 pointer" (click)="onSelectSkip(true)">Yes</span>  :  <span class="f-14 pointer" (click)="onSelectSkip(false)">No</span>
+                <input
+                  type="text"
+                  maxlength="2"
+                  name="priority"
+                  class="form-control inputForm f-14"
+                  [(ngModel)]="approval_priority"
+                  (change)="onSelectPriority(approval_priority)"
+                />
               </div>
-            </div>
-          </div>
-          <hr>
-          <div class="mt-2 mb-1">
-            <div class="d-flex justify-content-between">
-              <div class="f-14B">List of Entities that user can access</div>
-              <div *ngIf="!expandFull" (click)="expand(true)" class="pointer">
-                <i class="fa fa-expand" aria-hidden="true"></i>
-              </div>
-              <div *ngIf="expandFull" (click)="expand(false)" class="pointer">
-                <i class="fa fa-compress" aria-hidden="true"></i>
-              </div>
-        </div>
-
-          <div>
-            <ul class="p-0 ul-list"
-            [ngClass]="!expandFull ? 'normal_height' : 'full_height'">
-              <li
-                *ngFor="let value of selectedEntitys; let i = index"
-                class="listEntity"
+  
+              <div
+                class="inputDiv"
+                *ngIf="
+                  AccessPermissionTypeId == 4 &&
+                  isAmountBasedON &&
+                  entityBaseApproveBoolean
+                "
               >
-                <span
-                  >{{ value.entity }}
-                  <span *ngIf="value.entityDept"
-                    >-- {{ value.entityDept }}</span
-                  >
-                  <!-- <span *ngIf="value.category"
-                    >-- {{ value.category }}</span
-                  > -->
-                  <span *ngIf="value.subRole"
-                    >-- {{ value.subRole }}</span
-                  >
-                  <span *ngIf="value.userPriority"
-                    >-- {{ value.userPriority }}</span
-                  >
-                  <span *ngIf="value.maxAmount">-- {{ value.maxAmount }}</span>
-                  <span
-                    >-- {{ value.preApprove }}</span
-                  >
-                </span>
-                <!-- <span><i class="fa fa-times "  aria-hidden="true"></i></span> -->
-                <span
-                *ngIf="financeApproveDisplayBoolean"
-                  class="material-icons removeList"
-                  (click)="onRemove(i, value)"
-                >
-                  cancel
-                </span>
-              </li>
-            </ul>
+                  <label class="f-12 label-head"
+                    >Max Approval Amount
+                    <!-- <span style="color: #f35353">*</span> -->
+                    <input
+                      type="number"
+                      [(ngModel)]="max_role_amount"
+                      class="inputForm form-control f-14"
+                      (change)="onSelectAmount(max_role_amount)"
+                    />
+                  </label>
+              </div>
+  
+              <div
+                *ngIf="financeApproveDisplayBoolean && entityBaseApproveBoolean"
+              >
+                <div class="f-12 ">
+                  Skip Approval Process <span style="color: #f35353">*</span> ? <span class="f-14 pointer" (click)="onSelectSkip(true)">Yes</span>  :  <span class="f-14 pointer" (click)="onSelectSkip(false)">No</span>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="mt-2 mb-1">
+              <div class="d-flex justify-content-between">
+                <div class="f-14B">List of Entities that user can access</div>
+                <div *ngIf="!expandFull" (click)="expand(true)" class="pointer">
+                  <i class="fa fa-expand" aria-hidden="true"></i>
+                </div>
+                <div *ngIf="expandFull" (click)="expand(false)" class="pointer">
+                  <i class="fa fa-compress" aria-hidden="true"></i>
+                </div>
           </div>
-      </div>
-      <div class="btnAction fixed_pos">
-        <button
-          class="secondary_btn f-12 mr-3"
-          (click)="canceleditUser()"
-        >
-          Cancel
-        </button>
-        <button
-        *ngIf="header_Ac != 'Edit user'"
-        class="primary_btn f-12"
-          type="submit"
-          (click)="toCreateUser()"
-        >
-          Create
-        </button>
-        <button
-          *ngIf="header_Ac == 'Edit user'"
-          class="f-12 primary_btn"
-          [ngStyle]="{
-            cursor:
-              editRole?.invalid || mail?.invalid ? 'not-allowed' : 'pointer'
-          }"
-          [disabled]="editRole?.invalid || mail?.invalid"
-          (click)="UpdateUser()"
-        >
-          Update
-        </button>
-
-        <!-- [disabled]="editRole.invalid || mail.invalid || UserName.invalid || firstname.invalid || LastName.invalid    "
-          
-          [ngStyle]="{'cursor':( !editRole.valid || !mail.valid || !UserName.valid || !firstname.valid || !LastName.valid)? 'not-allowed':'pointer'}" -->
-      </div>
-    </div>
+  
+            <div>
+              <ul class="p-0 ul-list"
+              [ngClass]="!expandFull ? 'normal_height' : 'full_height'">
+                <li
+                  *ngFor="let value of selectedEntitys; let i = index"
+                  class="listEntity"
+                >
+                  <span
+                    >{{ value.entity }}
+                    <span *ngIf="value.entityDept"
+                      >-- {{ value.entityDept }}</span
+                    >
+                    <!-- <span *ngIf="value.category"
+                      >-- {{ value.category }}</span
+                    > -->
+                    <span *ngIf="value.subRole"
+                      >-- {{ value.subRole }}</span
+                    >
+                    <span *ngIf="value.userPriority"
+                      >-- {{ value.userPriority }}</span
+                    >
+                    <span *ngIf="value.maxAmount">-- {{ value.maxAmount }}</span>
+                    <span
+                      >-- {{ value.preApprove }}</span
+                    >
+                  </span>
+                  <!-- <span><i class="fa fa-times "  aria-hidden="true"></i></span> -->
+                  <span
+                  *ngIf="financeApproveDisplayBoolean"
+                    class="material-icons removeList"
+                    (click)="onRemove(i, value)"
+                  >
+                    cancel
+                  </span>
+                </li>
+              </ul>
+            </div>
+        </div>
+        <div class="btnAction fixed_pos">
+          <button
+            class="secondary_btn f-12 mr-3"
+            (click)="canceleditUser()"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+          *ngIf="header_Ac != 'Edit user'"
+          class="primary_btn f-12"
+            type="submit"
+            (click)="toCreateUser()"
+            [disabled]="!createUser.valid"
+          >
+            Create
+          </button>
+          <button
+            *ngIf="header_Ac == 'Edit user'"
+            class="f-12 primary_btn"
+            [ngStyle]="{
+              cursor:
+                editRole?.invalid || mail?.invalid ? 'not-allowed' : 'pointer'
+            }"
+            [disabled]="editRole?.invalid || mail?.invalid"
+            (click)="UpdateUser()"
+          >
+            Update
+          </button>
+  
+          <!-- [disabled]="editRole.invalid || mail.invalid || UserName.invalid || firstname.invalid || LastName.invalid    "
+            
+            [ngStyle]="{'cursor':( !editRole.valid || !mail.valid || !UserName.valid || !firstname.valid || !LastName.valid)? 'not-allowed':'pointer'}" -->
+        </div>
+        </div>
+      </form>
   </p-dialog>
 </div>
 

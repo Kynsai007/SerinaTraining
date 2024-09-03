@@ -549,7 +549,7 @@ export class Comparision3WayComponent
     }
     if (this.router.url.includes('InvoiceDetails') || this.router.url.includes('comparision-docs')) {
       this.Itype = 'Invoice';
-      if(this.editable && !['advance invoice','non po invoice','credit note'].includes(this.documentType) || this.mappingForCredit){
+      if(this.editable && !['advance invoice','non-po','credit note'].includes(this.documentType) || this.mappingForCredit){
         this.readLineItems();
       }
     } else if (this.router.url.includes('PODetails')) {
@@ -859,7 +859,7 @@ export class Comparision3WayComponent
     this.inputDisplayArray = [];
     // this.lineData = [];
     let serviceName;
-    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non po invoice' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
+    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
       this.pageType = "normal";
       serviceName = this.SharedService;
     } else {
@@ -879,7 +879,7 @@ export class Comparision3WayComponent
           this.uploadtime = response?.uploadtime;
         }
         if(response.doc_type){
-          this.docType = response?.doc_type;
+          this.docType = response?.doc_type?.toLowerCase();
           this.documentType = response?.doc_type?.toLowerCase();
         }
 
@@ -3641,7 +3641,7 @@ export class Comparision3WayComponent
             this.docType = el;
         } if(this.docType == 'credit'){
           this.docType = 'Invoice'
-        } else if(this.docType == 'non po invoice'){
+        } else if(this.docType == 'non-po'){
           this.docType = 'Non PO Invoice'
         } else if(this.docType == 'advance invoice'){
           this.docType = 'Advance Invoice'

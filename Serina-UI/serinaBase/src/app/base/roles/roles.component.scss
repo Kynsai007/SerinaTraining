@@ -67,7 +67,7 @@ td{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 10px;
+    gap: 15px;
   }
   .inputForm:focus {
       border: 1px solid #313971;
@@ -115,7 +115,7 @@ td{
 }
 .alertDiv{
     position: absolute;
-    bottom: -8px;
+    bottom: -16px;
 }
 
 
@@ -580,6 +580,7 @@ td{
     border-radius: 5px;
     padding: 6px 10px;
     width: 48%;
+    position: relative;
     input,select {
         border: 0;
         background-color: transparent;

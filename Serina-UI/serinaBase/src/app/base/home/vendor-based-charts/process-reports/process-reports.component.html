@@ -27,7 +27,7 @@
       <div class="chart_div1 d-flex ent_count">
         <ng-container *ngFor="let data of invoiceByEntityChartdata">
           <div class="ent_card">
-            <div class="f-12 shade_color">{{ data.EntityName }}</div>
+            <div class="f-12 shade_color">{{ data.EntityName }} <span *ngIf="data?.EntityCode">- {{data?.EntityCode}}</span></div>
             <div class="countSb_div">
               <div class="d-flex count_div">
                 <div class="f-18">{{ data.count }} <span class="f-10 line_text shade_color">invoice</span></div>

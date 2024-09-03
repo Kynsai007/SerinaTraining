@@ -378,7 +378,7 @@ export class RolesComponent implements OnInit {
           },
           (error) => {
             if (error.status == 400) {
-                this.alertFun("Please provide other priorioty, the given priority is already taken.");
+                this.alertFun("Please provide other priority, the given priority is already taken.");
             } else {
               this.alertFun(error.statusText);
             }
@@ -651,7 +651,7 @@ export class RolesComponent implements OnInit {
           this.selectedEntitys[this.selectedEntitys?.length - 1]?.entity &&
           this.selectedEntitys[this.selectedEntitys?.length - 1]?.subRole &&
           this.selectedEntitys[this.selectedEntitys?.length - 1]?.userPriority &&
-          this.selectedEntitys[this.selectedEntitys?.length - 1]?.preApprove
+          this.selectedEntitys[this.selectedEntitys?.length - 1]?.preApprove != undefined
         ) {
           this.sharedService.selectedEntityId = value.idEntity;
           this.selectedEntityId = value.idEntity;
@@ -659,6 +659,7 @@ export class RolesComponent implements OnInit {
           this.selectedEntitys.push({
             entity: value.EntityName,
             EntityID: value.idEntity,
+            subRole : this.appied_permission_def_id
           });
           this.updateUsersEntityInfo.push({
             idUserAccess: null,
@@ -873,7 +874,7 @@ export class RolesComponent implements OnInit {
 
   onSelectPriority(e){
     this.checkStatus(e,'priority');
-
+    
   }
   checkStatus(e,type) {
       this.updateUsersEntityInfo.forEach((value) => {
@@ -885,7 +886,7 @@ export class RolesComponent implements OnInit {
       if(type == 'approval'){
         bool = true;
       }
-    let obj = this.updateUsersEntityInfo[this.updateUsersEntityInfo.length-1]
+    let obj = this.updateUsersEntityInfo[this.updateUsersEntityInfo.length-1];
     this.sharedService.checkPriority(bool,obj).subscribe((data:any)=>{
       if(bool == true){
         if(data.status == 1){
@@ -911,6 +912,8 @@ export class RolesComponent implements OnInit {
         }
       }
 
+    },err=>{
+      this.alertFun("Server error");
     })
 
   }
@@ -1137,7 +1140,7 @@ export class RolesComponent implements OnInit {
       if(this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.EntityID &&
         this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.subRole &&
         this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.userPriority &&
-        this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove)
+        this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove != undefined)
         {
           this.updateAccessAPICall(editUser);
         } else {
@@ -1229,6 +1232,8 @@ export class RolesComponent implements OnInit {
   }
 
   userCheck(name) {
+    name = name.trim()
+    this.userName = name;
     if(name.length > 5){
       this.sharedService.userCheck(name).subscribe((data: any) => {
         if (!data.LogName) {
@@ -1239,6 +1244,9 @@ export class RolesComponent implements OnInit {
           this.userBoolean = false;
         }
       });
+    } else {
+      this.userNotBoolean = true;
+      this.userBoolean = false;
     }
   }
   getDept_ids(){
@@ -1282,7 +1290,7 @@ export class RolesComponent implements OnInit {
         if(this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.EntityID &&
           this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.subRole &&
           this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.userPriority &&
-          this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove)
+          this.updateUsersEntityInfo[this.updateUsersEntityInfo?.length - 1]?.preApprove != undefined)
           {
             this.addUserAPICall(createUserData);
           } else {

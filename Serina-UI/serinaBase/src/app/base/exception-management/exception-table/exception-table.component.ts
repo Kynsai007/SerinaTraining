@@ -482,7 +482,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.ds.subStatusId = e.idDocumentSubstatus;
       this.tagService.editable = true;
       this.sharedService.invoiceID = e.idDocument;
-      this.tagService.documentType = e.UploadDocType;
+      this.tagService.documentType = e.UploadDocType?.toLowerCase();
       this.ds.idDocumentType = e.idDocumentType;
       this.ds.entityID = e.idEntity;
       this.sharedService.selectedEntityId = e.idEntity;

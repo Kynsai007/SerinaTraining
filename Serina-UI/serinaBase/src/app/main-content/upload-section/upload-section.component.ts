@@ -1449,8 +1449,12 @@ export class UploadSectionComponent implements OnInit {
                   }, 2000);
                   // this.tagService.createInvoice = true;
                   // this.tagService.invoicePathBoolean = true;
-                  this.tagService.documentType = this.selectedInvoiceType;
-                  this.dataService.documentType = this.selectedInvoiceType;
+                  let invType = this.selectedInvoiceType?.toLowerCase();
+                  if(this.selectedInvoiceType == 'non po invoice'){
+                    invType = 'non-po'
+                  }
+                  this.tagService.documentType = invType;
+                  this.dataService.documentType = invType;
                   let id: number
                   if (this.document_type == 'Purchase Orders') {
                     id = 1;
