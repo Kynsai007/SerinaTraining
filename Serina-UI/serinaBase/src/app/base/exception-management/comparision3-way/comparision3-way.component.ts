@@ -519,9 +519,7 @@ export class Comparision3WayComponent
     // this.fin_boolean = this.permissionService.financeApproveBoolean;
     if(this.router.url.includes('approvals') && this.permissionService.financeApproveBoolean){
       this.fin_boolean = true;
-      console.log(this.fin_boolean)
     }
-    console.log(this.fin_boolean)
 
     this.submitBtn_boolean = this.tagService.submitBtnBoolean;
     this.approveBtn_boolean = this.tagService.approveBtnBoolean;
@@ -1264,7 +1262,16 @@ export class Comparision3WayComponent
         ele.order = 11
       }
     })
-    this.inputData = this.inputData.sort((a, b) => a.order - b.order);
+    // Separate items with and without the 'order' key
+    const withOrder = this.inputData.filter(item => item.hasOwnProperty('order'));
+    const withoutOrder = this.inputData.filter(item => !item.hasOwnProperty('order'));
+
+    // Sort the items with 'order' by their 'order' value
+    withOrder.sort((a, b) => a.order - b.order);
+
+    // Concatenate the sorted items with 'order' and those without 'order'
+    this.inputData = withOrder.concat(withoutOrder);
+    console.log(this.inputData)
   }
 
   readGRNInvData() {
