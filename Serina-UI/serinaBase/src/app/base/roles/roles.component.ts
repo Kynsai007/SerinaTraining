@@ -649,7 +649,6 @@ export class RolesComponent implements OnInit {
       if (this.selectedEntitys?.length > 0 && this.AccessPermissionTypeId == 4 && this.entityBaseApproveBoolean) {
         if (
           this.selectedEntitys[this.selectedEntitys?.length - 1]?.entity &&
-          this.selectedEntitys[this.selectedEntitys?.length - 1]?.subRole &&
           this.selectedEntitys[this.selectedEntitys?.length - 1]?.userPriority &&
           this.selectedEntitys[this.selectedEntitys?.length - 1]?.preApprove != undefined
         ) {
