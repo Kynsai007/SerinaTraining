@@ -278,7 +278,8 @@ input::-webkit-input-placeholder {
     height: fit-content;
     width: 180px;
     margin-top: 15px;
-    margin-left: -10px;
+    margin-left: 0px;
+    border-radius: 4px;
   }
 @media screen and (max-width: 576px){
     .login-div {

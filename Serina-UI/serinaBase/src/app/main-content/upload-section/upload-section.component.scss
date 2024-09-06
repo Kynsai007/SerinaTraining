@@ -545,7 +545,7 @@ input[type="checkbox"] {
   background-image: url("../../../assets/Serina Assets/new_theme/Group 933.svg");
 }
 .bg-agi {
-  background-image: url("../../../assets/Serina Assets/new_theme/AGI/agi_upload.png");
+  background-image: url("../../../assets/Serina Assets/new_theme/AGI/agi_upload1.png");
 }
 // .imgPlaceholder img{
 //   height: 40vh;
@@ -558,6 +558,7 @@ input[type="checkbox"] {
   gap: 20px;
   .column1 {
     width: 35%;
+    position: relative;
   }
   .column2 {
     width: 63%;
@@ -671,13 +672,22 @@ input[type="checkbox"] {
 }
 .accountSelect {
   width: clamp(260px, 23vw, 350px);
-  height: 34px;
+  height: 32px;
   background: inherit;
   border: 0;
   position: relative;
   top: -11px;
   z-index: 1;
   left: -13px;
+}
+.green-border {
+  border: 1px solid #2eb100 !important;
+  background-color: #FFFFFF;
+}
+
+.red-border {
+  border: 1px solid rgb(230, 230, 230) !important;
+  background-color: #FFFFFF;
 }
 
 .bg-success {
@@ -725,6 +735,11 @@ label {
   text-transform: capitalize;
   color: $theme_color;
   margin-left: 5px;
+}
+.agi_div {
+  position: absolute;
+  bottom: 75px;
+  width: 100%;
 }
 :host::ng-deep{
   .p-dialog {

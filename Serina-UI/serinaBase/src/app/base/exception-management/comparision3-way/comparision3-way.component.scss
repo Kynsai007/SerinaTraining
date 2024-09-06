@@ -153,7 +153,7 @@ $theme_color: var(--themeColor);
   min-height: 56px;
 }
 .count-h_normal {
-  min-height: 29px;
+  min-height: 26px;
 }
 @media screen and (max-width: 1000px) {
 
@@ -661,7 +661,7 @@ $theme_color: var(--themeColor);
   border-style: solid;
   border-color: transparent transparent transparent #303972;
 }
-@media screen and (width > 1500px) {
+@media screen and (width > 1415px) {
   // .total_count {
   //   width: 10vw !important;
   // }
@@ -669,7 +669,7 @@ $theme_color: var(--themeColor);
     min-width: calc(22svw - 60px);
   }
   .large_input_box {
-    width: calc(44.5svw - 103px);
+    width: calc(44.5svw - 117px);
   }
   .w-st {
     width: 11.5vw;

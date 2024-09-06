@@ -249,11 +249,12 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.dataStoreService.configData?.enableApprovals;
     let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
     let roleId = this.authService.currentUserValue['permissioninfo'].idAccessPermissionDef;
+
     if(this.dataStoreService.configData.client_name == 'Enova' && roleId == 26){
       this.isCoordinator = true;
       this.dataStoreService.isCoordinator = true;
     }
-    if(userRole == 'customer super admin' || userRole == 'ds it admin'){
+    if(roleId == 1 || userRole == 15){
       this.dataStoreService.isAdmin = true;
     } else {
       this.dataStoreService.isAdmin = false;
@@ -557,11 +558,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       } else {
         document.getElementById('body_content').style.opacity = '1';
       }
-    } else if(this.vendorInvoiceAccess && !this.serviceInvoiceAccess ) {
-      this.router.navigate([`${this.portalName}/ExceptionManagement`])
-    } else if(!this.vendorInvoiceAccess && this.serviceInvoiceAccess ) {
-      this.router.navigate([`${this.portalName}/ExceptionManagement/Service_ExceptionManagement`])
-    }
+    } 
   }
   approvalDropdown(){
     this.isOpen = false;

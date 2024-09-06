@@ -88,6 +88,7 @@ export class LoginPageComponent implements OnInit {
   isVendorPortalRequired: boolean;
   vendorInvoiceAccess: any;
   srcImg: any;
+  client_name: string;
 
   constructor(private router: Router,
     private formBuilder: FormBuilder,
@@ -212,10 +213,11 @@ export class LoginPageComponent implements OnInit {
       this.dataStoreService.configData = this.instanceInfo ;
       this.isVendorPortalRequired = this.instanceInfo?.enablevendorportal;
       this.vendorInvoiceAccess = this.instanceInfo?.vendorInvoices;
-      if(this.dataStoreService?.configData?.client_name == 'Cenomi'){
+      this.client_name = this.dataStoreService?.configData?.client_name;
+      if(this.client_name == 'Cenomi'){
         this.dataStoreService.changeTheme("#20113E",'#ffffff');
         this.srcImg = 'assets/Serina Assets/new_theme/cenomiLogo.png';
-      } else if(this.dataStoreService?.configData?.client_name == 'AGI'){
+      } else if(this.client_name == 'AGI'){
         this.titleService.setTitle('Finance Shared Service Invoice Portal');
         this.setFavicon('assets/Serina Assets/new_theme/AGI/fav_AGI.png');
         this.dataStoreService.changeTheme("#482464",'#ffffff');

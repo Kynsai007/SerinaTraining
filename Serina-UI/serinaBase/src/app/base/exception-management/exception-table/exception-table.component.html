@@ -477,7 +477,10 @@
                 </div>
               </ng-container>
             </ng-container>
-            <div *ngSwitchDefault [ngClass] = "col.dbColumnname.includes('Amount')? 't_right':'capitalized_text'">
+            <div *ngSwitchDefault [ngClass] = "{
+              't_right':col.dbColumnname.includes('Amount'),
+              'capitalized_text':!['sender'].includes(col.dbColumnname)
+            }">
               <span
                 *ngIf="col.dbColumnname == 'PODocumentID'"
                 (click)="openPOpage(invoiceData.PODocumentID)"

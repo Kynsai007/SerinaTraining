@@ -225,6 +225,11 @@ export class UploadSectionComponent implements OnInit {
   selectPageRange: boolean = false;
   invoiceType: any;
   vendorName: any;
+  serviceName: any;
+  selectedINVNumber: any;
+  selectedPPType: any;
+  selectedPPPercentage: any;
+  selectedAccount: any;
   selectedPoNumber: string;
   selectedGRNNumber: string;
   attachedBoolean: boolean = false;
@@ -252,6 +257,7 @@ export class UploadSectionComponent implements OnInit {
   serviceAccounts: any;
   filteredServiceAccount: any[];
   selectedServiceAccount: any;
+  selectedSAccount:any;
   accountsData: any;
   selectedInvoiceType: any;
   selectedInvoiceType_quick: any;
@@ -304,6 +310,8 @@ export class UploadSectionComponent implements OnInit {
   pre_type:string;
   selectedInvNumber: any;
   pre_type_val: any;
+  slQckPONum: boolean = false;
+  grnLine: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -401,6 +409,7 @@ export class UploadSectionComponent implements OnInit {
     this.pre_type = event?.value?.value;
   }
   pre_type_value(val,type){
+    this.displaySelectPdfBoolean = true;    
     if(type == 'fixed'){
       this.pre_type_val = val;
     } else if(type == 'percent' && val >= 0 && val <= 100){
@@ -441,6 +450,29 @@ export class UploadSectionComponent implements OnInit {
 
   chooseTab(val) {
     this.viewType = val;
+    if(val === 'ideal'){
+      this.EntityName = null;
+      this.vendorName = null;
+      this.serviceName = null;
+      this.selectedAccount = null;
+      this.selectedInvoiceType = null;
+      this.selectedPoNumber = null;
+      this.selectedPPType = null;
+      this.selectedPPPercentage = null;
+      this.selectedINVNumber = null;
+      this.selectedGRNNumber = null;
+    }
+    else{
+      this.EntityName = null;
+      this.vendorName = null;
+      this.selectedEntityId = null;
+      this.selectedVendor = null;
+      this.selectedInvoiceType_quick = null;
+      this.slQckPONum = false;
+      this.grnLine= false;
+      this.PO_GRN_Number_line = null;
+    }
+    this.displaySelectPdfBoolean = false;
   }
   // Set date range
   dateRange() {
@@ -535,6 +567,7 @@ export class UploadSectionComponent implements OnInit {
   // }
 
   onSelectPOType(val, type) {
+    this.displaySelectPdfBoolean = false;
     if (type == 'ideal') {
     this.selectedInvoiceType = val ;
       if(val == 'non po invoice'){
@@ -763,9 +796,12 @@ export class UploadSectionComponent implements OnInit {
 
   }
   selectServiceAccount(value) {
+    this.selectedAccount = value.Account;
     this.selectedServiceAccount = value.Account;
     this.displaySelectPdfBoolean = true;
-    this.selectedServiceAccount = value.Account;
+    this.webConnection();
+  }
+  webConnection(){
     this.webSocketService.userId = this.sharedService.userId;
     this.webSocketService.service_account = this.selectedServiceAccount;
     this.webSocketService.authToken = this.authenticationService.currentUserValue.token;
@@ -850,9 +886,16 @@ export class UploadSectionComponent implements OnInit {
       if(this.selectedInvoiceType.includes('credit note') && this.dataService.configData.client_name == 'SRG'){
         this.getVendorInvoices(event.PODocumentID);
       }
-      this.displayUploadOpt();
+      if(this.selectedInvoiceType === 'advance invoice'){
+        this.displaySelectPdfBoolean = false;
+      }
+      else{
+        this.displayUploadOpt();
+      }
+      
       // this.readPOLines(event.PODocumentID);
     } else {
+      this.slQckPONum = true;
       if (this.selectedInvoiceType_quick == 'invoice') {
         this.readPOLines(event.PODocumentID);
         } else {
@@ -952,6 +995,7 @@ export class UploadSectionComponent implements OnInit {
     })
   }
   addGrnLine(val) {
+    this.grnLine = true;
     this.po_grn_line_list = [];
     val?.value?.forEach(ele => {
       this.GRNData.filter(el => {
@@ -1290,6 +1334,8 @@ export class UploadSectionComponent implements OnInit {
     this.progress = null;
     if(this.selectedOption == 'Service'){
       this.returnmessage = false;
+      this.selectedSAccount = [];
+      this.displaySelectPdfBoolean = false;
       this.webSocketService.close();
     } else {
       this.evtSource.close();
@@ -1838,6 +1884,7 @@ export class UploadSectionComponent implements OnInit {
   }
 
   uploadService() {
+
     this.processStage = 'Invoice uploading initiated';
     this.sendFile();
     this.returnmessage = true;

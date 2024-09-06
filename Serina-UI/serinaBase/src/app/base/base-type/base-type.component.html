@@ -695,6 +695,7 @@
               cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
             }"
             (click)="exceptionDrop()"
+            [routerLink]="vendorInvoiceAccess && !serviceInvoiceAccess ? 'ExceptionManagement' : ((!vendorInvoiceAccess && serviceInvoiceAccess) ? 'ExceptionManagement/Service_ExceptionManagement':null)"
             *ngIf="excpetionPageAccess"
           >
             Exceptions
@@ -730,6 +731,7 @@
             <a
               [routerLink]="'ExceptionManagement/approvalPending'"
               routerLinkActive="active_sub_cls"
+              *ngIf="financeapproveDisplayBoolean"
               (click)="exceptionMenu('service', 'exc')"
               >Approval Pending</a
             >
@@ -954,6 +956,11 @@
             router.url.includes('Create_GRN_inv_list')) &&
           isDesktop
         "
+        [ngClass]="
+            ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
+              ? 'cenomiNavlink'
+              : ''
+          "
       >
         Card
         <span class="portal">
@@ -1041,6 +1048,7 @@
         cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
       }"
       (click)="exceptionDrop()"
+      [routerLink]="vendorInvoiceAccess && !serviceInvoiceAccess ? 'ExceptionManagement' : ((!vendorInvoiceAccess && serviceInvoiceAccess) ? 'ExceptionManagement/Service_ExceptionManagement':null)"
       *ngIf="excpetionPageAccess"
     >
       <details *ngIf="vendorInvoiceAccess && serviceInvoiceAccess">
@@ -1086,7 +1094,7 @@
     </div>
     <div
       class="nav_Link f-14"
-      [routerLink]="'invoice'"
+      [routerLink]=" vendorInvoiceAccess ? 'invoice/allInvoices':'invoice/ServiceInvoices'"
       (click)="doc_status_route()"
       [ngClass]="{
         active_cls: router.url.includes('invoice'),

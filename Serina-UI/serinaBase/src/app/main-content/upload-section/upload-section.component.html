@@ -5,11 +5,13 @@
     <div *ngIf="!displayTablebool">
       <div class="imgPlaceholder" [ngClass]="dataService.configData.client_name == 'AGI' ?'bg-agi':'bg-default'">
       </div>
-      <div class="welcomtext">
-        <h6 class="f-16 mt-4 text-center">Welcome. Let's get you settled in.</h6>
-      </div>
-      <div class="f-14 shade_color wlcom_bdy">
-        <fun-facts [factsList]="factsList"></fun-facts>
+      <div [ngClass]="dataService.configData.client_name == 'AGI' ?'agi_div':''">
+        <div class="welcomtext">
+          <h6 class="f-16 mt-4 text-center">Welcome. Let's get you settled in.</h6>
+        </div>
+        <div class="f-14 shade_color wlcom_bdy">
+          <fun-facts [factsList]="factsList"></fun-facts>
+        </div>
       </div>
     </div>
 
@@ -99,6 +101,10 @@
             *ngIf="
               serviceInvoiceAccess && vendorAccess && portal_name == 'customer'
             "
+             [ngClass]="{
+              'green-border': selectedOption,
+              'red-border':  !selectedOption
+            }"
           >
             <label class="f-12 mb-0">Select Type</label><br />
             <select
@@ -112,7 +118,11 @@
               <option value="Service">Service invoice</option>
             </select>
           </div>
-          <div class="selectFilter" *ngIf="isCustomerPortal">
+          <div class="selectFilter" *ngIf="isCustomerPortal"
+            [ngClass]="{
+              'green-border': EntityName,
+              'red-border':  !EntityName
+            }">
             <label class="f-12 mb-0">Select Entity</label>
             <p-autoComplete
               placeholder="Search or select from dropdown"
@@ -171,7 +181,11 @@
               </ng-template>
             </p-autoComplete>
             </div> -->
-          <div *ngIf="isCustomerPortal" class="selectFilter">
+          <div *ngIf="isCustomerPortal" class="selectFilter" 
+          [ngClass]="{
+            'red-border': (EntityName && !vendorName && selectedOption === 'Vendor') || (EntityName && !serviceName && selectedOption === 'Service'),
+            'green-border': (vendorName && selectedOption === 'Vendor') || (serviceName && selectedOption === 'Service')
+          }">
             <!-- <label class="f-12 mb-0">Select Vendor</label><br /> -->
             <label class="f-12 mb-0">{{
               selectedOption === "Service" ? "Select Service" : "Select Vendor"
@@ -190,6 +204,9 @@
               name="vendor"
               [(ngModel)]="vendorName"
               required
+              [disabled]="!EntityName"
+              [pTooltip]="!EntityName ? 'Select Entity first' : null"
+              tooltipPosition="top"
             >
               <ng-template let-group pTemplate="group">
                 <div class="flex align-items-center group-item">
@@ -215,6 +232,10 @@
               field="ServiceProviderName"
               [dropdown]="true"
               name="service"
+              [(ngModel)]="serviceName"
+              [disabled]="!EntityName"
+              [pTooltip]="!EntityName ? 'Select Entity first' : null"
+              tooltipPosition="top"
             >
               <ng-template let-service pTemplate="item">
                 <div class="flex align-items-center">
@@ -228,6 +249,10 @@
           <div
             class="selectFilter"
             *ngIf="portal_name == 'customer' && selectedOption === 'Service'"
+            [ngClass]="{
+              'green-border': selectedAccount,
+              'red-border': !selectedAccount && serviceName
+            }"
           >
             <label class="f-12 mb-0">Select Account </label><br />
             <p-autoComplete
@@ -238,6 +263,11 @@
               (completeMethod)="filterServicesAccount($event)"
               field="Account"
               [dropdown]="true"
+              [disabled]="!serviceName"
+              [pTooltip]="!serviceName ? 'Select Service' : null"
+              tooltipPosition="top"
+              name="sAccount"
+              [(ngModel)]="selectedSAccount"
             >
               <ng-template let-group pTemplate="group">
                 <div class="flex align-items-center">
@@ -249,6 +279,10 @@
           <div
             *ngIf="selectedOption != 'Service'"
             class="selectFilter"
+            [ngClass]="{
+              'green-border': selectedInvoiceType,
+              'red-border': !selectedInvoiceType && vendorName
+            }"
           >
             <label class="f-12 mb-0">Invoice Type </label><br />
             <select
@@ -259,6 +293,9 @@
               ngModel
               [value]="invoiceType"
               required
+              [disabled]="!vendorName"
+              [pTooltip]="!vendorName ? 'Select Vendor' : null"
+              tooltipPosition="top"
             >
             <option value="" disabled></option>
             <option *ngFor="let item of invTypeArr" [value]="item.value">
@@ -290,9 +327,13 @@
           <div
             *ngIf="
               viewType == 'ideal' &&
-              selectedInvoiceType != 'non po invoice'
+              selectedInvoiceType != 'non po invoice' && selectedOption != 'Service'
             "
             class="selectFilter"
+            [ngClass]="{
+              'green-border': selectedPoNumber,
+              'red-border': (!selectedPoNumber && selectedInvoiceType) || (!selectedPoNumber && selectedAccount)
+            }"
           >
             <label class="f-12 mb-0">Select PO Number</label>
             <p-autoComplete
@@ -307,6 +348,9 @@
               name="PONumber"
               [(ngModel)]="selectedPoNumber"
               required
+              [disabled]="!selectedInvoiceType && !selectedAccount"
+              [pTooltip]="(!selectedInvoiceType && selectedOption != 'Service') ? 'Select Invoice Type' : (!selectedAccount && selectedOption == 'Service') ? 'Select Account' : null"
+              tooltipPosition="top"
             >
               <ng-template let-group pTemplate="group">
                 <div class="flex align-items-center">
@@ -322,6 +366,10 @@
               (selectedInvoiceType == 'advance invoice' && dataService.configData.client_name == 'SRG')
             "
             class="selectFilter"
+            [ngClass]="{
+              'green-border': selectedPPType,
+              'red-border': !selectedPPType && selectedPoNumber
+            }"
           >
             <label class="f-12 mb-0">{{dataService.configData.client_name == 'SRG' ?'Pre-payment type':'Credit type'}}</label>
             <p-dropdown
@@ -330,16 +378,37 @@
               (onChange)="selectedSub($event)"
               name="subType"
               optionLabel="tagName"
+              [(ngModel)]="selectedPPType"
+              [disabled]="!selectedPoNumber"
+              [pTooltip]="!selectedPoNumber ? 'Select PO Number' : null"
+              tooltipPosition="top"
             >
             </p-dropdown>
           </div>
-          <div class="selectFilter ideal" *ngIf="selectedInvoiceType == 'advance invoice' && dataService.configData.client_name == 'SRG'">
+          <div class="selectFilter ideal" 
+            *ngIf="selectedInvoiceType == 'advance invoice' && dataService.configData.client_name == 'SRG'"
+            [ngClass]="{
+              'green-border': selectedPPPercentage,
+              'red-border': !selectedPPPercentage && selectedPPType
+            }"
+            >
             <label class="f-12 mb-0">Please add {{pre_type}}</label><br>
-            <input type="number" class="form-control accountSelect f-12" (change)="pre_type_value($event.target.value,pre_type)">
+            <input type="number" class="form-control accountSelect f-12" 
+              (change)="pre_type_value($event.target.value,pre_type)"
+              [(ngModel)]="selectedPPPercentage"
+              [disabled]="!selectedPPType"
+              [pTooltip]="!selectedPPType ? 'Select Pre-Payment Type' : null"
+              tooltipPosition="top"
+              name="pptype"
+            >
           </div>
           <div
             *ngIf="viewType == 'ideal' && selectedInvoiceType == 'credit note' && dataService.configData.client_name == 'SRG' "
             class="selectFilter ideal"
+            [ngClass]="{
+              'green-border': selectedINVNumber,
+              'red-border': !selectedINVNumber && selectedPoNumber
+            }"
           >
           <label class="f-12 mb-0">Select Invoice Number</label><br />
           <p-autoComplete
@@ -350,15 +419,23 @@
             [suggestions]="filteredInv"
             (completeMethod)="filterInvnumber($event)"
             field="docheaderID"
+            [(ngModel)]="selectedINVNumber"
             [dropdown]="true"
             name="invNumber"
             ngModel
+            [disabled]="!selectedPoNumber"
+            [pTooltip]="!selectedPoNumber ? 'Select PO Number' : null"
+            tooltipPosition="top"
           >
           </p-autoComplete>
         </div>
-          <div
+          <!-- <div
             *ngIf="viewType == 'ideal' && selectedInvoiceType == 'invoice' && portal_name == 'customer'"
             class="selectFilter ideal"
+            [ngClass]="{
+              'green-border': selectedGRNNumber,
+              'red-border': !selectedGRNNumber && selectedPoNumber
+            }"
           >
             <label class="f-12 mb-0">Select GRN</label>
             <p-multiSelect
@@ -373,9 +450,12 @@
               (onChange)="selectIdealGrn($event)"
               name="PO_GRN_Number"
               [(ngModel)]="selectedGRNNumber"
+              [disabled]="!selectedPoNumber"
+              [pTooltip]="!selectedPoNumber ? 'Select PO Number' : null"
+              tooltipPosition="top"
             >
             </p-multiSelect>
-          </div>
+          </div> -->
         </form>
 
         <!--Customer Portal Upload-->
@@ -674,7 +754,11 @@
           class="d-flex flex-wrap gap"
          
         >
-          <div class="selectFilter">
+          <div class="selectFilter"
+          [ngClass]="{
+            'green-border': selectedEntityId,
+            'red-border':  !selectedEntityId
+          }" >
             <label class="f-12 mb-0">Select Entity</label><br />
             <p-autoComplete
               placeholder="Select Entity"
@@ -687,7 +771,7 @@
               [completeOnFocus]="true"
               [autofocus]="true"
               name="EntityName"
-              ngModel
+              [(ngModel)]="EntityName"
               required
             >
               <ng-template let-group pTemplate="group">
@@ -699,7 +783,11 @@
           </div>
 
           <!--Vendor Selection-->
-          <div class="selectFilter">
+          <div class="selectFilter"
+          [ngClass]="{
+            'green-border': selectedVendor,
+            'red-border':  !selectedVendor && selectedEntityId
+          }">
             <label class="f-12 mb-0">Select Vendor</label><br />
             <p-autoComplete
               placeholder="Select vendor"
@@ -713,6 +801,10 @@
               [autofocus]="true"
               name="vendor"
               ngModel
+              [(ngModel)]="vendorName"
+              [disabled]="!selectedEntityId"
+              [pTooltip]="!selectedEntityId ? 'Select Entity first' : null"
+              tooltipPosition="top"
               required
             >
               <!-- <ng-template let-group pTemplate="item">
@@ -730,7 +822,11 @@
           </div>
 
           <!--Select PO type-->
-          <div class="selectFilter">
+          <div class="selectFilter" 
+          [ngClass]="{
+            'green-border': selectedInvoiceType_quick,
+            'red-border':  !selectedInvoiceType_quick && selectedVendor
+          }">
             <label class="f-12 mb-0"
               >Invoice Type
               <i
@@ -746,6 +842,9 @@
               name="invoiceType"
               ngModel
               required
+              [disabled]="!selectedVendor"
+              [pTooltip]="!selectedVendor ? 'Select Vendor' : null"
+              tooltipPosition="top"
             >
               <option value="" disabled></option>
               <option *ngFor="let item of invTypeArr" [value]="item.value">
@@ -794,6 +893,10 @@
           <div
             class="selectFilter"
             *ngIf="viewType != 'ideal' && selectedInvoiceType_quick != 'non po invoice'"
+            [ngClass]="{
+              'green-border': slQckPONum,
+              'red-border':  !slQckPONum && selectedInvoiceType_quick
+            }"
           >
             <label class="f-12 mb-0">Select PO Number</label><br />
             <p-autoComplete
@@ -807,6 +910,9 @@
               [dropdown]="true"
               name="PONumber"
               ngModel
+              [disabled]="!selectedInvoiceType_quick"
+              [pTooltip]="!selectedInvoiceType_quick ? 'Select Invoce Type' : null"
+              tooltipPosition="top"
             >
               <ng-template let-group pTemplate="group">
                 <div class="flex align-items-center">
@@ -848,12 +954,16 @@
           </div>
 
           <!-- select GRN Number -->
-          <!-- <div
+          <div
             class="selectFilter"
             *ngIf="
               viewType != 'ideal' &&
               selectedInvoiceType_quick == 'invoice'
             "
+            [ngClass]="{
+              'green-border': grnLine,
+              'red-border':  !grnLine && slQckPONum
+            }"
           >
             <label class="f-12 mb-0">Select GRN</label>
             <p-multiSelect
@@ -867,9 +977,12 @@
               (onChange)="addGrnLine($event)"
               name="PO_GRN_Number"
               ngModel
+              [disabled]="!slQckPONum"
+              [pTooltip]="!slQckPONum ? 'Select PO Number' : null"
+              tooltipPosition="top"
             >
             </p-multiSelect>
-          </div> -->
+          </div>
 
           <!-- select GRN Line -->
           <div
@@ -878,6 +991,9 @@
               viewType != 'ideal' &&
               selectedInvoiceType_quick == 'invoice'
             "
+             [ngClass]="{
+              'green-border': grnLine
+            }"
           >
             <label class="f-12 mb-0">Select GRN Line</label>
             <p-multiSelect
@@ -891,6 +1007,9 @@
               name="PO_GRN_Number_line"
               ngModel
               [(ngModel)]="PO_GRN_Number_line"
+              [disabled]="!grnLine"
+              [pTooltip]="!grnLine ? 'Select GRN Line' : null"
+              tooltipPosition="top"
             >
             </p-multiSelect>
           </div>

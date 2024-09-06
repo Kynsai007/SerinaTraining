@@ -396,7 +396,7 @@
             >
               <div class="d-flex justify-content-between">
                 <div class="f-14">{{ Itype }}/Purchase Details</div>
-                <div class="f-12 status_btn" *ngIf="doc_status" [title]="doc_status">
+                <div class="f-12 status_btn" *ngIf="doc_status" [title]="doc_status" style="background-color: inherit;">
                   {{ doc_status }}
                 </div>
               </div>
@@ -460,12 +460,12 @@
                     <input
                       *ngIf="!value?.TagLabel?.includes('Project')"
                       #inputv
-                      type="text"
+                      [type]="value?.TagLabel?.includes('AmountToApply')?'number':'text'"
                       [value]="value.Value"
                       [title]="value.Value"
                       [disabled]="!editable || fin_boolean"
                       (change)="
-                        onChangeValue(value.TagLabel, inputv.value, value)
+                      value?.TagLabel?.includes('AmountToApply')?progressiveAmount(inputv.value,value.idDocumentData):onChangeValue(value.TagLabel, inputv.value, value)
                       "
                       (blur)="saveChanges()"
                       class="form-control inv_inp_cls"
@@ -622,7 +622,7 @@
                   <div class="f-14 mr-3">
                     Invoice Line/Purchase Line Details
                   </div>
-                  <div class="f-12 status_btn" *ngIf="doc_status">
+                  <div class="f-12 status_btn" *ngIf="doc_status" style="background-color: inherit;">
                     {{ doc_status }}
                   </div>
                 </div>
@@ -973,6 +973,7 @@
                   </div>
                   <div
                     class="f-12 status_btn"
+                    style="background-color: inherit;"
                     *ngIf="
                       !router.url.includes('Inv_vs_GRN_details') &&
                       !router.url.includes('GRN_approvals')
@@ -1186,7 +1187,7 @@
                   <div class="f-14 mr-3">
                     Invoice Line/Purchase Line Details
                   </div>
-                  <div class="f-12 status_btn" *ngIf="doc_status">
+                  <div class="f-12 status_btn" *ngIf="doc_status" style="background-color: inherit;">
                     {{ doc_status }}
                   </div>
                 </div>

@@ -3,7 +3,7 @@
     <div class="col-1 col-sm-5 col-md-6 m-0 leftSide">
       
         <div class="d-flex justify-content-between">
-          <img class="logo_black" [ngClass]="!['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name) ? 'ml-3':'cenomiLogo'"
+          <img class="logo_black" [ngClass]="!['Cenomi','AGI'].includes(client_name) ? 'ml-3':'cenomiLogo'"
           [src]="srcImg"
           alt="login"
         />
@@ -11,8 +11,8 @@
           src="assets/Serina Assets/new_theme/cenomiLogo.png"
           alt="login"
         /> -->
-        <div class="pos_rel">
-          <img class="topRightImg1"
+        <div class="pos_rel" >
+          <img class="topRightImg1" *ngIf="client_name != 'AGI'"
           src="assets/Serina Assets/new_theme/Group 1943.svg"
           alt="login"
         />
@@ -40,7 +40,7 @@
           src="assets/Serina Assets/new_theme/blob (3) (1).svg"
           alt="login"
         />
-          <img class="bottomLeftImg1"
+          <img class="bottomLeftImg1" *ngIf="client_name != 'AGI'"
           src="assets/Serina Assets/new_theme/Group 1942.svg"
           alt="login"
         />
@@ -343,7 +343,7 @@
               </button>
             </div>
           </div>
-          <div class="nameHead">
+          <div class="nameHead" *ngIf="client_name != 'AGI'">
             <img
               src="assets/Serina Assets/new_theme/OD4FW00.png"
               alt="login"

@@ -1914,7 +1914,7 @@ export class Comparision3WayComponent
       this.update("Dear User, Invoice type is MultiPO,Please Check the invoice total is not matching with the lines.")
       this.currentTab = 'line';
     } else if (subStatus == 70) {
-      if (this.portalName == 'customer') {
+      if (this.portalName == 'customer' && this.dataService.isAdmin) {
         this.readDepartment();
         this.readCategoryData();
         this.approval_selection_boolean = true;
@@ -3912,6 +3912,17 @@ export class Comparision3WayComponent
   onChecked(value){
     console.log(value)
     this.isManpower = value
+  }
+  progressiveAmount(amount,id){
+    this.exceptionService.amountToApply(amount,id).subscribe((data:any)=>{
+      if(data?.status == 'sucess'){
+        this.success(data.msg)
+      } else {
+        this.error(data.msg)
+      }
+    },err=>{
+      this.error("Server error")
+    })
   }
   ngOnDestroy() {
     let sessionData = {

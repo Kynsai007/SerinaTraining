@@ -153,6 +153,9 @@ export class ExceptionsService {
   proceedMoreInfo(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Permission/proceedFromMoreInfo/${this.userId}/idInvoice/${this.invoiceID}`,data);
   }
+  amountToApply(amount,id_doc){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/checkPrepaymentRemainingAmout/${this.userId}?inv_id=${this.invoiceID}&amount_to_apply=${amount}&line_item_id=${id_doc}`)
+  }
 
   get_grn_data(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Exception/get_GRNSelected_lines/${this.userId}/${this.invoiceID}`)
@@ -206,5 +209,8 @@ export class ExceptionsService {
   }
   getAdPercentage(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?inv_id=${this.invoiceID}`,data) 
+  }
+  getManPowerData(s_date,e_date){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerGRN/${this.invoiceID}?startdate=${s_date}&enddate=${e_date}`) 
   }
 }
