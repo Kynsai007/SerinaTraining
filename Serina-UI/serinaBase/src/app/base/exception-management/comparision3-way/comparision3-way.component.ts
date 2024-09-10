@@ -1271,7 +1271,6 @@ export class Comparision3WayComponent
 
     // Concatenate the sorted items with 'order' and those without 'order'
     this.inputData = withOrder.concat(withoutOrder);
-    console.log(this.inputData)
   }
 
   readGRNInvData() {
@@ -1813,9 +1812,12 @@ export class Comparision3WayComponent
     //     }
     //   }
     // else{
+    this.SpinnerService.show();
     this.SharedService.serviceSubmit().subscribe((data: any) => {
       this.success("Sent to Batch Successfully!");
+      this.dataService.serviceinvoiceLoadedData = [];
       setTimeout(() => {
+        this.SpinnerService.hide();
         if(this.router.url.includes('CustomerUpload')){
           this.router.navigate([`${this.portalName}/invoice/ServiceInvoices`]);
         } else {
@@ -1824,6 +1826,7 @@ export class Comparision3WayComponent
       }, 1000);
     }, err => {
       this.error("Server error");
+      this.SpinnerService.hide();
     })
     // }
   }
@@ -1900,6 +1903,7 @@ export class Comparision3WayComponent
     }
     this.progressDailogBool = false;
   }
+
   processAlert(subStatus: number): void {
     if (subStatus == 18) {
       this.update("Invoice Total and 'Sub-Total+Tax' Mismatch Identified. Kindly check Entry");
@@ -3312,7 +3316,6 @@ export class Comparision3WayComponent
         this.LCMLineForm.control.patchValue(this.LCMObj);
       })
     }
-
   }
   readPONumbersLCM(ent_id) {
     this.SharedService.getLCMPOnum(ent_id).subscribe((data: any) => {
@@ -3910,7 +3913,6 @@ export class Comparision3WayComponent
     this.rectData = data;
   }
   onChecked(value){
-    console.log(value)
     this.isManpower = value
   }
   progressiveAmount(amount,id){

@@ -886,7 +886,7 @@ export class UploadSectionComponent implements OnInit {
       if(this.selectedInvoiceType.includes('credit note') && this.dataService.configData.client_name == 'SRG'){
         this.getVendorInvoices(event.PODocumentID);
       }
-      if(this.selectedInvoiceType === 'advance invoice'){
+      if(this.selectedInvoiceType === 'advance invoice' && this.dataService.configData.client_name == 'SRG'){
         this.displaySelectPdfBoolean = false;
       }
       else{
@@ -1332,6 +1332,7 @@ export class UploadSectionComponent implements OnInit {
     this.seconds = "00";
     this.minutes = "00";
     this.progress = null;
+    this.progressbar = null;
     if(this.selectedOption == 'Service'){
       this.returnmessage = false;
       this.selectedSAccount = [];

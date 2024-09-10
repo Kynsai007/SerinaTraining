@@ -1226,6 +1226,7 @@ export class RolesComponent implements OnInit {
     this.lastName = '';
     this.Flevel = '';
     this.selectedEntitys = [];
+    this.entitySelection_user = [];
     delete this.skip_approval_boolean;
     this.getSkipList();
   }
