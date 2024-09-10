@@ -1022,6 +1022,23 @@
               </div>
             </div>
           </div>
+          <div class="mb-2" *ngIf="financeApproveDisplayBoolean">
+            <div class="permisionDiv">
+              <div>
+                <span class="textth"> Set approval access</span>
+                <span class="f-right">
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      [checked]="set_approval_enabled"
+                      [(ngModel)]="set_approval_enabled"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </span>
+              </div>
+            </div>
+          </div>
 
       </div>
             
@@ -1214,6 +1231,75 @@
         </button>
       </div>
     </div>
+
+    <!-- <div class="row">
+      <div class="col-sm-6">
+        <ng-container *ngFor="let permission of leftColumnPermissions">
+          <div class="mb-2">
+            <div class="permisionDiv">
+              <div>
+                <span class="textth">{{permission.label}}</span>
+                <span class="f-right">
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      [checked]="permission.checked"
+                      (change)="onPermissionChange(permission.key, $event)"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="col-sm-6">
+        <ng-container *ngFor="let permission of rightColumnPermissions">
+          <div class="mb-2">
+            <div class="permisionDiv">
+              <div>
+                <span class="textth">{{permission.label}}</span>
+                <span class="f-right">
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      [checked]="permission.checked"
+                      (change)="onPermissionChange(permission.key, $event)"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <div>
+          <div class="permisionDiv">
+            <div><span class="textth">Invoices Permission:</span></div>
+          </div>
+          <ng-container *ngFor="let invoicePermission of invoicePermissions">
+            <div class="permisionDiv" [ngClass]="{'b-btm': invoicePermission.key === 'financeApprove' && financeApproveDisplayBoolean}">
+              <div>
+                <span class="f-13">{{invoicePermission.label}}</span>
+                <span class="f-right">
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      [checked]="invoicePermission.checked"
+                      (change)="onInvoicePermissionChange(invoicePermission.key, $event)"
+                    />
+                    <span class="slider round"></span>
+                  </label>
+                </span>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div> -->
   </p-dialog>
 
   <!--Edit user / create user  -->

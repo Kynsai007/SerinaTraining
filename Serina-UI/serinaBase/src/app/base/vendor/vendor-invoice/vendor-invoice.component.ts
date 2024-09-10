@@ -191,48 +191,51 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   }
 
   getElementData(e){
-    if((e.ServiceProviderName =='Dubai Electricity & Water Authority') || e.ServiceProviderName =='DUBAI ELECTRICITY AND WATER AUTHORITY'){
-      this.elementList = [
-        { id: 1, name: 'Water'},
-        { id: 2, name: 'Electricity'},
-        { id: 3, name: 'Housing'},
-        { id: 4, name: 'Sewerage'},
-        { id: 5, name: 'Others'},
-      ]
-    } else if(e.ServiceProviderName =='EMIRATES INTEGRATED TELECOMMUNICATIONS PJSC(DU)'){
-      this.elementList = [
-        { id: 1, name: 'Usage charges'},
-        { id: 2, name: 'Monthly Fixed Charges'},
-        { id: 3, name: 'TV Channels'},
-        { id: 4, name: 'Others'}
-      ]
-    } else if(e.ServiceProviderName =='ETISALAT'){
-      this.elementList = [
-        { id: 1, name: 'Usage_Credit'},
-        { id: 2, name: 'International_Calls'},
-        { id: 3, name: 'Others'}
-      ]
-    } else if(e.EntityName.includes('Cenomi')){
-      this.elementList = [
-        { id: 1, name: 'Electricity'},
-        { id: 2, name: 'Water'},
-        { id: 3, name: 'GAS'},
-        { id: 4, name: 'Government (GOSI)'},
-        { id: 5, name: 'Government (With holding tax)'},
-        { id: 6, name: 'Legal'},
-        { id: 7, name: 'Others'},
-      ]
-    } else {
-      this.elementList = [
-        { id: 1, name: 'Electricity'},
-        { id: 2, name: 'Water'},
-        { id: 3, name: 'GAS'},
-        { id: 4, name: 'Government (GOSI)'},
-        { id: 5, name: 'Government (With holding tax)'},
-        { id: 6, name: 'Legal'},
-        { id: 7, name: 'Others'},
-      ]
-    }
+    this.sharedService.getElements(e.ServiceProviderName).subscribe((data:any)=>{
+      this.elementList = data[e.ServiceProviderName];
+    })
+    // if((e.ServiceProviderName =='Dubai Electricity & Water Authority') || e.ServiceProviderName =='DUBAI ELECTRICITY AND WATER AUTHORITY'){
+    //   this.elementList = [
+    //     { id: 1, name: 'Water'},
+    //     { id: 2, name: 'Electricity'},
+    //     { id: 3, name: 'Housing'},
+    //     { id: 4, name: 'Sewerage'},
+    //     { id: 5, name: 'Others'},
+    //   ]
+    // } else if(e.ServiceProviderName =='EMIRATES INTEGRATED TELECOMMUNICATIONS PJSC(DU)'){
+    //   this.elementList = [
+    //     { id: 1, name: 'Usage charges'},
+    //     { id: 2, name: 'Monthly Fixed Charges'},
+    //     { id: 3, name: 'TV Channels'},
+    //     { id: 4, name: 'Others'}
+    //   ]
+    // } else if(e.ServiceProviderName =='ETISALAT'){
+    //   this.elementList = [
+    //     { id: 1, name: 'Usage_Credit'},
+    //     { id: 2, name: 'International_Calls'},
+    //     { id: 3, name: 'Others'}
+    //   ]
+    // } else if(e.EntityName.includes('Cenomi')){
+    //   this.elementList = [
+    //     { id: 1, name: 'Electricity'},
+    //     { id: 2, name: 'Water'},
+    //     { id: 3, name: 'GAS'},
+    //     { id: 4, name: 'Government (GOSI)'},
+    //     { id: 5, name: 'Government (With holding tax)'},
+    //     { id: 6, name: 'Legal'},
+    //     { id: 7, name: 'Others'},
+    //   ]
+    // } else {
+    //   this.elementList = [
+    //     { id: 1, name: 'Electricity'},
+    //     { id: 2, name: 'Water'},
+    //     { id: 3, name: 'GAS'},
+    //     { id: 4, name: 'Government (GOSI)'},
+    //     { id: 5, name: 'Government (With holding tax)'},
+    //     { id: 6, name: 'Legal'},
+    //     { id: 7, name: 'Others'},
+    //   ]
+    // }
   }
   initialForm() {
     return this.fb.group({

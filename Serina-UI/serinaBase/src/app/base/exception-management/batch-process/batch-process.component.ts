@@ -12,6 +12,7 @@ import { DatePipe, Location } from '@angular/common';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { Calendar } from 'primeng/calendar';
+import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 
 @Component({
   selector: 'app-batch-process',
@@ -94,6 +95,7 @@ export class BatchProcessComponent implements OnInit {
   page_supplier: string;
   isMobile: boolean;
   tableImportData: any;
+  userDetails:any;
 
   constructor(
     private tagService: TaggingService,
@@ -106,11 +108,13 @@ export class BatchProcessComponent implements OnInit {
     private sharedService :SharedService,
     private ds: DataService,
     private datePipe :DatePipe,
-    private dateFilterService :DateFilterService
+    private dateFilterService :DateFilterService,
+    private authService:AuthenticationService
   ) {}
 
   ngOnInit(): void {
     this.apprveBool = this.ds.configData?.enableApprovals;
+    this.userDetails = this.authService.currentUserValue;
     this.portalName = this.ds.portalName;
     this.isDesktop = this.ds.isDesktop;
     this.isMobile = this.ds.isMobile;
@@ -254,7 +258,7 @@ export class BatchProcessComponent implements OnInit {
             ...element.DocumentHistoryLogs,
           };
           mergeData['substatus'] = element.substatus;
-          if (element.Document?.documentsubstatusID == 70 && !this.ds.isAdmin) {
+          if (element.Document?.documentsubstatusID == 70 && !this.userDetails['permissioninfo'].set_approval_enabled) {
             return;  // Skip this iteration
           }
           if(element.Document?.UploadDocTypeCategory == 'credit'){

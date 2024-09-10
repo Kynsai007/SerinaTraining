@@ -44,7 +44,7 @@
       </button>
       <button
         *ngIf="
-          portalName == 'customer' && [8,16,17,19,21,27,34].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId))
+          portalName == 'customer' && [8,16,17,19,21,27,34].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
         "
         class="secondary_btn f-12 mr-2"
         (click)="open_dialog_comp('flip line')"
@@ -608,7 +608,7 @@
               <button
                 *ngIf="
                   portalName == 'customer' &&
-                  flipEnabled && [8,16,17,18,19,21,27,34].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId))
+                  flipEnabled && [8,16,17,18,19,21,27,34].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
                 "
                 class="secondary_btn f_12 m-t-neg ml-2"
                 (click)="open_dialog_comp('flip line', '')"
@@ -1164,7 +1164,7 @@
                 style="gap: 5px"
               >
                 <button
-                  *ngIf="portalName == 'customer' && subStatusId == 34 || (documentType == 'advance invoice' && [29,108].includes(subStatusId))"
+                  *ngIf="portalName == 'customer' && subStatusId == 34 || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)"
                   class="secondary_btn f-12 mr-2"
                   (click)="open_dialog_comp('flip')"
                 >

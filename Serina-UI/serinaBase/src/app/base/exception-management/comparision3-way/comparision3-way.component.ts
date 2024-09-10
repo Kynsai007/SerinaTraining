@@ -1918,7 +1918,7 @@ export class Comparision3WayComponent
       this.update("Dear User, Invoice type is MultiPO,Please Check the invoice total is not matching with the lines.")
       this.currentTab = 'line';
     } else if (subStatus == 70) {
-      if (this.portalName == 'customer' && this.dataService.isAdmin) {
+      if (this.portalName == 'customer' && this.userDetails['permissioninfo'].set_approval_enabled) {
         this.readDepartment();
         this.readCategoryData();
         this.approval_selection_boolean = true;

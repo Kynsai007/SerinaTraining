@@ -39,7 +39,11 @@ export interface dropdownData {
 export interface dropdownDatavalue {
   name: string;
 }
-
+interface Permission {
+  key: string;
+  label: string;
+  checked: boolean;
+}
 export interface selectedValue {
   idUserAccess?: number;
   entity?: string;
@@ -236,6 +240,7 @@ export class RolesComponent implements OnInit {
   party_type: string;
   is_fp= false;
   is_fpa = false;
+  set_approval_enabled = false;
   isDesktop: boolean;
   thCount: number;
   entities: { idEntity: number, EntityName: string }[] = [];
@@ -253,6 +258,11 @@ export class RolesComponent implements OnInit {
   entitySelection_user = [];
   serviceData: any[];
   selectedService = [];
+
+  leftColumnPermissions: Permission[] = [];
+  rightColumnPermissions: Permission[] = [];
+  invoicePermissions: Permission[] = [];
+
   constructor(
     private dataService: DataService,
     private sharedService: SharedService,
@@ -316,6 +326,41 @@ export class RolesComponent implements OnInit {
     this.someParameterValue = someParam;
   }
 
+  initializePermissions() {
+    const allPermissions: Permission[] = [
+      { key: 'viewDashboard', label: 'View Dashboard', checked: false },
+      { key: 'manageUsers', label: 'Manage Users', checked: false },
+      { key: 'viewReports', label: 'View Reports', checked: false },
+      { key: 'manageSettings', label: 'Manage Settings', checked: false },
+      // ... add all other permissions here ...
+    ];
+
+    // Split permissions into left and right columns
+    const midpoint = Math.ceil(allPermissions.length / 2);
+    this.leftColumnPermissions = allPermissions.slice(0, midpoint);
+    this.rightColumnPermissions = allPermissions.slice(midpoint);
+
+    // Initialize invoice permissions
+    this.invoicePermissions = [
+      { key: 'viewInvoices', label: 'View Invoices', checked: false },
+      { key: 'approveInvoices', label: 'Approve Invoices', checked: false },
+      { key: 'financeApprove', label: 'Finance Approve', checked: false },
+    ];
+  }
+  onPermissionChange(key: string, event: any) {
+    const permission = [...this.leftColumnPermissions, ...this.rightColumnPermissions]
+      .find(p => p.key === key);
+    if (permission) {
+      permission.checked = event.target.checked;
+    }
+  }
+
+  onInvoicePermissionChange(key: string, event: any) {
+    const permission = this.invoicePermissions.find(p => p.key === key);
+    if (permission) {
+      permission.checked = event.target.checked;
+    }
+  }
   showDialog(event:Event,e) {
     event.stopPropagation();
     this.CreateNewRole = false;
@@ -422,6 +467,7 @@ export class RolesComponent implements OnInit {
         this.settingsPageBoolean = this.roleInfoDetails.is_spa;
         this.is_fp = this.roleInfoDetails.is_fp;
         this.is_fpa = this.roleInfoDetails.is_fpa;
+        this.set_approval_enabled = this.roleInfoDetails.set_approval_enabled;
         // this.is_grn_approval = this.roleInfoDetails.is_grn_approval;
   
         const accessPermissionTypeId = this.roleInfoDetails.AccessPermissionTypeId;
@@ -550,7 +596,8 @@ export class RolesComponent implements OnInit {
       is_vspa: this.vendorPageBoolean,
       is_spa: this.settingsPageBoolean,
       is_fp : this.is_fp,
-      is_fpa:this.is_fpa
+      is_fpa:this.is_fpa,
+      set_approval_enabled:this.set_approval_enabled
     };
   }
 
