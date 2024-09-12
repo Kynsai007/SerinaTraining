@@ -153,7 +153,7 @@
             Invoice Status History
           </div>
           <div
-            *ngIf="(e_data.documentStatusID == 1 || e_data.documentsubstatusID == 35) && isAdmin &&(router.url.includes('allInvoices') || router.url.includes('ServiceInvoices'))"
+            *ngIf="(e_data.documentStatusID == 1 || e_data.documentsubstatusID == 35 || e_data.documentsubstatusID == 70) && isAdmin &&(router.url.includes('allInvoices') || router.url.includes('ServiceInvoices'))"
             (click)="triggerBatch($event, e_data.idDocument)"
             [disabled]="triggerBoolean && invoiceID == e_data.idDocument"
           >
@@ -432,7 +432,7 @@
                   <span
                     >{{ invoiceData[col.dbColumnname] }}
                     <button
-                      *ngIf="(invoiceData.documentStatusID == 1 || invoiceData.documentsubstatusID == 35)"
+                      *ngIf="(invoiceData.documentStatusID == 1 || invoiceData.documentsubstatusID == 35 || invoiceData.documentsubstatusID == 70)"
                       pTooltip="Trigger Batch"
                       tooltipPosition="top"
                       class="f-13 b-0"

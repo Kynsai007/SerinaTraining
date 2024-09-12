@@ -545,7 +545,9 @@ input[type="checkbox"] {
   background-image: url("../../../assets/Serina Assets/new_theme/Group 933.svg");
 }
 .bg-agi {
-  background-image: url("../../../assets/Serina Assets/new_theme/AGI/agi_upload1.png");
+  background-image: url("../../../assets/Serina Assets/new_theme/AGI/agi_upload1.png") !important;
+  height: calc(100vh - 123px) !important;
+  // background-color: white;
 }
 // .imgPlaceholder img{
 //   height: 40vh;
@@ -740,6 +742,7 @@ label {
   position: absolute;
   bottom: 75px;
   width: 100%;
+  display: none;
 }
 :host::ng-deep{
   .p-dialog {
