@@ -366,6 +366,10 @@ export class SharedService {
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_labels_info/${filename}`,{headers:new HttpHeaders({'folderpath':folderPath})}).pipe(retry(3));
   }
 
+  readServiceRules(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Permission/getSerinaRules/${this.userId}`).pipe(retry(3));
+  }
+
   /*Configuration settings APIs*/
   financeApprovalSetting(data):Observable<any> {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Customer/enableInvoiceApprovals/${this.userId}?isenabled=${data}`,'').pipe(retry(3));

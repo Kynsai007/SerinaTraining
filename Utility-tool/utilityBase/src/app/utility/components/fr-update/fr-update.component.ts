@@ -199,6 +199,8 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
         "description":"Euro"},
         {"currency":"FJD",
         "description":"Fiji Dollar"},
+        {"currency":"FUS",
+          "description":"F-United States Dollar"},
         {"currency":"GBP",
         "description":"British Pound Sterling"},
         {"currency":"GEL",
@@ -675,7 +677,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
 
   getMetaData(documentId) {
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
-        this.FRMetaData = data;
+        this.FRMetaData = data.FRMetaData;
         if(this.FRMetaData?.mandatoryheadertags){
           this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
           if(!this.headerArray.includes("TRN") && this.headerTags.filter(v => v.Name == 'TRN').length > 0){

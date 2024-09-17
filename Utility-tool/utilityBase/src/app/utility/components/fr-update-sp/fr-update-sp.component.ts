@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { SharedService } from 'src/app/services/shared/shared.service';
 import { MobmainService } from '../fr-update/mob/mobmain/mobmain.service';
 import * as fileSaver from 'file-saver';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-fr-update-sp',
   templateUrl: './fr-update-sp.component.html',
@@ -44,6 +45,8 @@ export class FrUpdateSpComponent implements OnInit {
   amountRulesData:any;
   currentTemplate: any;
   FolderPath:string="";
+  selected_extraction_type:string;
+  selected_page_selection:string;
   showCheckboxHeaderDiv: boolean ;
   showCheckboxLineDiv: boolean ;
   headerTags = [];
@@ -86,6 +89,12 @@ export class FrUpdateSpComponent implements OnInit {
   isPObasedSP: boolean;
   @ViewChild('updateMetaData')
   updateMetaData:NgForm;
+  serviceRules: any;
+  mandatoryServiceRules = [];
+  save_unidentified_accounts:boolean=false;
+  auto_template_classification:boolean=false;
+  showCheckboxServiceDiv:boolean;
+  selected_dateFormat:string;
 
   constructor(private sharedService: SharedService,
     private messageService : MessageService,
@@ -502,6 +511,7 @@ export class FrUpdateSpComponent implements OnInit {
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
     this.getAllTags();
+    this.getServiceRules();
     this.getMetaData(modal_id);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
@@ -515,6 +525,7 @@ export class FrUpdateSpComponent implements OnInit {
       this.mobservice.setModelData(this.modelData.DocumentModel);
       sessionStorage.setItem("modelData",JSON.stringify(this.modelData.DocumentModel));
       this.FolderPath = this.modelData.DocumentModel.folderPath;
+
       (<HTMLInputElement>document.getElementById("FolderPath")).value = this.FolderPath;
     }
   }
@@ -590,9 +601,30 @@ export class FrUpdateSpComponent implements OnInit {
   }
   getMetaData(documentId) {
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
-      this.FRMetaData = data;
+      this.FRMetaData = data.FRMetaData;
       this.headerArray = [];
       this.LineArray = [];
+      this.selected_dateFormat = this.FRMetaData?.DateFormat;
+      if (this.FRMetaData?.auto_template_classification) {
+        this.auto_template_classification = this.FRMetaData?.auto_template_classification;
+      } 
+      if(this.FRMetaData?.save_unidentified_accounts){
+        this.save_unidentified_accounts = this.FRMetaData?.save_unidentified_accounts;
+      }
+      if(data?.extractiontype){
+        this.selected_extraction_type =data?.extractiontype;
+      }
+      if(data?.pagepreference){
+        this.selected_page_selection = data?.pagepreference;
+      }
+      if(this.FRMetaData?.service_rules_function){
+        this.serviceRules?.forEach(el=>{
+          if(this.FRMetaData?.service_rules_function?.includes(el.function_name)){
+            el.isSelected = true;
+            this.mandatoryServiceRules.unshift(el);
+          }
+        })
+      }
       if(this.FRMetaData?.mandatoryheadertags){
         this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
         setTimeout(() => {
@@ -806,6 +838,11 @@ export class FrUpdateSpComponent implements OnInit {
     //     }
     //   }
     // }
+    let rules = []
+    this.mandatoryServiceRules.forEach(el=>{
+      rules.push(el.function_name)
+    })
+    value.service_rules_function = rules;
     if(value['FolderPath'] == ''){
       value['FolderPath'] = (<HTMLInputElement>document.getElementById("FolderPath")).value;
     }
@@ -866,8 +903,10 @@ export class FrUpdateSpComponent implements OnInit {
       }, 3000);
       this.msg = 'FR metadata updated successfully';
     });
-  }else{
+  }
+  else{
     _this.saving = false;
+    _this.router.navigate(['IT_Utility/training']);
   }
    } else {
      alert('Please add required fields.');
@@ -970,6 +1009,10 @@ export class FrUpdateSpComponent implements OnInit {
     this.showCheckboxOptHeaderDiv = false;
     this.showCheckboxLineOptDiv = false;
     this.showCheckboxHeaderDiv = !this.showCheckboxHeaderDiv;
+  }
+
+  showServiceRule(){
+    this.showCheckboxServiceDiv = !this.showCheckboxServiceDiv;
   }
 
   showHeaderOptionalCheckboxes(){
@@ -1093,4 +1136,82 @@ export class FrUpdateSpComponent implements OnInit {
   removeLineOptTag(index,tag) {
     this.LineOptTags.splice(index,1);
   }
+  getServiceRules(){
+    this.mandatoryServiceRules = [];
+    this.sharedService.readServiceRules().subscribe((data:any)=>{
+      console.log(data);
+      this.serviceRules = data?.result;
+      // this.serviceRules.forEach(el=>{
+      //   if(el.mandatory == 1) {
+      //     el.isSelected = true;
+      //     this.mandatoryServiceRules.push(el)
+      //   }
+      // })
+      // this.mandatoryServiceRules = [...new Set(this.mandatoryServiceRules)];
+    })
+  }
+  selectServiceRules(bool,val1){
+    if(bool == true){
+      const index = this.mandatoryServiceRules.findIndex(el=>el.idserinarules == val1.idserinarules);
+        if (index > -1) {
+          this.mandatoryServiceRules.splice(index, 1);
+        } else {
+          this.mandatoryServiceRules.push(val1);
+        }
+    } else {
+        const index = this.mandatoryServiceRules.findIndex(el=>el.idserinarules == val1.idserinarules);
+
+        if (index > -1) {
+          this.mandatoryServiceRules.splice(index, 1);
+        }
+    }
+    this.mandatoryServiceRules = [...new Set(this.mandatoryServiceRules)];
+    this.addFlag();
+    this.keepLastItemAtEnd();
+
+    let order = 1
+    this.mandatoryServiceRules.forEach(val=>{
+      val.order = order;
+      order++
+    })
+    console.log(this.mandatoryServiceRules)
+
+  }
+  addFlag(){
+    const bIds = new Set(this.mandatoryServiceRules.map(obj => obj.idserinarules));
+    this.serviceRules = this.serviceRules.map(obj => {
+      // Check if the current object id is in bIds set
+      const isSelected = bIds.has(obj.idserinarules);
+      // Return the updated object with the new flag
+      return { ...obj, isSelected };
+    });
+  }
+  removeServiceRule(i,value){
+    if(value.idserinarules != 8){
+      const index = this.mandatoryServiceRules.findIndex(el=>el.idserinarules == value.idserinarules);
+      if (index > -1) {
+        this.mandatoryServiceRules.splice(index, 1);
+      }
+      this.addFlag();
+    }
+
+  }
+  drop(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.mandatoryServiceRules, event.previousIndex, event.currentIndex);
+    this.updateOrder();
+  }
+
+  updateOrder() {
+    this.mandatoryServiceRules.forEach((item, index) => {
+      item.order = index + 1; // Update the order based on the new index
+    });
+  }
+  keepLastItemAtEnd() {
+    const index = this.mandatoryServiceRules.findIndex(item => item.idserinarules === 8);
+    if (index !== -1) {
+      const [item] = this.mandatoryServiceRules.splice(index, 1); // Remove the item with id 8
+      this.mandatoryServiceRules.push(item); // Add it back at the end
+    }
+  }
+  
 }
