@@ -8,6 +8,7 @@ import { DataService } from 'src/app/services/dataStore/data.service';
 import { DatePipe } from '@angular/common';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { Calendar } from 'primeng/calendar';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 
 @Component({
   selector: 'app-popup',
@@ -45,12 +46,13 @@ export class PopupComponent implements OnInit {
   v_a_id: any;
   so_id: any;
   minDate: Date;
-  maxDate: Date;
+  maxiDate: Date;
   rangeDates: Date[];
   @ViewChild('datePicker') datePicker: Calendar;
   manPowerData = [];
   grnLineCount:any
   timeSheet: any[];
+  replicaSheetData = [];
 
 
   constructor(
@@ -95,14 +97,14 @@ export class PopupComponent implements OnInit {
     this.inv_total = this.data?.resp?.sub_total;
     this.manPowerData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po));
     this.manPowerData = this.manPowerData.filter(el=>{
-    return el.TagName == 'Description' || el.TagName == 'PO Qty' || el.TagName == 'Actions' 
+    return el.TagName == 'Description' || el.TagName == 'PO Qty' 
     })
+    this.replicaSheetData = JSON.parse(JSON.stringify(this.manPowerData));
     this.grnLineCount = this.manPowerData[0].linedata;
     this.POLineData?.forEach(val => {
       val.isSelected = false;
       val.Quantity = val.PurchQty;
     })
-
   }
 
   flipPOFun(){
@@ -337,20 +339,48 @@ export class PopupComponent implements OnInit {
   dateRange() {
     this.dateFilterService.dateRange();
     this.minDate = this.dateFilterService.minDate;
-    this.maxDate = this.dateFilterService.maxDate;
+    this.maxiDate = this.dateFilterService.maxDate;
   }
-  filterByDate(date) {
-    if (date != '') {
-      const frmDate = this.datePipe.transform(date[0], 'MMM d, y');
-      const toDate = this.datePipe.transform(date[1], 'MMM d, y');
+  filterByDate(date_input) {
+    if (date_input != '') {
+      const frmDate = this.datePipe.transform(date_input[0], 'MMM d, y');
+      const toDate = this.datePipe.transform(date_input[1], 'MMM d, y');
+      const s_Date = this.datePipe.transform(date_input[0], 'yyyy-MM-dd');
+      const e_Date = this.datePipe.transform(date_input[1], 'yyyy-MM-dd');
+
+      let selectedMonth = s_Date.split("-")[1]
+      let today = new Date();
+      let c_month = today.getMonth()
+      let year = s_Date.split("-")[0];
+      if(Number(selectedMonth) != c_month+1){
+
+        this.maxiDate = new Date(Number(year), Number(selectedMonth), 0)
+        setTimeout(() => {
+          const input = document.querySelector('.p-inputtext') as HTMLElement;
+          if (input && !e_Date) {
+            input.focus();  // Re-focus the input element to keep the calendar open
+          }
+        }, 0);
+      }
+
       if(frmDate && toDate){
+        // this.getTimeSheetData(s_Date,e_Date);
         if (this.datePicker.overlayVisible) {
           this.datePicker.hideOverlay();
+
         }
-        let month = frmDate?.split(',')[0]?.split(' ')[0]
-        let date:any = frmDate?.split(',')[0]?.split(' ')[1]
-        let date1:any = toDate?.split(',')[0]?.split(' ')[1]
+        let month = frmDate?.split(',')[0]?.split(' ')[0];
+        let date:any = frmDate?.split(',')[0]?.split(' ')[1];
+        let date1:any = toDate?.split(',')[0]?.split(' ')[1];
+        let sampleData = JSON.parse(JSON.stringify(this.data?.resp?.grnData_po))
         this.timeSheet = []
+        if(this.manPowerData.length > 4){
+          this.manPowerData = [];
+          sampleData = sampleData.filter(el=>{
+            return el.TagName == 'Description' || el.TagName == 'PO Qty'
+          })
+          this.manPowerData = sampleData;
+        }
         this.grnLineCount.forEach((el,index)=>{
           this.timeSheet.push({
                       Value : '',
@@ -361,11 +391,12 @@ export class PopupComponent implements OnInit {
                       old_value:'',
           })
         })
-        this.manPowerData.splice(2,0,{ TagName:`Shift`,linedata: this.timeSheet})
+        this.manPowerData.splice(2,0,{ TagName:`Shift`,linedata: JSON.parse(JSON.stringify(this.timeSheet))})
         let index = 3
         for(let i = Number(date); i<= Number(date1); i++){
           let data =  []
-          let sheet = JSON.parse(JSON.stringify(this.timeSheet))
+          let sheet = []
+          sheet = JSON.parse(JSON.stringify(this.timeSheet))
           sheet.forEach((el,index)=>{
             el.tagName = `${month}-${i}-${index}`
             data.push(el)
@@ -378,7 +409,10 @@ export class PopupComponent implements OnInit {
   }
   clearDates() {
     this.filterByDate('');
+    this.dateRange();
   }
+
+
   addNewShift(str,index){
     this.manPowerData.forEach(el=>{
       el.linedata.splice(index+1,0,JSON.parse(JSON.stringify(el.linedata[index])))
@@ -386,12 +420,31 @@ export class PopupComponent implements OnInit {
     this.manPowerData.forEach(el=>{
       el.linedata.forEach((v,i)=>{
         if( index+1 == i && el.TagName != 'Description' && el.TagName != "PO Qty"){
-          
           v.tagName = `shift${index+1}-${el.TagName}`
-          console.log(v.tagName)
         }
       })
     })
-    console.log(this.manPowerData)
+  }
+
+  removeShift(str,index){
+    const matD: MatDialogRef<ConfirmationComponent> = this.mat_dlg.open(ConfirmationComponent, {
+      width: '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data: { body:"Are you sure, you want to delete?" , type: "confirmation", heading: "Confirmation", icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
+    })
+    matD.afterClosed().subscribe((bool:Boolean)=>{
+      if(bool){
+        this.manPowerData.forEach((el)=>{
+          el.linedata.splice(index,1)
+        })
+      }
+    })
+  }
+
+  getTimeSheetData(s_date,e_date){
+    this.ES.getManPowerData(s_date,e_date).subscribe((data:any)=>{
+      console.log(data)
+    })
   }
 }
