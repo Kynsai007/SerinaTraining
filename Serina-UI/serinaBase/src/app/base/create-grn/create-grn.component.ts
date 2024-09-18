@@ -12,6 +12,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { DatePipe } from '@angular/common';
 import { Calendar } from 'primeng/calendar';
+import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
 @Component({
   selector: 'app-create-grn',
   templateUrl: './create-grn.component.html',
@@ -73,7 +74,8 @@ export class CreateGRNComponent implements OnInit {
     private permissionService : PermissionService,
     private ds : DataService,
     private md: MatDialog,
-    private datePipe :DatePipe
+    private datePipe :DatePipe,
+    private exceptionsService:ExceptionsService
   ) { }
 
   ngOnInit(): void {
@@ -427,9 +429,21 @@ export class CreateGRNComponent implements OnInit {
     this.ds.grnWithPOBoolean = true;
     this.tagService.editable = true;
     this.ds.GRN_PO_Data = val.PO_GRN_Number_line;
-    this.router.navigate([
-      `customer/Create_GRN_inv_list/Inv_vs_GRN_details/${this.sharedService.po_doc_id}`,
-    ]);
+    if(this.ds.configData.client_name == 'Cenomi'){
+      this.exceptionsService.getManpowerMetaData(this.sharedService.po_num).subscribe((data:any)=>{
+       delete this.ds.grn_manpower_metadata
+        this.ds.grn_manpower_metadata = data;
+        this.router.navigate([
+          `customer/Create_GRN_inv_list/Inv_vs_GRN_details/${this.sharedService.po_doc_id}`,
+        ]);
+      })
+
+    } else {
+      this.router.navigate([
+        `customer/Create_GRN_inv_list/Inv_vs_GRN_details/${this.sharedService.po_doc_id}`,
+      ]);
+    }
+
   }
 
   universalSearch(txt){
