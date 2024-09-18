@@ -11,6 +11,7 @@ export class ExceptionsService {
 
 
 
+
   userId: any;
   poNumber: string;
   invoiceID:number;
@@ -210,7 +211,16 @@ export class ExceptionsService {
   getAdPercentage(data){
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Advance/Getadvancepercentamount/${this.userId}?inv_id=${this.invoiceID}`,data) 
   }
+  getManpowerMetaData(po_id){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getmanPowerMetadata/${po_id}/${this.userId}`) 
+  }
+  getManpowerPrefill(po_id,s_date,e_date){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerPrefill/${po_id}?startdate=${s_date}&enddate=${e_date}`) 
+  }
   getManPowerData(s_date,e_date){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerGRN/${this.invoiceID}?startdate=${s_date}&enddate=${e_date}`) 
+  }
+  createTimesheet(manPowerAPI_request: any,context:any) {
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createManpowerGRN/${this.invoiceID}/${context}/${this.userId}`,manPowerAPI_request) 
   }
 }

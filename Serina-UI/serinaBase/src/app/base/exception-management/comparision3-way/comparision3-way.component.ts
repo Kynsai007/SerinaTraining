@@ -186,14 +186,14 @@ export class Comparision3WayComponent
   poDocId: any;
   po_num: any;
   subStatusId: any;
-  statusId:number;
+  statusId: number;
   isAmtStr: boolean;
   flipEnabled: boolean;
   partytype: string;
   lineTxt1: string;
   lineTxt2: string;
   docType: any;
-  documentType:string;
+  documentType: string;
   poLinedata = [];
   soLinedata = [];
   lineTable = [
@@ -331,7 +331,7 @@ export class Comparision3WayComponent
   allocateTotal: number;
   balanceAmount: any;
   invoiceTotal: any;
-  inv_line_total:number;
+  inv_line_total: number;
   entityList: any;
   entityName: any;
   commentsBool: boolean = true;
@@ -392,8 +392,8 @@ export class Comparision3WayComponent
   // ciTab: boolean = false;
   // invoiceType: string = '';
   // disableButton: boolean = false;
-  advanceAPIbody:any;
-  grnAttachmentArray:any;
+  advanceAPIbody: any;
+  grnAttachmentArray: any;
   isAprUser: boolean;
   totalTaxDynamic = 0;
   totalAmountDynamic = 0;
@@ -403,19 +403,25 @@ export class Comparision3WayComponent
   filteredProject: any[];
   temp_header_data: any[];
   temp_line_data: any[];
-  batch_id:number;
+  batch_id: number;
   bulk_bool: boolean = false;
   client_name: string;
   isMoreRequired: boolean;
   moreInfoBool: boolean;
-  grnNumber_enova:string;
+  grnNumber_enova: string;
   d_type: any;
-  ent_code:string;
+  ent_code: string;
   filteredPreData: any[];
   invNumbersList: any;
   mappingForCredit = false;
   rectData: any;
-  isManpower:boolean;
+  isManpower: boolean;
+  manpower_metadata = [];
+  manpowerTableHeaders: { header: string; field: string; }[];
+  isManpowerTags: boolean;
+  manPowerGRNData: any;
+  manPowerAPI_request: any;
+  manpowerHeaderId: any;
 
   constructor(
     fb: FormBuilder,
@@ -445,7 +451,7 @@ export class Comparision3WayComponent
   ngOnInit(): void {
     this.ERP = this.dataService?.configData?.erpname;
     this.client_name = this.dataService?.configData?.client_name;
-    if(this.client_name == 'SRG'){
+    if (this.client_name == 'SRG') {
       this.mappingForCredit = true;
     }
     this.rejectReason = this.dataService.rejectReason;
@@ -517,7 +523,7 @@ export class Comparision3WayComponent
     });
     this.editable = this.tagService.editable;
     // this.fin_boolean = this.permissionService.financeApproveBoolean;
-    if(this.router.url.includes('approvals') && this.permissionService.financeApproveBoolean){
+    if (this.router.url.includes('approvals') && this.permissionService.financeApproveBoolean) {
       this.fin_boolean = true;
     }
 
@@ -536,6 +542,14 @@ export class Comparision3WayComponent
     this.subStatusId = this.dataService.subStatusId;
     this.statusId = this.dataService.statusId;
 
+    this.manpower_metadata = this.dataService?.grn_manpower_metadata?.headerFields;
+    if (this.client_name == 'Cenomi' && this.router.url.includes('Create_GRN_inv_list')) {
+      if (this.manpower_metadata?.length < 1) {
+        this.manpowerMetadataFunction();
+      } else {
+        this.createTimeSheetDisplayData('old');
+      }
+    }
     if (
       this.router.url.includes('invoice/InvoiceDetails/vendorUpload') ||
       this.router.url.includes('invoice/InvoiceDetails/CustomerUpload')
@@ -547,7 +561,7 @@ export class Comparision3WayComponent
     }
     if (this.router.url.includes('InvoiceDetails') || this.router.url.includes('comparision-docs')) {
       this.Itype = 'Invoice';
-      if(this.editable && !['advance invoice','non-po','credit note'].includes(this.documentType) || this.mappingForCredit){
+      if (this.editable && !['advance invoice', 'non-po', 'credit note'].includes(this.documentType) || this.mappingForCredit) {
         this.readLineItems();
       }
     } else if (this.router.url.includes('PODetails')) {
@@ -593,7 +607,7 @@ export class Comparision3WayComponent
       // this.readPOLines();
       // this.readErrorTypes();
       // this.readMappingData();
-      if(!['advance invoice'].includes(this.documentType)){
+      if (!['advance invoice'].includes(this.documentType)) {
         this.getGRNtabData();
         this.getGrnAttachment();
       }
@@ -611,12 +625,20 @@ export class Comparision3WayComponent
     // this.Itype = this.tagService.type;
 
     this.routeOptions();
-    if(this.fin_boolean){
+    if (this.fin_boolean) {
       this.getRejectionComments();
     }
     this.headerName = this.tagService.headerName;
 
     // this.showInvoice = "/assets/New folder/MEHTAB 9497.pdf"
+  }
+  manpowerMetadataFunction() {
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun("Please confirm whether you want to add manpower data in GRN?", "confirmation", "Confirmation")
+    drf.afterClosed().subscribe((bool) => {
+      if (bool) {
+        this.open_dialog_comp("manpower_metadata")
+      }
+    })
   }
 
   routeOptions() {
@@ -743,7 +765,7 @@ export class Comparision3WayComponent
     if (this.currentTab == 'LCM') {
       this.isLCMTab = true;
     }
-    if (val == 'cost' || val=='dynamic'){
+    if (val == 'cost' || val == 'dynamic') {
       this.costTabBoolean = true;
     } else {
       this.costTabBoolean = false;
@@ -758,33 +780,72 @@ export class Comparision3WayComponent
   get_PO_GRN_Lines() {
     this.descrptonBool = true;
     this.dataService.GRN_PO_Data.forEach((ele, i) => {
-      this.GRN_PO_tags.forEach(tag => {
-        if (tag.TagName == 'Description') {
-          tag.linedata.push({ Value: ele.Name, old_value: ele.Name, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Description' })
-        } else if (tag.TagName == 'PO Qty') {
-          tag.linedata.push({ Value: ele.PurchQty, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PO Qty' })
-        } else if (tag.TagName == 'PO Balance Qty') {
-          tag.linedata.push({ Value: ele.RemainInventPhysical, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PO Balance Qty' })
-        } else if (tag.TagName == 'GRN - Quantity') {
-          tag.linedata.push({ Value: ele.PurchQty, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Quantity' })
-        } else if (tag.TagName == 'UnitPrice') {
-          tag.linedata.push({ Value: ele.UnitPrice, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: 'Price', tagName: 'UnitPrice' })
-        } else if (tag.TagName == 'AmountExcTax') {
-          let y = ele.UnitPrice.replace(/,/g, '');
-          y = parseFloat(y);
-          let amount = (y * ele.PurchQty).toFixed(2);
-          this.GRN_line_total = this.GRN_line_total + Number(amount)
-          tag.linedata.push({ Value: amount, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'AmountExcTax' })
-        }
-        // else if (tag.TagName == 'PurchUnit') {
-        //   tag.linedata.push({ Value: ele.PurchUnit, ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'PurchUnit' })
-        // }
-        else if (tag.TagName == 'Actions') {
-          tag.linedata.push({ Value: '', ErrorDesc: '', idDocumentLineItems: ele.LineNumber, is_mapped: '', tagName: 'Actions' })
-        }
+      const tagMappings = {
+        'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
+        'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
+        'PO Balance Qty': { value: 'RemainInventPhysical', isMapped: '', tagName: 'PO Balance Qty' },
+        'GRN - Quantity': { value: 'PurchQty', isMapped: '', tagName: 'Quantity' },
+        'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
+        'AmountExcTax': {
+          value: (ele) => {
+            const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
+            const amount = (unitPrice * ele.PurchQty).toFixed(2);
+            this.GRN_line_total += Number(amount);
+            return amount;
+          },
+          isMapped: '',
+          tagName: 'AmountExcTax'
+        },
+        'Actions': { value: '', isMapped: '', tagName: 'Actions' }
+      };
 
-      })
+      if (this.client_name == 'Cenomi' && this.isManpowerTags) {
+        tagMappings['Duration in months'] = { value: 'durationMonth', isMapped: '', tagName: 'Duration in months' }
+        tagMappings['Monthly quantity'] = {
+          value: (ele) => {
+            let monthlyQuantity = 0;
+            if (ele.durationMonth) {
+              monthlyQuantity = ele.PurchQty / ele.durationMonth;
+            }
+            return monthlyQuantity.toFixed(2);
+          }, isMapped: '', tagName: 'Monthly quantity'
+        }
+        tagMappings['Is Timesheets'] = { value: 'isTimesheets', isMapped: '', tagName: 'Is Timesheets' }
+        tagMappings['Number of Shifts'] = { value: 'shifts', isMapped: '', tagName: 'Number of Shifts' }
+      }
+
+      this.GRN_PO_tags.forEach((tag, index) => {
+        if (tagMappings[tag.TagName]) {
+          const mapping = tagMappings[tag.TagName];
+          const value = typeof mapping.value === 'function' ? mapping.value(ele) : ele[mapping.value];
+          tag.linedata.push({
+            Value: value,
+            old_value: mapping.oldValue ? ele[mapping.oldValue] : undefined,
+            ErrorDesc: '',
+            idDocumentLineItems: ele.LineNumber,
+            is_mapped: mapping.isMapped,
+            LineNumber: ele.LineNumber || ele.itemCode,
+            tagName_u: `${mapping.tagName}-${ele.LineNumber || ele.itemCode}-${i}`,
+            tagName: mapping.tagName
+          });
+        }
+      });
     })
+    const timeSheetTag = this.GRN_PO_tags.find(item => item.TagName === 'Is Timesheets');
+    if (timeSheetTag) {
+      this.GRN_PO_tags.forEach(item => {
+        if (item.TagName == 'GRN - Quantity') {
+          item.linedata.forEach(el => {
+            timeSheetTag.linedata.forEach(item => {
+              if (el.LineNumber == item.LineNumber && item.Value == true || item.Value == 'Yes') {
+                el.is_timesheets = true;
+              }
+            });
+
+          });
+        }
+      });
+    }
     this.lineDisplayData = this.GRN_PO_tags;
     let arr = this.GRN_PO_tags;
     setTimeout(() => {
@@ -857,7 +918,7 @@ export class Comparision3WayComponent
     this.inputDisplayArray = [];
     // this.lineData = [];
     let serviceName;
-    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service'|| this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
+    if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
       this.pageType = "normal";
       serviceName = this.SharedService;
     } else {
@@ -876,33 +937,33 @@ export class Comparision3WayComponent
         if (response?.uploadtime) {
           this.uploadtime = response?.uploadtime;
         }
-        if(response.doc_type){
+        if (response.doc_type) {
           this.docType = response?.doc_type?.toLowerCase();
           this.documentType = response?.doc_type?.toLowerCase();
         }
 
         this.getInvTypes();
         // this.lineDataConversion();
-        if(this.pageType == "mapping"){
+        if (this.pageType == "mapping") {
           this.calculateCost();
         }
         // this.po_total = response.po_total;
         const pushedArrayHeader = [];
         // if(data?.ok?.cost_alloc != null){
         //   this.normalCostAllocation = true;
-          data?.ok?.cost_alloc?.forEach(cost => {
-            let merge = { ...cost.AccountCostAllocation }
-            this.costAllocation.push(merge);
-            })
+        data?.ok?.cost_alloc?.forEach(cost => {
+          let merge = { ...cost.AccountCostAllocation }
+          this.costAllocation.push(merge);
+        })
 
         // }
         // else{
-          this.normalCostAllocation = false;
-          data?.ok?.dynamic_cost_alloc?.forEach(dynamic =>{
-              this.dynamicdata.push(dynamic);
-              this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
-              this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
-            })
+        this.normalCostAllocation = false;
+        data?.ok?.dynamic_cost_alloc?.forEach(dynamic => {
+          this.dynamicdata.push(dynamic);
+          this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
+          this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
+        })
         // }
         response?.headerdata?.forEach((element) => {
           this.mergedArray = {
@@ -913,16 +974,16 @@ export class Comparision3WayComponent
           pushedArrayHeader.push(this.mergedArray);
         });
         this.inputData = pushedArrayHeader;
-        this.temp_header_data =  response?.headerdata?.slice();
+        this.temp_header_data = response?.headerdata?.slice();
         this.isMoreRequired = response?.approverData?.more_info_required;
 
-        if (response?.approverData?.to_approve_by){
+        if (response?.approverData?.to_approve_by) {
           let ap_id = response?.approverData?.to_approve_by[0];
-          if(ap_id == this.SharedService.userId) {
+          if (ap_id == this.SharedService.userId) {
             this.isAprUser = true;
           }
-        } 
-        
+        }
+
         // let inv_num_data: any = this.inputData.filter(val => {
         //   return val.TagLabel == 'InvoiceId';
         // })
@@ -936,7 +997,7 @@ export class Comparision3WayComponent
           this.getPODocId(this.po_num);
           this.getGRNnumbers(this.po_num);
         }
-        if(this.documentType == 'credit note'){
+        if (this.documentType == 'credit note') {
           // this.getProjectData();
           this.getPOs();
           this.getVendorInvoices(this.po_num)
@@ -1025,15 +1086,15 @@ export class Comparision3WayComponent
                 idDocumentLineItemTags: 1,
               });
             }
-            this.inv_line_total = 0 ;
+            this.inv_line_total = 0;
             this.lineDisplayData.forEach((ele) => {
               if (ele.TagName == 'S.No') {
                 ele.linedata = this.lineDisplayData[2]?.linedata;
               } else if (ele.TagName == 'Actions') {
                 ele.linedata = this.lineDisplayData[2]?.linedata;
               }
-              if(ele.TagName == 'AmountExcTax'){
-                  ele.linedata.forEach(ele=>{
+              if (ele.TagName == 'AmountExcTax') {
+                ele.linedata.forEach(ele => {
                   this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
                 })
               }
@@ -1080,15 +1141,15 @@ export class Comparision3WayComponent
           };
           this.vendorName = this.vendorData['ServiceProviderName'];
           this.serviceProvidercode = this.vendorData['ServiceProviderCode'];
-            if(this.vendorName == 'SANAM'){
-              this.isFormValid = false;
-              this.reqServiceprovider = true;
-              // this.costTabBoolean = false;
-              // this.reqDataValidation();
-            }
-            else{
-              this.reqServiceprovider = false;
-            }
+          if (this.vendorName == 'SANAM') {
+            this.isFormValid = false;
+            this.reqServiceprovider = true;
+            // this.costTabBoolean = false;
+            // this.reqDataValidation();
+          }
+          else {
+            this.reqServiceprovider = false;
+          }
         }
         this.support_doc_list = response?.support_doc?.files;
         if (this.support_doc_list == null) {
@@ -1219,15 +1280,15 @@ export class Comparision3WayComponent
   getPOs() {
     this.poList = [];
     this.exceptionService.getInvoicePOs().subscribe(((data: any) => {
-      data.forEach(ele=>{
+      data.forEach(ele => {
         this.poList.push(ele.PODocumentID);
       })
     }))
   }
-  getVendorInvoices(po_num){
-    this.invNumbersList =[]
-    this.SharedService.readVenInvoices(po_num).subscribe((data:any)=>{
-      data.forEach(ele=>{
+  getVendorInvoices(po_num) {
+    this.invNumbersList = []
+    this.SharedService.readVenInvoices(po_num).subscribe((data: any) => {
+      data.forEach(ele => {
         this.invNumbersList.push(ele.docheaderID);
       })
     })
@@ -1239,10 +1300,10 @@ export class Comparision3WayComponent
         ele.order = 1
       } else if (ele.TagLabel == 'VendorAddress') {
         ele.order = 2
-      } else if (ele.TagLabel == 'PurchaseOrder' || ele.TagLabel == 'PurchId') {
+      } else if (['PurchaseOrder', 'PurchId', 'POHeaderId'].includes(ele.TagLabel)) {
         ele.order = 3
         this.po_num = ele?.Value
-      } else if (ele.TagLabel == 'InvoiceId' || ele.TagLabel == 'bill_number') {
+      } else if (['InvoiceId', 'bill_number'].includes(ele.TagLabel)) {
         this.invoiceNumber = ele?.Value;
         ele.order = 4
       } else if (ele.TagLabel == 'InvoiceTotal') {
@@ -1444,9 +1505,9 @@ export class Comparision3WayComponent
         this.vendorId = this.vendorData['idVendor'];
         // this.selectedRule = data.ok.ruledata[0].Name;
         // this.poList = data.all_pos;
-        if(this.router.url.includes('GRN_approvals') ){
-          let index = this.lineDisplayData.findIndex(tag=> tag.TagName == 'Inv - Quantity');
-          this.lineDisplayData.splice(index,1)
+        if (this.router.url.includes('GRN_approvals')) {
+          let index = this.lineDisplayData.findIndex(tag => tag.TagName == 'Inv - Quantity');
+          this.lineDisplayData.splice(index, 1)
         }
         this.isGRNDataLoaded = true;
         setTimeout(() => {
@@ -1663,11 +1724,7 @@ export class Comparision3WayComponent
             count++;
             errorTypeHead = 'AmountHeader';
           }
-        } else if (
-          data.TagLabel == 'PurchaseOrder' ||
-          data.TagLabel == 'InvoiceDate' ||
-          data.TagLabel == 'InvoiceId'
-        ) {
+        } else if (['PurchaseOrder', 'InvoiceDate', 'InvoiceId'].includes(data.TagLabel)) {
           if (data.Value == '') {
             count++;
             errorType = 'emptyHeader';
@@ -1677,10 +1734,7 @@ export class Comparision3WayComponent
 
       this.lineDisplayData.forEach((element) => {
         if (
-          element.tagname == 'Quantity' ||
-          element.tagname == 'UnitPrice' ||
-          element.tagname == 'AmountExcTax' ||
-          element.tagname == 'Amount'
+          ['Quantity', 'UnitPrice', 'AmountExcTax', 'Amount'].includes(element.tagname)
         ) {
           element.items.forEach((ele) => {
             ele.linedetails.forEach((ele1) => {
@@ -1722,17 +1776,14 @@ export class Comparision3WayComponent
         }
         if (errorType == 'emptyHeader') {
           this.error("Please Check the PO Number, Invoice Date, and Invoice-Id fields on the header");
-          // this.changeTab('header');
         }
         if (errorTypeLine == 'AmountLine') {
           setTimeout(() => {
             this.error("Please verify the Amount, Quantity, Unit price and Amount-Excluding-Tax on the Line details")
-            // this.currentTab = 'line';
           }, 10);
         } else if (errorTypeLine == 'quantity') {
           setTimeout(() => {
             this.error("Please check the 'Quantity' in the Line details")
-            // this.currentTab = 'line';
           }, 10);
         }
         /* Error response end*/
@@ -1818,7 +1869,7 @@ export class Comparision3WayComponent
       this.dataService.serviceinvoiceLoadedData = [];
       setTimeout(() => {
         this.SpinnerService.hide();
-        if(this.router.url.includes('CustomerUpload')){
+        if (this.router.url.includes('CustomerUpload')) {
           this.router.navigate([`${this.portalName}/invoice/ServiceInvoices`]);
         } else {
           this._location.back();
@@ -1842,8 +1893,8 @@ export class Comparision3WayComponent
       let sub_status = this.batchData[this.batchData.length - 1]?.sub_status;
       this.subStatusId = sub_status;
       this.isBatchFailed = false;
-      this.batchData.forEach(el=>{
-        if(el.msg.includes('Tax')){
+      this.batchData.forEach(el => {
+        if (el.msg.includes('Tax')) {
           this.getInvoiceFulldata('');
         }
       })
@@ -1881,17 +1932,17 @@ export class Comparision3WayComponent
       last_status = this.batchData[this.batchData.length - 1].status;
     }
     this.ap_enabled_exc = last_status;
-    
+
     this.subStatusId = sub_status;
     this.dataService.subStatusId = sub_status;
     if (this.portalName == 'vendorPortal') {
-      if ([8, 16, 18, 19, 33, 21, 27,29].includes(sub_status)) {
+      if ([8, 16, 18, 19, 33, 21, 27, 29].includes(sub_status)) {
         this.processAlert(sub_status);
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-      if ([8, 16, 17, 18, 19, 33, 21, 27,29,51,54,70, 75,101,102,104].includes(sub_status)) {
+      if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104].includes(sub_status)) {
         this.processAlert(sub_status);
       } else if (sub_status == 34) {
         this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
@@ -2210,8 +2261,8 @@ export class Comparision3WayComponent
       };
       this.uploadCompleted = true;
       this.SpinnerService.show();
-      if(this.fin_boolean && this.rejectionUserId != 0){
-        this.exceptionService.rejectApprove(rejectionData,this.rejectionUserId).subscribe((data:any)=>{
+      if (this.fin_boolean && this.rejectionUserId != 0) {
+        this.exceptionService.rejectApprove(rejectionData, this.rejectionUserId).subscribe((data: any) => {
           this.dataService.invoiceLoadedData = [];
           this.success(data.result);
           this.displayrejectDialog = false;
@@ -2219,7 +2270,7 @@ export class Comparision3WayComponent
             this.SpinnerService.hide();
             this.router.navigate([`${this.portalName}/ExceptionManagement`]);
           }, 1000);
-        },err=>{
+        }, err => {
           this.error("Server error");
           this.SpinnerService.hide();
         })
@@ -2257,30 +2308,30 @@ export class Comparision3WayComponent
     }
   }
 
-  getApprovedUserList(){
+  getApprovedUserList() {
     this.userList_approved = [];
     this.SpinnerService.show();
-    this.exceptionService.getApprovedUsers().subscribe((data:any)=>{
+    this.exceptionService.getApprovedUsers().subscribe((data: any) => {
 
-      if(typeof(data?.result) != "string"){
-        data?.result?.forEach(el=>{
+      if (typeof (data?.result) != "string") {
+        data?.result?.forEach(el => {
           this.userList_approved.push(el);
         });
       } else {
-      this.userList_approved.push({firstName: "Vendor",idUser: 0,lastName: ""});
+        this.userList_approved.push({ firstName: "Vendor", idUser: 0, lastName: "" });
 
       }
       this.SpinnerService.hide();
     })
   }
-  selectUserForReject(event){
+  selectUserForReject(event) {
     this.rejectionUserId = event;
   }
   onChangeGrn(lineItem, val) {
     if (this.GRN_PO_Bool) {
       this.updateAmountExcTax(lineItem, val, 'UnitPrice', 'AmountExcTax', 'idDocumentLineItems');
     } else {
-      this.onChangeLineValue('Quantity',val,lineItem);
+      this.onChangeLineValue('Quantity', val, lineItem);
       this.updateAmountExcTax(lineItem, val, 'GRN - UnitPrice', 'GRN - AmountExcTax', 'invoice_itemcode');
     }
   }
@@ -2306,39 +2357,42 @@ export class Comparision3WayComponent
   }
 
   deleteGrnLine(id) {
-    if (confirm('Are you sure you want to delete this line?')) {
-      this.lineDisplayData = this.lineDisplayData.map(record => {
-        const newLinedata = record.linedata.filter(obj => obj?.idDocumentLineItems !== id);
-        return { ...record, linedata: newLinedata };
-      });
-      this.GRN_line_total = 0;
-      this.lineDisplayData.forEach(ele => {
-        if (ele.TagName == "AmountExcTax") {
-          ele.linedata.forEach(v => this.GRN_line_total = this.GRN_line_total + Number(v.Value))
-        }
-      })
-      this.GRNObject = this.GRNObject.filter(val => {
-        return val?.idDocumentLineItems != id
-      })
-      this.grnLineCount = this.lineDisplayData[0]?.linedata;
-    }
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation')
+    drf.afterClosed().subscribe((bool:boolean) => {
+      if (bool) {
+        this.lineDisplayData = this.lineDisplayData.map(record => {
+          const newLinedata = record.linedata.filter(obj => obj?.idDocumentLineItems !== id);
+          return { ...record, linedata: newLinedata };
+        });
+        this.GRN_line_total = 0;
+        this.lineDisplayData.forEach(ele => {
+          if (ele.TagName == "AmountExcTax") {
+            ele.linedata.forEach(v => this.GRN_line_total = this.GRN_line_total + Number(v.Value))
+          }
+        })
+        this.GRNObject = this.GRNObject.filter(val => {
+          return val?.idDocumentLineItems != id
+        })
+        this.grnLineCount = this.lineDisplayData[0]?.linedata;
+      }
+    })
   }
-  confirmFun(body,type,head){
+  confirmFun(body, type, head) {
     return this.mat_dlg.open(ConfirmationComponent, {
       width: '400px',
       height: '300px',
       hasBackdrop: false,
-      data: { body:body , type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
+      data: { body: body, type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
   }
-  bulk_confirm(){
-    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('We found more invoices for the same batch, do you want to approve all the invoices for the batch?','confirmation','Confirmation')
+  bulk_confirm() {
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('We found more invoices for the same batch, do you want to approve all the invoices for the batch?', 'confirmation', 'Confirmation')
     drf.afterClosed().subscribe((bool) => {
       const dialog = document.querySelector('dialog');
       if (dialog) {
         dialog.showModal();
         this.bulk_bool = bool;
-        if(bool){
+        if (bool) {
           document.getElementById("cmt").style.display = "block";
         } else {
           document.getElementById("cmt").style.display = "none";
@@ -2348,14 +2402,14 @@ export class Comparision3WayComponent
     })
 
   }
-  closeDialog(){
+  closeDialog() {
     const dialog = document.querySelector('dialog');
-    if(dialog){
+    if (dialog) {
       dialog.close();
     }
   }
   delete_confirmation(id) {
-    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?','confirmation','Confirmation')
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation')
 
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
@@ -2365,9 +2419,12 @@ export class Comparision3WayComponent
   }
 
   confirm_pop(grnQ, boolean, txt) {
-    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Kindly confirm the number of GRN lines.','confirmation','Confirmation')
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Kindly confirm the number of GRN lines.', 'confirmation', 'Confirmation')
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
+        if (this.isManpowerTags) {
+          this.createTimesheetAPI();
+        }
         this.onSave_submit(grnQ, boolean, txt);
       }
     })
@@ -2430,15 +2487,15 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            if (this.invoiceNumber) {
-              this.grnDuplicateCheck();
-            } else {
-              this.error("Dear user, please add the invoice number.");
-            }
+            // if (this.invoiceNumber) {
+            this.grnDuplicateCheck(boolean);
+            // } else {
+            //   this.error("Dear user, please add the invoice number.");
+            // }
           } else {
             setTimeout(() => {
-              if(this.router.url.includes('GRN_approvals')){
-                this.grnDuplicateCheck();
+              if (this.router.url.includes('GRN_approvals')) {
+                this.grnDuplicateCheck(boolean);
               } else {
                 this.CreateGRNAPI(boolean, txt);
               }
@@ -2461,13 +2518,18 @@ export class Comparision3WayComponent
     }
   }
 
-  createGRNWithPO() {
+  createGRNWithPO(bool) {
+    // bool = bool ? 'false' : 'true';
     this.SpinnerService.show();
     let inv_number = '';
     if (this.invoiceNumber) {
-      inv_number = `&inv_num=${this.invoiceNumber}`
+      inv_number = `&inv_num=${this.invoiceNumber}`;
     }
-    this.SharedService.createGRNWithPO(inv_number, this.GRNObjectDuplicate).subscribe((data: any) => {
+    let manPower = '';
+    if (this.manpowerHeaderId) {
+      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}`;
+    }
+    this.SharedService.createGRNWithPO(inv_number, manPower, this.GRNObjectDuplicate).subscribe((data: any) => {
       this.SpinnerService.hide();
       if (data.status == 'Posted') {
         this.success(data.message);
@@ -2489,12 +2551,12 @@ export class Comparision3WayComponent
 
   }
 
-  grnDuplicateCheck() {
+  grnDuplicateCheck(boolean) {
     if (this.GRNObjectDuplicate.length > 0) {
       let arr = [];
       this.GRNObjectDuplicate.forEach((ele) => {
         ele.Value = ele?.Value?.toString()
-        if(this.router.url.includes("GRN_approvals")){
+        if (this.router.url.includes("GRN_approvals")) {
           if (ele.is_quantity) {
             let obj = {
               line_id: ele.invoice_itemcode,
@@ -2516,38 +2578,38 @@ export class Comparision3WayComponent
       // const uniqarr = arr.filter((val,ind,arr)=> ind == arr.findIndex(v=>v.line_id == val.line_id && v.quantity == val.quantity));
       let duplicateAPI_response: string;
       let extra_param = '';
-      if(this.router.url.includes('GRN_approvals')){
+      if (this.router.url.includes('GRN_approvals')) {
         extra_param = `&grn_id=${this.invoiceID}`
-      } 
-      this.SharedService.duplicateGRNCheck(arr,extra_param).subscribe((data: any) => {
+      }
+      this.SharedService.duplicateGRNCheck(arr, extra_param).subscribe((data: any) => {
         duplicateAPI_response = data.result;
         this.SharedService.checkGRN_PO_balance(false).subscribe((data: any) => {
           let negativeData = [];
           let negKey = {};
-          let bool:boolean;
-          for (let key in data?.result){
+          let bool: boolean;
+          for (let key in data?.result) {
             let valuee = data.result[key];
             this.GRNObjectDuplicate.forEach((ele) => {
-              if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && (+valuee < +ele.Value)  ) {
+              if (ele.tagName == 'Quantity' && ele.idDocumentLineItems == key && (+valuee < +ele.Value)) {
                 negKey[key] = valuee;
                 negativeData.push(valuee);
               }
             })
           }
-          if (negativeData.length <= 0) {    
+          if (negativeData.length <= 0) {
             if (duplicateAPI_response == 'successful') {
-              if(this.router.url.includes("GRN_approvals")){
+              if (this.router.url.includes("GRN_approvals")) {
                 this.Approve_grn();
               } else {
-                this.createGRNWithPO();
+                this.createGRNWithPO(boolean);
               }
-              
+
             } else {
               this.AlertService.errorObject.detail = duplicateAPI_response;
               this.error(duplicateAPI_response);
             }
           } else {
-            let str:string = JSON.stringify(negKey);
+            let str: string = JSON.stringify(negKey);
             this.error(`Please check available quantity in the line numbers (${str})`);
           }
         }, err => {
@@ -2569,13 +2631,12 @@ export class Comparision3WayComponent
     } else {
       this.grnAPICall(boolean, txt);
     }
-
   }
 
   grnAPICall(boolean, txt) {
     this.SpinnerService.show();
     this.SharedService.saveGRNData(
-      boolean,this.GRNObject
+      boolean, this.GRNObject
     ).subscribe(
       (data: any) => {
         this.SpinnerService.hide();
@@ -2640,7 +2701,11 @@ export class Comparision3WayComponent
     } else if (str == 'manpower') {
       w = '80%';
       h = '72vh';
-      response = { "grnData_po" : this.lineDisplayData}
+      response = { "grnData_po": this.lineDisplayData }
+    } else if (str == 'manpower_metadata') {
+      w = '60%';
+      h = '65vh';
+      response = { "manpower_metadata": this.manpower_metadata }
     }
     this.SpinnerService.show();
     const matdrf: MatDialogRef<PopupComponent> = this.mat_dlg.open(PopupComponent, {
@@ -2657,10 +2722,164 @@ export class Comparision3WayComponent
           this.Reject();
         }
       })
+    } else if (str == 'manpower_metadata') {
+      this.SpinnerService.show();
+      matdrf.afterClosed().subscribe((resp: any) => {
+        this.manpower_metadata = resp;
+        this.createTimeSheetDisplayData("new");
+
+      })
+    } else if (str == 'manpower') {
+      this.SpinnerService.show();
+      matdrf.afterClosed().subscribe((resp: any) => {
+        if (resp) {
+          this.manPowerAPI_request = {
+            "startdate": resp?.dates?.startdate,
+            "enddate": resp?.dates?.enddate,
+            "data": []
+          }
+          this.manPowerAPI_request.data = this.prepare_api_request(resp.data);
+          this.manPowerGRNData = resp.data;
+          let grnQuantity = resp.data.find(el => el.TagName == 'GRN - Quantity');
+          this.lineDisplayData = this.lineDisplayData.map(el => {
+            if (el.TagName == 'GRN - Quantity') {
+              el.linedata.forEach(ele => {
+                grnQuantity.linedata.forEach(res => {
+                  if (ele.LineNumber == res.LineNumber) {
+                    this.onChangeGrn(ele, res.Value);
+                    ele.Value = res.Value;
+                  }
+                })
+              })
+            }
+            return el;
+          })
+          this.SpinnerService.hide();
+        }
+        this.SpinnerService.hide();
+      })
     }
-
   }
+  prepare_api_request(inputData) {
+    let shiftData = [];
 
+    // Organize shift data for each LineNumber
+    let shiftsByLineNumber = {};
+    inputData.forEach(item => {
+      if (item.TagName === "Number of Shifts" || item.TagName === "Shift") {
+        item.linedata.forEach(line => {
+          const lineNumber = line.LineNumber;
+          const shift = line.Value;
+
+          if (!shiftsByLineNumber[lineNumber]) {
+            shiftsByLineNumber[lineNumber] = {};
+          }
+
+          // Associate the shift with the corresponding idDocumentLineItems for this line
+          shiftsByLineNumber[lineNumber][line.idDocumentLineItems] = shift;
+        });
+      }
+    });
+
+    // Gather quantities by date for each LineNumber and shift
+    let quantitiesByLineNumberAndShift = {};
+    inputData.forEach(item => {
+      if (!['Description', 'PO Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity'].includes(item.TagName)) {
+        const date = item.TagName;
+
+        item.linedata.forEach(line => {
+          const lineNumber = line.LineNumber;
+          const value = parseFloat(line.Value);
+          const idDocumentLineItems = line.idDocumentLineItems;
+
+          // Check if there is a shift associated with this idDocumentLineItems for the current lineNumber
+          const shift = shiftsByLineNumber[lineNumber]?.[idDocumentLineItems];
+
+          if (shift) {
+            // Ensure data structure exists for the current shift and line number
+            if (!quantitiesByLineNumberAndShift[lineNumber]) {
+              quantitiesByLineNumberAndShift[lineNumber] = {};
+            }
+
+            if (!quantitiesByLineNumberAndShift[lineNumber][shift]) {
+              quantitiesByLineNumberAndShift[lineNumber][shift] = [];
+            }
+
+            // Add the date and quantity to the correct shift
+            quantitiesByLineNumberAndShift[lineNumber][shift].push({
+              date: date,
+              quantity: value.toFixed(2)
+            });
+          } 
+        });
+      }
+    });
+
+    // Gather durationmonth from linedisplaydata
+    let durationByLineNumber = {};
+    this.lineDisplayData.forEach(item => {
+      if (item.TagName == "Duration in months") {
+        item.linedata.forEach(line => {
+          const lineNumber = line.LineNumber;
+          const idDocumentLineItems = line.idDocumentLineItems;
+          const duration = line.Value; 
+          if (!durationByLineNumber[lineNumber]) {
+            durationByLineNumber[lineNumber] = {};
+          }
+
+          durationByLineNumber[lineNumber][idDocumentLineItems] = parseInt(duration, 10); // Store the duration as integer
+        });
+      }
+    });
+
+    // Prepare the result in the desired format
+    Object.keys(quantitiesByLineNumberAndShift).forEach(lineNumber => {
+      Object.keys(quantitiesByLineNumberAndShift[lineNumber]).forEach(shift => {
+        const durationmonth = durationByLineNumber[lineNumber][lineNumber] || null;
+
+        shiftData.push({
+          itemCode: lineNumber,
+          shift: shift,
+          quantity: JSON.stringify(quantitiesByLineNumberAndShift[lineNumber][shift]),
+          durationmonth: durationmonth
+        });
+      });
+    });
+
+    return shiftData;
+  }
+  createTimeSheetDisplayData(str) {
+    this.dataService.GRN_PO_Data.forEach(ele => {
+      this.manpower_metadata.forEach(meta => {
+        if (ele.LineNumber == meta.itemCode) {
+          ele.durationMonth = meta.durationMonth || "NA";
+          ele.isTimesheets = str == "new" ? meta.isTimesheets : true;
+          ele.shifts = meta.shifts || "NA";
+        }
+      })
+    })
+    this.isManpowerTags = true;
+    this.create_GRN_PO_tags();
+    if (str == 'new') {
+      this.get_PO_GRN_Lines();
+    }
+    this.SpinnerService.hide();
+  }
+  createTimesheetAPI() {
+    this.exceptionService.createTimesheet(this.manPowerAPI_request, 'PO').subscribe((data: any) => {
+      if (data.status.toLowerCase() == 'success') {
+        this.success(data.message);
+        this.manpowerHeaderId = data.ManPowerHeaderId;
+      } else {
+        this.error(data.message);
+      }
+      // this.success(data.message);
+    })
+  }
+  create_GRN_PO_tags() {
+    this.GRN_PO_tags = this.GRN_PO_tags.filter((tag) => tag.linedata = []);
+    this.GRN_PO_tags.splice(5, 0, { TagName: 'Duration in months', linedata: [] }, { TagName: 'Monthly quantity', linedata: [] }, { TagName: 'Is Timesheets', linedata: [] }, { TagName: 'Number of Shifts', linedata: [] })
+  }
   open_dialog(str) {
     if (str == 'reject') {
       this.rejectModalHeader = 'ADD Rejection Comments';
@@ -2673,14 +2892,14 @@ export class Comparision3WayComponent
         this.isApproveCommentBoolean = true;
         this.isLCMSubmitBoolean = false;
       }
-    } else if(str == 'more'){
+    } else if (str == 'more') {
       this.rejectModalHeader = 'Please Add Comments';
       this.moreInfoBool = true;
     } else {
       this.rejectModalHeader = "Check Item Code Availability";
     }
     this.displayrejectDialog = true;
-    
+
   }
   addComments(val) {
     this.rejectionComments = val;
@@ -2806,7 +3025,7 @@ export class Comparision3WayComponent
         }
       }
       let total_arr = []
-      this.selectedGRNLines.forEach(el=>{
+      this.selectedGRNLines.forEach(el => {
         total_arr.push(el.linesData)
       })
       this.selected_GRN_total = total_arr.reduce((acc, arr) => {
@@ -3097,7 +3316,7 @@ export class Comparision3WayComponent
     );
   }
 
-  grnAttachmentDoc(base64, type){
+  grnAttachmentDoc(base64, type) {
     let blob: any = this.base64ToBlob(base64);
     const url = window.URL.createObjectURL(blob);
     if (type == 'view') {
@@ -3113,44 +3332,44 @@ export class Comparision3WayComponent
     }
   }
 
-  getGrnAttachment(){
-    this.SharedService.getGRNAttachment().subscribe((data:any)=>{
+  getGrnAttachment() {
+    this.SharedService.getGRNAttachment().subscribe((data: any) => {
       this.grnAttachmentArray = data;
-    },err=>{
+    }, err => {
       this.error("Server error");
     })
   }
 
-   base64ToBlob(base64) {
-      // Extract the MIME type from the Base64 string if present
-      const base64Pattern = /^data:(.*);base64,(.*)$/;
-      const matches = base64?.match(base64Pattern);
+  base64ToBlob(base64) {
+    // Extract the MIME type from the Base64 string if present
+    const base64Pattern = /^data:(.*);base64,(.*)$/;
+    const matches = base64?.match(base64Pattern);
 
-      let mimeType;
-      let data;
+    let mimeType;
+    let data;
 
-      if (matches) {
-          mimeType = matches[1]; // Extracted MIME type
-          data = matches[2]; // Base64 data
-      } else {
-          // Fallback MIME type if not specified in the Base64 string
-          mimeType = 'application/octet-stream';
-          data = base64;
-      }
+    if (matches) {
+      mimeType = matches[1]; // Extracted MIME type
+      data = matches[2]; // Base64 data
+    } else {
+      // Fallback MIME type if not specified in the Base64 string
+      mimeType = 'application/octet-stream';
+      data = base64;
+    }
 
-      // Decode the Base64 string
-      const byteCharacters = atob(data);
+    // Decode the Base64 string
+    const byteCharacters = atob(data);
 
-      // Create an array for the byte characters
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
+    // Create an array for the byte characters
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
 
-      // Convert the byte numbers array into a Uint8Array
-      const byteArray = new Uint8Array(byteNumbers);
-      // Create a Blob from the Uint8Array
-      return new Blob([byteArray], {type: mimeType});
+    // Convert the byte numbers array into a Uint8Array
+    const byteArray = new Uint8Array(byteNumbers);
+    // Create a Blob from the Uint8Array
+    return new Blob([byteArray], { type: mimeType });
   }
 
   getEntity() {
@@ -3294,17 +3513,17 @@ export class Comparision3WayComponent
   // onSelectEnt(event){
   //   this.selectedEntity = event.EntityName;
   // }
-  onSelectEntity(event,type) {
-    if(type == 'change'){
-      this.exceptionService.changeEntity(event.idEntity).subscribe((data:any)=>{
-        if(data.status == 'success'){
+  onSelectEntity(event, type) {
+    if (type == 'change') {
+      this.exceptionService.changeEntity(event.idEntity).subscribe((data: any) => {
+        if (data.status == 'success') {
           this.success("Entity changed successfully and batch triggered.");
           this.syncBatch();
         } else {
           this.error(data.message)
         }
 
-      },err=>{
+      }, err => {
         this.error("Server error")
       })
     } else {
@@ -3574,34 +3793,34 @@ export class Comparision3WayComponent
     // console.log(unitPriceObject)
     if (unitPriceObject && quantityObject) {
 
-        const unitPriceData = unitPriceObject?.items;
-        const quantityData = quantityObject?.items;
+      const unitPriceData = unitPriceObject?.items;
+      const quantityData = quantityObject?.items;
 
-        let totalpoCost = 0;
-        let totalinvCost = 0;
-        for (let i = 0; i < unitPriceData?.length; i++) {
-            const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
-            const poquantity = parseInt(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
+      let totalpoCost = 0;
+      let totalinvCost = 0;
+      for (let i = 0; i < unitPriceData?.length; i++) {
+        const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
+        const poquantity = parseInt(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
 
-            const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-            const invquantity = parseInt(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+        const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+        const invquantity = parseInt(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
 
-            if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
-                totalpoCost += pounitPrice * poquantity;
-            }
-            if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
-              totalinvCost += invunitPrice * invquantity;
-          }
+        if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
+          totalpoCost += pounitPrice * poquantity;
         }
-        this.po_total = totalpoCost;
-        this.totalInvCost = totalinvCost;
-        // console.log("Total Cost:", totalpoCost);
+        if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
+          totalinvCost += invunitPrice * invquantity;
+        }
+      }
+      this.po_total = totalpoCost;
+      this.totalInvCost = totalinvCost;
+      // console.log("Total Cost:", totalpoCost);
     } else {
-        console.log("UnitPrice or Quantity data not found.");
+      console.log("UnitPrice or Quantity data not found.");
     }
   }
-  getRejectionComments(){
-    this.exceptionService.rejectCommentsList().subscribe((data:any)=>{
+  getRejectionComments() {
+    this.exceptionService.rejectCommentsList().subscribe((data: any) => {
       this.approvalRejectRecord = data;
     })
   }
@@ -3615,7 +3834,7 @@ export class Comparision3WayComponent
     this.AlertService.update_alert(msg);
   }
 
-  reqDataValidation(){
+  reqDataValidation() {
     for (const row of this.rows) {
       if (!row.driver_name || !row.company_name) {
         this.isFormValid = true;
@@ -3623,14 +3842,14 @@ export class Comparision3WayComponent
       }
     }
   }
-   updateEditedValue(iddynamiccostallocation: any, key: string, value: any) {
-  //   this.editedValues[key] = value;
-  //   this.editedValues[iddynamiccostallocation] = this.editedValues[iddynamiccostallocation] || {};
-  //   this.editedValues[iddynamiccostallocation][key] = value;
+  updateEditedValue(iddynamiccostallocation: any, key: string, value: any) {
+    //   this.editedValues[key] = value;
+    //   this.editedValues[iddynamiccostallocation] = this.editedValues[iddynamiccostallocation] || {};
+    //   this.editedValues[iddynamiccostallocation][key] = value;
     this.editedValues[iddynamiccostallocation + ',' + key] = value;
 
   }
-  addRow(index: number){
+  addRow(index: number) {
     this.isFormValid = false;
     this.rows.push(this.getNewRow());
     // console.log(this.rows)
@@ -3643,36 +3862,36 @@ export class Comparision3WayComponent
     this.rows.splice(index, 1);
   }
 
-  getInvTypes(){
-    this.exceptionService.getInvTypes().subscribe((data:any)=>{
+  getInvTypes() {
+    this.exceptionService.getInvTypes().subscribe((data: any) => {
       this.invTypeList = data.data;
-      data.data.forEach(el=>{
-        if(el.toLowerCase() == this.docType ){
-            this.docType = el;
-        } if(this.docType == 'credit'){
+      data.data.forEach(el => {
+        if (el.toLowerCase() == this.docType) {
+          this.docType = el;
+        } if (this.docType == 'credit') {
           this.docType = 'Invoice'
-        } else if(this.docType == 'non-po'){
+        } else if (this.docType == 'non-po') {
           this.docType = 'Non PO Invoice'
-        } else if(this.docType == 'advance invoice'){
+        } else if (this.docType == 'advance invoice') {
           this.docType = 'Advance Invoice'
-        } else if(this.docType == 'credit note'){
+        } else if (this.docType == 'credit note') {
           this.docType = 'Credit Note'
-        } else if(this.docType == 'retention invoice'){
+        } else if (this.docType == 'retention invoice') {
           this.docType = 'Retention Invoice'
         }
         this.d_type = this.docType;
       })
     })
   }
-  onSelectInvType(event){
-    this.exceptionService.changeInvType(event.value.toLowerCase()).subscribe((data:any)=>{
-      if(data.status == 'success'){
+  onSelectInvType(event) {
+    this.exceptionService.changeInvType(event.value.toLowerCase()).subscribe((data: any) => {
+      if (data.status == 'success') {
         this.success("Invoice type changed successfully, and sent to batch.");
         this.syncBatch();
       } else {
         this.error(data.message)
       }
-    },err=>{
+    }, err => {
       this.error("Server error")
     })
   }
@@ -3682,18 +3901,18 @@ export class Comparision3WayComponent
     this.activeTab = 'percentage';
   }
 
-  saveData(tab: string){
+  saveData(tab: string) {
     let pa_data;
     let inv_type = true;
 
     if (tab === 'percentage') {
       pa_data = this.percentageData;
       inv_type = true;
-    } else{
+    } else {
       pa_data = this.amountData;
       inv_type = false;
     }
-    this.SharedService.uploadPercentageAndAmountDetails(pa_data,inv_type,tab).subscribe((data: any) => {
+    this.SharedService.uploadPercentageAndAmountDetails(pa_data, inv_type, tab).subscribe((data: any) => {
       this.success("Submitted successfully")
       setTimeout(() => {
         this.isBoxOpen = false;
@@ -3712,7 +3931,7 @@ export class Comparision3WayComponent
   updateButtonState(tab: string) {
     // Enable the button only when both percentageData and amountData are provided
     this.isButtonDisabled = !(this.percentageData || this.amountData);
-    if(this.percentageData == ''){
+    if (this.percentageData == '') {
       this.resultAmount = 0;
     }
     if (tab === 'percentage') {
@@ -3726,7 +3945,7 @@ export class Comparision3WayComponent
     }
   }
 
-  onChangeAdvance(data,in_value,tagName){
+  onChangeAdvance(data, in_value, tagName) {
     // let amount_old;
     // let amt_line_id;
     // let ad_line_id;
@@ -3758,49 +3977,49 @@ export class Comparision3WayComponent
       "prev_value": data.Value.toString(),
       "id_documentline": data.idDocumentLineItems,
       "value": in_value,
-      "tagname":tagName
+      "tagname": tagName
     };
   }
-  saveAdChanges(){
-    if(this.advanceAPIbody && this.advanceAPIbody.value != ''){
+  saveAdChanges() {
+    if (this.advanceAPIbody && this.advanceAPIbody.value != '') {
       this.SpinnerService.show();
-      this.exceptionService.getAdPercentage(this.advanceAPIbody).subscribe((data:any)=>{
+      this.exceptionService.getAdPercentage(this.advanceAPIbody).subscribe((data: any) => {
         this.SpinnerService.hide();
-        if(data?.status == "Success"){
+        if (data?.status == "Success") {
           this.success("Updated succesfully");
           this.inv_line_total = 0;
-          this.lineDisplayData.forEach(tag=>{
-            let  tagName = 'AmountExcTax';
-            if(this.advanceAPIbody.tagname == 'AmountExcTax'){
+          this.lineDisplayData.forEach(tag => {
+            let tagName = 'AmountExcTax';
+            if (this.advanceAPIbody.tagname == 'AmountExcTax') {
               tagName = 'AdvancePercent';
             }
-              tag.linedata.forEach(ele=>{
-                if(tag.TagName == tagName){
-                  if(ele.DocumentLineItems.itemCode == this.advanceAPIbody.linenumber){
-                    ele.DocumentLineItems.Value = data?.result?.value;
-                  }
+            tag.linedata.forEach(ele => {
+              if (tag.TagName == tagName) {
+                if (ele.DocumentLineItems.itemCode == this.advanceAPIbody.linenumber) {
+                  ele.DocumentLineItems.Value = data?.result?.value;
                 }
-                // if(this.advanceAPIbody.tagname == 'AmountExcTax'){
-                //   this.inv_line_total = parseFloat(this.advanceAPIbody.value) + this.inv_line_total ;
-                // }
-                if(tag.TagName == 'AmountExcTax'){
-                  this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
-                }
-              })
+              }
+              // if(this.advanceAPIbody.tagname == 'AmountExcTax'){
+              //   this.inv_line_total = parseFloat(this.advanceAPIbody.value) + this.inv_line_total ;
+              // }
+              if (tag.TagName == 'AmountExcTax') {
+                this.inv_line_total = this.inv_line_total + parseFloat(ele.DocumentLineItems.Value);
+              }
+            })
           })
         } else {
           this.error(data?.msg);
         }
-      },err=>{
+      }, err => {
         this.SpinnerService.hide();
         this.error("Server error");
       })
     }
   }
 
-  filterPreDrop(event,tag){
+  filterPreDrop(event, tag) {
     let arr = [];
-    if(tag == 'PurchaseOrder'){
+    if (tag == 'PurchaseOrder') {
       arr = this.poList;
     } else {
       arr = this.invNumbersList;
@@ -3817,10 +4036,10 @@ export class Comparision3WayComponent
     }
     this.filteredPreData = filtered;
   }
-  onSelectPrePay(event,value,tagname, index){
+  onSelectPrePay(event, value, tagname, index) {
     let old_value
-    this.temp_line_data.forEach(tag=>{
-      if(tag.tagname == tagname){
+    this.temp_line_data.forEach(tag => {
+      if (tag.tagname == tagname) {
         old_value = tag.items[index].linedetails[0].invline[0].DocumentLineItems.Value
       }
     })
@@ -3830,16 +4049,16 @@ export class Comparision3WayComponent
       prev_value: old_value,
       curr_value: event,
     }
-    this.exceptionService.savePreData(obj).subscribe((data:any)=>{
+    this.exceptionService.savePreData(obj).subscribe((data: any) => {
       this.success('Changes saved successfully')
-    },err=>{
+    }, err => {
       this.error("Server error or Please check the data");
     })
   }
 
-  filterProject(event,tag) {
+  filterProject(event, tag) {
     let arr = [];
-    if(tag == 'Project'){
+    if (tag == 'Project') {
       arr = this.projectIdArr;
     } else {
       arr = this.projectCArr;
@@ -3857,47 +4076,47 @@ export class Comparision3WayComponent
     this.filteredProject = filtered;
   }
 
-  onSelectProject(event,value){
-    let old_val:any = this.temp_header_data.filter(el=>value.idDocumentData == el?.DocumentData?.idDocumentData);
+  onSelectProject(event, value) {
+    let old_val: any = this.temp_header_data.filter(el => value.idDocumentData == el?.DocumentData?.idDocumentData);
     let obj = {
       tag_id: value.idDocumentData,
       tag_name: value.TagLabel,
       prev_value: old_val[0]?.DocumentData?.Value,
       curr_value: event,
     }
-    this.exceptionService.saveProjectData(obj).subscribe((data:any)=>{
+    this.exceptionService.saveProjectData(obj).subscribe((data: any) => {
       this.success('Changes saved successfully')
-    },err=>{
+    }, err => {
       this.error("Server error or Please check the data");
     })
   }
-  ap_api_body(){
+  ap_api_body() {
     return {
       "desp": `${this.rejectionComments}`,
       "bulk_approval": this.bulk_bool
     }
   }
-  moreInfoFun(){
+  moreInfoFun() {
     this.SpinnerService.show();
     let desc = this.ap_api_body();
-      this.exceptionService.sendToMore(desc).subscribe((data:any)=>{
-        if(data.result == 'success'){
-          this.success(data.message);
-          setTimeout(() => {
-            this.SpinnerService.hide();
-            this._location.back();
-          }, 1000);
-        } else {
-          this.error(data.message);
-        }
-        this.SpinnerService.hide();
-      })
+    this.exceptionService.sendToMore(desc).subscribe((data: any) => {
+      if (data.result == 'success') {
+        this.success(data.message);
+        setTimeout(() => {
+          this.SpinnerService.hide();
+          this._location.back();
+        }, 1000);
+      } else {
+        this.error(data.message);
+      }
+      this.SpinnerService.hide();
+    })
   }
-  proceedMoreInfo(){
+  proceedMoreInfo() {
     this.SpinnerService.show();
     let desc = this.ap_api_body();
-    this.exceptionService.proceedMoreInfo(desc).subscribe((data:any)=>{
-      if(data.result == 'success'){
+    this.exceptionService.proceedMoreInfo(desc).subscribe((data: any) => {
+      if (data.result == 'success') {
         this.success(data.message);
         setTimeout(() => {
           this._location.back();
@@ -3908,21 +4127,21 @@ export class Comparision3WayComponent
       this.SpinnerService.hide();
     })
   }
-  onHighlight(data){
+  onHighlight(data) {
     console.log(data)
     this.rectData = data;
   }
-  onChecked(value){
+  onChecked(value) {
     this.isManpower = value
   }
-  progressiveAmount(amount,id){
-    this.exceptionService.amountToApply(amount,id).subscribe((data:any)=>{
-      if(data?.status == 'sucess'){
+  progressiveAmount(amount, id) {
+    this.exceptionService.amountToApply(amount, id).subscribe((data: any) => {
+      if (data?.status == 'sucess') {
         this.success(data.msg)
       } else {
         this.error(data.msg)
       }
-    },err=>{
+    }, err => {
       this.error("Server error")
     })
   }

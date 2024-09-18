@@ -1,28 +1,28 @@
 $theme_color: var(--themeColor);
 
 .tb_div {
-    max-height: 66vh;
-    overflow: auto;
-    position: relative;
+  max-height: 66vh;
+  overflow: auto;
+  position: relative;
 }
 .tb_head {
-    background: #f3f3f3 !important;
-    position: sticky;
-    top: -1px;
+  background: #f3f3f3 !important;
+  position: sticky;
+  top: -1px;
 }
-.tb_head th{
-    padding: 8px 10px !important;
+.tb_head th {
+  padding: 8px 10px !important;
 }
-.total_table{
-    position: absolute;
-    top: 0;
-    color: white;
+.total_table {
+  position: absolute;
+  top: 0;
+  color: white;
 }
 .total_table tr:nth-child(1) {
   height: 30px;
   background: $theme_color;
 }
-.total_table tr:nth-child(2){
+.total_table tr:nth-child(2) {
   height: 30px;
   background: #358dc01a;
   color: black;
@@ -34,10 +34,11 @@ $theme_color: var(--themeColor);
   height: 55px;
   align-items: flex-end;
 }
-.table th, .table td {
+.table th,
+.table td {
   padding: 0px 10px;
   vertical-align: middle;
-  border: 0
+  border: 0;
 }
 .p_l_40 {
   padding-left: 40px;
@@ -53,103 +54,113 @@ $theme_color: var(--themeColor);
   font-weight: 600;
   color: black;
   height: 27px;
-  margin-right: 5px;
-  width: 50px;
+  // margin-right: 5px;
+  width: 70px;
   border: 0;
-  padding: 0px;
+  padding: 4px 10px;
+  border-radius: 0;
+}
+.w-des {
+  width: 100%;
+  width: -webkit-fill-available;
+}
+.tabDiv {
+  border-top: 2px solid lightgray;
+  max-height: 41vh !important;
+  margin-top: 2px;
+  min-height: 41vh !important;
+  overflow: auto;
+}
+.calender_div {
+  background-color: #f2f2f2;
+  border-radius: 6px;
+}
+:host ::ng-deep {
+  .p-calendar .p-datepicker {
+    left: -96px !important;
   }
-  .w-des{
-    width: 100%;
-    width: -webkit-fill-available;
-  }
-  .tabDiv{
-    border-top: 2px solid lightgray;
-    max-height: 41vh !important;
-    margin-top: 2px;
-    min-height: 41vh !important;
-    overflow: auto;
-  }
-  .calender_div {
-    background-color: #f2f2f2;
-    border-radius: 6px;
-  }
-  :host ::ng-deep {
-    .p-calendar .p-datepicker {
-      left: -96px !important
-    }
-    .p-calendar .p-inputtext {
-      width: 160px !important;
-      background-color: inherit;
-      position: relative;
-      top: 6px;
-    }
-  }
-  .invert {
-    display: flex;
-    // overflow: auto;
-  }
-  .invert_tr {
-    display: block;
-    float: left;
-    background-color: #f5f5f5;
-    // width: 100%;
-    // border-bottom: 5px solid white;
-    // width: 100%;
-  }
-  .invert_th_td {
-    display: block;
-    border: 1px solid lightgray;
-  }
-  .invert_thtd {
-    display: flex;
-  }
-  .lineName {
-    padding: 10px 10px;
-    font-size: 11px;
-    padding-left: 10px;
-    // min-width: 130px;
-    // max-width: 130px;
-    font-weight: 500;
-    background-color: #EBEBEB !important;
-    position: sticky;
-    left: 0px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .linevalue {
-    padding: 1px 10px;
-    font-size: 12px;
-    height: 30px;
-    background-color: white;
-  }
-  .count_line {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 50px;
-    background: white;
-    border: 1px solid lightgray;
-  }
-  .count-h {
-    min-height: 56px;
-  }
-  .s-no{
-    font-size: 11px;
-    font-weight: 500;
-    height: 26px;
+  .p-calendar .p-inputtext {
+    width: 160px !important;
+    background-color: inherit;
     position: relative;
     top: 6px;
   }
-  .m-l-neg{
-    // margin-left: -20px;
-    min-width: 50px !important;
-    max-width: 68px;
+  .p-datepicker-stay-open .p-datepicker-panel {
+    display: block !important;
+    visibility: visible !important;
   }
-  .trash_btn {
-    border-color: transparent;
-    background: inherit;
-  }
-  .act_div {
-    height: 25px;
-  }
+}
+.invert {
+  display: flex;
+  // overflow: auto;
+}
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: #f1f1f1 !important;
+  opacity: 1;
+}
+.invert_tr {
+  display: block;
+  float: left;
+  background-color: #f5f5f5;
+  // width: 100%;
+  // border-bottom: 5px solid white;
+  // width: 100%;
+}
+.invert_th_td {
+  display: block;
+  border: 1px solid lightgray;
+}
+.invert_thtd {
+  display: flex;
+}
+.lineName {
+  padding: 10px 10px;
+  font-size: 11px;
+  padding-left: 10px;
+  // min-width: 130px;
+  // max-width: 130px;
+  font-weight: 500;
+  background-color: #ebebeb !important;
+  position: sticky;
+  left: 0px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.linevalue {
+  // padding: 1px 10px;
+  font-size: 12px;
+  height: 30px;
+  background-color: white;
+}
+.count_line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50px;
+  background: white;
+  border: 1px solid lightgray;
+}
+.count-h {
+  min-height: 56px;
+}
+.s-no {
+  font-size: 11px;
+  font-weight: 500;
+  height: 26px;
+  position: relative;
+  top: 6px;
+}
+.m-l-neg {
+  max-width: 64px;
+}
+.trash_btn {
+  border-color: transparent;
+  background: inherit;
+}
+.act_div {
+  height: 25px;
+  position: relative;
+  left: -10px;
+}

@@ -6,7 +6,8 @@
       >
       <span *ngIf="type == 'Amend'">Please change the template body</span>
       <span *ngIf="type == 'editApprover'">Please add the approvers</span>
-      <span *ngIf="type == 'manpower'">Please add</span>
+      <span *ngIf="type == 'manpower'">Please add timesheet details</span>
+      <span *ngIf="type == 'manpower_metadata'">Please add meta data</span>
     </h6>
 
     <!-- <h6 class="f-14" *ngIf="approveBool">
@@ -323,19 +324,20 @@
           [(ngModel)]="rangeDates"
           selectionMode="range"
           [minDate]="minDate"
-          [maxDate]="maxDate"
+          [maxDate]="maxiDate"
           placeholder=""
           [readonlyInput]="true"
           [showIcon]="true"
           showButtonBar="true"
           (onClearClick)="clearDates()"
           (onSelect)="filterByDate(rangeDates)"
+          [disabledDates]="disabledDates"
           inputId="range"
         ></p-calendar>
       </div>
     </div>
 
-    <div class="tabDiv">
+    <form #manpowerForm="ngForm" (ngSubmit)="onSubmitManpower(manpowerForm.value)" class="tabDiv">
        
       <!-- <table class="table f-12">
         <tr class="tHead">
@@ -388,43 +390,36 @@
         >
           <tr
             class="invert_tr"
-            [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
             *ngIf="
-              item.TagName != 'Inv - AmountExcTax'
+              !['AmountExcTax','UnitPrice','Duration in months','Is Timesheets','Actions','Number of Shifts'].includes(item.TagName)
             "
           >
             <td
               class="lineName invert_th_td"
-              *ngIf="
-                item.TagName != 'Inv - AmountExcTax'
-              "
-              [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
             >
-              <div *ngIf="item.TagName != 'GRN - AmountExcTax'" class="d-flex justify-content-between">
+              <div  class="d-flex justify-content-between">
                 <div>{{ item.TagName }}</div>
               </div>
-              <span *ngIf="item.TagName == 'GRN - AmountExcTax'"
-                >AmountExcTax</span
-              >
             </td>
             <td
               class="linevalue invert_th_td"
               *ngFor="let line1 of item.linedata; let i = index"
-              [ngClass]="item.TagName === 'Actions' ? 'm-l-neg' : ''"
             >
-              <div *ngIf="['Description','PO Qty'].includes(item.TagName)  && item.TagName != 'Actions'">
+              <div *ngIf="item.TagName != 'Actions'">
                 <input
                   #inputval
-                  type="text"
-                  [name]="line1.idDocumentLineItems"
-                  [value]="line1.Value"
+                  [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName)?'text':'number'"
+                  [name]="line1.tagName_u"
                   [title]="line1.Value"
                   class="form-control inputHeight w-sm"
                   [(ngModel)]="line1.Value"
                   [ngClass]="item.TagName == 'Description'?'w-des':''"
+                  required
+                  (change)="onChange(line1, line1.Value)"
+                  [readonly]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData"
                 />
               </div>
-              <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
+              <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
                 <input
                   #inputval
                   type="text"
@@ -436,8 +431,8 @@
                   [ngClass]="item.TagName == 'Description'?'w-des':''"
                   
                 />
-              </div>
-              <div *ngIf="item.TagName === 'Actions'" class="linevalue invert_thtd act_div">
+              </div> -->
+              <!-- <div *ngIf="item.TagName === 'Actions'" class="linevalue invert_thtd act_div">
                   <button
                     class="trash_btn"
                     (click)="addNewShift(line1.Value,i)"
@@ -446,35 +441,73 @@
                   </button>
                   <button
                     class="trash_btn"
-                    (click)="addNewShift(line1.Value,i)"
+                    (click)="removeShift(line1.Value,i)"
                   >
                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                   </button>
-              </div>
+              </div> -->
             </td>
           </tr>
         </ng-container>
       </table>
-    </div>
-    <div
-      class="mt-4 d-flex justify-content-end mb-2"
-    >
-      <button
-        class="secondary_btn f-12 mr-3"
-        type="button"
-        mat-dialog-close
+      <div class="f-12">Note: Please add the shift data for the selected dates</div>
+      <div
+        class="mt-4 d-flex justify-content-end mb-2"
       >
-        Cancel
-      </button>
+        <button
+          class="secondary_btn f-12 mr-3"
+          type="button"
+          mat-dialog-close
+        >
+          Cancel
+        </button>
+        <button
+          class="primary_btn f-12"
+          type="submit"
+          [disabled]="manpowerForm.invalid"
+        >
+          Save
+        </button>
+
+      </div>
+    </form>
+
+  </div>
+
+  <div *ngIf="type == 'manpower_metadata'">
+    <!-- {{manPowerMetadata | json}} -->
+    <table *ngIf="manPowerMetadata.length > 0"           
+      style="border-collapse: collapse"
+      class="table table-bordered f-11">
+      <thead >
+        <tr class="f-12 tb_head">
+          <th *ngFor="let header of manpowerTableHeaders">{{header.header}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of manPowerMetadata; let i = index">
+          <td>{{row.description}}</td>
+          <td>
+            <input type="number" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event)">
+          </td>
+          <td>
+            <input type="checkbox"  [(ngModel)]="row.isTimesheets" (ngModelChange)="updateManpowerMetadata(i, 'isTimesheets', $event)">
+          </td>
+          <td>
+            <input type="number" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event)">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="mt-4 d-flex justify-content-end mb-2">
       <button
         class="primary_btn f-12"
-        type="submit"
-        [disabled]="!updateSOObj"
-        (click)="updateMapping()"
+        type="button"
+        (click)="saveManpowerMetadata()"
       >
         Save
       </button>
-
     </div>
   </div>
 </section>

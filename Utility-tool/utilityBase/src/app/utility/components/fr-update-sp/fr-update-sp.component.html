@@ -229,16 +229,17 @@
                 <div class="mt-3">
                     <form #updateMetaData ="ngForm" (ngSubmit)="updateMetainfo(updateMetaData.value)">
                         <table style="width: 80%;">
-                            <!-- <tr class="trHeight">
+                            <tr class="trHeight">
                                 <td class="tdLeft f-13">Date Format <span class="colon">:</span></td>
                                 <td class="tdRight">
-                                    <select name="DateFormat" id="DateFormat" class="form-control max_width f-13"
+                                    <!-- <select name="DateFormat" id="DateFormat" class="form-control max_width f-13"
                                         [(ngModel)]="selected_template"  ngModel #DateFormat="ngModel" >
                                         <option value="" selected disabled>Select Date format</option>
                                         <option [value]="format" *ngFor="let format of dateFormats">{{format}}</option>
-                                    </select>
+                                    </select> -->
+                                    <input type="text" class="form-control max_width f-13" name="DateFormat" [(ngModel)]="selected_dateFormat" id="DateFormat" ngModel #DateFormat="ngModel" placeholder="Date Format">
                                 </td>
-                            </tr> -->
+                            </tr>
                             <tr class="trHeight">
                                 <td class="tdLeft f-13">Folder Path <span class="colon">:</span></td>
                                 <td class="tdRight">
@@ -267,7 +268,7 @@
                             <!-- <tr class="trHeight">
                                 <td class="tdLeft f-13">Tolerance Threshold <span class="colon">:</span></td>
                                 <td class="tdRight">
-                                    <input type="text" class="form-control f-13" [value]="frData.ConnectionString" disabled>
+                                    <input type="text" class="form-control f-13" disabled>
                                     <div class="d-flex">
                                         <div class=" w-100">
                                             <label for="AccuracyOverall" class=" w-100">UnitPrice Tolerance percent
@@ -283,13 +284,22 @@
                                 </td>
                             </tr> -->
     
-                            <!-- <tr class="trHeight">
-                                <td class="tdLeft f-13">Invoice Format <span class="colon">:</span></td>
+                            <tr class="trHeight">
+                                <td class="tdLeft f-13">Page Selection <span class="colon">:</span></td>
                                 <td class="tdRight">
-                                    <input type="text" name="InvoiceFormat" id="InvoiceFormat" class="form-control max_width f-13" ngModel #invoiceFormat="ngModel" placeholder="">
+                                    <input type="text" name="page_selection" id="pageSelection" class="form-control max_width f-13" [(ngModel)]="selected_page_selection" ngModel #pageSelection="ngModel" placeholder="eg:1-2,1-4">
     
                                 </td>
-                            </tr> -->
+                            </tr>
+                            <tr class="trHeight">
+                                <td class="tdLeft f-13">Processing Type <span class="colon">:</span></td>
+                                <td class="tdRight">
+                                    <select name="extraction_type" class="form-control max_width f-13" [(ngModel)]="selected_extraction_type" ngModel #pageSelection="ngModel">
+                                        <option value="Document">Document</option>
+                                        <option value="Page">Page</option>
+                                    </select>
+                                </td>
+                            </tr>
     
                             <tr class="trHeight">
                                 <td class="tdLeft f-13">Currency <span class="colon">:</span></td>
@@ -309,16 +319,34 @@
                                     </select>
                                 </td>
                             </tr>
-                            <!-- <tr class="trHeight">
-                                <td class="tdLeft f-13">Select Service Provider type <span class="req_clr">*</span> <span class="colon">:</span></td>
+                            <tr class="trHeight">
+                                <td class="tdLeft f-13">Select Service Rule <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">
-                                    <select name="SPType" id="SPType" ngModel #SPType="ngModel" class="form-control max_width f-13" [(ngModel)]="selectedSPType" (change)="onChangeVndrType(selectedSPType)"
-                                         required>
-                                        <option value="" selected disabled>Select Service Provider type</option>
-                                        <option *ngFor="let rule of SPTypeData" [value]="rule.value">{{rule.value}}</option>
-                                    </select>
+                                    <div class="multipleSelection">
+                                        <div class="selectBox w-100">
+                                                    <ul class="ulTags max_width" cdkDropList (cdkDropListDropped)="drop($event)">
+                                                        <li class="listData" *ngFor="let tag of mandatoryServiceRules; let i = index;" cdkDrag >{{tag.rulesname}} 
+                                                            <span  (click)="removeServiceRule(i,tag)">
+                                                                <i class="fa fa-times-circle-o ml-2" style="cursor: pointer;" aria-hidden="true" ></i>
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                            <div class="downArrow" (click)="showServiceRule()">
+                                                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                              
+                                        <div id="checkBoxesService" *ngIf="showCheckboxServiceDiv" >
+                                            <label *ngFor="let header of serviceRules">
+                                                <input type="checkbox" (change)="selectServiceRules($event.target.checked,header)" [checked]="header.isSelected" [readonly]="header.mandatory == 1"/>
+                                                {{header.rulesname}} <span *ngIf="header.mandatory == 1" style="color: red;">*</span>
+                                            </label>
+                                              
+                                        </div>
+                                        Note: Validations will happen based on the above mentioned order
+                                    </div>
                                 </td>
-                            </tr> -->
+                            </tr>
                             <!-- <tr class="trHeight" *ngIf="isPObasedSP">
                                 <td class="tdLeft f-13">Select ERP API Rule <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">
@@ -478,7 +506,28 @@
                                     </div>
                                 </td>
                             </tr>
-
+                            <tr class="trHeight">
+                                <td class="tdLeft f-13">Auto template classification </td>
+                                <td class="tdRight" style="position: relative;">
+                                        <span class="f-right">
+                                          <label class="switch">
+                                            <input type="checkbox" name="auto_template_classification" [checked]="auto_template_classification" [(ngModel)]="auto_template_classification" />
+                                            <span class="slider round"></span>
+                                          </label>
+                                        </span>
+                                </td>
+                            </tr>
+                            <tr class="trHeight">
+                                <td class="tdLeft f-13">Save unidentified accounts</td>
+                                <td class="tdRight" style="position: relative;">
+                                        <span class="f-right">
+                                          <label class="switch">
+                                            <input type="checkbox" name="save_unidentified_accounts" [checked]="save_unidentified_accounts" [(ngModel)]="save_unidentified_accounts"/>
+                                            <span class="slider round"></span>
+                                          </label>
+                                        </span>
+                                </td>
+                            </tr>
                             <!-- <tr class="trHeight">
                                 <td class="tdLeft f-13">Template unique keywords <span class="req_clr">*</span> <span class="colon">:</span></td>
                                 <td class="tdRight">

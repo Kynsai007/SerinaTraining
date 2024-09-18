@@ -459,12 +459,15 @@
                         invoiceData.docstatus == 'Need To Review' ||
                         ((invoiceData.docstatus == 'Posted In ERP' ||
                           invoiceData.docstatus == 'Sent to ERP') &&
-                          invoiceData.documentsubstatusID == 77)
+                          invoiceData.documentsubstatusID == 77) || (
+                          invoiceData.documentsubstatusID == 32 
+                        )
                       "
                       [pTooltip]="
                         invoiceData.documentsubstatusID == 77
                           ? 'Manually Created/Posted'
-                          : invoiceData?.status
+                          : invoiceData.documentsubstatusID == 32 ? invoiceData.documentDescription
+                          : invoiceData.docstatus == 'Need To Review' ? invoiceData?.status:''
                       "
                       tooltipPosition="top"
                       class="f-13 ml-3"

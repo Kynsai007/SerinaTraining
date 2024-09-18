@@ -274,6 +274,7 @@ $theme_color: var(--themeColor);
   .trash_btn {
     border-color: transparent;
     background: inherit;
+    height: 32px !important;
   }
   .w-st {
     width: 11vw;
