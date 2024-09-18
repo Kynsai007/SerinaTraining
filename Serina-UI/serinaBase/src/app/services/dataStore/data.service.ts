@@ -229,6 +229,7 @@ export class DataService {
   projectCArr: any;
   ent_code: any;
   isCoordinator: boolean;
+  grn_manpower_metadata: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
