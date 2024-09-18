@@ -636,7 +636,8 @@ export class Comparision3WayComponent
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun("Please confirm whether you want to add manpower data in GRN?", "confirmation", "Confirmation")
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
-        this.open_dialog_comp("manpower_metadata")
+        this.open_dialog_comp("manpower_metadata");
+        
       }
     })
   }
@@ -2359,7 +2360,9 @@ export class Comparision3WayComponent
   deleteGrnLine(id) {
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation')
     drf.afterClosed().subscribe((bool:boolean) => {
+
       if (bool) {
+        this.SpinnerService.show();
         this.lineDisplayData = this.lineDisplayData.map(record => {
           const newLinedata = record.linedata.filter(obj => obj?.idDocumentLineItems !== id);
           return { ...record, linedata: newLinedata };
@@ -2374,6 +2377,7 @@ export class Comparision3WayComponent
           return val?.idDocumentLineItems != id
         })
         this.grnLineCount = this.lineDisplayData[0]?.linedata;
+        this.SpinnerService.hide();
       }
     })
   }
@@ -2725,9 +2729,11 @@ export class Comparision3WayComponent
     } else if (str == 'manpower_metadata') {
       this.SpinnerService.show();
       matdrf.afterClosed().subscribe((resp: any) => {
-        this.manpower_metadata = resp;
-        this.createTimeSheetDisplayData("new");
-
+        if(resp) {
+          this.manpower_metadata = resp;
+          this.createTimeSheetDisplayData("new");
+        }
+        this.SpinnerService.hide();
       })
     } else if (str == 'manpower') {
       this.SpinnerService.show();
@@ -2878,7 +2884,9 @@ export class Comparision3WayComponent
   }
   create_GRN_PO_tags() {
     this.GRN_PO_tags = this.GRN_PO_tags.filter((tag) => tag.linedata = []);
-    this.GRN_PO_tags.splice(5, 0, { TagName: 'Duration in months', linedata: [] }, { TagName: 'Monthly quantity', linedata: [] }, { TagName: 'Is Timesheets', linedata: [] }, { TagName: 'Number of Shifts', linedata: [] })
+    if(this.GRN_PO_tags.filter(tag => tag.TagName == 'Duration in months').length == 0) {
+      this.GRN_PO_tags.splice(5, 0, { TagName: 'Duration in months', linedata: [] }, { TagName: 'Monthly quantity', linedata: [] }, { TagName: 'Is Timesheets', linedata: [] }, { TagName: 'Number of Shifts', linedata: [] })
+    }
   }
   open_dialog(str) {
     if (str == 'reject') {

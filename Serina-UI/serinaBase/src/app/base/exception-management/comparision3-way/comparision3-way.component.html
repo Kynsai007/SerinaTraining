@@ -1060,7 +1060,10 @@
                          <div>
                           <input type="text" [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
                           [ngStyle]="{'border': line1.is_mapped === 1 ? '2px solid #f2be42' : ''}"
-                          [value]="line1.Value" [title]="line1.Value" class="form-control inputHeight" disabled>
+                          [value]="line1.Value ? line1.Value : 'NA'" [title]="line1.Value ? line1.Value : ''"
+                          class="form-control inputHeight" 
+                          (click)="!line1.Value? open_dialog_comp('manpower_metadata'): null"
+                          [disabled]="line1.Value">
                          </div>
                         </ng-container>
                       </ng-container>
@@ -2749,43 +2752,45 @@
 
 <dialog>
   
-  <div class="d-flex justify-content-between mb-2">
-    <h6 class="f-14">Approval comments</h6>
-    <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
-  </div>
-  <div>
+  <div *ngIf="!this.router.url.includes('Create_GRN_inv_list')">
+    <div class="d-flex justify-content-between mb-2">
+      <h6 class="f-14">Approval comments</h6>
+      <div class="f-14 pointer" (click)="closeDialog()"> <i class="fa fa-close"></i></div>
+    </div>
     <div>
-      <label class="label-head mt-2 mb-0">Comments</label> <br />
-      <!-- <small *ngIf="preApproveBoolean" class="f-11 cmt_text"
-      >Desc: Add the Names of the Signatory is mandatory</small
-    > -->
+      <div>
+        <label class="label-head mt-2 mb-0">Comments</label> <br />
+        <!-- <small *ngIf="preApproveBoolean" class="f-11 cmt_text"
+        >Desc: Add the Names of the Signatory is mandatory</small
+      > -->
+    
+        <textarea
+          required
+          name="comment"
+          class="form-control"
+          style="font-size: 13px"
+          minlength="0"
+          (keyup)="addComments($event.target.value)"
+          cols="50"
+          rows="2"
+        ></textarea>
+      </div>
+      <div class="f-12" id="cmt">
+        Note: Please add comment for the bulk approval for the same batch invoices.
+      </div>
+    </div>
   
-      <textarea
-        required
-        name="comment"
-        class="form-control"
-        style="font-size: 13px"
-        minlength="0"
-        (keyup)="addComments($event.target.value)"
-        cols="50"
-        rows="2"
-      ></textarea>
+    <div class="d-flex justify-content-end mt-3">
+      <button
+        type="button"
+        class="primary_btn f-12"
+        [disabled]="commentsBool"
+        [ngStyle]="{ cursor: commentsBool ? 'not-allowed' : 'pointer' }"
+        (click)="financeApprove()"
+      >
+        Approve
+      </button>
     </div>
-    <div class="f-12" id="cmt">
-      Note: Please add comment for the bulk approval for the same batch invoices.
-    </div>
-  </div>
-
-  <div class="d-flex justify-content-end mt-3">
-    <button
-      type="button"
-      class="primary_btn f-12"
-      [disabled]="commentsBool"
-      [ngStyle]="{ cursor: commentsBool ? 'not-allowed' : 'pointer' }"
-      (click)="financeApprove()"
-    >
-      Approve
-    </button>
   </div>
 </dialog>
 <p-toast></p-toast>

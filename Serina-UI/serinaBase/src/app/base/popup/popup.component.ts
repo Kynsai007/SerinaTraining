@@ -104,12 +104,13 @@ export class PopupComponent implements OnInit {
     } else if (this.type == 'manpower_metadata') {
       // this.manPowerMetadata = JSON.parse(JSON.stringify(this.data?.resp?.manpower_metadata));
       this.manPowerMetadata = this.ds.GRN_PO_Data.map(ele => {
+        const matchingItem = this.ds?.grn_manpower_metadata?.headerFields?.find(item => item.itemCode == ele.LineNumber);
         return {
           description: ele.Name,
           itemCode: ele.LineNumber,
-          durationMonth: '', // Initialize empty, to be filled by user
-          isTimesheets: false, // Initialize as false, can be toggled by user
-          shifts: '' // Initialize empty, to be filled by user
+          durationMonth: matchingItem?.durationMonth || '',
+          isTimesheets: matchingItem ? true : false,
+          shifts: matchingItem?.shifts || ''
         };
       });
       // Create table headers
@@ -543,8 +544,18 @@ export class PopupComponent implements OnInit {
     this.ES.getManPowerData(s_date, e_date).subscribe((data: any) => {
     })
   }
-  updateManpowerMetadata(index: number, field: string, value: any) {
+  updateManpowerMetadata(index: number, field: string, value: any, row: any) {
     this.manPowerMetadata[index][field] = value;
+    let existingRecord = this.ds.grn_manpower_metadata.headerFields.find(el => el.itemCode == row);
+    if (existingRecord) {
+      existingRecord[field] = value;
+    } else {
+      this.ds.grn_manpower_metadata.headerFields.push({
+        itemCode: row,
+        [field]: value
+      });
+    }
+    // this.ds.grn_manpower_metadata.headerFields[index][field] = value;
   }
   saveManpowerMetadata() {
     this.dialogRef.close(this.manPowerMetadata);

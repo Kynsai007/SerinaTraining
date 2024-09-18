@@ -338,6 +338,13 @@ $theme_color: var(--themeColor);
     font-size: 12px;
     height: 30px;
   }
+  #grnTable {
+    overflow: auto;
+    max-height: calc(100vh - 200px);
+    .linevalue {
+      height: auto;
+    }
+  }
   #grnTable .linevalue {
     height: auto;
   }
