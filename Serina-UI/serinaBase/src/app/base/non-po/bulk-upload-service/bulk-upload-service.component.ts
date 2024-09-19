@@ -34,10 +34,7 @@ export class BulkUploadServiceComponent implements OnInit {
   erpSelectionBoolean: boolean;
   uploadSectionBoolean: boolean;
   displayErpBoolean;
-  ERPList = [
-    { erp: 'Fixed'},
-    { erp: 'Dynamic' },
-  ]
+  ERPList = [];
   progress: number;
   UploadDetails: string | Blob;
   selectedERPType: any;
@@ -95,6 +92,16 @@ export class BulkUploadServiceComponent implements OnInit {
     this.tableDataForBatch();
     this.getEntitySummary();
     this.client_name = this.dataService.configData.client_name;
+    if(this.client_name == 'Enova'){
+      this.ERPList = [
+        { erp: 'Dynamic' },
+      ]
+    } else {
+      this.ERPList = [
+        { erp: 'Fixed'},
+        { erp: 'Dynamic' },
+      ]
+    }
   }
 
   onChange(evt) {

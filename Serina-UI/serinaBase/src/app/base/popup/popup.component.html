@@ -408,7 +408,7 @@
               <div *ngIf="item.TagName != 'Actions'">
                 <input
                   #inputval
-                  [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName)?'text':'number'"
+                  [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity','PO Balance Qty'].includes(item.TagName)?'text':'number'"
                   [name]="line1.tagName_u"
                   [title]="line1.Value"
                   class="form-control inputHeight w-sm"
@@ -416,7 +416,7 @@
                   [ngClass]="item.TagName == 'Description'?'w-des':''"
                   required
                   (change)="onChange(line1, line1.Value)"
-                  [readonly]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData"
+                  [disabled]="['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData"
                 />
               </div>
               <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">

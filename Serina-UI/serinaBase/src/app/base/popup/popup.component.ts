@@ -448,12 +448,14 @@ export class PopupComponent implements OnInit {
         if (this.manPowerData.length > 4) {
           this.manPowerData = [];
           sampleData = sampleData.filter(el => {
-            return ['Description', 'PO Qty', 'Monthly quantity', 'Number of Shifts', 'Shift', 'GRN - Quantity'].includes(el.TagName)
+            return ['Description', 'PO Qty', 'PO Balance Qty', 'Monthly quantity', 'Number of Shifts', 'Shift', 'GRN - Quantity'].includes(el.TagName)
           })
           this.manPowerData = sampleData;
           let shiftIndex = this.manPowerData.findIndex(el => el.TagName == 'Number of Shifts');
           let shiftLineData = this.manPowerData[shiftIndex].linedata
-          this.manPowerData.splice(shiftIndex, 0, { TagName: `Shift`, linedata: shiftLineData })
+          if(this.manPowerData.filter(el => el.TagName == 'Shift').length == 0){
+            this.manPowerData.splice(shiftIndex, 0, { TagName: `Shift`, linedata: shiftLineData })
+          }
         }
         this.timeSheet = [];
         this.grnLineCount.forEach((el, index) => {
@@ -493,15 +495,22 @@ export class PopupComponent implements OnInit {
                     manpower.linedata.forEach(line => {
                       if(line.tagName == item.tagName){
                         line.Value = item.quantity;
-                        line.isSavedData = true;
                       }
                     })
                   }
+                  manpower.linedata.forEach(line => {
+                    if(line.LineNumber == el.itemCode){
+                      line.isSavedData = true;
+                    }
+                    if(line.tagName == 'Quantity' && line.LineNumber == el.itemCode){
+                      line.Value = 0;
+                    }
+                  })
                 })
               })
             })
           }
-        }, 100)
+        }, 1000)
       }
 
     }
@@ -511,39 +520,39 @@ export class PopupComponent implements OnInit {
     this.dateRange();
   }
 
-  addNewShift(str, index) {
-    this.manPowerData.forEach(el => {
-      el.linedata.splice(index + 1, 0, JSON.parse(JSON.stringify(el.linedata[index])))
-    })
-    this.manPowerData.forEach(el => {
-      el.linedata.forEach((v, i) => {
-        if (index + 1 == i && el.TagName != 'Description' && el.TagName != "PO Qty") {
-          v.tagName_u = `shift${index + 1}-${el.TagName}`
-        }
-      })
-    })
-  }
+  // addNewShift(str, index) {
+  //   this.manPowerData.forEach(el => {
+  //     el.linedata.splice(index + 1, 0, JSON.parse(JSON.stringify(el.linedata[index])))
+  //   })
+  //   this.manPowerData.forEach(el => {
+  //     el.linedata.forEach((v, i) => {
+  //       if (index + 1 == i && el.TagName != 'Description' && el.TagName != "PO Qty") {
+  //         v.tagName_u = `shift${index + 1}-${el.TagName}`
+  //       }
+  //     })
+  //   })
+  // }
 
-  removeShift(str, index) {
-    const matD: MatDialogRef<ConfirmationComponent> = this.mat_dlg.open(ConfirmationComponent, {
-      width: '400px',
-      height: '300px',
-      hasBackdrop: false,
-      data: { body: "Are you sure, you want to delete?", type: "confirmation", heading: "Confirmation", icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
-    })
-    matD.afterClosed().subscribe((bool: Boolean) => {
-      if (bool) {
-        this.manPowerData.forEach((el) => {
-          el.linedata.splice(index, 1)
-        })
-      }
-    })
-  }
+  // removeShift(str, index) {
+  //   const matD: MatDialogRef<ConfirmationComponent> = this.mat_dlg.open(ConfirmationComponent, {
+  //     width: '400px',
+  //     height: '300px',
+  //     hasBackdrop: false,
+  //     data: { body: "Are you sure, you want to delete?", type: "confirmation", heading: "Confirmation", icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
+  //   })
+  //   matD.afterClosed().subscribe((bool: Boolean) => {
+  //     if (bool) {
+  //       this.manPowerData.forEach((el) => {
+  //         el.linedata.splice(index, 1)
+  //       })
+  //     }
+  //   })
+  // }
 
-  getTimeSheetData(s_date, e_date) {
-    this.ES.getManPowerData(s_date, e_date).subscribe((data: any) => {
-    })
-  }
+  // getTimeSheetData(s_date, e_date) {
+  //   this.ES.getManPowerData(s_date, e_date).subscribe((data: any) => {
+  //   })
+  // }
   updateManpowerMetadata(index: number, field: string, value: any, row: any) {
     this.manPowerMetadata[index][field] = value;
     let existingRecord = this.ds.grn_manpower_metadata.headerFields.find(el => el.itemCode == row);
@@ -602,11 +611,11 @@ export class PopupComponent implements OnInit {
             // Find the corresponding shift count from the Number of Shifts tag using the same idDocumentLineItems
             const shiftCountLine = numberOfShiftsTag.linedata.find(shiftLine => shiftLine.idDocumentLineItems === line.idDocumentLineItems);
             const shiftCount = shiftCountLine ? parseInt(shiftCountLine.Value, 10) : 1;  // Default to 1 if not found
-
             // Replicate the line based on the shift count
             return Array.from({ length: shiftCount }, (_, index) => ({
               ...line,
-              idDocumentLineItems: `${line.idDocumentLineItems}-${index + 1}`,  // Add unique ID per shift
+              idDocumentLineItems: `${line.idDocumentLineItems}-${index + 1}`,
+              tagName_u: `${line.tagName_u}-${index + 1}`,
               Value: item.TagName == 'Number of Shifts' ? `Shift ${index + 1}` : line.Value  // Add Shift information per replication
             }));
           })
@@ -623,7 +632,7 @@ export class PopupComponent implements OnInit {
 
     let sepValuesByLineNumber = {};
     this.manPowerData.forEach(item => {
-      if (!['Description', 'PO Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity'].includes(item.TagName)) {
+      if (!['Description', 'PO Qty', 'PO Balance Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity'].includes(item.TagName)) {
         item.linedata.forEach(line => {
           const lineNumber = line.LineNumber;
           const value = parseFloat(line.Value);
@@ -658,7 +667,7 @@ export class PopupComponent implements OnInit {
           const lineNumber = line.LineNumber;
           const sepData = sepValuesByLineNumber[lineNumber];
 
-          if (sepData) {
+          if (sepData && !line.isSavedData) {
             const { totalValue, shiftCount } = sepData;
 
             // Check for valid shiftCount and totalValue before dividing

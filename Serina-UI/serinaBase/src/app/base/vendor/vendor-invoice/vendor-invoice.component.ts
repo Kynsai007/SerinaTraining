@@ -47,6 +47,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   accountsArray = [];
   ERPname:string;
   mainAccount = [];
+  postingList = [{id:1,name:'on-hold'},{id:2,name:'automatic'}];
 
   constructor(private sharedService: SharedService,
     public dataService : DataService,

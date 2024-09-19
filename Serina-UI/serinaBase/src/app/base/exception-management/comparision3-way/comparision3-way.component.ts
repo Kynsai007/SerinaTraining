@@ -137,15 +137,7 @@ export class Comparision3WayComponent
   isAdmin: boolean;
   GRN_PO_Bool: boolean;
   GRN_PO_Data = [];
-  GRN_PO_tags = [
-    { TagName: 'Description', linedata: [] },
-    { TagName: 'PO Qty', linedata: [] },
-    { TagName: 'AmountExcTax', linedata: [] },
-    { TagName: 'GRN - Quantity', linedata: [] },
-    { TagName: 'UnitPrice', linedata: [] },
-    // { TagName: 'PurchUnit', linedata: [] },
-    { TagName: 'Actions', linedata: [] }
-  ];
+  GRN_PO_tags = [];
   po_grn_list = [];
   po_grn_line_list = [];
   filteredPO_GRN = [];
@@ -422,6 +414,7 @@ export class Comparision3WayComponent
   manPowerGRNData: any;
   manPowerAPI_request: any;
   manpowerHeaderId: any;
+  po_qty_array: any;
 
   constructor(
     fb: FormBuilder,
@@ -453,6 +446,20 @@ export class Comparision3WayComponent
     this.client_name = this.dataService?.configData?.client_name;
     if (this.client_name == 'SRG') {
       this.mappingForCredit = true;
+    } 
+    const commonTags = [
+      { TagName: 'Description', linedata: [] },
+      { TagName: 'PO Qty', linedata: [] },
+      { TagName: 'AmountExcTax', linedata: [] },
+      { TagName: 'GRN - Quantity', linedata: [] },
+      { TagName: 'UnitPrice', linedata: [] },
+      { TagName: 'Actions', linedata: [] }
+    ];
+
+    this.GRN_PO_tags = [...commonTags];
+
+    if (this.client_name === 'Cenomi') {
+      this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
     }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
@@ -847,6 +854,8 @@ export class Comparision3WayComponent
         }
       });
     }
+    this.po_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Qty');
+    console.log(this.po_qty_array);
     this.lineDisplayData = this.GRN_PO_tags;
     let arr = this.GRN_PO_tags;
     setTimeout(() => {
@@ -2329,6 +2338,12 @@ export class Comparision3WayComponent
     this.rejectionUserId = event;
   }
   onChangeGrn(lineItem, val) {
+    const po_qty_value = this.po_qty_array.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+    if(po_qty_value < val){
+      this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
+      this.error('GRN Quantity cannot be greater than PO Quantity');
+      return;
+    }
     if (this.GRN_PO_Bool) {
       this.updateAmountExcTax(lineItem, val, 'UnitPrice', 'AmountExcTax', 'idDocumentLineItems');
     } else {
@@ -2790,7 +2805,7 @@ export class Comparision3WayComponent
     // Gather quantities by date for each LineNumber and shift
     let quantitiesByLineNumberAndShift = {};
     inputData.forEach(item => {
-      if (!['Description', 'PO Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity'].includes(item.TagName)) {
+      if (!['Description', 'PO Qty', 'GRN - Quantity', 'Number of Shifts', 'Shift', 'Monthly quantity','PO Balance Qty'].includes(item.TagName)) {
         const date = item.TagName;
 
         item.linedata.forEach(line => {
