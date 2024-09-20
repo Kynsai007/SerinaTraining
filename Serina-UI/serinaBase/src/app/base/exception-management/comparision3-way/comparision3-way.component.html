@@ -1002,9 +1002,10 @@
                 </div>
 
                 <div [ngClass]="GRN_PO_Bool && client_name == 'Cenomi'?'':'hide'">
-                    <label class="f-12">Time sheet
+                    <!-- <div class="f-12" (click)="open_dialog_comp('manpower_metadata')" *ngIf="isManpowerTags">Edit Metadata <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </div> -->
+                    <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
-                    </label>
+                    </label> -->
                 </div>
               </div>
               <table class="invert mt-2 w-100" id="grnTable">
@@ -2093,7 +2094,7 @@
               *ngIf="client_name == 'Cenomi'"
               class="primary_btn f-12 mr-3"
               type="submit"
-              [disabled]="!enable_create_grn"
+              [disabled]="!enable_create_grn || disable_save_btn"
               (click)="
                 router.url.includes('GRN_approvals')
                   ? Approve_grn()
@@ -2105,7 +2106,7 @@
             <button
               class="primary_btn f-12 mr-3"
               type="submit"
-              [disabled]="!enable_create_grn"
+              [disabled]="!enable_create_grn || disable_save_btn"
               (click)="
                 router.url.includes('GRN_approvals')
                   ? Approve_grn()
@@ -2436,7 +2437,7 @@
 
   <div
     *ngIf="headerpop == 'GRN Creation Status'"
-    class="f-13 text-center"
+    class="f-13"
     style="color: #f38a6b"
   >
     {{ APIResponse }}

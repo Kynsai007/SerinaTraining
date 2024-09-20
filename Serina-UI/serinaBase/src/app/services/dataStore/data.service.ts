@@ -230,6 +230,9 @@ export class DataService {
   ent_code: any;
   isCoordinator: boolean;
   grn_manpower_metadata: any;
+  added_manpower_data: any[];
+  number_of_days: number;
+  manpower_saved_date_range: Date[];
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

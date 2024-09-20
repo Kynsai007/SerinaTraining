@@ -488,13 +488,14 @@
         <tr *ngFor="let row of manPowerMetadata; let i = index">
           <td>{{row.description}}</td>
           <td>
-            <input type="number" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event, row.itemCode)">
-          </td>
-          <td>
             <input type="checkbox"  [(ngModel)]="row.isTimesheets" (ngModelChange)="updateManpowerMetadata(i, 'isTimesheets', $event, row.itemCode)">
           </td>
           <td>
-            <input type="number" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event, row.itemCode)">
+            <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event, row.itemCode)">
+          </td>
+
+          <td>
+            <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event, row.itemCode)">
           </td>
         </tr>
       </tbody>

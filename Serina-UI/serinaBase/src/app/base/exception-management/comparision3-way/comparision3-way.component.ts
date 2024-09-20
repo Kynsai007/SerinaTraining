@@ -415,6 +415,8 @@ export class Comparision3WayComponent
   manPowerAPI_request: any;
   manpowerHeaderId: any;
   po_qty_array: any;
+  po_balance_qty_array: any;
+  disable_save_btn: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -786,6 +788,7 @@ export class Comparision3WayComponent
   }
 
   get_PO_GRN_Lines() {
+    this.GRNObject = [];
     this.descrptonBool = true;
     this.dataService.GRN_PO_Data.forEach((ele, i) => {
       const tagMappings = {
@@ -855,7 +858,7 @@ export class Comparision3WayComponent
       });
     }
     this.po_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Qty');
-    console.log(this.po_qty_array);
+    this.po_balance_qty_array = this.GRN_PO_tags.find(item => item.TagName === 'PO Balance Qty');
     this.lineDisplayData = this.GRN_PO_tags;
     let arr = this.GRN_PO_tags;
     setTimeout(() => {
@@ -2339,9 +2342,25 @@ export class Comparision3WayComponent
   }
   onChangeGrn(lineItem, val) {
     const po_qty_value = this.po_qty_array.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
-    if(po_qty_value < val){
+    const po_balance_qty_value = this.po_balance_qty_array.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+    let checking_value;
+    let error_msg;
+    if(po_balance_qty_value){
+      checking_value = po_balance_qty_value;
+      error_msg = 'PO Balance Quantity';
+    } else {
+      checking_value = po_qty_value;
+      error_msg = 'PO Quantity';
+    }
+    if(checking_value < val){
+      // this.dataService.added_manpower_data.forEach(el=>{
+      //   if(el.idDocumentLineItems == lineItem.idDocumentLineItems){
+      //     el.Value = lineItem.old_value;
+      //   }
+      // })
       this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
-      this.error('GRN Quantity cannot be greater than PO Quantity');
+      this.error(`GRN Quantity cannot be greater than ${error_msg}`);
+      this.disable_save_btn = true;
       return;
     }
     if (this.GRN_PO_Bool) {
@@ -2552,7 +2571,11 @@ export class Comparision3WayComponent
       this.SpinnerService.hide();
       if (data.status == 'Posted') {
         this.success(data.message);
-
+        setTimeout(() => {
+          this.router.navigate(['/customer/Create_GRN_inv_list']);
+        }, 2000);
+      }  else if(data.status == 'Draft') {
+        this.update(data.message);
         setTimeout(() => {
           this.router.navigate(['/customer/Create_GRN_inv_list']);
         }, 2000);
@@ -2661,7 +2684,11 @@ export class Comparision3WayComponent
         this.SpinnerService.hide();
         if (data.status == 'Posted') {
           this.success(data.message);
-
+          setTimeout(() => {
+            this.router.navigate(['/customer/Create_GRN_inv_list']);
+          }, 2000);
+        } else if(data.status == 'Draft') {
+          this.update(data.message);
           setTimeout(() => {
             this.router.navigate(['/customer/Create_GRN_inv_list']);
           }, 2000);
@@ -2671,6 +2698,7 @@ export class Comparision3WayComponent
           this.headerpop = 'GRN Creation Status';
           this.APIResponse = data.message;
         }
+
       },
       (error) => {
         this.SpinnerService.hide();
@@ -2759,7 +2787,8 @@ export class Comparision3WayComponent
             "enddate": resp?.dates?.enddate,
             "data": []
           }
-          this.manPowerAPI_request.data = this.prepare_api_request(resp.data);
+          const response = this.prepare_api_request(resp.data);
+          this.manPowerAPI_request.data = response;
           this.manPowerGRNData = resp.data;
           let grnQuantity = resp.data.find(el => el.TagName == 'GRN - Quantity');
           this.lineDisplayData = this.lineDisplayData.map(el => {
@@ -2801,7 +2830,6 @@ export class Comparision3WayComponent
         });
       }
     });
-
     // Gather quantities by date for each LineNumber and shift
     let quantitiesByLineNumberAndShift = {};
     inputData.forEach(item => {
@@ -2869,6 +2897,7 @@ export class Comparision3WayComponent
 
     return shiftData;
   }
+
   createTimeSheetDisplayData(str) {
     this.dataService.GRN_PO_Data.forEach(ele => {
       this.manpower_metadata.forEach(meta => {
@@ -2876,6 +2905,10 @@ export class Comparision3WayComponent
           ele.durationMonth = meta.durationMonth || "NA";
           ele.isTimesheets = str == "new" ? meta.isTimesheets : true;
           ele.shifts = meta.shifts || "NA";
+
+          if(ele.isTimesheets){
+            this.isManpower = true;
+          }
         }
       })
     })
@@ -4187,6 +4220,8 @@ export class Comparision3WayComponent
     delete this.dataService.documentType;
     delete this.tagService.approval_selection_boolean;
     delete this.dataService.subStatusId;
+    delete this.dataService.added_manpower_data;
+    delete this.dataService.number_of_days;
     this.mat_dlg.closeAll();
   }
 }

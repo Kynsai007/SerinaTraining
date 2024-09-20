@@ -98,8 +98,13 @@ export class PopupComponent implements OnInit {
       this.approveBool = true;
       this.flipApproverlist();
     } else if (this.type == 'manpower') {
-      this.dateRange()
-      this.manpowerCreateFunction();
+      this.dateRange();
+      this.manPowerData = this.ds.added_manpower_data;
+      if(!this.manPowerData){
+        this.manpowerCreateFunction();
+      } else {
+        this.grnLineCount = this.manPowerData[0].linedata;
+      }
 
     } else if (this.type == 'manpower_metadata') {
       // this.manPowerMetadata = JSON.parse(JSON.stringify(this.data?.resp?.manpower_metadata));
@@ -116,8 +121,8 @@ export class PopupComponent implements OnInit {
       // Create table headers
       this.manpowerTableHeaders = [
         { header: 'Description', field: 'description' },
-        { header: 'Duration in months', field: 'duration' },
         { header: 'Is Timesheets', field: 'isTimesheets' },
+        { header: 'Duration in months', field: 'duration' },
         { header: 'Number of Shifts', field: 'shifts' }
       ];
     }
@@ -410,7 +415,9 @@ export class PopupComponent implements OnInit {
       }
       const numDays = (y, m) => new Date(y, m, 0).getDate();
       this.number_of_days = numDays(year, selectedMonth);
+      this.ds.number_of_days = this.number_of_days;
       if (frmDate && toDate) {
+        this.ds.manpower_saved_date_range = this.rangeDates;
         // this.getTimeSheetData(s_Date,e_Date);
         if (this.datePicker.overlayVisible) {
           this.datePicker.hideOverlay();
@@ -458,16 +465,25 @@ export class PopupComponent implements OnInit {
           }
         }
         this.timeSheet = [];
+        let index1 = 0;
+        let item_Code = '';
         this.grnLineCount.forEach((el, index) => {
+          index1++;
+          let lineNumber = el.LineNumber || el.itemCode;
+          if(item_Code != lineNumber){
+            item_Code = lineNumber;
+            index1 = 0;
+          }
+
           this.timeSheet.push({
             Value: '',
-            tagName: `timeSheet${index}`,
-            tagName_u: `timeSheet${index}`,
+            tagName: `timeSheet${index1}`,
+            tagName_u: `timeSheet${index1}`,
             ErrorDesc: '',
-            idDocumentLineItems: `${el.LineNumber || el.itemCode}-${index+1}`,
+            idDocumentLineItems: `${lineNumber}-${index1+1}`,
             is_mapped: '',
             old_value: '',
-            LineNumber: el.LineNumber || el.itemCode
+            LineNumber: lineNumber
           })
         })
         let index = 3
@@ -569,14 +585,17 @@ export class PopupComponent implements OnInit {
   saveManpowerMetadata() {
     this.dialogRef.close(this.manPowerMetadata);
   }
+
   onSubmitManpower() {
-    let startDate = this.datePipe.transform(this.rangeDates[0], 'yyyy-MM-dd');    
-    let endDate = this.datePipe.transform(this.rangeDates[1], 'yyyy-MM-dd');
+    let startDate = this.datePipe.transform(this.ds.manpower_saved_date_range[0], 'yyyy-MM-dd');    
+    let endDate = this.datePipe.transform(this.ds.manpower_saved_date_range[1], 'yyyy-MM-dd');
     let response = {
       dates: { startdate: startDate, enddate: endDate },  
       data: this.manPowerData
     }
     this.dialogRef.close(response);
+    this.ds.added_manpower_data = this.manPowerData;
+
   }
 
   manpowerCreateFunction() {
@@ -627,7 +646,7 @@ export class PopupComponent implements OnInit {
     this.grnLineCount = this.manPowerData[0].linedata;
   }
   onChange(line, value) {
-    const numberOfDays = this.number_of_days; 
+    const numberOfDays = this.ds.number_of_days; 
 
 
     let sepValuesByLineNumber = {};
