@@ -280,7 +280,7 @@
             *ngIf="selectedOption != 'Service'"
             class="selectFilter"
             [ngClass]="{
-              'green-border': selectedInvoiceType,
+              'green-border': selectedInvoiceType || !isCustomerPortal,
               'red-border': !selectedInvoiceType && vendorName
             }"
           >
@@ -293,11 +293,11 @@
               ngModel
               [value]="invoiceType"
               required
-              [disabled]="!vendorName"
-              [pTooltip]="!vendorName ? 'Select Vendor' : null"
+              [disabled]="isCustomerPortal && !vendorName"
+              [pTooltip]="isCustomerPortal && !vendorName ? 'Select Vendor' : null"
               tooltipPosition="top"
             >
-            <option value="" disabled></option>
+            <option value="" ></option>
             <option *ngFor="let item of invTypeArr" [value]="item.value">
               {{ item.name }}
             </option>

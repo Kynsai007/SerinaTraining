@@ -548,6 +548,11 @@
             class="fa fa-pencil-square-o f-13 showEye mr-2 font_weight_500"
             (click)="editInvoice(invoiceData)"
           ></i>
+          <i
+            *ngIf="(router.url.includes('invoice/GRN') && client_name == 'Cenomi')"
+            class="fa fa-pencil-square-o f-13 showEye mr-2 font_weight_500"
+            (click)="editGRN(invoiceData)"
+          ></i>
           <button
             *ngIf="router.url.includes('PO')"
             pTooltip="Click here to update PO"

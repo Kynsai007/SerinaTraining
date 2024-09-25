@@ -53,9 +53,8 @@
             <div class="col-sm-7">
               <div>
                 <span class="f-12">Done by</span> :
-                <span style="font-weight: 500"
-                  >{{ item?.firstName }} {{ item?.lastName }}</span
-                >
+                <span style="font-weight: 500" *ngIf="item?.firstName || item?.lastName">{{ item?.firstName }} {{ item?.lastName }}</span>
+                <span style="font-weight: 500" *ngIf="!(item?.firstName || item?.lastName)">Processed by System Automatically </span>
               </div>
               <div *ngIf="item?.DocumentHistoryLogs?.documentdescription">
                 <span class="f-12">Description</span> :

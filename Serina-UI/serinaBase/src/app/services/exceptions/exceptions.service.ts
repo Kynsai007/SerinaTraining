@@ -18,6 +18,8 @@ export class ExceptionsService {
 
   selectedRuleId:number;
   popupmsg = new BehaviorSubject<string>("sample");
+  po_num:string;
+  
   constructor(private http : HttpClient) { }
 
   readBatchInvoicesData(): Observable<any> {
@@ -217,10 +219,46 @@ export class ExceptionsService {
   getManpowerPrefill(po_id,s_date,e_date){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerPrefill/${po_id}?startdate=${s_date}&enddate=${e_date}`) 
   }
-  getManPowerData(s_date,e_date){
-    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerGRN/${this.invoiceID}?startdate=${s_date}&enddate=${e_date}`) 
+  getManPowerData(){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerGRN/${this.invoiceID}/${this.userId}`) 
   }
   createTimesheet(manPowerAPI_request: any,context:any) {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createManpowerGRN/${this.invoiceID}/${context}/${this.userId}`,manPowerAPI_request) 
+  }
+
+  convertData(inputData, purchId: string) {
+    const output = [];
+    
+    // Helper function to find value by tag name
+    const findValueByTagName = (tagName: string,index): string | null => {
+      const item = inputData.find(tag => tag.TagName === tagName);
+      return item ? item.linedata[index].DocumentLineItems.Value : null;
+    };
+  
+    // Iterate through each name (Description) tag
+    inputData.forEach(tag => {
+      if (tag.TagName === 'Description') {
+        tag.linedata.forEach((line,i)=>{
+          const name = line.DocumentLineItems.Value;
+          const poLinenumber = findValueByTagName('POLineNumber',i);
+          const lineNumber = findValueByTagName('LineNumber',i);
+          const quantity = findValueByTagName('Quantity',i);
+          const remainInventPhysical = findValueByTagName('PackingSlip',i);
+          const unitPrice = findValueByTagName('UnitPrice',i);
+    
+          output.push({
+            PurchId: purchId,
+            Name: name || '',
+            LineNumber: lineNumber || poLinenumber,
+            GRNQty: quantity || '',
+            PurchQty:  '',
+            RemainInventPhysical: remainInventPhysical || '',
+            UnitPrice: unitPrice || ''
+          });
+        })
+      }
+    });
+  
+    return output;
   }
 }

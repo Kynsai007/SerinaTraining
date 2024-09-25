@@ -551,14 +551,7 @@ export class Comparision3WayComponent
     this.subStatusId = this.dataService.subStatusId;
     this.statusId = this.dataService.statusId;
 
-    this.manpower_metadata = this.dataService?.grn_manpower_metadata?.headerFields;
-    if (this.client_name == 'Cenomi' && this.router.url.includes('Create_GRN_inv_list')) {
-      if (this.manpower_metadata?.length < 1) {
-        this.manpowerMetadataFunction();
-      } else {
-        this.createTimeSheetDisplayData('old');
-      }
-    }
+
     if (
       this.router.url.includes('invoice/InvoiceDetails/vendorUpload') ||
       this.router.url.includes('invoice/InvoiceDetails/CustomerUpload')
@@ -592,7 +585,6 @@ export class Comparision3WayComponent
           this.tagService.headerName = 'Create GRN with PO';
           this.Itype = 'PO';
           this.getInvoiceFulldata_po();
-          this.get_PO_GRN_Lines();
         } else {
           if (this.router.url.includes('GRN_approvals')) {
             this.tagService.headerName = 'GRN Approval';
@@ -795,14 +787,19 @@ export class Comparision3WayComponent
         'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
         'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
         'PO Balance Qty': { value: 'RemainInventPhysical', isMapped: '', tagName: 'PO Balance Qty' },
-        'GRN - Quantity': { value: 'PurchQty', isMapped: '', tagName: 'Quantity' },
+        'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'PurchQty', isMapped: '', tagName: 'Quantity' },
         'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
         'AmountExcTax': {
           value: (ele) => {
             const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
-            const amount = (unitPrice * ele.PurchQty).toFixed(2);
+            let amount;
+            if(this.dataService.isEditGRN){
+              amount = (unitPrice * ele.GRNQty).toFixed(2);
+            } else {
+              amount = (unitPrice * ele.PurchQty).toFixed(2);
+            }
             this.GRN_line_total += Number(amount);
-            return amount;
+            return Number(amount);
           },
           isMapped: '',
           tagName: 'AmountExcTax'
@@ -898,6 +895,33 @@ export class Comparision3WayComponent
           pushedArrayHeader.push(this.mergedArray);
         });
         this.inputData = pushedArrayHeader;
+        let GRN_linedata = data?.ok?.linedata;
+       if(this.dataService.isEditGRN){
+        let po_lines = this.dataService.po_lines;
+        this.dataService.GRN_PO_Data = this.exceptionService.convertData(GRN_linedata, this.exceptionService.po_num);
+        this.getPODocId(this.exceptionService.po_num)
+        po_lines.forEach(line=>{
+          this.dataService.GRN_PO_Data.forEach(grn_line=>{
+            if(line.LineNumber == grn_line.LineNumber){
+              grn_line.PurchQty = line.PurchQty;
+              grn_line.RemainInventPhysical = line.RemainInventPhysical;
+              
+            }
+          })
+        })
+       } 
+      //  else {
+      //   this.getPODocId(this.po_num);
+      //  }
+        this.manpower_metadata = this.dataService?.grn_manpower_metadata?.headerFields;
+        if (this.client_name == 'Cenomi' && this.router.url.includes('Create_GRN_inv_list')) {
+          if (this.manpower_metadata?.length < 1) {
+            this.manpowerMetadataFunction();
+          } else {
+            this.createTimeSheetDisplayData('old');
+          }
+        }
+        this.get_PO_GRN_Lines();
         // let inv_num_data: any = this.inputData.filter((val) => {
         //   return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
         // });
@@ -907,7 +931,6 @@ export class Comparision3WayComponent
         // });
         this.headerDataOrder();
         // this.po_num = po_num_data[0]?.Value;
-        this.getPODocId(this.po_num);
         if (data?.ok?.vendordata) {
           this.vendorData = {
             ...data?.ok?.vendordata[0].Vendor,
@@ -1315,7 +1338,7 @@ export class Comparision3WayComponent
         ele.order = 2
       } else if (['PurchaseOrder', 'PurchId', 'POHeaderId'].includes(ele.TagLabel)) {
         ele.order = 3
-        this.po_num = ele?.Value
+        this.po_num = ele?.Value;
       } else if (['InvoiceId', 'bill_number'].includes(ele.TagLabel)) {
         this.invoiceNumber = ele?.Value;
         ele.order = 4
@@ -2343,6 +2366,7 @@ export class Comparision3WayComponent
   onChangeGrn(lineItem, val) {
     const po_qty_value = this.po_qty_array.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
     const po_balance_qty_value = this.po_balance_qty_array.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+
     let checking_value;
     let error_msg;
     if(po_balance_qty_value){
@@ -2352,7 +2376,8 @@ export class Comparision3WayComponent
       checking_value = po_qty_value;
       error_msg = 'PO Quantity';
     }
-    if(checking_value < val){
+    if(Number(checking_value) < Number(val)){
+
       // this.dataService.added_manpower_data.forEach(el=>{
       //   if(el.idDocumentLineItems == lineItem.idDocumentLineItems){
       //     el.Value = lineItem.old_value;
@@ -2857,7 +2882,7 @@ export class Comparision3WayComponent
             // Add the date and quantity to the correct shift
             quantitiesByLineNumberAndShift[lineNumber][shift].push({
               date: date,
-              quantity: value.toFixed(2)
+              quantity: value
             });
           } 
         });
@@ -3174,8 +3199,8 @@ export class Comparision3WayComponent
   readPOLines(po_num) {
     this.SpinnerService.show();
     this.SharedService.getPO_Lines(po_num).subscribe((data: any) => {
-      this.PO_GRN_Number_line = data?.result;
       this.SpinnerService.hide();
+      return data?.result;
     }, err => {
       this.error("Server error");
       this.SpinnerService.hide();
@@ -4222,6 +4247,9 @@ export class Comparision3WayComponent
     delete this.dataService.subStatusId;
     delete this.dataService.added_manpower_data;
     delete this.dataService.number_of_days;
+    delete this.SharedService.po_num;
+    delete this.exceptionService.po_num;
     this.mat_dlg.closeAll();
+    this.dataService.isEditGRN = false;
   }
 }

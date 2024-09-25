@@ -107,6 +107,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   FilterData: any;
   ERPName: string;
   actionBool: boolean = true;
+  client_name: any;
 
   constructor(
     private tagService: TaggingService,
@@ -130,6 +131,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.ap_boolean = this.ds.ap_boolean;
     this.initialData();
     this.dateFunc();
+    this.client_name = this.ds.configData?.client_name;
     let userRole = this.authService.currentUserValue['permissioninfo'].NameOfRole.toLowerCase();
     this.ERPName = this.ds.configData?.erpname;
     if (userRole == 'customer super admin' || userRole == 'ds it admin') {
@@ -137,7 +139,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     } else {
       this.isAdmin = false;
     }
-    if(!this.ds.projectIdArr && this.ds.configData?.client_name == 'Enova'){
+    if(!this.ds.projectIdArr && this.client_name == 'Enova'){
       this.getProjectData('12355');
     }
     // if(this.columnsData?.length>10){
@@ -604,6 +606,25 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       }
     }
   }
+  editGRN(e){
+    this.ExceptionsService.po_num = e.PODocumentID;
+    this.sharedService.po_num = e.PODocumentID;
+    this.sharedService.po_doc_id = e.idDocument;
+    this.permissionService.enable_create_grn = true;
+    this.ds.grnWithPOBoolean = true;
+    this.tagService.editable = true;
+    this.ds.isEditGRN = true;
+    this.sharedService.getPO_Lines(e.PODocumentID).subscribe((data: any) => {
+      this.ds.po_lines = data?.result
+    })
+    this.ExceptionsService.getManpowerMetaData(e.PODocumentID).subscribe((data:any)=>{
+      delete this.ds.grn_manpower_metadata
+       this.ds.grn_manpower_metadata = data;
+       this.router.navigate([
+         `customer/Create_GRN_inv_list/Inv_vs_GRN_details/${e.idDocument}`,
+       ]);
+     })
+  }
 
   getPOLines(e) {
     this.SpinnerService.show();
@@ -990,5 +1011,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.error("Server error");
     })
   }
+
+
 
 }

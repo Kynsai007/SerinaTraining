@@ -60,7 +60,8 @@ export class PopupComponent implements OnInit {
   disabledDates: Date[] = [];
   startDate: Date;
   endDate: Date;
-
+  isEditGRN: boolean = false;
+  createdDates = [];
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -82,6 +83,7 @@ export class PopupComponent implements OnInit {
     let grn = this.data?.grnLine;
     this.POLineData = this.data?.resp?.podata;
     this.inv_total = this.data?.resp?.sub_total;
+    this.isEditGRN = this.ds?.isEditGRN;
     if (grn) {
       grn?.forEach(el => {
         let obj = { LineNumber: el.POLineNumber, grnpackagingid: el.PackingSlip };
@@ -100,6 +102,9 @@ export class PopupComponent implements OnInit {
     } else if (this.type == 'manpower') {
       this.dateRange();
       this.manPowerData = this.ds.added_manpower_data;
+      if(this.isEditGRN){
+        this.getTimeSheetData();
+      }
       if(!this.manPowerData){
         this.manpowerCreateFunction();
       } else {
@@ -394,11 +399,13 @@ export class PopupComponent implements OnInit {
     }
   filterByDate(date_input) {
       if(date_input != '') {
+      if(this.isEditGRN){
+        this.rangeDates = date_input
+      }
       const frmDate = this.datePipe.transform(date_input[0], 'MMM d, y');
       const toDate = this.datePipe.transform(date_input[1], 'MMM d, y');
       const s_Date = this.datePipe.transform(date_input[0], 'yyyy-MM-dd');
       const e_Date = this.datePipe.transform(date_input[1], 'yyyy-MM-dd');
-
       let selectedMonth: any = s_Date.split("-")[1]
       let today = new Date();
       let c_month: any = today.getMonth()
@@ -419,7 +426,7 @@ export class PopupComponent implements OnInit {
       if (frmDate && toDate) {
         this.ds.manpower_saved_date_range = this.rangeDates;
         // this.getTimeSheetData(s_Date,e_Date);
-        if (this.datePicker.overlayVisible) {
+        if (!this.isEditGRN && this.datePicker.overlayVisible) {
           this.datePicker.hideOverlay();
 
         }
@@ -515,10 +522,10 @@ export class PopupComponent implements OnInit {
                     })
                   }
                   manpower.linedata.forEach(line => {
-                    if(line.LineNumber == el.itemCode){
+                    if(line.LineNumber == el.itemCode && !this.createdDates.includes(manpower.TagName)){
                       line.isSavedData = true;
                     }
-                    if(line.tagName == 'Quantity' && line.LineNumber == el.itemCode){
+                    if(line.tagName == 'Quantity' && line.LineNumber == el.itemCode && this.createdDates.includes(manpower.TagName)){
                       line.Value = 0;
                     }
                   })
@@ -565,10 +572,21 @@ export class PopupComponent implements OnInit {
   //   })
   // }
 
-  // getTimeSheetData(s_date, e_date) {
-  //   this.ES.getManPowerData(s_date, e_date).subscribe((data: any) => {
-  //   })
-  // }
+  getTimeSheetData() {
+    this.ES.getManPowerData().subscribe((data: any) => {
+      if(data?.data){
+        let dates = [data?.data?.startdate, data?.data?.enddate]
+        this.filterByDate(dates)
+      }
+      if(data?.data?.timesheets?.length>0){
+        data?.data?.timesheets[0].quantity.forEach(e=>{
+          if(!this.createdDates.includes(e.date)){
+            this.createdDates.push(e.date);
+          }
+        })
+      }
+    })
+  }
   updateManpowerMetadata(index: number, field: string, value: any, row: any) {
     this.manPowerMetadata[index][field] = value;
     let existingRecord = this.ds.grn_manpower_metadata.headerFields.find(el => el.itemCode == row);
@@ -645,6 +663,7 @@ export class PopupComponent implements OnInit {
     this.manPowerData = replicatedData;
     this.grnLineCount = this.manPowerData[0].linedata;
   }
+
   onChange(line, value) {
     const numberOfDays = this.ds.number_of_days; 
 
@@ -686,7 +705,7 @@ export class PopupComponent implements OnInit {
           const lineNumber = line.LineNumber;
           const sepData = sepValuesByLineNumber[lineNumber];
 
-          if (sepData && !line.isSavedData) {
+          if (sepData && (!line.isSavedData || this.isEditGRN)) {
             const { totalValue, shiftCount } = sepData;
 
             // Check for valid shiftCount and totalValue before dividing

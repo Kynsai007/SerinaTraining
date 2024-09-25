@@ -233,6 +233,8 @@ export class DataService {
   added_manpower_data: any[];
   number_of_days: number;
   manpower_saved_date_range: Date[];
+  isEditGRN: boolean;
+  po_lines: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

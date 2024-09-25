@@ -994,6 +994,7 @@
                       *ngIf="GRN_PO_Bool"
                       type="text"
                       name="inv_number"
+                      [ngModelOptions]="{standalone: true}"
                       class="inv_number f-12 text_color"
                       placeholder="Please add invoice number"
                       [(ngModel)]="invoiceNumber"
@@ -1036,7 +1037,7 @@
                             <input #inputval type="text" style="border: 0.2px solid #358dc0" 
                                  [name]="line1.idDocumentLineItems" [(ngModel)]="line1.Value" 
                                  (change)="onChangeGrn(line1, inputval.value)" [readonly]="line1.is_timesheets"
-                                 class="form-control inputHeight w-sm" [title]="line1.Value">
+                                 class="form-control inputHeight w-sm" [title]="line1.Value" >
                           </div>
                         </ng-container>
                         <ng-container *ngSwitchCase="'Comments'" [ngSwitch]="GRN_PO_Bool">
@@ -1044,7 +1045,7 @@
                             <div>
                               <input #inputval type="text" style="width: 150px; border: 0.2px solid #358dc0"
                                    [ngClass]="{'w-des': item.TagName === 'Description', 'w-sm': item.TagName !== 'Description'}"
-                                   [(ngModel)]="line1.ErrorDesc" class="form-control inputHeight" [title]="line1.ErrorDesc">
+                                   [(ngModel)]="line1.ErrorDesc" [name]="line1.idDocumentLineItems" [ngModelOptions]="{standalone: true}" class="form-control inputHeight" [title]="line1.ErrorDesc">
                             </div>
                           </ng-container>
                         </ng-container>
@@ -1063,8 +1064,9 @@
                           [ngStyle]="{'border': line1.is_mapped === 1 ? '2px solid #f2be42' : ''}"
                           [value]="line1.Value ? line1.Value : 'NA'" [title]="line1.Value ? line1.Value : ''"
                           class="form-control inputHeight" 
+                          [name]="line1.idDocumentLineItems"
                           (click)="!line1.Value? open_dialog_comp('manpower_metadata'): null"
-                          [disabled]="line1.Value">
+                          [disabled]="line1.Value" [ngModelOptions]="{standalone: true}">
                          </div>
                         </ng-container>
                       </ng-container>
