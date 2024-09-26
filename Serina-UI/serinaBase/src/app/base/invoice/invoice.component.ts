@@ -13,6 +13,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Calendar } from 'primeng/calendar';
+import { PermissionService } from 'src/app/services/permission.service';
 
 export interface updateColumn {
   idtabColumn: number;
@@ -178,12 +179,13 @@ isMobile:boolean;
     private ImportExcelService: ImportExcelService,
     private dateFilterService: DateFilterService,
     private datePipe: DatePipe,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private permissionService: PermissionService
   ) { 
   }
 
   ngOnInit(): void {
-    if(!this.ds.isCoordinator){
+    if(this.permissionService.show_document_status){
       this.userDetails = this.authService.currentUserValue;
       this.userEmailID = this.userDetails.userdetails.email;
       this.GRNCreateBool = this.ds.configData?.enableGRN;
@@ -214,7 +216,7 @@ isMobile:boolean;
       // this.getDisplayReceiptdata();
       this.deviceColumns();
     } else {
-      this.route.navigate(['/customer/approvals'])
+      this.route.navigate(['/customer/home'])
     }
 
   }

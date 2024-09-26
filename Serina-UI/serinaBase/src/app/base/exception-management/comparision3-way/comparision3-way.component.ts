@@ -787,7 +787,7 @@ export class Comparision3WayComponent
         'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
         'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
         'PO Balance Qty': { value: 'RemainInventPhysical', isMapped: '', tagName: 'PO Balance Qty' },
-        'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'PurchQty', isMapped: '', tagName: 'Quantity' },
+        'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'', isMapped: '', tagName: 'Quantity' },
         'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
         'AmountExcTax': {
           value: (ele) => {
@@ -2812,6 +2812,9 @@ export class Comparision3WayComponent
             "enddate": resp?.dates?.enddate,
             "data": []
           }
+          if(this.dataService.isEditGRN){
+            this.manPowerAPI_request.grnDocumentId = this.invoiceID;
+          }
           const response = this.prepare_api_request(resp.data);
           this.manPowerAPI_request.data = response;
           this.manPowerGRNData = resp.data;
@@ -2945,7 +2948,7 @@ export class Comparision3WayComponent
     this.SpinnerService.hide();
   }
   createTimesheetAPI() {
-    this.exceptionService.createTimesheet(this.manPowerAPI_request, 'PO').subscribe((data: any) => {
+    this.exceptionService.createTimesheet(this.SharedService.po_doc_id,this.manPowerAPI_request, 'PO').subscribe((data: any) => {
       if (data.status.toLowerCase() == 'success') {
         this.success(data.message);
         this.manpowerHeaderId = data.ManPowerHeaderId;
@@ -4249,6 +4252,7 @@ export class Comparision3WayComponent
     delete this.dataService.number_of_days;
     delete this.SharedService.po_num;
     delete this.exceptionService.po_num;
+    delete this.dataService.grn_manpower_metadata;
     this.mat_dlg.closeAll();
     this.dataService.isEditGRN = false;
   }

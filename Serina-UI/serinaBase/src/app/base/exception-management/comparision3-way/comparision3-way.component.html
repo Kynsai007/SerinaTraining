@@ -1007,7 +1007,8 @@
                     <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
                     </label> -->
-                </div>
+                    <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Time sheet</button>
+                  </div>
               </div>
               <table class="invert mt-2 w-100" id="grnTable">
                 <tr class="invert_tr" style="width: 50px">
@@ -1023,9 +1024,6 @@
                       <ng-container *ngIf="item.TagName !== 'GRN - AmountExcTax'; else amountExcTax">
                         <div class="d-flex justify-content-between">
                           <div>{{ item.TagName }}</div>
-                          <div *ngIf="item.TagName === 'Description' && isManpower" class="calendar" (click)="open_dialog_comp('manpower')">
-                            <i class="pi pi-calendar"></i>
-                          </div>
                         </div>
                       </ng-container>
                       <ng-template #amountExcTax>AmountExcTax</ng-template>

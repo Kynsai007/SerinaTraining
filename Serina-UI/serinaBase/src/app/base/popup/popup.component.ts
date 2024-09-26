@@ -399,142 +399,145 @@ export class PopupComponent implements OnInit {
     }
   filterByDate(date_input) {
       if(date_input != '') {
-      if(this.isEditGRN){
-        this.rangeDates = date_input
-      }
-      const frmDate = this.datePipe.transform(date_input[0], 'MMM d, y');
-      const toDate = this.datePipe.transform(date_input[1], 'MMM d, y');
-      const s_Date = this.datePipe.transform(date_input[0], 'yyyy-MM-dd');
-      const e_Date = this.datePipe.transform(date_input[1], 'yyyy-MM-dd');
-      let selectedMonth: any = s_Date.split("-")[1]
-      let today = new Date();
-      let c_month: any = today.getMonth()
-      let year: any = s_Date.split("-")[0];
-      if (Number(selectedMonth) != c_month + 1) {
-
-        this.maxiDate = new Date(Number(year), Number(selectedMonth), 0)
-        setTimeout(() => {
-          const input = document.querySelector('.p-inputtext') as HTMLElement;
-          if (input && !e_Date) {
-            input.focus();  // Re-focus the input element to keep the calendar open
-          }
-        }, 0);
-      }
-      const numDays = (y, m) => new Date(y, m, 0).getDate();
-      this.number_of_days = numDays(year, selectedMonth);
-      this.ds.number_of_days = this.number_of_days;
-      if (frmDate && toDate) {
-        this.ds.manpower_saved_date_range = this.rangeDates;
-        // this.getTimeSheetData(s_Date,e_Date);
-        if (!this.isEditGRN && this.datePicker.overlayVisible) {
-          this.datePicker.hideOverlay();
-
+        if(this.isEditGRN){
+          this.rangeDates = date_input
         }
-        let old_data = [];
-        this.ES.getManpowerPrefill(this.sharedService.po_num, s_Date, e_Date).subscribe((data: any) => {
-          old_data =  data?.data?.timesheets;
-          if(old_data){
-            old_data.forEach(el => {
-              el.quantity.forEach(item => {
-                item.itemCode = el.itemCode
-                item.LineNumber = el.itemCode
-                if(el.shift == 'Shift 1'){
-                  item.tagName = 'timeSheet0'
-                }
-                if(el.shift == 'Shift 2'){
-                  item.tagName = 'timeSheet1'
-                }
-                if(el.shift == 'Shift 3'){
-                  item.tagName = 'timeSheet2'
-                }
-                if(el.shift == 'Shift 4'){
-                  item.tagName = 'timeSheet3'
-                }
+        const frmDate = this.datePipe.transform(date_input[0], 'MMM d, y');
+        const toDate = this.datePipe.transform(date_input[1], 'MMM d, y');
+        const s_Date = this.datePipe.transform(date_input[0], 'yyyy-MM-dd');
+        const e_Date = this.datePipe.transform(date_input[1], 'yyyy-MM-dd');
+        let selectedMonth: any = s_Date.split("-")[1]
+        let today = new Date();
+        let c_month: any = today.getMonth()
+        let year: any = s_Date.split("-")[0];
+        if (Number(selectedMonth) != c_month + 1) {
+
+          this.maxiDate = new Date(Number(year), Number(selectedMonth), 0)
+          setTimeout(() => {
+            const input = document.querySelector('.p-inputtext') as HTMLElement;
+            if (input && !e_Date) {
+              input.focus();  // Re-focus the input element to keep the calendar open
+            }
+          }, 0);
+        }
+        const numDays = (y, m) => new Date(y, m, 0).getDate();
+        this.number_of_days = numDays(year, selectedMonth);
+        this.ds.number_of_days = this.number_of_days;
+        if (frmDate && toDate) {
+          this.ds.manpower_saved_date_range = this.rangeDates;
+          // this.getTimeSheetData(s_Date,e_Date);
+          if (!this.isEditGRN && this.datePicker.overlayVisible) {
+            this.datePicker.hideOverlay();
+
+          }
+          let old_data = [];
+          this.ES.getManpowerPrefill(this.sharedService.po_num, s_Date, e_Date).subscribe((data: any) => {
+            old_data =  data?.data?.timesheets;
+            if(old_data){
+              old_data.forEach(el => {
+                el.quantity.forEach(item => {
+                  console.log(item.itemCode,el.itemCode)
+                  item.itemCode = el.itemCode
+                  item.LineNumber = el.itemCode
+                  if(el.shift == 'Shift 1'){
+                    item.tagName = 'timeSheet0'
+                  }
+                  if(el.shift == 'Shift 2'){
+                    item.tagName = 'timeSheet1'
+                  }
+                  if(el.shift == 'Shift 3'){
+                    item.tagName = 'timeSheet2'
+                  }
+                  if(el.shift == 'Shift 4'){
+                    item.tagName = 'timeSheet3'
+                  }
+                })
               })
+            }
+          })
+          let month = frmDate?.split(',')[0]?.split(' ')[0];
+          let date: any = frmDate?.split(',')[0]?.split(' ')[1];
+          let date1: any = toDate?.split(',')[0]?.split(' ')[1];
+          let sampleData = JSON.parse(JSON.stringify(this.manPowerData))
+          this.timeSheet = []
+          if (this.manPowerData.length > 4) {
+            this.manPowerData = [];
+            sampleData = sampleData.filter(el => {
+              return ['Description', 'PO Qty', 'PO Balance Qty', 'Monthly quantity', 'Number of Shifts', 'Shift', 'GRN - Quantity'].includes(el.TagName)
             })
+            this.manPowerData = sampleData;
+            let shiftIndex = this.manPowerData.findIndex(el => el.TagName == 'Number of Shifts');
+            let shiftLineData = this.manPowerData[shiftIndex].linedata
+            if(this.manPowerData.filter(el => el.TagName == 'Shift').length == 0){
+              this.manPowerData.splice(shiftIndex, 0, { TagName: `Shift`, linedata: shiftLineData })
+            }
           }
-        })
-        let month = frmDate?.split(',')[0]?.split(' ')[0];
-        let date: any = frmDate?.split(',')[0]?.split(' ')[1];
-        let date1: any = toDate?.split(',')[0]?.split(' ')[1];
-        let sampleData = JSON.parse(JSON.stringify(this.manPowerData))
-        this.timeSheet = []
-        if (this.manPowerData.length > 4) {
-          this.manPowerData = [];
-          sampleData = sampleData.filter(el => {
-            return ['Description', 'PO Qty', 'PO Balance Qty', 'Monthly quantity', 'Number of Shifts', 'Shift', 'GRN - Quantity'].includes(el.TagName)
-          })
-          this.manPowerData = sampleData;
-          let shiftIndex = this.manPowerData.findIndex(el => el.TagName == 'Number of Shifts');
-          let shiftLineData = this.manPowerData[shiftIndex].linedata
-          if(this.manPowerData.filter(el => el.TagName == 'Shift').length == 0){
-            this.manPowerData.splice(shiftIndex, 0, { TagName: `Shift`, linedata: shiftLineData })
-          }
-        }
-        this.timeSheet = [];
-        let index1 = 0;
-        let item_Code = '';
-        this.grnLineCount.forEach((el, index) => {
-          index1++;
-          let lineNumber = el.LineNumber || el.itemCode;
-          if(item_Code != lineNumber){
-            item_Code = lineNumber;
-            index1 = 0;
-          }
+          this.timeSheet = [];
+          let index1 = 0;
+          let item_Code = '';
+          this.grnLineCount.forEach((el, index) => {
+            index1++;
+            let lineNumber = el.LineNumber || el.itemCode;
+            if(item_Code != lineNumber){
+              item_Code = lineNumber;
+              index1 = 0;
+            }
 
-          this.timeSheet.push({
-            Value: '',
-            tagName: `timeSheet${index1}`,
-            tagName_u: `timeSheet${index1}`,
-            ErrorDesc: '',
-            idDocumentLineItems: `${lineNumber}-${index1+1}`,
-            is_mapped: '',
-            old_value: '',
-            LineNumber: lineNumber
+            this.timeSheet.push({
+              Value: '',
+              tagName: `timeSheet${index1}`,
+              tagName_u: `timeSheet${index1}`,
+              ErrorDesc: '',
+              idDocumentLineItems: `${lineNumber}-${index1+1}`,
+              is_mapped: '',
+              old_value: '',
+              LineNumber: lineNumber
+            })
           })
-        })
-        let index = 3
-        for (let i = Number(date); i <= Number(date1); i++) {
-          let currentDate = new Date(year, selectedMonth-1, i);
-          if (currentDate >= this.startDate && currentDate <= this.endDate) {
-            continue; // Skip the dates within the excluded range
+          let index = 3
+          for (let i = Number(date); i <= Number(date1); i++) {
+            let currentDate = new Date(year, selectedMonth-1, i);
+            if (currentDate >= this.startDate && currentDate <= this.endDate) {
+              continue; // Skip the dates within the excluded range
+            }
+            let data = []
+            let sheet = []
+            sheet = JSON.parse(JSON.stringify(this.timeSheet))
+            sheet.forEach((el, index) => {
+              el.tagName_u = `${month}-${i}-${index}`
+              data.push(el)
+            })
+            this.manPowerData.splice(index, 0, { TagName: `${year}-${selectedMonth}-${i}`, linedata: data })
+            index++
           }
-          let data = []
-          let sheet = []
-          sheet = JSON.parse(JSON.stringify(this.timeSheet))
-          sheet.forEach((el, index) => {
-            el.tagName_u = `${month}-${i}-${index}`
-            data.push(el)
-          })
-          this.manPowerData.splice(index, 0, { TagName: `${year}-${selectedMonth}-${i}`, linedata: data })
-          index++
-        }
-        setTimeout(() => {
-          if(old_data){
-            old_data.forEach(el => {
-              el.quantity.forEach(item => {
-                this.manPowerData.forEach(manpower => {
-                  if(item.date == manpower.TagName){
+          console.log(this.manPowerData)
+          setTimeout(() => {
+            if(old_data){
+              old_data.forEach(el => {
+                el.quantity.forEach(item => {
+                  this.manPowerData.forEach(manpower => {
+                    if(item.date == manpower.TagName){
+                      manpower.linedata.forEach(line => {
+                        console.log(line,item)
+                        if(line.tagName == item.tagName && line.LineNumber == item.itemCode){
+                          line.Value = item.quantity;
+                        }
+                      })
+                    }
                     manpower.linedata.forEach(line => {
-                      if(line.tagName == item.tagName){
-                        line.Value = item.quantity;
+                      if(line.LineNumber == el.itemCode && !this.createdDates.includes(manpower.TagName) && !this.isEditGRN){
+                        line.isSavedData = true;
+                      }
+                      if(line.tagName == 'Quantity' && line.LineNumber == el.itemCode && this.createdDates.includes(manpower.TagName)){
+                        line.Value = 0;
                       }
                     })
-                  }
-                  manpower.linedata.forEach(line => {
-                    if(line.LineNumber == el.itemCode && !this.createdDates.includes(manpower.TagName)){
-                      line.isSavedData = true;
-                    }
-                    if(line.tagName == 'Quantity' && line.LineNumber == el.itemCode && this.createdDates.includes(manpower.TagName)){
-                      line.Value = 0;
-                    }
                   })
                 })
               })
-            })
-          }
-        }, 1000)
-      }
+            }
+          }, 1000)
+        }
 
     }
   }
@@ -575,7 +578,10 @@ export class PopupComponent implements OnInit {
   getTimeSheetData() {
     this.ES.getManPowerData().subscribe((data: any) => {
       if(data?.data){
-        let dates = [data?.data?.startdate, data?.data?.enddate]
+        const fDate = new Date(data?.data?.startdate);
+        const eDate = new Date(data?.data?.enddate)
+        let dates = [fDate,eDate ]
+
         this.filterByDate(dates)
       }
       if(data?.data?.timesheets?.length>0){

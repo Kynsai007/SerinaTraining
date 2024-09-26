@@ -755,7 +755,7 @@
           class="nav_Link f-14"
           [routerLink]=" vendorInvoiceAccess ? 'invoice/allInvoices':'invoice/ServiceInvoices'"
           (click)="doc_status_route()"
-          *ngIf="!isCoordinator"
+          *ngIf="show_document_status"
           [ngClass]="{
             active_cls: router.url.includes('invoice'),
             cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
@@ -1101,6 +1101,7 @@
         cenomiNavlink: ['Cenomi','AGI'].includes(dataStoreService?.configData?.client_name)
       }"
       routerLinkActive="active_cls"
+      *ngIf="show_document_status"
     >
       Document Status
     </div>

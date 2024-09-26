@@ -222,8 +222,8 @@ export class ExceptionsService {
   getManPowerData(){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/getManpowerGRN/${this.invoiceID}/${this.userId}`) 
   }
-  createTimesheet(manPowerAPI_request: any,context:any) {
-    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createManpowerGRN/${this.invoiceID}/${context}/${this.userId}`,manPowerAPI_request) 
+  createTimesheet(po_id,manPowerAPI_request: any,context:any) {
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createManpowerGRN/${po_id}/${context}/${this.userId}`,manPowerAPI_request) 
   }
 
   convertData(inputData, purchId: string) {

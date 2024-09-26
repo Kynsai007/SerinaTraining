@@ -84,6 +84,7 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
   isMenuOpen: boolean;
   isMobile: boolean;
   isCoordinator:boolean;
+  show_document_status: boolean;
 
   constructor(
     public router: Router,
@@ -324,6 +325,8 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     this.chartService.userId = this.userDetails.userdetails.idUser;
     this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
+    this.show_document_status = this.userDetails.permissioninfo.show_document_status;
+    this.permissionService.show_document_status = this.show_document_status;
     this.last_login1 = this.userDetails.last_login;
     this.financeapproveDisplayBoolean =
       this.settingService.finaceApproveBoolean;

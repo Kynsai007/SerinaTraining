@@ -262,6 +262,7 @@ export class RolesComponent implements OnInit {
   leftColumnPermissions: Permission[] = [];
   rightColumnPermissions: Permission[] = [];
   invoicePermissions: Permission[] = [];
+  show_document_status: boolean;
 
   constructor(
     private dataService: DataService,
@@ -465,6 +466,7 @@ export class RolesComponent implements OnInit {
         this.GRNPageBoolean = this.roleInfoDetails.is_gpa;
         this.vendorPageBoolean = this.roleInfoDetails.is_vspa;
         this.settingsPageBoolean = this.roleInfoDetails.is_spa;
+        this.show_document_status = this.roleInfoDetails.show_document_status;
         this.is_fp = this.roleInfoDetails.is_fp;
         this.is_fpa = this.roleInfoDetails.is_fpa;
         this.set_approval_enabled = this.roleInfoDetails.set_approval_enabled;
@@ -595,6 +597,7 @@ export class RolesComponent implements OnInit {
       is_gpa: this.GRNPageBoolean,
       is_vspa: this.vendorPageBoolean,
       is_spa: this.settingsPageBoolean,
+      show_document_status: this.show_document_status,
       is_fp : this.is_fp,
       is_fpa:this.is_fpa,
       set_approval_enabled:this.set_approval_enabled
