@@ -1028,6 +1028,24 @@ export class Comparision3WayComponent
         //   return (val.TagLabel == 'PurchaseOrder');
         // });
         // this.po_num = po_num_data[0]?.Value;
+        if (response?.servicedata) {
+          this.isServiceData = true;
+          this.vendorData = {
+            ...response.servicedata[0].ServiceAccount,
+            ...response.servicedata[0].ServiceProvider,
+          };
+          this.vendorName = this.vendorData['ServiceProviderName'];
+          this.serviceProvidercode = this.vendorData['ServiceProviderCode'];
+          if (this.vendorName == 'SANAM') {
+            this.isFormValid = false;
+            this.reqServiceprovider = true;
+            // this.costTabBoolean = false;
+            // this.reqDataValidation();
+          }
+          else {
+            this.reqServiceprovider = false;
+          }
+        }
         this.headerDataOrder();
         if (this.po_num) {
           this.getPODocId(this.po_num);
@@ -1169,24 +1187,7 @@ export class Comparision3WayComponent
           this.vendorName = this.vendorData['VendorName'];
           this.vendorId = this.vendorData['idVendor'];
         }
-        if (response?.servicedata) {
-          this.isServiceData = true;
-          this.vendorData = {
-            ...response.servicedata[0].ServiceAccount,
-            ...response.servicedata[0].ServiceProvider,
-          };
-          this.vendorName = this.vendorData['ServiceProviderName'];
-          this.serviceProvidercode = this.vendorData['ServiceProviderCode'];
-          if (this.vendorName == 'SANAM') {
-            this.isFormValid = false;
-            this.reqServiceprovider = true;
-            // this.costTabBoolean = false;
-            // this.reqDataValidation();
-          }
-          else {
-            this.reqServiceprovider = false;
-          }
-        }
+
         this.support_doc_list = response?.support_doc?.files;
         if (this.support_doc_list == null) {
           this.support_doc_list = []
@@ -1331,34 +1332,55 @@ export class Comparision3WayComponent
   }
 
   headerDataOrder() {
-    this.inputData.forEach(ele => {
-      if (ele.TagLabel == 'VendorName') {
-        ele.order = 1
-      } else if (ele.TagLabel == 'VendorAddress') {
-        ele.order = 2
-      } else if (['PurchaseOrder', 'PurchId', 'POHeaderId'].includes(ele.TagLabel)) {
-        ele.order = 3
-        this.po_num = ele?.Value;
-      } else if (['InvoiceId', 'bill_number'].includes(ele.TagLabel)) {
-        this.invoiceNumber = ele?.Value;
-        ele.order = 4
-      } else if (ele.TagLabel == 'InvoiceTotal') {
-        ele.order = 5
-      } else if (ele.TagLabel == 'InvoiceDate') {
-        ele.order = 6
-      } else if (ele.TagLabel == 'TotalTax') {
-        ele.order = 7
-      } else if (ele.TagLabel == 'SubTotal') {
-        ele.order = 8
-        this.invoice_subTotal = ele?.Value;
-      } else if (ele.TagLabel == 'PaymentTerm') {
-        ele.order = 9
-      } else if (ele.TagLabel == 'TRN') {
-        ele.order = 10
-      } else if (ele.TagLabel == 'DueDate') {
-        ele.order = 11
-      }
-    })
+    if(!this.isServiceData){
+      this.inputData.forEach(ele => {
+        if (ele.TagLabel == 'VendorName') {
+          ele.order = 1
+        } else if (ele.TagLabel == 'VendorAddress') {
+          ele.order = 2
+        } else if (['PurchaseOrder', 'PurchId', 'POHeaderId'].includes(ele.TagLabel)) {
+          ele.order = 3
+          this.po_num = ele?.Value;
+        } else if (['InvoiceId', 'bill_number'].includes(ele.TagLabel)) {
+          this.invoiceNumber = ele?.Value;
+          ele.order = 4
+        } else if (ele.TagLabel == 'InvoiceTotal') {
+          ele.order = 5
+        } else if (ele.TagLabel == 'InvoiceDate') {
+          ele.order = 6
+        } else if (ele.TagLabel == 'TotalTax') {
+          ele.order = 7
+        } else if (ele.TagLabel == 'SubTotal') {
+          ele.order = 8
+          this.invoice_subTotal = ele?.Value;
+        } else if (ele.TagLabel == 'PaymentTerm') {
+          ele.order = 9
+        } else if (ele.TagLabel == 'TRN') {
+          ele.order = 10
+        } else if (ele.TagLabel == 'DueDate') {
+          ele.order = 11
+        }
+      })
+    } else {
+      this.inputData.forEach(ele => {
+        let tag = ele.TagLabel.toLowerCase();
+        if (tag == 'company name') {
+          ele.order = 1
+        } else if (tag.includes('customer po box')) {
+          ele.order = 2
+        } else if (tag == 'bill number') {
+          ele.order = 3
+        } else if (tag.includes('customer trn')) {
+          ele.order = 4
+        } else if (tag == 'bill issue date') {
+          ele.order = 5
+        } else if (tag == 'account number') {
+          ele.order = 6
+        } else if (tag == 'bill period') {
+          ele.order = 7
+        } 
+      })
+    }
     // Separate items with and without the 'order' key
     const withOrder = this.inputData.filter(item => item.hasOwnProperty('order'));
     const withoutOrder = this.inputData.filter(item => !item.hasOwnProperty('order'));

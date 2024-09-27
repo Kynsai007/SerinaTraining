@@ -230,6 +230,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       this.pageNumber = this.ds.rejTabPageNumber;
     } else if (this.router.url.includes('ServiceInvoices')) {
       this.pageNumber = this.ds.serviceTabPageNumber;
+      if(this.client_name == 'AGI'){
+        this.rows = 50;
+      }
     } else if (this.router.url.includes('ExceptionManagement')) {
       this.pageNumber = this.ds.excTabPageNumber;
     } else if (this.router.url.includes('Create_GRN_inv_list')) {

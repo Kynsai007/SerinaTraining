@@ -1051,6 +1051,8 @@ isMobile:boolean;
     } else {
       this.invoiceDisplayData = this.filterData;
       this.allInvoiceLength = this.invoiceDisplayData.length;
+      this.serviceinvoiceDispalyData = this.filterDataService;
+      this.serviceInvoiceLength = this.serviceinvoiceDispalyData.length;
       this.search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
     }
   }

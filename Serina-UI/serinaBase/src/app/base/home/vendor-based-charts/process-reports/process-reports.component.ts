@@ -453,12 +453,14 @@ export class ProcessReportsComponent implements OnInit {
     this.SpinnerService.show();
     this.chartsService.getvendorBasedSummary(filter).subscribe((data: any) => {
       this.vendorSummary = data?.data;
-      this.cardsArr[0].count = this.vendorSummary?.totaluploaded[0]?.count;
-      this.cardsArr[1].count = this.vendorSummary?.erpinvoice[0]?.count;
-      this.cardsArr[2].count= this.vendorSummary?.pending[0]?.count;
-      this.cardsArr[3].count = this.vendorSummary?.rejected[0]?.count;
-      this.cardsArr[4].count = this.vendorSummary?.errorinv[0]?.count;
-      this.cardsArr[5].count = this.vendorSummary?.avguptime;
+      if(this.vendorSummary){
+        this.cardsArr[0].count = this.vendorSummary?.totaluploaded[0]?.count;
+        this.cardsArr[1].count = this.vendorSummary?.erpinvoice[0]?.count;
+        this.cardsArr[2].count= this.vendorSummary?.pending[0]?.count;
+        this.cardsArr[3].count = this.vendorSummary?.rejected[0]?.count;
+        this.cardsArr[4].count = this.vendorSummary?.errorinv[0]?.count;
+        this.cardsArr[5].count = this.vendorSummary?.avguptime;
+      }
       this.SpinnerService.hide();
     }, err=>{
       this.SpinnerService.hide();
@@ -473,115 +475,55 @@ export class ProcessReportsComponent implements OnInit {
 
   filterByDate(date) {
     this.selectedDateValue = '';
-    let query = '';
-    let date1: any;
-    let date2: any
-    if (date != '' && date != undefined) {
+    let queryParams: any = {};
+    let date1: any, date2: any;
+  
+    if (date && date.length) {
       date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
       date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
-      if (this.datePicker.overlayVisible) {
+      if (this.datePicker?.overlayVisible) {
         this.datePicker.hideOverlay();
       }
-      this.selectedDateValue = date
+      this.selectedDateValue = date;
+      queryParams.date = `${date1}To${date2}`;
     }
-    if (
-      this.selectedVendor != 'ALL' &&
-      this.selectedEntityValue == 'ALL' &&
-      this.selectedSourceValue == 'ALL' &&
-      this.selectedDateValue == ''
-    ) {
-      let encodeString = encodeURIComponent(this.selectedVendor);
-      query = `?vendor=${encodeString}`;
-    } else if (
-      this.selectedVendor == 'ALL' &&
-      this.selectedEntityValue != 'ALL' &&
-      this.selectedSourceValue == 'ALL' &&
-      this.selectedDateValue == ''
-    ) {
-      query = `?entity=${this.selectedEntityValue}`;
-    } else if (
-      this.selectedVendor == 'ALL' &&
-      this.selectedEntityValue == 'ALL' &&
-      this.selectedSourceValue != 'ALL' &&
-      this.selectedDateValue == ''
-    ) {
-      query = `?source=${this.selectedSourceValue}`;
-    } else if (
-      this.selectedVendor == 'ALL' &&
-      this.selectedEntityValue == 'ALL' &&
-      this.selectedSourceValue == 'ALL' &&
-      this.selectedDateValue != ''
-    ) {
-      query = `?date=${date1}To${date2}`;
-    } else if (
-      this.selectedVendor != 'ALL' &&
-      this.selectedEntityValue != 'ALL' &&
-      this.selectedSourceValue == 'ALL' &&
-      this.selectedDateValue == ''
-    ) {
-      let encodeString = encodeURIComponent(this.selectedVendor);
-      query = `?vendor=${encodeString}&entity=${this.selectedEntityValue}`;
-    } else if (
-      this.selectedVendor != 'ALL' &&
-      this.selectedEntityValue != 'ALL' &&
-      this.selectedSourceValue != 'ALL' &&
-      this.selectedDateValue == ''
-    ) {
-      let encodeString = encodeURIComponent(this.selectedVendor);
-      query = `?vendor=${encodeString}&entity=${this.selectedEntityValue}&source=${this.selectedSourceValue}`;
-    } else if (
-      this.selectedVendor != 'ALL' &&
-      this.selectedEntityValue != 'ALL' &&
-      this.selectedSourceValue != 'ALL' &&
-      this.selectedDateValue != ''
-    ) {
-      let encodeString = encodeURIComponent(this.selectedVendor);
-      query = `?vendor=${encodeString}&entity=${this.selectedEntityValue}&source=${this.selectedSourceValue}&date=${date1}To${date2}`;
-    } else if (
-      this.selectedVendor == 'ALL' &&
-      this.selectedEntityValue != 'ALL' &&
-      this.selectedSourceValue != 'ALL' &&
-      this.selectedDateValue != ''
-    ) {
-      query = `?entity=${this.selectedEntityValue}&source=${this.selectedSourceValue}&date=${date1}To${date2}`;
-    } else if (
-      this.selectedVendor == 'ALL' &&
-      this.selectedEntityValue != 'ALL' &&
-      this.selectedSourceValue == 'ALL' &&
-      this.selectedDateValue != ''
-    ) {
-      query = `?entity=${this.selectedEntityValue}&date=${date1}To${date2}`;
-    } else if (
-      this.selectedVendor == 'ALL' &&
-      this.selectedEntityValue != 'ALL' &&
-      this.selectedSourceValue != 'ALL' &&
-      this.selectedDateValue == ''
-    ) {
-      query = `?entity=${this.selectedEntityValue}&source=${this.selectedSourceValue}`;
-    } else if (
-      this.selectedVendor == 'ALL' &&
-      this.selectedEntityValue == 'ALL' &&
-      this.selectedSourceValue != 'ALL' &&
-      this.selectedDateValue != ''
-    ) {
-      query = `?source=${this.selectedSourceValue}&date=${date1}To${date2}`;
+  
+    // Set query parameters based on selected values
+    if (this.selectedVendor !== 'ALL') {
+      queryParams.vendor = encodeURIComponent(this.selectedVendor);
     }
+    if (this.selectedEntityValue !== 'ALL') {
+      queryParams.entity = this.selectedEntityValue;
+    }
+    if (this.selectedSourceValue !== 'ALL') {
+      queryParams.source = this.selectedSourceValue;
+    }
+  
+    // Build the query string
+    const query = Object.keys(queryParams)
+      .map(key => `${key}=${queryParams[key]}`)
+      .join('&');
+    let queryP = ''
+    if(query != ''){
+      queryP = `?${query}`;
+    }
+    // Trigger data fetching methods
     this.chartsData();
-    this.readInvSummmary(query);
-    this.readvendorAmount(query);
-    this.readInvCountByVendor(query);
-    this.readInvCountBySource(query);
-    this.readInvAgeReport(query);
-    this.readInvCountByEntity(query);
-    this.readPOSummary(query);
-    // this.readPageCountByEntity(query);
-    // this.readSource();
-    // this.getEntitySummary();
+    this.readInvSummmary(queryP);
+    this.readvendorAmount(queryP);
+    this.readInvCountByVendor(queryP);
+    this.readInvCountBySource(queryP);
+    this.readInvAgeReport(queryP);
+    this.readInvCountByEntity(queryP);
+    this.readPOSummary(queryP);
+  
+    // Close the dialog and reset charts container
     this.closeDialog();
     setTimeout(() => {
       this.setConatinerForCharts();
     }, 1000);
   }
+  
   clearDates(){
     this.selectedDateValue = '';
   }
