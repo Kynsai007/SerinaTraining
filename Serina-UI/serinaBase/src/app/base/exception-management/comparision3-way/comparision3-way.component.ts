@@ -1058,7 +1058,8 @@ export class Comparision3WayComponent
           this.getGRNnumbers(this.po_num);
         }
         if (this.documentType == 'credit note') {
-          // this.getProjectData();
+          this.getProjectData();
+          this.getProjectCatData();
           this.getPOs();
           this.getVendorInvoices(this.po_num)
           this.projectCArr = this.dataService.projectCArr;
@@ -2876,6 +2877,7 @@ export class Comparision3WayComponent
       })
     }
   }
+
   prepare_api_request(inputData) {
     this.saveDisabled = false;
     let shiftData = [];
@@ -4185,6 +4187,7 @@ export class Comparision3WayComponent
 
   filterProject(event, tag) {
     let arr = [];
+    this.SpinnerService.show();
     if (tag == 'Project') {
       arr = this.projectIdArr;
     } else {
@@ -4201,6 +4204,7 @@ export class Comparision3WayComponent
       }
     }
     this.filteredProject = filtered;
+    this.SpinnerService.hide();
   }
 
   onSelectProject(event, value) {
@@ -4261,6 +4265,7 @@ export class Comparision3WayComponent
   onChecked(value) {
     this.isManpower = value
   }
+
   progressiveAmount(amount, id) {
     this.exceptionService.amountToApply(amount, id).subscribe((data: any) => {
       if (data?.status == 'sucess') {
@@ -4270,6 +4275,20 @@ export class Comparision3WayComponent
       }
     }, err => {
       this.error("Server error")
+    })
+  }
+
+  getProjectData(){
+    this.exceptionService.readProjectData().subscribe((data:any)=>{
+      this.projectIdArr = data.result.value;
+
+    },err=>{
+    })
+  }
+  getProjectCatData(){
+    this.exceptionService.readProjectCatData().subscribe((data:any)=>{
+      this.projectCArr = data.result.value;
+    },err=>{
     })
   }
   ngOnDestroy() {
