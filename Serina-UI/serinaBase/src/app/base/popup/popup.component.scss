@@ -66,7 +66,7 @@ $theme_color: var(--themeColor);
 }
 .tabDiv {
   border-top: 2px solid lightgray;
-  max-height: 41vh !important;
+  max-height: 60vh !important;
   margin-top: 2px;
   min-height: 41vh !important;
   overflow: auto;
@@ -163,4 +163,9 @@ $theme_color: var(--themeColor);
   height: 25px;
   position: relative;
   left: -10px;
+}
+.man_btns {
+  position: absolute;
+    bottom: -26px;
+    right: 30px;
 }

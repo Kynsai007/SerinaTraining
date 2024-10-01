@@ -399,13 +399,30 @@ export class PopupComponent implements OnInit {
           let old_data = [];
           this.ES.getManpowerPrefill(this.sharedService.po_num, s_Date, e_Date).subscribe((data: any) => {
             old_data =  data?.data?.timesheets;
-            if(old_data){
-                if(old_data.length > 0 && !this.isEditGRN){
-                  const matD: MatDialogRef<ConfirmationComponent> = this.confirmFun("Overlapping dates are there. Please close this window and try again with another date range.","ok","Information")
 
-                  matD.afterClosed().subscribe((bool) => {
-                    this.dialogRef.close();
-                  })
+            if(old_data){
+              let item_codes = [];
+              old_data.filter(el=> {
+                if(!item_codes.includes(el.itemCode)){
+                  item_codes.push(el.itemCode)
+                }
+              })
+              let va_bool:boolean;
+              let lineArr = [];
+              console.log(this.manPowerData,this.manPowerData[0])
+              this.manPowerData[0].linedata.filter(id=>{
+                if(!lineArr.includes(id.LineNumber)){
+                  lineArr.push(Number(id.LineNumber))
+                }
+              });
+              va_bool = lineArr.every(e=> item_codes.includes(e))
+              console.log(va_bool,item_codes,lineArr)
+              if(old_data.length > 0 && !this.isEditGRN && va_bool ){
+                const matD: MatDialogRef<ConfirmationComponent> = this.confirmFun("Overlapping dates are there. Please close this window and try again with another date range.","ok","Information")
+
+                matD.afterClosed().subscribe((bool) => {
+                  this.dialogRef.close();
+                })
               }
               old_data.forEach(el => {
                 el.quantity.forEach(item => {

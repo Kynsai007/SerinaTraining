@@ -2811,7 +2811,7 @@ export class Comparision3WayComponent
       }
     } else if (str == 'manpower') {
       w = '80%';
-      h = '72vh';
+      h = '82vh';
       response = { "grnData_po": this.lineDisplayData }
     } else if (str == 'manpower_metadata') {
       w = '60%';

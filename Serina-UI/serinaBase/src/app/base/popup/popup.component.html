@@ -1,4 +1,4 @@
-<section class="p-4" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+<section class="p-4" cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="position: relative;">
   <div class="d-flex justify-content-between">
     <h6 class="f-14">
       <span *ngIf="type.includes('flip')"
@@ -450,9 +450,14 @@
           </tr>
         </ng-container>
       </table>
-      <div class="f-12">Note: Please add the shift data for the selected dates</div>
+      
+      <div class="f-11">
+        <div class="f-13">Notes:</div>
+        1. GRN Quantity calculation:  "(Total timesheet values for the line item)/(number of shifts * number of days in the month)" <br>
+        2. Disabled input field indicates that the data is already available or overlapping dates have been added <br>
+      </div>
       <div
-        class="mt-4 d-flex justify-content-end mb-2"
+        class="mt-4 d-flex justify-content-end mb-2 man_btns"
       >
         <button
           class="secondary_btn f-12 mr-3"
@@ -499,7 +504,12 @@
         </tr>
       </tbody>
     </table>
-
+    <div class="f-11">
+      <div class="f-13">Instructions:</div>
+      1. Check the "is Timesheets" box if you want to add manpower data for a specific line. <br>
+      2. Enter the duration data in months. <br>
+      3. Include the number of shifts for the same line. <br>
+    </div>
     <div class="mt-4 d-flex justify-content-end mb-2">
       <button
         class="primary_btn f-12"

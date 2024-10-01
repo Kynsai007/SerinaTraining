@@ -549,7 +549,7 @@
             (click)="editInvoice(invoiceData)"
           ></i>
           <i
-            *ngIf="(router.url.includes('invoice/GRN') && client_name == 'Cenomi')"
+            *ngIf="(router.url.includes('invoice/GRN') && client_name == 'Cenomi') && invoiceData.grn_status.toLowerCase().includes('draft') && (isAdmin ||  user_name ==  invoiceData.firstName)"
             class="fa fa-pencil-square-o f-13 showEye mr-2 font_weight_500"
             (click)="editGRN(invoiceData)"
           ></i>

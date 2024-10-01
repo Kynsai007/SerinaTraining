@@ -539,7 +539,7 @@ isMobile:boolean;
         merge.grn_type = ele.grn_type;
         merge.firstName = ele.firstName;
         merge.InvoiceNumber = ele.InvoiceNumber;
-        merge.grn_status = ele.grn_status;
+        merge.grn_status = ele.status;
         grnD.push(merge)
       })
 
