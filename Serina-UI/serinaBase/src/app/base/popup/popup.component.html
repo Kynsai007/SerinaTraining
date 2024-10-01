@@ -13,7 +13,7 @@
     <!-- <h6 class="f-14" *ngIf="approveBool">
       <span></span>
     </h6> -->
-    <div>
+    <div *ngIf="type != 'manpower'">
       <i class="fa fa-close" style="cursor: pointer" mat-dialog-close></i>
     </div>
   </div>
@@ -405,7 +405,7 @@
               class="linevalue invert_th_td"
               *ngFor="let line1 of item.linedata; let i = index"
             >
-              <div *ngIf="item.TagName != 'Actions'">
+              <div *ngIf="item.TagName != 'Actions'" [ngStyle]="{'background-color': (['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData) ? '#f1f1f1':''}">
                 <input
                   #inputval
                   [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity','PO Balance Qty'].includes(item.TagName)?'text':'number'"
@@ -457,14 +457,13 @@
         <button
           class="secondary_btn f-12 mr-3"
           type="button"
-          mat-dialog-close
+          (click)="closeDialog(manpowerForm.touched, manpowerForm.dirty)"
         >
           Cancel
         </button>
         <button
           class="primary_btn f-12"
           type="submit"
-          [disabled]="manpowerForm.invalid"
         >
           Save
         </button>

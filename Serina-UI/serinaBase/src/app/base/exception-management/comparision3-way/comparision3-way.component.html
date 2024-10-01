@@ -1007,7 +1007,7 @@
                     <!-- <label class="f-12">Time sheet
                       <input type="checkbox" (change)="onChecked($event.target.checked)">
                     </label> -->
-                    <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Time sheet</button>
+                    <button class="f-12 primary_btn" *ngIf="isManpower" (click)="open_dialog_comp('manpower')">Timesheet</button>
                   </div>
               </div>
               <table class="invert mt-2 w-100" id="grnTable">
@@ -2094,7 +2094,9 @@
               *ngIf="client_name == 'Cenomi'"
               class="primary_btn f-12 mr-3"
               type="submit"
-              [disabled]="!enable_create_grn || disable_save_btn"
+              [disabled]="!enable_create_grn || disable_save_btn "
+              [pTooltip]="disable_save_btn ? grnTooltip : null"
+              tooltipPosition="top"
               (click)="
                 router.url.includes('GRN_approvals')
                   ? Approve_grn()
@@ -2106,7 +2108,9 @@
             <button
               class="primary_btn f-12 mr-3"
               type="submit"
-              [disabled]="!enable_create_grn || disable_save_btn"
+              [pTooltip]="disable_save_btn ? grnTooltip : 'Please fill all the dates data in the timesheet'"
+              tooltipPosition="top"
+              [disabled]="!enable_create_grn || disable_save_btn || saveDisabled"
               (click)="
                 router.url.includes('GRN_approvals')
                   ? Approve_grn()

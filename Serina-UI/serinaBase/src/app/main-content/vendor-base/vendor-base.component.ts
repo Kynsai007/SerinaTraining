@@ -80,6 +80,9 @@ export class VendorBaseComponent implements OnInit {
     if(this.DS.configData.client_name == 'Cenomi'){
       this.logoSrc = 'assets/Serina Assets/new_theme/cenomiLogo.png';
       this.DS.changeTheme("#20113E",'#ffffff');
+    } else if(this.DS?.configData?.client_name == 'AGI'){
+      this.DS.changeTheme("#482464",'#ffffff');
+      this.logoSrc = 'assets/Serina Assets/new_theme/AGI/agi_home.png';
     } else {
       this.DS.changeTheme("#358dc0",'#140101');
       this.logoSrc = 'assets/Serina Assets/new_theme/logo.png';
@@ -109,7 +112,8 @@ export class VendorBaseComponent implements OnInit {
     this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login = this.userDetails.last_login;
-    this.name_short = this.userDetails.userdetails.firstName[0] + this.userDetails.userdetails?.lastName[0]
+    this.name_short = this.userDetails.userdetails.firstName[0] + this.userDetails.userdetails?.lastName[0];
+    this.permissionService.show_document_status = this.userDetails.permissioninfo.show_document_status;
     this.readVendor();
     this.getPermissions();
     

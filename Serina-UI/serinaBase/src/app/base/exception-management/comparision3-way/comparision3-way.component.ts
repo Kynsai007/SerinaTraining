@@ -417,6 +417,8 @@ export class Comparision3WayComponent
   po_qty_array: any;
   po_balance_qty_array: any;
   disable_save_btn: boolean;
+  saveDisabled: boolean;
+  grnTooltip: string;
 
   constructor(
     fb: FormBuilder,
@@ -582,7 +584,11 @@ export class Comparision3WayComponent
         this.btnText = 'View invoice';
         this.currentTab = 'line';
         if (this.GRN_PO_Bool) {
-          this.tagService.headerName = 'Create GRN with PO';
+          if(this.dataService.isEditGRN){
+            this.tagService.headerName = 'Update GRN'
+          } else {
+            this.tagService.headerName = 'Create GRN with PO';
+          }
           this.Itype = 'PO';
           this.getInvoiceFulldata_po();
         } else {
@@ -2386,8 +2392,8 @@ export class Comparision3WayComponent
     this.rejectionUserId = event;
   }
   onChangeGrn(lineItem, val) {
-    const po_qty_value = this.po_qty_array.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
-    const po_balance_qty_value = this.po_balance_qty_array.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+    const po_qty_value = this.po_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+    const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
 
     let checking_value;
     let error_msg;
@@ -2398,6 +2404,7 @@ export class Comparision3WayComponent
       checking_value = po_qty_value;
       error_msg = 'PO Quantity';
     }
+    this.disable_save_btn = false;
     if(Number(checking_value) < Number(val)){
 
       // this.dataService.added_manpower_data.forEach(el=>{
@@ -2407,6 +2414,7 @@ export class Comparision3WayComponent
       // })
       this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
       this.error(`GRN Quantity cannot be greater than ${error_msg}`);
+      this.grnTooltip = `GRN Quantity cannot be greater than ${error_msg}`;
       this.disable_save_btn = true;
       return;
     }
@@ -2504,6 +2512,12 @@ export class Comparision3WayComponent
   }
 
   confirm_pop(grnQ, boolean, txt) {
+    const GRNQtyArr = this.lineDisplayData.find(item=> item.TagName === 'GRN - Quantity');
+    let validationBool = GRNQtyArr?.linedata?.some(el=> el.Value == '' ||  el.Value == undefined);
+    if (validationBool) {
+      this.error('Please add a valid GRN Quantity');
+      return;
+    }
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Kindly confirm the number of GRN lines.', 'confirmation', 'Confirmation')
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
@@ -2532,7 +2546,9 @@ export class Comparision3WayComponent
         // this.GRNObjectDuplicate = this.GRNObjectDuplicate.filter((val, ind, arr) => ind == arr.findIndex(v => v.idDocumentLineItems == val.idDocumentLineItems && v.tagName == val.tagName));
 
       } else {
-        this.validateInvPOUnitPrice();
+        if(!this.GRN_PO_Bool){
+          this.validateInvPOUnitPrice();
+        }
       }
       let emptyBoolean: boolean = false;
       let commentBoolean = false;
@@ -2540,7 +2556,7 @@ export class Comparision3WayComponent
       this.GRNObjectDuplicate.forEach((ele, ind) => {
         if (ele.Value === '') {
           emptyBoolean = true;
-          errorMsg = 'Fields should not be empty!';
+          errorMsg = 'Please fill in all the given fields.';
         } else if (ele.Value != ele.old_value && !this.GRN_PO_Bool) {
           if (
             ele.ErrorDesc == null ||
@@ -2612,7 +2628,7 @@ export class Comparision3WayComponent
     }
     let manPower = '';
     if (this.manpowerHeaderId) {
-      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}`;
+      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}&grn_doc_id${this.invoiceID}`;
     }
     this.SharedService.createGRNWithPO(inv_number, manPower, this.GRNObjectDuplicate).subscribe((data: any) => {
       this.SpinnerService.hide();
@@ -2861,6 +2877,7 @@ export class Comparision3WayComponent
     }
   }
   prepare_api_request(inputData) {
+    this.saveDisabled = false;
     let shiftData = [];
 
     // Organize shift data for each LineNumber
@@ -2888,7 +2905,11 @@ export class Comparision3WayComponent
 
         item.linedata.forEach(line => {
           const lineNumber = line.LineNumber;
+          if(line.Value == '' || line.Value == undefined){
+            this.saveDisabled = true;
+          }
           const value = parseFloat(line.Value);
+          
           const idDocumentLineItems = line.idDocumentLineItems;
 
           // Check if there is a shift associated with this idDocumentLineItems for the current lineNumber
@@ -4275,6 +4296,7 @@ export class Comparision3WayComponent
     delete this.SharedService.po_num;
     delete this.exceptionService.po_num;
     delete this.dataService.grn_manpower_metadata;
+    delete this.dataService.manpowerResponse
     this.mat_dlg.closeAll();
     this.dataService.isEditGRN = false;
   }

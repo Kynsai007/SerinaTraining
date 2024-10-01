@@ -319,41 +319,6 @@ export class PopupComponent implements OnInit {
     })
   }
 
-
-
-  onSelectMaster(des) {
-    this.updateSOObj = {
-      "so_line_number": this.line_num,
-      "Value": des
-    }
-  }
-
-  onSearch(val, tab) {
-    let dataArray;
-    let dataField: string;
-    let field: string;
-    if (tab == 'order') {
-      dataArray = this.orderData;
-      dataField = "order_history";
-      field = 'Description';
-    } else if (tab == 'master') {
-      dataArray = this.masterData;
-      dataField = "master_data";
-      field = 'description';
-    }
-    if (val != '') {
-      if (val.length < this.textlngth) {
-        this.orderHistoryData[dataField] = dataArray;
-      }
-      this.textlngth = val.length;
-      this.orderHistoryData[dataField] = this.orderHistoryData[dataField].filter((el) => {
-        return el[field].toLowerCase().includes(val.toLowerCase());
-      })
-    } else {
-      this.orderHistoryData[dataField] = dataArray;
-    }
-  }
-
   updateMapping() {
     this.ES.updateSOmap(this.so_id, this.v_a_id, this.updateSOObj).subscribe((data) => {
       // this.alert.addObject.detail = "SO Line is mapped successfully";
@@ -397,6 +362,7 @@ export class PopupComponent implements OnInit {
       this.generateDisabledDates(this.startDate, this.endDate);
     }
     }
+
   filterByDate(date_input) {
       if(date_input != '') {
         if(this.isEditGRN){
@@ -434,9 +400,15 @@ export class PopupComponent implements OnInit {
           this.ES.getManpowerPrefill(this.sharedService.po_num, s_Date, e_Date).subscribe((data: any) => {
             old_data =  data?.data?.timesheets;
             if(old_data){
+                if(old_data.length > 0 && !this.isEditGRN){
+                  const matD: MatDialogRef<ConfirmationComponent> = this.confirmFun("Overlapping dates are there. Please close this window and try again with another date range.","ok","Information")
+
+                  matD.afterClosed().subscribe((bool) => {
+                    this.dialogRef.close();
+                  })
+              }
               old_data.forEach(el => {
                 el.quantity.forEach(item => {
-                  console.log(item.itemCode,el.itemCode)
                   item.itemCode = el.itemCode
                   item.LineNumber = el.itemCode
                   if(el.shift == 'Shift 1'){
@@ -510,7 +482,6 @@ export class PopupComponent implements OnInit {
             this.manPowerData.splice(index, 0, { TagName: `${year}-${selectedMonth}-${i}`, linedata: data })
             index++
           }
-          console.log(this.manPowerData)
           setTimeout(() => {
             if(old_data){
               old_data.forEach(el => {
@@ -518,7 +489,6 @@ export class PopupComponent implements OnInit {
                   this.manPowerData.forEach(manpower => {
                     if(item.date == manpower.TagName){
                       manpower.linedata.forEach(line => {
-                        console.log(line,item)
                         if(line.tagName == item.tagName && line.LineNumber == item.itemCode){
                           line.Value = item.quantity;
                         }
@@ -541,6 +511,7 @@ export class PopupComponent implements OnInit {
 
     }
   }
+
   clearDates() {
     this.filterByDate('');
     this.dateRange();
@@ -581,7 +552,6 @@ export class PopupComponent implements OnInit {
         const fDate = new Date(data?.data?.startdate);
         const eDate = new Date(data?.data?.enddate)
         let dates = [fDate,eDate ]
-
         this.filterByDate(dates)
       }
       if(data?.data?.timesheets?.length>0){
@@ -610,6 +580,7 @@ export class PopupComponent implements OnInit {
     this.dialogRef.close(this.manPowerMetadata);
   }
 
+
   onSubmitManpower() {
     let startDate = this.datePipe.transform(this.ds.manpower_saved_date_range[0], 'yyyy-MM-dd');    
     let endDate = this.datePipe.transform(this.ds.manpower_saved_date_range[1], 'yyyy-MM-dd');
@@ -619,7 +590,19 @@ export class PopupComponent implements OnInit {
     }
     this.dialogRef.close(response);
     this.ds.added_manpower_data = this.manPowerData;
-
+    this.ds.manpowerResponse = response;
+  }
+  closeDialog(bool,bool1){
+    if(bool && bool1){
+      const matD: MatDialogRef<ConfirmationComponent> = this.confirmFun("You have unsaved timesheet data. Are you sure you want to cancel? Please click 'Save' to proceed.","confirmation","Confirmation")
+      matD.afterClosed().subscribe((bool:Boolean)=>{
+        if(bool){
+          this.dialogRef.close();
+        }
+      })
+    } else {
+      this.dialogRef.close();
+    }
   }
 
   manpowerCreateFunction() {
@@ -728,5 +711,14 @@ export class PopupComponent implements OnInit {
         });
       }
     });
+  }
+
+  confirmFun(body, type, head) {
+    return this.mat_dlg.open(ConfirmationComponent, {
+      width: '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data: { body: body, type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
+    })
   }
 }
