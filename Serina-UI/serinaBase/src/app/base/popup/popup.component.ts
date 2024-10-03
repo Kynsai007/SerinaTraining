@@ -409,14 +409,12 @@ export class PopupComponent implements OnInit {
               })
               let va_bool:boolean;
               let lineArr = [];
-              console.log(this.manPowerData,this.manPowerData[0])
               this.manPowerData[0].linedata.filter(id=>{
                 if(!lineArr.includes(id.LineNumber)){
                   lineArr.push(Number(id.LineNumber))
                 }
               });
               va_bool = lineArr.every(e=> item_codes.includes(e))
-              console.log(va_bool,item_codes,lineArr)
               if(old_data.length > 0 && !this.isEditGRN && va_bool ){
                 const matD: MatDialogRef<ConfirmationComponent> = this.confirmFun("Overlapping dates are there. Please close this window and try again with another date range.","ok","Information")
 

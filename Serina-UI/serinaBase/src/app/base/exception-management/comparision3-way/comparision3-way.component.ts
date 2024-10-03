@@ -906,7 +906,7 @@ export class Comparision3WayComponent
         let po_lines = this.dataService.po_lines;
         this.dataService.GRN_PO_Data = this.exceptionService.convertData(GRN_linedata, this.exceptionService.po_num);
         this.getPODocId(this.exceptionService.po_num)
-        po_lines.forEach(line=>{
+        po_lines?.forEach(line=>{
           this.dataService.GRN_PO_Data.forEach(grn_line=>{
             if(line.LineNumber == grn_line.LineNumber){
               grn_line.PurchQty = line.PurchQty;
@@ -2628,8 +2628,13 @@ export class Comparision3WayComponent
       inv_number = `&inv_num=${this.invoiceNumber}`;
     }
     let manPower = '';
-    if (this.manpowerHeaderId) {
-      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}&grn_doc_id${this.invoiceID}`;
+    if (this.manpowerHeaderId && this.dataService.isEditGRN) {
+      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}&grn_doc_id=${this.invoiceID}`;
+    } else if(this.manpowerHeaderId && !this.dataService.isEditGRN){
+      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}`;
+    }
+    if(this.isManpowerTags && !this.manpowerHeaderId){
+      return;
     }
     this.SharedService.createGRNWithPO(inv_number, manPower, this.GRNObjectDuplicate).subscribe((data: any) => {
       this.SpinnerService.hide();
@@ -2845,6 +2850,7 @@ export class Comparision3WayComponent
     } else if (str == 'manpower') {
       this.SpinnerService.show();
       matdrf.afterClosed().subscribe((resp: any) => {
+
         if (resp) {
           this.manPowerAPI_request = {
             "startdate": resp?.dates?.startdate,
@@ -3001,6 +3007,9 @@ export class Comparision3WayComponent
         this.error(data.message);
       }
       // this.success(data.message);
+    },err=>{
+      this.error("Server error");
+      this.SpinnerService.hide();
     })
   }
   create_GRN_PO_tags() {
