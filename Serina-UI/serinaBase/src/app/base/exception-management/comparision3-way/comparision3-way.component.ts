@@ -3257,6 +3257,7 @@ export class Comparision3WayComponent
     this.SpinnerService.show();
     this.SharedService.getPO_Lines(po_num).subscribe((data: any) => {
       this.SpinnerService.hide();
+      this.PO_GRN_Number_line = data?.result;
       return data?.result;
     }, err => {
       this.error("Server error");

@@ -297,7 +297,6 @@
               [pTooltip]="isCustomerPortal && !vendorName ? 'Select Vendor' : null"
               tooltipPosition="top"
             >
-            <option value="" ></option>
             <option *ngFor="let item of invTypeArr" [value]="item.value">
               {{ item.name }}
             </option>
@@ -846,7 +845,6 @@
               [pTooltip]="!selectedVendor ? 'Select Vendor' : null"
               tooltipPosition="top"
             >
-              <option value="" disabled></option>
               <option *ngFor="let item of invTypeArr" [value]="item.value">
                 {{ item.name }}
               </option>
