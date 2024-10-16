@@ -22,7 +22,14 @@ export class RegistrationComponent implements OnInit {
   userData: any;
   errorDivBoolean: boolean;
   emailId: string;
-
+  mpassword: any;
+  lengthbool: boolean = false;
+  specialCharbool: boolean = false;
+  upperCharbool: boolean = false;
+  lowerCharbool: boolean = false;
+  numberbool: boolean = false;
+  confirmPasswordFocus: boolean = false;
+  
   constructor(private fb:FormBuilder,
     private activatedRoute: ActivatedRoute,
     private datePipe: DatePipe,
@@ -113,6 +120,41 @@ export class RegistrationComponent implements OnInit {
       }
     });
   }
-
+  passwordValidation(){
+    const number = new RegExp('(?=.*[0-9])');
+    const lowerCase = new RegExp('(?=.*[a-z])');
+    const upperCase = new RegExp('(?=.*[A-Z])');
+    const specialChar = new RegExp('(?=.*[!@#$%^&*()_+.,/{}])');
+    const minLength = new RegExp('(?=.{8,})')
+    if (this.mpassword && this.mpassword.length >= 8) {
+      this.lengthbool = true;
+    } else {
+      this.lengthbool = false;
+    }
+    if(specialChar.test(this.mpassword)){
+      this.specialCharbool = true;
+    }
+    else{
+      this.specialCharbool = false;
+    }
+    if(upperCase.test(this.mpassword)){
+      this.upperCharbool = true;
+    }
+    else{
+      this.upperCharbool = false;
+    }
+    if(lowerCase.test(this.mpassword)){
+      this.lowerCharbool = true;
+    }
+    else{
+      this.lowerCharbool = false;
+    }
+    if(number.test(this.mpassword)){
+      this.numberbool = true;
+    }
+    else{
+      this.numberbool = false;
+    }
+  }
 
 }

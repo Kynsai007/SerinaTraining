@@ -1,3 +1,4 @@
+
 .registrationDiv{
     display: flex;
     width: fit-content;
@@ -61,7 +62,7 @@ label{
     position: absolute;
     top: 2%;
     right: 3%;
-    color: #F2BE42;
+    color: white;
     font-weight: 600;
     font-size: 25px;
 }
@@ -70,6 +71,12 @@ label{
     max-width: 270px;
     font-weight: 600;
     color: #ef5656;
+}
+.success-text{
+    font-size: 12px;
+    max-width: 270px;
+    font-weight: 600;
+    color: green;
 }
 .eye-show{
     position: relative;
@@ -148,3 +155,65 @@ label{
         transform: skew(0deg);
     }
 }
+.add-subject {
+    background-color: #f3f3f3;
+    border-radius: 6px;
+    box-shadow: 0px 0px 2px #00000029;
+    width: 403px;
+    height: 60px;
+    display: grid;
+    padding-top: 8px;
+    padding-left: 17px;
+}
+.inputbox {
+    width: 300px;
+    font-size: small;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    color: #140101;
+    font-weight: 600;
+    height: 31px;
+    font-size: 14px;
+    background: inherit;
+    border: 0px solid lightgray;
+    padding-left: 0; 
+}
+.form-cntnt{
+    gap: 10px;
+    display: grid;
+}
+.icon-btn{
+    padding-right: 2px;
+}
+.input-group-append{
+    height: 50px;
+    padding-top: 7px;
+    padding-right: 37px;
+    margin-top: -23px;
+    border: hidden;
+    margin-right: 10px;
+}
+.input-group-text{
+    padding-right: 7px;
+    border: 0px solid lightgray;
+    background-color: #f3f3f3;
+}
+.next-button{
+   background: rgb(53, 141, 192); 
+   color: white;
+}
+.butn-cntnr{
+    justify-content: right;
+    display: flex;
+}
+.dull-mode {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.nameHead::first-letter {
+    color: rgb(53, 141, 192);
+    font-size: 30px;
+}
+// .nameHead::last-letter {
+//     color: rgb(53, 141, 192);
+// }
