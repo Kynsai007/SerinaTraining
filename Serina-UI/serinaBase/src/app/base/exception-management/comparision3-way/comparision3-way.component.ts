@@ -2999,6 +2999,7 @@ export class Comparision3WayComponent
     this.SpinnerService.hide();
   }
   createTimesheetAPI() {
+    
     this.exceptionService.createTimesheet(this.SharedService.po_doc_id,this.manPowerAPI_request, 'PO').subscribe((data: any) => {
       if (data.status.toLowerCase() == 'success') {
         this.success(data.message);
@@ -3104,7 +3105,10 @@ export class Comparision3WayComponent
       this.progressDailogBool = false;
       this.SharedService.updateGRNnumber(this.selectedGRNList).subscribe(data => {
         this.getGRNtabData();
-        this.success("GRN Data Updated. Kindly click 'Next' button to send the invoice to the batch")
+        this.success("GRN Data Updated. Kindly click 'Next' button to send the invoice to the batch");
+        if(this.router.url.includes('Inv_vs_GRN_details')){
+          this.syncBatch();
+        }
 
       }, err => {
         this.error("Server error");

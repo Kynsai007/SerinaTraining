@@ -51,8 +51,11 @@ export class ProcessReportserviceComponent implements OnInit {
   cardsArr = [
     { title: 'Total Invoices Downloaded' , count:0, image:'vendor_up' },
     { title: 'Processed to ERP' , count:0, image:'vendor_pr' },
-    { title: 'Pending Invoices' , count:0, image:'vendor_rm' }]
-
+    { title: 'Pending Invoices' , count:0, image:'vendor_rm' },
+    { title: 'System Check' , count:0, image:'vendor_err' },
+  ];
+  client_name:string;
+  agi_p_link = "https://apps.powerapps.com/play/e/f81e19e2-1c2c-e736-93f4-b631f0177a44/a/6227c405-6da3-4ea7-9865-d13ca96b4593?tenantId=38a3f678-5fe7-4dbb-8eb9-eee7a0c6fd57&hint=6d334e0e-0c8e-479e-80f7-583e64497066&sourcetime=1729059118010"
   constructor(
     private sharedService: SharedService,
     private chartsService: ChartsService,
@@ -64,6 +67,7 @@ export class ProcessReportserviceComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.client_name = this.dataStoreService.configData.client_name;
     this.readService();
     this.chartsData();
     this.dateRange();

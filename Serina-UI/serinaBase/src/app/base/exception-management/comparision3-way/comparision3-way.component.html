@@ -11,7 +11,7 @@
   <h6 class="headh6 pl-80">{{ headerName }}</h6>
 </div> -->
 <div class="row invoice-body">
-  <div class="viewPdf d-flex">
+  <div class="viewPdf d-flex" [ngClass]="router.url.includes('Inv_vs_GRN_details')?'r-490':'r-340'">
     <!-- <button
       class="btnUpload  mr-2"
       (click)="open_dialog_comp('Amend')"
@@ -29,13 +29,13 @@
           financeApproveBoolean) &&
         submitBtn_boolean &&
         isDesktop && !isServiceData &&
-        currentTab == 'line'
+        currentTab == 'line'  || router.url.includes('Inv_vs_GRN_details')
       "
     >
       
       <button
         *ngIf="
-          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit
+          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit || router.url.includes('Inv_vs_GRN_details')
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -2108,7 +2108,7 @@
             <button
               class="primary_btn f-12 mr-3"
               type="submit"
-              [pTooltip]="disable_save_btn ? grnTooltip : 'Please fill all the dates data in the timesheet'"
+              [pTooltip]="disable_save_btn ? grnTooltip : saveDisabled ? 'Please fill all the dates data in the timesheet' : null"
               tooltipPosition="top"
               [disabled]="!enable_create_grn || disable_save_btn || saveDisabled"
               (click)="
