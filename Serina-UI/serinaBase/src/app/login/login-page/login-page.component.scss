@@ -29,6 +29,8 @@ h1 {
 .microsoft-login-button {
     border: none;
     width: 100%;
+    border-radius: 6px;
+    height: 30px;
   }
   
   .microsoft-login-button img {
@@ -37,7 +39,7 @@ h1 {
   }
   .ms {
     width: 20px !important;
-    height: 18px !important;
+    height: 20px !important;
 
   }
   .msb {

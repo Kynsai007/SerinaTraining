@@ -51,7 +51,7 @@
     <div class="col-11 col-sm-7 col-md-6">
           <div class="login-div">
             <!-- Login page -->
-            <div *ngIf="loginboolean && !loginsuccess">
+            <div *ngIf="loginboolean && !loginsuccess && client_name != 'AGI'">
               <h5 class="f-24 mb-0">It's good to have you back!</h5>
               <div class="f-14 color2 mb-3">Enter your Email and Password and get the help you need.</div>
               <form [formGroup]="loginForm" (ngSubmit)="login('normal')">
@@ -142,6 +142,15 @@
                   
                   <div class="mt-2 f-14 color2">If you are a vendor and don't have an account? <br><a style="color:royalblue" (click)="signUpLink()">Please click me</a> </div>
                 </div>
+              </div>
+            </div>
+            <div *ngIf="loginboolean && !loginsuccess && client_name == 'AGI'">
+              <h5 class="f-24 mb-0">It's good to have you back!</h5>
+              <div class="f-14 color2 mb-3">Please login with your Microsoft account.</div>
+              <div>
+                <button class="microsoft-login-button btn-block f-14 msb" (click)="loginMS()">
+                  <img class="mr-2 ms" src="assets/microsoft-logo.png" alt="Microsoft Logo" /> Microsoft Login
+                </button>
               </div>
             </div>
             <div *ngIf="loginsuccess">

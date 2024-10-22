@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 import { DataService } from 'src/app/services/dataStore/data.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ChartsService } from 'src/app/services/dashboard/charts.service';
 import { ServiceInvoiceService } from 'src/app/services/serviceBased/service-invoice.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -8,6 +8,7 @@ import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DatePipe } from '@angular/common';
 import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
+import { Calendar } from 'primeng/calendar';
 
 @Component({
   selector: 'app-process-reportservice',
@@ -55,6 +56,7 @@ export class ProcessReportserviceComponent implements OnInit {
     { title: 'System Check' , count:0, image:'vendor_err' },
   ];
   client_name:string;
+  @ViewChild('datePicker') datePicker: Calendar;
   agi_p_link = "https://apps.powerapps.com/play/e/f81e19e2-1c2c-e736-93f4-b631f0177a44/a/6227c405-6da3-4ea7-9865-d13ca96b4593?tenantId=38a3f678-5fe7-4dbb-8eb9-eee7a0c6fd57&hint=6d334e0e-0c8e-479e-80f7-583e64497066&sourcetime=1729059118010"
   constructor(
     private sharedService: SharedService,
@@ -319,16 +321,25 @@ export class ProcessReportserviceComponent implements OnInit {
     this.datequery = `?date=${date1}To${date2}`;
     this.rangeDates = [date3,this.maxDate];
   }
-
+  selectedDates(date){
+    const date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
+    const date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
+    if(date1 && date2){
+      if (this.datePicker.overlayVisible) {
+        this.datePicker.hideOverlay();
+      }
+    }
+  }
   filterByDate(date) {
     this.selectedDateValue = '';
     let query = '';
     let date1: any;
     let date2: any
     if (date != '' && date != undefined) {
+      
       date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
       date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
-      this.selectedDateValue = date
+      this.selectedDateValue = date;
     }
     if (
       this.selectedServiceValue != 'ALL' &&

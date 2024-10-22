@@ -157,6 +157,7 @@
   <div class="inputBox">
     <label class="f-12 shade_color">Start & End Date</label><br>
     <p-calendar
+      #datePicker
       [(ngModel)]="rangeDates"
       selectionMode="range"
       [minDate]="minDate"
@@ -166,6 +167,7 @@
       [showIcon]="true"
       showButtonBar="true"
       inputId="range"
+      (onSelect) = "selectedDates(rangeDates)"
       (onClearClick)="clearDates()"
     ></p-calendar>
   </div>

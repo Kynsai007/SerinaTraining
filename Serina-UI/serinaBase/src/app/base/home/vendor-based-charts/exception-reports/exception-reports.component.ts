@@ -1,5 +1,5 @@
 import { ImportExcelService } from './../../../../services/importExcel/import-excel.service';
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChartsService } from 'src/app/services/dashboard/charts.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -7,6 +7,7 @@ import { TaggingService } from 'src/app/services/tagging.service';
 import { DateFilterService } from 'src/app/services/date/date-filter.service';
 import { DatePipe } from '@angular/common';
 import { DataService } from 'src/app/services/dataStore/data.service';
+import { Calendar } from 'primeng/calendar';
 
 @Component({
   selector: 'app-exception-reports',
@@ -62,6 +63,7 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
     { title: 'OCR Queue' , count:0, image:'vendor_pr' ,name:'OCR'},
     { title: 'Batch Queue' , count:0, image:'vendor_rm',name:'Batch' },
     { title: 'ERP Queue' , count:0, image:'vendor_rej',name:'ERP' }]
+  @ViewChild('datePicker') datePicker: Calendar;
   constructor(
     private tagService: TaggingService,
     private chartsService: ChartsService,
@@ -312,7 +314,15 @@ export class ExceptionReportsComponent implements OnInit, OnChanges {
       this.ImportExcelService.exportExcel(this.ERPTableData);
     }
   }
-
+  selectedDates(date){
+    const date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
+    const date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
+    if(date1 && date2){
+      if (this.datePicker.overlayVisible) {
+        this.datePicker.hideOverlay();
+      }
+    }
+  }
   filterByDate(date) {
     // if(date != ''){
 

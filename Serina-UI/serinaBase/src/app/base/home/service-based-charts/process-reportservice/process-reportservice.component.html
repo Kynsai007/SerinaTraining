@@ -1,4 +1,7 @@
-<div class="f-12 filter_icon" style="right: 75px;" *ngIf="client_name == 'AGI'"><a [href]="agi_p_link" target="_blank"><img src="../../../../../assets/Serina Assets/new_theme/PowerApps_scalable.svg" alt="Power apps" height="30"> Power apps</a></div>
+<div class="filter_icon d-flex">
+  <div class="f-12 p_t5" [ngClass]="client_name == 'AGI' ? 'mr-3': 'mr-5'">Current filter:   {{ rangeDates[0] | date: 'MMM d, yyyy' }} - {{ rangeDates[1] | date: 'MMM d, yyyy' }}</div>
+  <div class="f-12 mr-5" *ngIf="client_name == 'AGI'"><a [href]="agi_p_link" target="_blank"><img src="../../../../../assets/Serina Assets/new_theme/PowerApps_scalable.svg" alt="Power apps" height="30"> Power apps</a></div>
+</div>
 <div class="filter_icon" (click)="openFilterDialog($event)">
   <mat-icon class="placement" svgIcon="filter_ic"></mat-icon>
 </div>
@@ -125,6 +128,7 @@
   <div class="inputBox">
     <label class="f-12 shade_color">Start & End Date</label><br>
     <p-calendar
+      #datePicker
       [(ngModel)]="rangeDates"
       selectionMode="range"
       [minDate]="minDate"
@@ -135,6 +139,7 @@
       showButtonBar="true"
       inputId="range"
       (onClearClick)="clearDates()"
+      (onSelect) = "selectedDates(rangeDates)"
     ></p-calendar>
   </div>
     <div class="inputBox">

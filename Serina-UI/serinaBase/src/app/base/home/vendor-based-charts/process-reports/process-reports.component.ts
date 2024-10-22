@@ -472,6 +472,15 @@ export class ProcessReportsComponent implements OnInit {
     this.minDate = this.dateFilterService.minDate;
     this.maxDate = this.dateFilterService.maxDate;
   }
+  selectedDates(date){
+    const date1 = this.datePipe.transform(date[0], 'yyyy-MM-dd');
+    const date2 = this.datePipe.transform(date[1], 'yyyy-MM-dd');
+    if(date1 && date2){
+      if (this.datePicker.overlayVisible) {
+        this.datePicker.hideOverlay();
+      }
+    }
+  }
 
   filterByDate(date) {
     this.selectedDateValue = '';
