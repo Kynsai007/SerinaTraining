@@ -1,3 +1,4 @@
+import { AlertService } from 'src/app/services/alert/alert.service';
 import { MessageService } from 'primeng/api';
 import { RegistrationService } from './../../services/registration/registration.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -34,7 +35,7 @@ export class RegistrationComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private datePipe: DatePipe,
     private router:Router,
-    private messageService : MessageService,
+    private alertService : AlertService,
     private registrationService : RegistrationService) {
 
    }
@@ -56,23 +57,19 @@ export class RegistrationComponent implements OnInit {
 
     this.registrationService.savenewUserPassword(passwordData).subscribe((data:any)=>{
       if(data.result == "Account Activated"){
-        this.messageService.add({
-          severity: "success",
-          summary: "Password Saved",
-          detail: "Account Activated Successfully"
-        });
+        this.alertService.success_alert('Account Activated Successfully')
         this.router.navigate(["/"]);
       }
     },error=>{
-      this.messageService.add({
-        severity: "error",
-        summary: "error",
-        detail: "User already activated"
-      });
+      if(error.status == 400){
+        this.alertService.error_alert('User already activated');
+      } else {
+        this.alertService.error_alert("Please contact admin.")
+      }
     })
   }
   decode(){
-    const decoded = jwt_decode( this.token);
+    const decoded = jwt_decode(this.token);
 
     this.userData = decoded;
     this.registrationForm = this.fb.group({
@@ -99,24 +96,12 @@ export class RegistrationComponent implements OnInit {
   }
   resendActivationLink(){
     this.registrationService.resendVerificationLink(this.token,this.emailId).subscribe((data:any)=>{
-      this.messageService.add({
-        severity: "success",
-        summary: "Link Sent",
-        detail: "Activation link sent to your Email, please check"
-      });
+      this.alertService.success_alert("Activation link sent to your Email, please check.")
     }, error=>{
       if(error.status == 400){
-        this.messageService.add({
-          severity: "error",
-          summary: "error",
-          detail: "Please enter a valid Email which is present in Serina"
-        });
+        this.alertService.error_alert("Please enter a valid Email which is present in Serina.");
       } else {
-        this.messageService.add({
-          severity: "error",
-          summary: "error",
-          detail: "Please contact admin"
-        });
+        this.alertService.error_alert("Please contact admin.")
       }
     });
   }

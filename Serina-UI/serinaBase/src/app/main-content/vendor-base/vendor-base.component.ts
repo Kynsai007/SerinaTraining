@@ -112,7 +112,11 @@ export class VendorBaseComponent implements OnInit {
     this.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.permissionService.uploadPermissionBoolean = this.userDetails.permissioninfo.NewInvoice;
     this.last_login = this.userDetails.last_login;
-    this.name_short = this.userDetails.userdetails.firstName[0] + this.userDetails.userdetails?.lastName[0];
+    if(this.userDetails?.userdetails?.lastName){
+      this.name_short = this.userDetails?.userdetails?.firstName[0] + this.userDetails?.userdetails?.lastName[0];
+    } else {
+      this.name_short = this.userDetails?.userdetails?.firstName[0];
+    }
     this.permissionService.show_document_status = this.userDetails.permissioninfo.show_document_status;
     this.readVendor();
     this.getPermissions();
