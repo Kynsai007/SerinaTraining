@@ -13,15 +13,15 @@
                 <input type="text" id="userName" formControlName ="userName" class="form-control inputForm">
             </div> -->
             <div class="form-cntnt">
-              <div class="add-subject">
+              <div class="add-subject disable">
                   <label class="f-12 mb-0 sub">User Name</label>
                   <input type="text" formControlName="userName" class="form-control mb-1 inputHeight inputbox" />
                 </div>
-                <div class="add-subject">
+                <div class="add-subject disable">
                   <label class="f-12 mb-0 sub">First Name</label>
                   <input type="text" formControlName="firstName" class="form-control mb-1 inputHeight inputbox" />
                 </div>
-                <div class="add-subject">
+                <div class="add-subject disable">
                   <label class="f-12 mb-0 sub">Last Name</label>
                   <input type="text" formControlName="lastName" class="form-control mb-1 inputHeight inputbox" />
                 </div>
@@ -95,13 +95,14 @@
                 <div class="alert alert-danger f-12" *ngIf="errorDivBoolean">
                   Please enter the same password.
                 </div>
+                <div class="f-12">
+                  Note: Please create your password and click submit.
+                </div>
               </div>
             <div class="butn-cntnr">
-                <div class="btn">
-                    <button class="primary_btn f-12 next-button" type="submit" 
+                    <button class="primary_btn f-12 btn-block" type="submit" 
                      [disabled]="!registrationForm.valid || errorDivBoolean"
                     [ngClass]="{'dull-mode': !registrationForm.valid || errorDivBoolean }">Submit</button>
-                </div>
             </div>
             
         </form>
@@ -117,7 +118,7 @@
           </div>
           <div class="butn-cntnr">
             <div class="btn">
-              <button class="primary_btn f-12 next-button" (click)="resendActivationLink()">Get Activation Link</button>
+              <button class="primary_btn f-12" (click)="resendActivationLink()">Get Activation Link</button>
             </div>
             
           </div>
