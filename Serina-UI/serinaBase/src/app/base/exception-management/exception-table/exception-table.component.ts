@@ -208,7 +208,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         }
 
       })
-      this.statusData = new Set(mergedStatus);
+      this.statusData = [...new Set(mergedStatus)];
       if (!this.isTableView && this.columnsData?.length <= this.cardCount) {
         this.showPaginatorAllInvoice = false;
       } else if(this.columnsData?.length > this.cardCount){
