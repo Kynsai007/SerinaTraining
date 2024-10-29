@@ -77,7 +77,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   globalSearch: string;
   ap_boolean: any;
   selectedStatus: any;
-  statusData: Set<string>;
+  statusData =[];
   exceptionAlertdate: any;
   isDesktop: boolean;
   drilldownarray = [];
@@ -216,6 +216,14 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       }
     }
     this.findActiveRoute();
+    if(this.router.url.includes('invoice/ServiceInvoices')){
+      this.selectedStatus = this.ds.serviceStatus;
+    } else if(this.router.url.includes('invoice/allInvoices')){
+      this.selectedStatus = this.ds.invoiceStatus;
+    }
+    if(this.selectedStatus){
+      this.filter(this.selectedStatus,'docstatus');
+    }
   }
   findActiveRoute() {
     if (this.router.url.includes('allInvoices')) {
@@ -404,6 +412,11 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
   filter(value, dbCl) {
     this.selectedStatus = value;
+    if(this.router.url.includes('invoice/ServiceInvoices')){
+      this.ds.serviceStatus = value;
+    } else if(this.router.url.includes('invoice/allInvoices')){
+      this.ds.invoiceStatus = value;
+    }
     // this.ds.allSelected
     if (!this.router.url.includes('invoice')) {
       if (value != 'All') {
@@ -1006,6 +1019,18 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     }, err => {
       this.SpinnerService.hide();
       this.error("Server error");
+    })
+  }
+
+  raiseTicket(id){
+    this.SpinnerService.show();
+    this.ExceptionsService.createTicket(id).subscribe((data:any)=>{
+      this.SpinnerService.hide();
+      this.success("Ticked raised.")
+      console.log(data)
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error")
     })
   }
 

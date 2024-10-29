@@ -419,6 +419,7 @@ export class Comparision3WayComponent
   disable_save_btn: boolean;
   saveDisabled: boolean;
   grnTooltip: string;
+  isDraft: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -2513,6 +2514,10 @@ export class Comparision3WayComponent
   }
 
   confirm_pop(grnQ, boolean, txt) {
+    this.isDraft = false ;
+    if(txt.includes('saved')){
+      this.isDraft = true ;
+    }
     const GRNQtyArr = this.lineDisplayData.find(item=> item.TagName === 'GRN - Quantity');
     let validationBool = GRNQtyArr?.linedata?.some(el=> el.Value == '' ||  el.Value == undefined);
     if (validationBool) {
@@ -2522,7 +2527,7 @@ export class Comparision3WayComponent
     const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Kindly confirm the number of GRN lines.', 'confirmation', 'Confirmation')
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
-        if (this.isManpowerTags) {
+        if (this.isManpowerTags && this.manPowerAPI_request) {
           this.createTimesheetAPI();
         }
         this.onSave_submit(grnQ, boolean, txt);
@@ -2629,11 +2634,14 @@ export class Comparision3WayComponent
     }
     let manPower = '';
     if (this.manpowerHeaderId && this.dataService.isEditGRN) {
-      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}&grn_doc_id=${this.invoiceID}`;
+      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${this.isDraft}&grn_doc_id=${this.invoiceID}`;
     } else if(this.manpowerHeaderId && !this.dataService.isEditGRN){
-      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${bool}`;
+      manPower = `&ManPowerHeaderId=${this.manpowerHeaderId}&isdraft=${this.isDraft}`;
+    } else if(!this.manpowerHeaderId && this.dataService.isEditGRN){
+      manPower = `&isdraft=${this.isDraft}&grn_doc_id=${this.invoiceID}`;
     }
-    if(this.isManpowerTags && !this.manpowerHeaderId){
+    if(this.isManpowerTags && !this.manpowerHeaderId && this.manPowerAPI_request){
+      this.SpinnerService.hide();
       return;
     }
     this.SharedService.createGRNWithPO(inv_number, manPower, this.GRNObjectDuplicate).subscribe((data: any) => {
@@ -2850,7 +2858,6 @@ export class Comparision3WayComponent
     } else if (str == 'manpower') {
       this.SpinnerService.show();
       matdrf.afterClosed().subscribe((resp: any) => {
-
         if (resp) {
           this.manPowerAPI_request = {
             "startdate": resp?.dates?.startdate,
@@ -3000,7 +3007,7 @@ export class Comparision3WayComponent
   }
   createTimesheetAPI() {
     
-    this.exceptionService.createTimesheet(this.SharedService.po_doc_id,this.manPowerAPI_request, 'po').subscribe((data: any) => {
+    this.exceptionService.createTimesheet(this.SharedService.po_doc_id,this.manPowerAPI_request, 'PO').subscribe((data: any) => {
       if (data.status.toLowerCase() == 'success') {
         this.success(data.message);
         this.manpowerHeaderId = data.ManPowerHeaderId;

@@ -237,6 +237,8 @@ export class DataService {
   isEditGRN: boolean;
   po_lines: any;
   manpowerResponse: { dates: { startdate: string; enddate: string; }; data: any[]; };
+  serviceStatus: any;
+  invoiceStatus: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");

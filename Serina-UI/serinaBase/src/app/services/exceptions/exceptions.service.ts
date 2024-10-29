@@ -229,6 +229,10 @@ export class ExceptionsService {
     return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/createManpowerGRN/${po_id}/${context}/${this.userId}`,manPowerAPI_request) 
   }
 
+  createTicket(inv_id){
+    return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/ticket_creation/${inv_id}`) 
+  }
+
   convertData(inputData, purchId: string) {
     const output = [];
     
