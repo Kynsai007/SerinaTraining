@@ -207,16 +207,11 @@
               [disabled]="!EntityName"
               [pTooltip]="!EntityName ? 'Select Entity first' : null"
               tooltipPosition="top"
+              [autofocus]="true" 
             >
               <ng-template let-group pTemplate="group">
-                <div class="flex align-items-center group-item">
-                  <div
-                    [ngStyle]="{
-                      color: group.is_onboarded ? '#099309' : '#f97e7e'
-                    }"
-                  >
-                    {{ group.VendorName }}
-                  </div>
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.VendorName }}</span>
                 </div>
               </ng-template>
             </p-autoComplete>
@@ -250,8 +245,8 @@
             class="selectFilter"
             *ngIf="portal_name == 'customer' && selectedOption === 'Service'"
             [ngClass]="{
-              'green-border': selectedAccount,
-              'red-border': !selectedAccount && serviceName
+              'green-border': selectedSAccount,
+              'red-border': !selectedSAccount && serviceName
             }"
           >
             <label class="f-12 mb-0">Select Account </label><br />
@@ -297,6 +292,7 @@
               [pTooltip]="isCustomerPortal && !vendorName ? 'Select Vendor' : null"
               tooltipPosition="top"
             >
+            <option value="" ></option>
             <option *ngFor="let item of invTypeArr" [value]="item.value">
               {{ item.name }}
             </option>
@@ -421,7 +417,6 @@
             [(ngModel)]="selectedINVNumber"
             [dropdown]="true"
             name="invNumber"
-            ngModel
             [disabled]="!selectedPoNumber"
             [pTooltip]="!selectedPoNumber ? 'Select PO Number' : null"
             tooltipPosition="top"
@@ -797,7 +792,6 @@
               field="VendorName"
               [dropdown]="true"
               [completeOnFocus]="true"
-              [autofocus]="true"
               name="vendor"
               ngModel
               [(ngModel)]="vendorName"
@@ -805,7 +799,14 @@
               [pTooltip]="!selectedEntityId ? 'Select Entity first' : null"
               tooltipPosition="top"
               required
+              [autofocus]="true" 
+              
             >
+              <ng-template let-group pTemplate="group">
+                <div class="flex align-items-center">
+                  <span class="f-12">{{ group.VendorName }}</span>
+                </div>
+              </ng-template>
               <!-- <ng-template let-group pTemplate="item">
                 <div class="flex align-items-center group-item">
                   <div
@@ -840,11 +841,13 @@
               (change)="onSelectPOType($event.target.value, 'Quick')"
               name="invoiceType"
               ngModel
+              [(ngModel)]="selectedInvoiceType_quick"
               required
               [disabled]="!selectedVendor"
               [pTooltip]="!selectedVendor ? 'Select Vendor' : null"
               tooltipPosition="top"
             >
+              <option value="" disabled></option>
               <option *ngFor="let item of invTypeArr" [value]="item.value">
                 {{ item.name }}
               </option>
@@ -907,7 +910,7 @@
               field="PODocumentID"
               [dropdown]="true"
               name="PONumber"
-              ngModel
+              [(ngModel)]="slQckPONum"
               [disabled]="!selectedInvoiceType_quick"
               [pTooltip]="!selectedInvoiceType_quick ? 'Select Invoce Type' : null"
               tooltipPosition="top"
@@ -959,8 +962,8 @@
               selectedInvoiceType_quick == 'invoice'
             "
             [ngClass]="{
-              'green-border': grnLine,
-              'red-border':  !grnLine && slQckPONum
+              'green-border': sltGRNNum,
+              'red-border':  !sltGRNNum && slQckPONum
             }"
           >
             <label class="f-12 mb-0">Select GRN</label>
@@ -974,7 +977,7 @@
               [selectedItemsLabel]="'{0} items selected'"
               (onChange)="addGrnLine($event)"
               name="PO_GRN_Number"
-              ngModel
+              [(ngModel)]="sltGRNNum"
               [disabled]="!slQckPONum"
               [pTooltip]="!slQckPONum ? 'Select PO Number' : null"
               tooltipPosition="top"
@@ -990,7 +993,8 @@
               selectedInvoiceType_quick == 'invoice'
             "
              [ngClass]="{
-              'green-border': grnLine
+              'green-border': PO_GRN_Number_line,
+              'red-border':  !PO_GRN_Number_line && sltGRNNum
             }"
           >
             <label class="f-12 mb-0">Select GRN Line</label>

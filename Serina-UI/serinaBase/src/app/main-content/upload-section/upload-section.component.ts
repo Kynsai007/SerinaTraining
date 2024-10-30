@@ -85,7 +85,7 @@ export class UploadSectionComponent implements OnInit {
   displaySelectPdfBoolean: boolean;
   vendorAccountId: any;
   vendorAccountName: any;
-  vendorAccount = [];
+  vendorAccount: any[];
   vendorAccountByEntity = [];
   selectedVendor: any;
 
@@ -93,7 +93,7 @@ export class UploadSectionComponent implements OnInit {
   selected = new FormControl(0);
   tabtitle: string = '';
   isCustomerPortal: boolean;
-  filteredVendors = [];
+  filteredVendors: any[];
   tabData = [];
   entirePOData = [];
   evtSource: any;
@@ -228,6 +228,7 @@ export class UploadSectionComponent implements OnInit {
   serviceName: any;
   selectedINVNumber: any;
   selectedPPType: any;
+  slctdInvNum: any;
   selectedPPPercentage: any;
   selectedAccount: any;
   selectedPoNumber: string;
@@ -236,6 +237,7 @@ export class UploadSectionComponent implements OnInit {
   upperValCheck: boolean;
   totalPageValdation: boolean;
   patternValidation: boolean;
+  sltGRNNum  : any;
   portal_name = 'vendorPortal';
 
   selectedOption: string;
@@ -257,7 +259,7 @@ export class UploadSectionComponent implements OnInit {
   serviceAccounts: any;
   filteredServiceAccount: any[];
   selectedServiceAccount: any;
-  selectedSAccount:any;
+  selectedSAccount: any;
   accountsData: any;
   selectedInvoiceType: any;
   selectedInvoiceType_quick: any;
@@ -310,8 +312,9 @@ export class UploadSectionComponent implements OnInit {
   pre_type:string;
   selectedInvNumber: any;
   pre_type_val: any;
-  slQckPONum: boolean = false;
+  slQckPONum: any;
   grnLine: boolean = false;
+  quickVendor: any[];
 
   constructor(
     private http: HttpClient,
@@ -406,6 +409,7 @@ export class UploadSectionComponent implements OnInit {
 
   }
   selectedSub(event){
+    this.selectedPPPercentage = null;
     this.pre_type = event?.value?.value;
   }
   pre_type_value(val,type){
@@ -468,7 +472,7 @@ export class UploadSectionComponent implements OnInit {
       this.selectedEntityId = null;
       this.selectedVendor = null;
       this.selectedInvoiceType_quick = null;
-      this.slQckPONum = false;
+      this.slQckPONum = null;
       this.grnLine= false;
       this.PO_GRN_Number_line = null;
     }
@@ -538,9 +542,16 @@ export class UploadSectionComponent implements OnInit {
     });
   }
   selectType(value) {
-
+    this.EntityName = null;
     this.entity = '';
+    this.selectedAccount = null;
+    this.selectedPoNumber = null;
+    this.selectedINVNumber = null;
     this.displaySelectPdfBoolean = false;
+    this.selectedInvoiceType = null;
+    this.selectedSAccount = null;
+    this.displaySelectPdfBoolean = false;
+    this.serviceName = null;
     this.getEntitySummary();
     // if (value === 'Service invoice') {
     //   this.selectedOption = 'Service';
@@ -568,6 +579,13 @@ export class UploadSectionComponent implements OnInit {
 
   onSelectPOType(val, type) {
     this.displaySelectPdfBoolean = false;
+    this.selectedPoNumber = null;
+    this.selectedINVNumber = null;
+    this.selectedPPType = null;
+    this.selectedPPPercentage = null;
+    this.sltGRNNum = null;
+    this.PO_GRN_Number_line = null;
+    this.slQckPONum = null;
     if (type == 'ideal') {
     this.selectedInvoiceType = val ;
       if(val == 'non po invoice'){
@@ -634,6 +652,18 @@ export class UploadSectionComponent implements OnInit {
   selectEntity(value) {
     this.approversSendData = [];
     this.selectedEntityId = value.idEntity;
+    this.selectedInvoiceType = null;
+    this.selectedPoNumber = null;
+    this.selectedINVNumber = null;
+    this.displaySelectPdfBoolean = false;
+    this.selectedSAccount = null;
+    this.displaySelectPdfBoolean = false;
+    this.serviceName = null;
+    this.sltGRNNum = null;
+    this.PO_GRN_Number_line = null;
+    this.slQckPONum = null;
+    this.selectedInvoiceType_quick = null;
+    this.selectedVendor = null;
     this.sharedService.selectedEntityId = value.idEntity;
     // this.entity.forEach(val => {
     //   if (value == val.idEntity) {
@@ -667,16 +697,18 @@ export class UploadSectionComponent implements OnInit {
   }
 
   getCustomerVendors() {
+    let arr: any[] = [];
     this.sharedService
       .getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}`)
       .subscribe((data: any) => {
-        let arr = [];
         data.vendorlist.forEach(ele => {
-          ele.VendorName1 = `${ele.VendorName} - ${ele.VendorCode}`;
-          arr.push({ VendorName: ele.VendorName1, idVendor: ele.idVendor, is_onboarded: ele.is_onboarded })
+          if(ele.is_onboarded){
+            ele.VendorName1 = `${ele.VendorName} - ${ele.VendorCode}`;
+            arr.push({ VendorName: ele.VendorName1, idVendor: ele.idVendor, is_onboarded: ele.is_onboarded })
+          }
         })
         this.vendorAccount = arr;
-        // this.filteredVendors = arr;
+        this.filteredVendors = arr;
       });
   }
   getServiceList() {
@@ -711,19 +743,21 @@ export class UploadSectionComponent implements OnInit {
   // }
 
   filterVendor(event) {
+    let arr: any[] = [];
     let query = event.query.toLowerCase();
-    if (query != '') {
+    // if (query != '') {
       this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&ent_id=${this.selectedEntityId}&ven_name=${query}`).subscribe((data: any) => {
-        let arr = [];
         data.vendorlist.forEach(ele => {
-          ele.VendorName1 = `${ele.VendorName} - ${ele.VendorCode}`;
-          arr.push({ VendorName: ele.VendorName1, idVendor: ele.idVendor, is_onboarded: ele.is_onboarded })
+          if(ele.is_onboarded){
+            ele.VendorName1 = `${ele.VendorName} - ${ele.VendorCode}`;
+            arr.push({ VendorName: ele.VendorName1, idVendor: ele.idVendor, is_onboarded: ele.is_onboarded })
+          }
         })
         this.filteredVendors = arr;
       });
-    } else {
-      this.filteredVendors = this.vendorAccount;
-    }
+    // } else {
+    //   this.filteredVendors = this.vendorAccount;
+    // }
   }
   filterServices(value) {
     let query = value.query.toLowerCase();
@@ -747,9 +781,19 @@ export class UploadSectionComponent implements OnInit {
   }
 
   selectVendorAccount(value) {
+    this.selectedInvoiceType = null;
+    this.selectedPoNumber = null;
+    this.selectedINVNumber = null;
+    this.displaySelectPdfBoolean = false;
+    this.selectedSAccount = null;
+    this.selectedPPPercentage = null;
     this.selectedVendor = value.idVendor;
     this.selectedPONumber = '';
     delete this.PONumber;
+    this.sltGRNNum = null;
+    this.PO_GRN_Number_line = null;
+    this.slQckPONum = null;
+    this.selectedInvoiceType_quick = null;
     this.displayUploadOpt();
     
     // this.vendorAccountId = value.vendoraccounts[0].idVendorAccount;
@@ -774,6 +818,8 @@ export class UploadSectionComponent implements OnInit {
   }
   selectService(value) {
     this.sp_id = value;
+    this.selectedSAccount = null;
+    this.displaySelectPdfBoolean = false;
     this.selectedServiceAccount = '';
 
     this.getAccountsByService(this.sp_id);
@@ -865,6 +911,7 @@ export class UploadSectionComponent implements OnInit {
   }
 
   selectedInv(event){
+    this.displayUploadOpt();
     if(this.viewType == 'quick'){
       this.sharedService.readInvLines(event.docheaderID).subscribe(data=>{
         this.popupFun('flip returns',data,'');
@@ -877,6 +924,12 @@ export class UploadSectionComponent implements OnInit {
   }
 
   selectedPO(event) {
+    this.displaySelectPdfBoolean = true;
+    this.selectedINVNumber = null;
+    this.selectedPPType = null;
+    this.selectedPPPercentage = null;
+    this.sltGRNNum = null;
+    this.PO_GRN_Number_line = null;
     if(this.viewType == 'ideal'){
       this.selectedPONumber = event.PODocumentID;
       if(!this.isCustomerPortal){
@@ -885,17 +938,17 @@ export class UploadSectionComponent implements OnInit {
       }
       if(this.selectedInvoiceType.includes('credit note') && this.dataService.configData.client_name == 'SRG'){
         this.getVendorInvoices(event.PODocumentID);
+         this.displaySelectPdfBoolean = false;
       }
       if(this.selectedInvoiceType === 'advance invoice' && this.dataService.configData.client_name == 'SRG'){
         this.displaySelectPdfBoolean = false;
       }
-      else{
+      if(this.selectedInvoiceType !== 'credit note'){
         this.displayUploadOpt();
       }
       
       // this.readPOLines(event.PODocumentID);
     } else {
-      this.slQckPONum = true;
       if (this.selectedInvoiceType_quick == 'invoice') {
         this.readPOLines(event.PODocumentID);
         } else {
@@ -995,6 +1048,7 @@ export class UploadSectionComponent implements OnInit {
     })
   }
   addGrnLine(val) {
+    this.PO_GRN_Number_line = null;
     this.grnLine = true;
     this.po_grn_line_list = [];
     val?.value?.forEach(ele => {
@@ -1332,7 +1386,7 @@ export class UploadSectionComponent implements OnInit {
     this.seconds = "00";
     this.minutes = "00";
     this.progress = null;
-    this.progressbar = null;
+    this.progressbar = 0;
     if(this.selectedOption == 'Service'){
       this.returnmessage = false;
       this.selectedSAccount = [];

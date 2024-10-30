@@ -271,7 +271,7 @@
           [src]="logoSrc"
           alt="Serina logo"
           [ngClass]="
-            DS.configData?.client_name == 'Cenomi' ? 'otherBrand' : 'Serina'
+          ['Cenomi','AGI'].includes(DS?.configData?.client_name) ? 'otherBrand' : 'Serina'
           "
         />
       </div>
