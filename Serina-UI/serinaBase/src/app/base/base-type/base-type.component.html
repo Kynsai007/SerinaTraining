@@ -898,7 +898,7 @@
               [routerLink]="'bulkUploadService'"
               routerLinkActive="active_sub_cls"
               (click)="onMenuChange('Service Bulk upload/ Batch trigger')"
-              *ngIf="serviceInvoiceAccess"
+              *ngIf="serviceInvoiceAccess && serviceTriggerBoolean"
               >Service Bulk upload/ Batch trigger</a
             >
             <!-- <a
