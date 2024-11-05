@@ -3412,7 +3412,8 @@ export class Comparision3WayComponent
     this.progress = 1;
     const formData: any = new FormData();
     for (const file of this.uploadFileList) {
-      formData.append('files', file, file.name);
+      const cleanedFileName = file.name.replace(/\.(?=.*\.)/g, '');
+      formData.append('files', file, cleanedFileName);
     }
     this.SpinnerService.show()
     this.SharedService.uploadSupportDoc(formData)
