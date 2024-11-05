@@ -617,7 +617,9 @@ export class Comparision3WayComponent
       // this.readMappingData();
       if (!['advance invoice'].includes(this.documentType)) {
         this.getGRNtabData();
-        this.getGrnAttachment();
+        if(this.client_name != 'SRG'){
+          this.getGrnAttachment();
+        }
       }
 
 
@@ -3007,7 +3009,7 @@ export class Comparision3WayComponent
   }
   createTimesheetAPI() {
     
-    this.exceptionService.createTimesheet(this.SharedService.po_doc_id,this.manPowerAPI_request, 'PO').subscribe((data: any) => {
+    this.exceptionService.createTimesheet(this.SharedService.po_doc_id,this.manPowerAPI_request, 'po').subscribe((data: any) => {
       if (data.status.toLowerCase() == 'success') {
         this.success(data.message);
         this.manpowerHeaderId = data.ManPowerHeaderId;
