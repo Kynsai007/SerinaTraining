@@ -57,7 +57,7 @@ export class ProcessReportserviceComponent implements OnInit {
   ];
   client_name:string;
   @ViewChild('datePicker') datePicker: Calendar;
-  agi_p_link = "https://apps.powerapps.com/play/e/f81e19e2-1c2c-e736-93f4-b631f0177a44/a/6227c405-6da3-4ea7-9865-d13ca96b4593?tenantId=38a3f678-5fe7-4dbb-8eb9-eee7a0c6fd57&hint=6d334e0e-0c8e-479e-80f7-583e64497066&sourcetime=1729059118010"
+  agi_p_link = "https://apps.powerapps.com/play/e/89447b7d-5d08-ef84-8559-89f7c9ace85e/a/4a50ae40-fe92-4e2a-8dd8-c391fc951b1c?tenantId=38a3f678-5fe7-4dbb-8eb9-eee7a0c6fd57&hint=d9e99d62-e8a6-40cb-9b06-2f549661f69c&sourcetime=1730891381494"
   constructor(
     private sharedService: SharedService,
     private chartsService: ChartsService,
