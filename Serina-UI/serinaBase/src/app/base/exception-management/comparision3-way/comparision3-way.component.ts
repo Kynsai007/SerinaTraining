@@ -2596,11 +2596,15 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            // if (this.invoiceNumber) {
-            this.grnDuplicateCheck(boolean);
-            // } else {
-            //   this.error("Dear user, please add the invoice number.");
-            // }
+            if(this.client_name == 'SRG'){
+              if (this.invoiceNumber) {
+                this.grnDuplicateCheck(boolean);
+                } else {
+                  this.error("Dear user, please add the invoice number.");
+                }
+            } else {
+              this.grnDuplicateCheck(boolean);
+            }
           } else {
             setTimeout(() => {
               if (this.router.url.includes('GRN_approvals')) {
