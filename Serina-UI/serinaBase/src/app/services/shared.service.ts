@@ -280,10 +280,10 @@ export class SharedService {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/serviceprovideraccount/${this.userId}?${data}${apiParam}`).pipe(retry(3));
   }
   createserviceprovideraccount(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/newSPAccount/${this.userId}/serviceId/` + this.spID, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/newSPAccount/${this.userId}/serviceId/` + this.spID, data);
   }
   updateSpAccount(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/updateSPAccount/${this.userId}/idServiceAccount/${this.spAccountID}`, data).pipe(retry(3));
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/ServiceProvider/updateSPAccount/${this.userId}/idServiceAccount/${this.spAccountID}`, data);
   }
   readserviceproviderinvoice() {
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/InvoicePush/readServiceInvoiceList/${this.userId}?sp_id=` + this.spID).pipe(retry(3));
