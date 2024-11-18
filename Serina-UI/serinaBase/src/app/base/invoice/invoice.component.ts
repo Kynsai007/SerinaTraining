@@ -360,14 +360,17 @@ isMobile:boolean;
         dbColumnname: 'VendorName',
         columnName: `${this.partyType} Name`,
       });
+      if(!this.vendorInvoiceAccess){
+        this.rejectedColumns = this.rejectedColumns.filter(col=> col.dbColumnname !== 'PODocumentID')
+      }
     }
 
-    this.rejectedColumns.forEach((e) => {
-      if (!this.ds.ap_boolean && e.columnName == 'Invoice Number') {
-        e.columnName = 'Document Number'
-      }
-      this.columnstodisplayrejected.push(e.dbColumnname);
-    });
+    // this.rejectedColumns.forEach((e) => {
+    //   if (!this.ds.ap_boolean && e.columnName == 'Invoice Number') {
+    //     e.columnName = 'Document Number'
+    //   }
+    //   this.columnstodisplayrejected.push(e.dbColumnname);
+    // });
 
     this.GRNColumns.forEach((e) => {
       this.columnstodisplayGRN.push(e.dbColumnname);

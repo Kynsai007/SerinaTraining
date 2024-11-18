@@ -795,7 +795,7 @@ export class Comparision3WayComponent
       const tagMappings = {
         'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
         'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
-        'PO Balance Qty': { value: 'RemainInventPhysical', isMapped: '', tagName: 'PO Balance Qty' },
+        'PO Balance Qty': { value: 'RemainPurchPhysical', isMapped: '', tagName: 'PO Balance Qty' },
         'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'', isMapped: '', tagName: 'Quantity' },
         'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
         'AmountExcTax': {
@@ -913,7 +913,7 @@ export class Comparision3WayComponent
           this.dataService.GRN_PO_Data.forEach(grn_line=>{
             if(line.LineNumber == grn_line.LineNumber){
               grn_line.PurchQty = line.PurchQty;
-              grn_line.RemainInventPhysical = line.RemainInventPhysical;
+              grn_line.RemainPurchPhysical = line.RemainPurchPhysical;
               
             }
           })
@@ -1465,7 +1465,7 @@ export class Comparision3WayComponent
               ele.podata.forEach((v) => {
                 if (v.TagName == 'PurchQty') {
                   poQty.push(v);
-                } else if (v.TagName == 'RemainInventPhysical') {
+                } else if (v.TagName == 'RemainPurchPhysical') {
                   poBalQty.push(v);
                 }
               });
