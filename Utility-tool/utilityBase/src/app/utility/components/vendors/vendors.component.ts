@@ -315,7 +315,7 @@ export class VendorsComponent implements OnInit {
     this.sharedService
       .getVendorsListToCreateNewlogin(`?offset=1&limit=100`)
       .subscribe((data: any) => {
-        this.vendorAccount = data.vendorlist;
+        this.vendorAccount = [...new Map(data.vendorlist.map(v => [v.VendorCode, v])).values()];
         this.vendorAccount.unshift({ VendorName: 'ALL', idVendor: "ALL" })
         // this.filteredVendors = arr;
       });
@@ -326,13 +326,14 @@ export class VendorsComponent implements OnInit {
     if(this.selectedEntityId != 'ALL'){
       param = `&ent_id=${this.selectedEntityId}`
     }
-    if (query != '') {
+    // if (query != '') {
       this.sharedService.getVendorsListToCreateNewlogin(`?offset=1&limit=100&${param}&ven_name=${query}`).subscribe((data: any) => {
-        this.filteredVendors = data.vendorlist;
+        // this.filteredVendors = data.vendorlist;
+        this.filteredVendors = [...new Map(data.vendorlist.map(v => [v.VendorCode, v])).values()]; 
       });
-    } else {
-      this.filteredVendors = this.vendorAccount;
-    }
+    // } else {
+    //   this.filteredVendors = this.vendorAccount;
+    // }
   }
   selectedVendor(event){
     this.vendorNameForSearch = event.VendorName;

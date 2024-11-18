@@ -59,7 +59,7 @@ export class SharedService {
   customerNameForSearch:any;
   spNameForSearch = 'ALL';
   selected_Vendor: any;
-  selected_ent: any;
+  selected_ent = {EntityName: 'ALL', idEntity: 'ALL'};
   selected_sp: any;
   currencies = [ 
     {"currency":"AED",
