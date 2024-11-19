@@ -353,11 +353,13 @@ isMobile:boolean;
     ];
 
     if (this.portal_name == 'customer') {
-      if (!this.partyType) {
+      if (!this.vendorInvoiceAccess) {
         this.partyType = 'Service'
+      } else {
+        this.partyType = 'Vendor'
       }
       this.rejectedColumns.unshift({
-        dbColumnname: 'VendorName',
+        dbColumnname: !this.vendorInvoiceAccess ?'ServiceProviderName':'VendorName',
         columnName: `${this.partyType} Name`,
       });
       if(!this.vendorInvoiceAccess){
