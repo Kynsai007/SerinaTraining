@@ -94,10 +94,10 @@
     <div  *ngIf="tabName== 'create' && isEmailVerified" class="main_div">
       <h6 class="f-16">Please select below options</h6>
       <div class="acc_options">
-        <div>
+        <!-- <div>
           <img src="assets/Serina Assets/new_theme/Group 2064.svg" alt="ERP" width="180" height="120">
           <label class="f-14"><input type="radio" class="mr-2" name="account" (change)="onSelectType('ERP')">Account in ERP</label>
-        </div>
+        </div> -->
 
         <div>
           <img src="assets/Serina Assets/new_theme/Group 2067.svg" alt="Serina" width="180" height="120">
@@ -110,7 +110,7 @@
       [formGroup]="registrationForm"
       (ngSubmit)="savePasswordforNewuser()"
     >
-      <h6 class="f-16">Please type Vendor Credentials</h6>
+      <h6 class="f-16">Please type vendor credentials</h6>
       <div class="reg_div">
         <div>
           <div class="inputBox">
