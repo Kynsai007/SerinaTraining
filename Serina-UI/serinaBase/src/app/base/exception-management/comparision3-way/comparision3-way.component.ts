@@ -1564,6 +1564,7 @@ export class Comparision3WayComponent
         this.headerDataOrder();
         this.po_num = po_num_data[0]?.Value;
         this.getPODocId(this.po_num);
+        this.getGRNnumbers(this.exceptionService.po_num)
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -3471,6 +3472,28 @@ export class Comparision3WayComponent
         this.error("Server error");
       }
     );
+  }
+
+  deleteSupport(file){
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to delete this line?', 'confirmation', 'Confirmation');
+    drf.afterClosed().subscribe((bool:boolean)=>{
+      if(bool){
+        this.support_doc_list = [];
+        this.SpinnerService.show();
+        this.SharedService.deleteSupport(file).subscribe((data:any)=>{
+          console.log(data)
+          if(data.status == 'success'){
+            this.support_doc_list = data.files;
+            console.log(this.support_doc_list)
+            this.success("Deleted successfully.");
+            this.SpinnerService.hide();
+          }
+        },err=>{
+          this.error("Server error");
+          this.SpinnerService.hide();
+        })
+      }
+    })
   }
 
   grnAttachmentDoc(base64, type) {

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
 
 @Injectable({
@@ -6,14 +7,18 @@ import * as FileSaver from 'file-saver';
 })
 export class ImportExcelService {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   exportExcel(data) {
     import("xlsx").then(xlsx => {
       const worksheet = xlsx.utils.json_to_sheet(data);
       const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
       const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-      this.saveAsExcelFile(excelBuffer, "InvoiceData");
+      let filename = "InvoiceData"
+      if(this.router.url.includes('roles')){
+        filename = "userReport"
+      }
+      this.saveAsExcelFile(excelBuffer,filename );
     });
   }
 

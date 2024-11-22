@@ -35,7 +35,7 @@
       
       <button
         *ngIf="
-          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit || router.url.includes('Inv_vs_GRN_details')
+          portalName == 'customer' && !isServiceData && !fin_boolean && editable && !['advance invoice','non-po','credit note'].includes(documentType) || mappingForCredit || (router.url.includes('Inv_vs_GRN_details') && !GRN_PO_Bool)
         "
         class="secondary_btn f-12 m-t-neg ml-2 mr-2"
         (click)="opengrnDailog()"
@@ -44,7 +44,7 @@
       </button>
       <button
         *ngIf="
-          portalName == 'customer' && [8,16,17,19,21,27,34].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
+          portalName == 'customer' && [8,16,17,19,21,27,34,205].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
         "
         class="secondary_btn f-12 mr-2"
         (click)="open_dialog_comp('flip line')"
@@ -609,7 +609,7 @@
               <button
                 *ngIf="
                   portalName == 'customer' &&
-                  flipEnabled && [8,16,17,18,19,21,27,34].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
+                  flipEnabled && [8,16,17,18,19,21,27,34,205].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
                 "
                 class="secondary_btn f_12 m-t-neg ml-2"
                 (click)="open_dialog_comp('flip line', '')"
@@ -1672,9 +1672,14 @@
                   </td>
                   <td style="width: 100px;">
                     <i
-                      class="fa fa-download pointer"
+                      class="fa fa-download pointer mr-2"
                       aria-hidden="true"
                       (click)="downloadDoc(file, 'down')"
+                    ></i>
+                    <i
+                      class="fa fa-trash-o pointer"
+                      aria-hidden="true"
+                      (click)="deleteSupport(file)"
                     ></i>
                   </td>
                 </tr>
@@ -1711,7 +1716,9 @@
 
 
               <p class="f-11">
-                 *SERINA is not reading the supporting document<strong> (.pdf only)</strong>. Please check and review it manually.
+                *SERINA is not reading the supporting document
+                <strong>(.pdf only)</strong>
+                . Please check and review it manually.
               </p>
             </div>
             <div

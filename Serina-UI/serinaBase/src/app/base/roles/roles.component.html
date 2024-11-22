@@ -8,7 +8,7 @@
             class="nav-link"
             [class.active]="viewType == 'user'"
             (click)="viewType = 'user'"
-            >Users</a
+            >Users({{CustomerUserReadData?.length > 0 ? CustomerUserReadData.length : '-' }})</a
           >
         </li>
         <li [routerLink]="['/customer/roles', 'definedRoles']">
@@ -27,7 +27,7 @@
             class="nav-link"
             [class.active]="viewType == 'vendorAdminUser'"
             (click)="viewType = 'vendorAdminUser'"
-            >Vendor Admin</a
+            >Vendor Admin ({{ vendorAdminReadData.length>0 ? vendorAdminReadData.length : '-'}})</a
           >
         </li>
 
@@ -39,7 +39,7 @@
             class="nav-link"
             [class.active]="viewType == 'vendorAdminUserApprve'"
             (click)="viewType = 'vendorAdminUserApprve'"
-            >Admin Approval</a
+            >Admin Approval ({{ vendorAdminReadDataAP.length>0 ? vendorAdminReadDataAP.length : '-'}})</a
           >
         </li>
       </ul>
@@ -59,6 +59,9 @@
       <div *ngSwitchCase="'user'">
         <div class="positionCreateUpload">
           <!-- <button class=" btnUpload mr-2">Export</button> -->
+          <button class="secondary_btn f-18 export mr-3" (click)="exportExcel(CustomerUserReadData)">
+            <i class="fa fa-download"></i>
+          </button>
           <button class="btnUpload mr-53" (click)="createCustomerUserPage()">
             <span class="f-16">+</span> Add New User
           </button>
@@ -347,6 +350,9 @@
       <!-- vendor Admin users -->
       <div *ngSwitchCase="'vendorAdminUser'">
         <div class="positionCreateUpload">
+          <button class="secondary_btn f-18 export mr-3" (click)="exportExcel(totalVendors)">
+            <i class="fa fa-download"></i>
+          </button>
           <button class="btnUpload mr-53" (click)="addVendorUser()">
             <span class="f-16">+</span> Add Vendor
           </button>

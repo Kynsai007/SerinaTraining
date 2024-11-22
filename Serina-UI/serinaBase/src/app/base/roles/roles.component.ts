@@ -10,6 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ImportExcelService } from 'src/app/services/importExcel/import-excel.service';
 
 export interface UserData {
   name: string;
@@ -263,6 +264,7 @@ export class RolesComponent implements OnInit {
   rightColumnPermissions: Permission[] = [];
   invoicePermissions: Permission[] = [];
   show_document_status: boolean;
+  totalVendors: any[];
 
   constructor(
     private dataService: DataService,
@@ -274,7 +276,8 @@ export class RolesComponent implements OnInit {
     private _location: Location,
     private settingsService: SettingsService,
     private Alert : AlertService,
-    private mat_dlg : MatDialog
+    private mat_dlg : MatDialog,
+    private ImportExcelService: ImportExcelService
   ) {
     routeIn.params.subscribe((params) => {
       this.setupComponent(params['someParam']);
@@ -1723,6 +1726,7 @@ export class RolesComponent implements OnInit {
           vendorUsersList.push(mergerdObject);
         }
       });
+      this.totalVendors = vendorUsersList.concat(vendorUsersListAp);
       this.vendorAdminReadData = vendorUsersList;
       this.vendorAdminReadDataAP = vendorUsersListAp;
       if (this.vendorAdminReadData.length > 10 && this.isDesktop) {
@@ -1858,5 +1862,9 @@ export class RolesComponent implements OnInit {
 
   expand(bool){
     this.expandFull = bool;
+  }
+
+  exportExcel(exportData){
+    this.ImportExcelService.exportExcel(exportData);
   }
 }

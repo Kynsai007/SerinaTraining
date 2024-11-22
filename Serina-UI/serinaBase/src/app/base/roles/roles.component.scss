@@ -625,3 +625,9 @@ input:checked + .slider {
 .user_down .shade_color {
     line-height: 1;
 }
+.export {
+    height: 30px;
+    position: relative;
+    top: 3px;
+    min-width: 50px !important;
+}

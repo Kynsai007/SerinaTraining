@@ -453,6 +453,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   // edit invoice details if something wrong
   editInvoice(e) {
     this.tagService.approval_selection_boolean = false;
+    this.ExceptionsService.po_num = e?.PODocumentID;
     this.ds.documentType = e?.UploadDocTypeCategory?.toLowerCase();
     this.ds.ent_code = e.EntityCode;
     if (this.router.url.includes('invoice')) {
