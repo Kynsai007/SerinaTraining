@@ -961,7 +961,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
         this.globalSearch = stItem?.filters?.global?.value;
       }
     }
-    else if (this.router.url.includes('GRN') && !this.router.url.includes('GRNExceptions')) {
+    else if (this.router.url.includes('invoice/GRN') && !this.router.url.includes('GRNExceptions')) {
       this.first = this.ds.GRNPaginationFirst;
       this.rows = this.ds.GRNPaginationRowLength;
       this.stateTable = 'GRN';

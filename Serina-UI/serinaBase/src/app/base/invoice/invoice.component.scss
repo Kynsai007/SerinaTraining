@@ -61,6 +61,9 @@ $theme_color: var(--themeColor);
   .erpDiv .p-autocomplete-dd .p-autocomplete-input {
     width: 100%;
   }
+  .inputBox .p-autocomplete {
+    width: 100%;
+  }
   .erpDiv .p-autocomplete {
     width: 100%;
   }
@@ -363,9 +366,11 @@ dialog .footer {
 :host::ng-deep {
   dialog .inputBox .p-calendar {
     width: -webkit-fill-available !important;
+    width: 100% !important;
   }
   
   dialog .inputBox .p-calendar .p-inputtext {
+    width: 100% !important;
     width: -webkit-fill-available !important;
     border: 0px solid #d3d3d3 !important;
     height: 30px !important;

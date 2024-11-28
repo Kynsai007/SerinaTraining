@@ -167,6 +167,7 @@ $theme_color: var(--themeColor);
   .p-autocomplete {
     height: 30px;
     width: -webkit-fill-available;
+    width: 100%;
     position: relative;
     top: -12px;
     left: -8px;
@@ -194,12 +195,14 @@ $theme_color: var(--themeColor);
   // }
   .inputBox .p-calendar {
     width: -webkit-fill-available !important;
+    width: 100% !important;
     position: relative;
     top: -12px;
     left: -8px;
   }
   .inputBox .p-calendar .p-inputtext {
     width: -webkit-fill-available !important;
+    width: 100% !important; 
     background-color: transparent;
   }
   .p-calendar .p-datepicker {
