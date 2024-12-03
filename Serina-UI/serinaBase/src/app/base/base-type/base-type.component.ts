@@ -5,7 +5,7 @@ import { SettingsService } from './../../services/settings/settings.service';
 import { PermissionService } from './../../services/permission.service';
 import { AuthenticationService } from './../../services/auth/auth-service.service';
 import { SharedService } from './../../services/shared.service';
-import { Component, OnInit, OnDestroy,Renderer2, AfterViewInit  } from '@angular/core';
+import { Component, OnInit, OnDestroy,Renderer2, AfterViewInit, HostListener  } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 // import { IMqttMessage, MqttService } from 'ngx-mqtt';
@@ -628,6 +628,34 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
       this.subscription.unsubscribe();
     }
     this.DisplayMode.unsubscribe();
-    this.dialog.closeAll();
+    this.dialog.closeAll();    
+
+
   }
+  @HostListener('window:beforeunload', ['$event'])
+  clearSessionStorage(event: Event): void {
+    // Remove session storage items if they exist
+    if (sessionStorage.getItem('allInvoices')) {
+      sessionStorage.removeItem('allInvoices');
+    }
+    if (sessionStorage.getItem('PO')) {
+      sessionStorage.removeItem('PO');
+    }
+    if (sessionStorage.getItem('GRN')) {
+      sessionStorage.removeItem('GRN');
+    }    
+    if (sessionStorage.getItem('GRN Creation')) {
+      sessionStorage.removeItem('GRN Creation');
+    }
+    if (sessionStorage.getItem('editException')) {
+      sessionStorage.removeItem('editException');
+    }    
+    if (sessionStorage.getItem('Archived')) {
+      sessionStorage.removeItem('Archived');
+    }    
+    if (sessionStorage.getItem('rejected')) {
+      sessionStorage.removeItem('rejected');
+    }
+  }
+  
 }

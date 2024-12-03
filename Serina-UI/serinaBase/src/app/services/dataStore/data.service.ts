@@ -94,6 +94,8 @@ export class DataService {
     { id:3, sub_id:70, name :'Approval Pending', bgcolor: 'inherit', textColor :'#358DC0'},
     { id:4, sub_id:81, name :'GRN Approval Pending', bgcolor: 'inherit', textColor :'#358DC0'},
     { id:27, sub_id:23, name :'Duplicate Invoice', bgcolor: 'inherit', textColor :'#F1932F'},
+    { id:29, sub_id:23, name :'Mail Queue', bgcolor: 'inherit', textColor :'#F1932F'},
+    { id:30, sub_id:23, name :'PO Cancelled', bgcolor: 'inherit', textColor :'#F1932F'},
   ]
 
   // bgColorCode = [
@@ -239,6 +241,7 @@ export class DataService {
   manpowerResponse: { dates: { startdate: string; enddate: string; }; data: any[]; };
   serviceStatus: any;
   invoiceStatus: any;
+  invoiceNumber: any;
   constructor(
   ) { 
     // this.ap_boolean = sessionStorage.getItem("ap_boolean");
