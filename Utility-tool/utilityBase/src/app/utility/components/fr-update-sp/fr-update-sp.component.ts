@@ -95,6 +95,11 @@ export class FrUpdateSpComponent implements OnInit {
   auto_template_classification:boolean=false;
   showCheckboxServiceDiv:boolean;
   selected_dateFormat:string;
+  modelVersions = [
+    { name: 'Azure Form Recognizer 2.1', version:'v2.1'},
+    { name: 'Azure Form Recognizer 3.0', version:'2022-08-31'},
+    { name: 'Azure Form Recognizer 3.1', version:'2023-07-31'},
+  ]
 
   constructor(private sharedService: SharedService,
     private messageService : MessageService,
@@ -284,10 +289,10 @@ export class FrUpdateSpComponent implements OnInit {
       })
   }
   getMetaData(documentId) {
+    this.headerArray = [];
+    this.LineArray = [];
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
       this.FRMetaData = data.FRMetaData;
-      this.headerArray = [];
-      this.LineArray = [];
       this.selected_dateFormat = this.FRMetaData?.DateFormat;
       if (this.FRMetaData?.auto_template_classification) {
         this.auto_template_classification = this.FRMetaData?.auto_template_classification;
@@ -566,6 +571,7 @@ export class FrUpdateSpComponent implements OnInit {
      value['optionalheadertags'] = this.headerOptTags ? this.headerOptTags.toString() : "";
      value['optionallinertags'] = this.LineOptTags ? this.LineOptTags.toString() : "";
      value["ServiceProviderName"] = this.SPName;
+     value["model_version"] = this.modelData?.DocumentModel?.model_version;
     //  if(value["SPType"] == "PO based"){
     //    value["batchmap"] = 1;
     //    if(!value['erprule'] || value['erprule'] == ''){

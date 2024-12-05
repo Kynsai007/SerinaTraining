@@ -551,8 +551,12 @@ export class SharedService {
   deleteBlob(blobname): Observable<any> {
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/DeleteBlob?blob=${blobname}`).pipe(retry(3));
   }
-  checkModelStatus(modelId): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/check_model_status/${modelId}`).pipe(retry(3));
+  checkModelStatus(modelId,version): Observable<any>{
+    let param = '';
+    if(version){
+      param = `?ocr_version=${version}`
+    }
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/check_model_status/${modelId}${param}`).pipe(retry(3));
   }
   saveFieldsFile(frobj): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/save_fields_file`,frobj).pipe(retry(3));
@@ -601,8 +605,12 @@ export class SharedService {
   getTaggingInfo(container,folderpath,connstr,documentId): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_tagging_info/${documentId}`,{headers:new HttpHeaders({'container':container,'connstr':connstr,"path":folderpath})}).pipe(retry(3));
   }
-  getAnalyzeResult(frobj):Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result/${frobj['container']}`,{headers:new HttpHeaders({'filename':frobj['filename'],'connstr':frobj['connstr'],'fr_endpoint':frobj['fr_endpoint'],'fr_key':frobj['fr_key'],'account':frobj['account']})}).pipe(retry(3));
+  getAnalyzeResult(frobj,version):Observable<any>{
+    let param = '';
+    if(version){
+      param = `?ocr_version=${version}`
+    }
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result/${frobj['container']}${param}`,{headers:new HttpHeaders({'filename':frobj['filename'],'connstr':frobj['connstr'],'fr_endpoint':frobj['fr_endpoint'],'fr_key':frobj['fr_key'],'account':frobj['account']})}).pipe(retry(3));
   }
   getAnalyzeResultHTML(filename):Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_analyze_result_html?filename=${filename}`).pipe(retry(3));
@@ -613,20 +621,32 @@ export class SharedService {
   getTrainingResult(documentId): Observable<any>{
     return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/get_training_result/${documentId}`).pipe(retry(3));
   }
-  trainModel(frobj): Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/train-model`,frobj).pipe(retry(3));
+  trainModel(frobj,version): Observable<any>{
+    let param = '';
+    if(version){
+      param = `?ocr_version=${version}`
+    }
+    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/train-model${param}`,frobj).pipe(retry(3));
   }
   updateTrainingResult(resultobj): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/create_training_result`,resultobj).pipe(retry(3));
   }
-  composeModels(modelsobj): Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/compose_model`,modelsobj).pipe(retry(3));
+  composeModels(modelsobj,version): Observable<any>{
+    let param = '';
+    if(version){
+      param = `?ocr_version=${version}`
+    }
+    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/compose_model${param}`,modelsobj).pipe(retry(3));
   }
   saveComposedModel(modelobj): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/create_compose_result`,modelobj).pipe(retry(3));
   }
-  testModel(modelobj): Observable<any>{
-    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result/${modelobj['modelName']}/model/${modelobj['modelid']}`,modelobj['formData'],{headers:new HttpHeaders({'fr_endpoint':modelobj['fr_endpoint'],'fr_key':modelobj['fr_key']})}).pipe(retry(3));
+  testModel(modelobj,version): Observable<any>{
+    let param = '';
+    if(version){
+      param = `?ocr_version=${version}`
+    }
+    return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result/${modelobj['modelName']}/model/${modelobj['modelid']}${param}`,modelobj['formData'],{headers:new HttpHeaders({'fr_endpoint':modelobj['fr_endpoint'],'fr_key':modelobj['fr_key']})}).pipe(retry(3));
   }
   testHtml(formData): Observable<any>{
     return this.http.post(`${this.url}/${this.apiVersion}/ModelOnBoard/test_analyze_result_html`,formData).pipe(retry(3));
@@ -670,16 +690,25 @@ export class SharedService {
     return this.http.post(url,resetObj).pipe(retry(3));
   }
   // auto tagging value to fields
-  tagValuesToFields(folderPath: string, fileName?: string): Observable<any> {
-    let url = `${this.url}/${this.apiVersion}/ModelOnBoard/autoLabels/${folderPath}`;
-    if (fileName) {
-      url += `?filename=${fileName}`;
+  tagValuesToFields(folderPath: string, fileName?: string,version?: string): Observable<any> {
+    let param = '';
+    if(version && fileName){
+      param = `?filename=${fileName}&ocr_version=${version}`;
+    } else if(version && !fileName){
+      param = `?ocr_version=${version}`;
+    } else if(!version && fileName){
+      param = `?filename=${fileName}`;
     }
+    let url = `${this.url}/${this.apiVersion}/ModelOnBoard/autoLabels/${folderPath}`;
     return this.http.get(url).pipe(retry(3));
   }
 
-  runLayout(folderPath:string): Observable<any>{
-    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/runlayout/${folderPath}`).pipe(retry(3));
+  runLayout(folderPath:string,version): Observable<any>{
+    let param = '';
+    if(version){
+      param = `?ocr_version=${version}`
+    }
+    return this.http.get(`${this.url}/${this.apiVersion}/ModelOnBoard/runlayout/${folderPath}${param}`).pipe(retry(3));
   }
 
   getLabelsInfo(folderPath,filename): Observable<any>{

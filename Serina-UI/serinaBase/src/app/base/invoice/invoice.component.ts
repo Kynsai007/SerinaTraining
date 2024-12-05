@@ -346,6 +346,7 @@ isMobile:boolean;
       { dbColumnname: 'PODocumentID', columnName: 'PO Number' },
       { dbColumnname: 'docheaderID', columnName: 'GRN Number' },
       { dbColumnname: 'InvoiceNumber', columnName: 'Invoice Number' },
+      { dbColumnname: 'JournalNumber', columnName: 'Invoice reference' },
       { dbColumnname: 'grn_status', columnName: 'GRN Status' },
       { dbColumnname: 'CreatedOn', columnName: 'Received Date' },
       { dbColumnname: 'firstName', columnName: 'Created By' },

@@ -11,7 +11,7 @@ import { SharedService } from 'src/app/services/shared/shared.service';
 export class TrainingtoolComponent implements OnInit,AfterViewInit {
   frp_id:any;
   resp:any;
-  apiversion: string = "Azure Form Recognizer 2.1";
+  apiversion: string = "v2.1";
   training:boolean=false;
   textmodel: string = "Model Name"
   nottrained:boolean = true;
@@ -30,6 +30,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any;
   @Input() showtab:any;
   @Output() changeTab = new EventEmitter<{'show1':boolean,'show2':boolean,'show3':boolean,'show4':boolean}>();
+  ocr_version: any;
   
   constructor(private sharedService:SharedService) {
     this.nameinvalid = {
@@ -40,6 +41,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
    }
 
   ngOnInit(): void {
+    this.ocr_version = this.modelData?.model_version || 'v2.1';
     try {
       this.setup();   
     }catch(ex){
@@ -49,9 +51,9 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
   ngAfterViewInit(): void {
     sessionStorage.setItem("modelData",JSON.stringify(this.modelData));
     sessionStorage.setItem("frConfigData",JSON.stringify(this.frConfigData));
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
+    const ocr_engine_version =  this.ocr_version;
     this.apiversion = ocr_engine_version;
-    if(this.apiversion != "Azure Form Recognizer 2.1"){
+    if(this.apiversion != "v2.1"){
       this.textmodel = "Enter Model Identifier"
     }
   }
@@ -70,7 +72,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
     }
   }
   async setup(){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
+    const ocr_engine_version =  this.ocr_version;
     if(!this.modelData){
       this.modelData = JSON.parse(sessionStorage.getItem("modelData"));
       this.frConfigData = JSON.parse(sessionStorage.getItem("frConfigData")); 
@@ -84,13 +86,13 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
             return;
           }
           this.previoustrainingres = JSON.parse(this.previoustraining[this.previoustraining.length - 1]);
-          if(ocr_engine_version == "Azure Form Recognizer 2.1"){
-            if(this.previoustrainingres.modelInfo.status == "creating"){
+          if(ocr_engine_version == "v2.1"){
+            if(this.previoustrainingres?.modelInfo.status == "creating"){
               this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button"
               this.nottrained = false;
               return;
             }
-            if(this.previoustrainingres.modelInfo.attributes.isComposed){
+            if(this.previoustrainingres?.modelInfo?.attributes?.isComposed){
               this.fields = this.previoustrainingres.composedTrainResults[0].fields;
             }else{
               this.fields = this.previoustrainingres.trainResult.fields;
@@ -155,9 +157,9 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
   }
   checkModelStatus(){
     this.checkmodel = true;
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
-    if(ocr_engine_version == "Azure Form Recognizer 2.1"){
-      this.sharedService.checkModelStatus(this.previoustrainingres['modelInfo']['modelId']).subscribe(data=>{
+    const ocr_engine_version =  this.ocr_version;
+    if(ocr_engine_version == "v2.1"){
+      this.sharedService.checkModelStatus(this.previoustrainingres['modelInfo']['modelId'], this.ocr_version).subscribe(data=>{
         this.checkmodel = false;
         if(data["modelInfo"]["status"] == "ready"){
           let resultobj = {'fr_result':JSON.stringify(data),'docid':this.modelData.idDocumentModel,'modelName':this.previoustrainingres['modelInfo']['modelId']}
@@ -175,7 +177,7 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
     }
   }
   async trainModel(){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
+    const ocr_engine_version =  this.ocr_version;
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
     this.training = true;
     let frobj = {
@@ -186,14 +188,14 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
       'modelName':modelName
     }
     try{
-      this.sharedService.trainModel(frobj).subscribe((data:any) => {
+      this.sharedService.trainModel(frobj, this.ocr_version).subscribe((data:any) => {
         this.successmsg = "";
         this.resp = data;
         console.log(this.resp);
         this.training = false;
 
         if(this.resp["message"] == "failure"){
-          if(ocr_engine_version == "Azure Form Recognizer 2.1"){
+          if(ocr_engine_version == "v2.1"){
             if(this.resp["result"]["modelInfo"]["status"] == "creating"){
               this.previoustrainingres = {"modelInfo":{"status":this.resp["result"]["modelInfo"]["status"],"modelId":this.resp["result"]["modelInfo"]["modelId"],"modelName":this.resp["result"]["modelInfo"]["modelName"]}}
               this.successmsg = "Model training is still in progress. Please wait for 2-3 minutes and click on Check Status Button"
@@ -251,9 +253,9 @@ export class TrainingtoolComponent implements OnInit,AfterViewInit {
         if(this.resp['message'] == 'success'){
           this.trainingresult = this.resp['result'];
           let modelName;
-          if(ocr_engine_version == "Azure Form Recognizer 2.1"){
+          if(ocr_engine_version == "v2.1"){
             this.errors = this.resp['result']['trainResult']['errors'];
-            modelName = this.trainingresult["modelInfo"]["modelName"]
+            modelName = this.trainingresult?.modelInfo["modelName"]
           }else{
             this.errors = [];
             if(this.resp['result'].result){

@@ -579,6 +579,12 @@
                         <option *ngFor="let sp of SPAccountList" [value]="sp.idServiceAccount">
                             {{sp.Account}}</option>
                     </select> -->
+                    <label class="f-14">Select FR Version *</label>
+                    <select class="form-control f-13 inputBox selectpicker"
+                        name="model_version" ngModel #model_version="ngModel" required>
+                        <option *ngFor="let version of modelVersions" [value]="version.version">
+                            {{version.name}}</option>
+                    </select>
 
                     <label class="f-14 mt-2">Template Name</label>
                     <input type="text" class="form-control inputBox f-13" name="modelName" ngModel

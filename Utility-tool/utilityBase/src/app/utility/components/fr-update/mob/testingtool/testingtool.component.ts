@@ -70,6 +70,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any; 
   @Input() showtab:any;
   @Output() changeTab = new EventEmitter<{'show1':boolean,'show2':boolean,'show3':boolean,'show4':boolean}>();
+  ocr_version: any;
   
   constructor(private sharedService:SharedService,private domSanitizer: DomSanitizer,private messageService: MessageService,private router:Router) {
     this.ready = false;
@@ -89,6 +90,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     return sessionStorage.getItem("temp_lang");
   }
   ngOnInit(): void {
+    this.ocr_version = this.modelData?.model_version || 'v2.1';
     try {
       this.setup();
     }catch(ex){
@@ -220,7 +222,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     element.scrollIntoView(); 
   }
   async runAnalyses(){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
+    const ocr_engine_version =  this.ocr_version || 'v2.1';
     if(this.file_url != ""){
       const formData: FormData = new FormData();
       formData.append('file', this.file);
@@ -233,7 +235,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         "fr_endpoint":"",
         "fr_key":""
       }
-      this.sharedService.testModel(testobj).subscribe((data:any) => {
+      this.sharedService.testModel(testobj, this.ocr_version).subscribe((data:any) => {
         this.resp = data;
         this.testing = false;
         this.analyzed = true;
@@ -241,7 +243,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
           //this.model_validate();
           this.jsonresult = this.resp['json_result'];
           let obj;
-          if(ocr_engine_version == "Azure Form Recognizer 2.1"){
+          if(ocr_engine_version == "v2.1"){
             this.readResults = this.jsonresult['analyzeResult']['readResults']
             obj = this.readResults.filter(v => v.page == 1);
             this.fields = this.jsonresult.analyzeResult.documentResults[0].fields
@@ -472,14 +474,14 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     saveAs(blob,filename);
   }
   viewTable(f){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
+    const ocr_engine_version =  this.ocr_version;
     this.rows = [];
     this.currenttable = f;
     this.currentheaders = Object.keys(this.fields[f].valueArray[0].valueObject);
     for(let r=0;r<this.fields[f].valueArray.length;r++){
       let temparr:any[] = [];
       for(let h of this.currentheaders){
-        if(ocr_engine_version == "Azure Form Recognizer 2.1")
+        if(ocr_engine_version == "v2.1")
         temparr.push(this.fields[f].valueArray[r].valueObject[h].text);
         else
         temparr.push(this.fields[f].valueArray[r].valueObject[h].content);

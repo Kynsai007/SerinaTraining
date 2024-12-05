@@ -140,6 +140,17 @@ a:active {
     color: #272727;
     cursor: pointer;
 }
+#checkBoxesService[_ngcontent-rij-c121] {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+    padding: 3px;
+    z-index: 123;
+    position: absolute;
+    width: 100%;
+    max-height: 117px;
+    overflow: auto;
+}
 #checkBoxes {
     // display: none;
     border: 1px solid #ced4da;

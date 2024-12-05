@@ -36,7 +36,7 @@
     
                 <button class="btn btn-default f-13 btn-sm" style="float: right;box-shadow: 0 0 0 0.2rem rgb(0 123 255 / 25%);" data-toggle="modal"
                 data-target="#myModal"> <i class="fa fa-plus"></i> Add Template</button>
-                Form Recogniser configurations
+                Form Recognizer configurations
                 <div *ngIf="frLoadBoolean else spinner">
                     <div class="mt-4" *ngFor="let frData of FRConfigData;">
                         
@@ -535,6 +535,13 @@
                         <option value="" selected disabled>Select vendor account</option>
                         <option *ngFor="let vendor of vendorAccountList" [value]="vendor.idVendorAccount">
                             {{vendor.Account}}</option>
+                    </select>
+
+                    <label class="f-14">Select FR Version *</label>
+                    <select class="form-control f-13 inputBox selectpicker"
+                        name="model_version" ngModel #model_version="ngModel" required>
+                        <option *ngFor="let version of modelVersions" [value]="version.version">
+                            {{version.name}}</option>
                     </select>
 
                     <label class="f-14 mt-2">Template Name *</label>

@@ -56,7 +56,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   rowfields:any[]=[];
   colors:string[]= [];
   zoomVal:number = 0.6;
-  jsonresult = {};
+  jsonresult:any = {};
   readResults:any[]=[];
   currenttext:string="";
   labelsJson={};
@@ -91,6 +91,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
   drawingRect: any;
   selectedRect: any;
   toDelete:any[]= [];
+  ocr_version: any;
   constructor(private domSanitizer: DomSanitizer,private sharedService:SharedService,private router:Router,private sanitizer: DomSanitizer) { 
     this.fieldsfile = {}
     this.options = {'rect':{'minWidth':10,'minHeight':10}}
@@ -100,6 +101,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     sessionStorage.setItem("layoutInfo",JSON.stringify({}));
     sessionStorage.removeItem("htmlInfo");
     sessionStorage.removeItem("htmlArray");
+    this.modelData = JSON.parse(sessionStorage.getItem("modelData"));
+    this.ocr_version = this.modelData?.model_version || 'v2.1';
     router.events.forEach((event) => {
       if(event instanceof NavigationStart && router.url == '/IT_Utility/training') {
         
@@ -856,8 +859,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     });
   }
   async customMizeLabels(labelsJson:any){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
-    if (ocr_engine_version === "Azure Form Recognizer 2.1") {
+    const ocr_engine_version =  this.ocr_version
+    if (ocr_engine_version === "v2.1") {
       if (!labelsJson["labelingState"]) {
           labelsJson["labelingState"] = 2;
       }
@@ -871,7 +874,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
             delete item.labelType;
         }
     });
-  }else if (ocr_engine_version === "Azure Form Recognizer 3.0" || ocr_engine_version === "Azure Form Recognizer 3.1") {
+  }else if (ocr_engine_version === "2022-08-31" || ocr_engine_version === "2023-07-31") {
       if (labelsJson["labelingState"]) {
           delete labelsJson["labelingState"];
       }
@@ -889,8 +892,8 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     return labelsJson
   }
   async analyzeDocument(id: any, filename: string, data: Object) {
-    const instanceConfig = JSON.parse(sessionStorage.getItem('instanceConfig'));
-    const ocrEngineVersion = instanceConfig?.InstanceModel?.ocr_engine || '';
+    // const instanceConfig = JSON.parse(sessionStorage.getItem('instanceConfig'));
+    const ocrEngineVersion =  this.ocr_version || 'v.21';
 
     this.showtags = true;
     this.showtabletags = false;
@@ -908,7 +911,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
         this.labelsJson["$schema"] = "https://schema.cognitiveservices.azure.com/formrecognizer/2021-03-01/labels.json";
         this.labelsJson["document"] = this.currentfile;
         this.labelsJson["labels"] = [];
-        if (ocrEngineVersion === "Azure Form Recognizer 2.1") {
+        if (ocrEngineVersion === "v2.1") {
             this.labelsJson["labelingState"] = 2;
         }
     }
@@ -935,7 +938,7 @@ export class TaggingtoolComponent implements OnInit,AfterViewInit {
     if (layoutInfo && this.modelData.folderPath + "/" + filename in JSON.parse(layoutInfo)) {
         await this.processLayoutFromStorage(layoutInfo, filename, ocrEngineVersion);
     } else {
-        this.sharedService.getAnalyzeResult(frobj).subscribe(async (data: any) => {
+        this.sharedService.getAnalyzeResult(frobj, this.ocr_version).subscribe(async (data: any) => {
             await this.processAnalyzeResult(data, filename, ocrEngineVersion);
         });
     }
@@ -1007,10 +1010,10 @@ private async processAnalyzeResult(data: any, filename: string, ocrEngineVersion
 }
 
 private getReadResults(ocrEngineVersion: string): any[] {
-    if (ocrEngineVersion === "Azure Form Recognizer 2.1") {
+    if (ocrEngineVersion === "v2.1") {
         return this.jsonresult['analyzeResult']['readResults'];
     } else {
-        return this.jsonresult['analyzeResult']['pages'];
+        return this.jsonresult?.analyzeResult?.pages;
     }
 }
 
@@ -1030,8 +1033,8 @@ private async loadFile(fileurl: string, filetype: string) {
 
 private async drawAllCanvases(ocrEngineVersion: string) {
     for (const obj of this.readResults) {
-        this.alldivs[ocrEngineVersion === "Azure Form Recognizer 2.1" ? obj["page"] : obj["pageNumber"]] = [];
-        if (ocrEngineVersion === "Azure Form Recognizer 2.1") {
+        this.alldivs[ocrEngineVersion === "v2.1" ? obj["page"] : obj["pageNumber"]] = [];
+        if (ocrEngineVersion === "v2.1") {
             await this.drawCanvas(obj);
         } else {
             await this.drawCanvasv3(obj);
@@ -1609,7 +1612,7 @@ private initializeFields() {
     return Object.keys(obj);
   }
   next(){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
+    const ocr_engine_version =  this.ocr_version;
     this.currentindex = this.currentindex + 1;
     if(this.currentindex > this.maxpage){
       this.currentindex = 1;
@@ -1621,7 +1624,7 @@ private initializeFields() {
     let popdiv = (<HTMLDivElement>document.getElementById("hidden"+this.currentindex));
     popdiv.style.display = 'none';
     let obj;
-    if(ocr_engine_version == "Azure Form Recognizer 2.1")
+    if(ocr_engine_version == "v2.1")
     obj = this.readResults.filter(v => v.page == this.currentindex);
     else
     obj = this.readResults.filter(v => v.pageNumber == this.currentindex);
@@ -1640,7 +1643,7 @@ private initializeFields() {
 
 
   previous(){
-    const ocr_engine_version = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine
+    const ocr_engine_version =  this.ocr_version;
     this.currentindex = this.currentindex - 1
     if(this.currentindex < 1){
       this.currentindex = this.maxpage;
@@ -1652,7 +1655,7 @@ private initializeFields() {
     let popdiv = (<HTMLDivElement>document.getElementById("hidden"+this.currentindex));
     popdiv.style.visibility = 'none';
     let obj;
-    if(ocr_engine_version == "Azure Form Recognizer 2.1")
+    if(ocr_engine_version == "v2.1")
     obj = this.readResults.filter(v => v.page == this.currentindex);
     else
     obj = this.readResults.filter(v => v.pageNumber == this.currentindex);
@@ -1945,7 +1948,7 @@ private initializeFields() {
     this.analyzing = true;
     this.ready = false;
     this.layouttext = "Running Layout for all files. Please Wait!"
-    this.sharedService.runLayout(this.modelData.folderPath).subscribe((data:any) =>{
+    this.sharedService.runLayout(this.modelData.folderPath, this.ocr_version).subscribe((data:any) =>{
       this.ready = true;
       this.analyzing = false;
       location.reload();

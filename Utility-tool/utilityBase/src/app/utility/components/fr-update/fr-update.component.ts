@@ -103,6 +103,11 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   @ViewChild('updateMetaData')
   updateMetaData:NgForm;
   instanceData:any;
+  modelVersions = [
+    { name: 'Azure Form Recognizer 2.1', version:'v2.1'},
+    { name: 'Azure Form Recognizer 3.0', version:'2022-08-31'},
+    { name: 'Azure Form Recognizer 3.1', version:'2023-07-31'},
+  ]
 
   constructor(private sharedService: SharedService,
     private messageService : MessageService,
@@ -358,8 +363,10 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
   }
 
   getMetaData(documentId) {
+    this.headerArray = [];
     this.sharedService.getMetaData(documentId).subscribe((data:any) =>{
         this.FRMetaData = data.FRMetaData;
+        
         if(this.FRMetaData?.mandatoryheadertags){
           this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
           if(!this.headerArray.includes("TRN") && this.headerTags.filter(v => v.Name == 'TRN').length > 0){
@@ -671,6 +678,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
      value['optionalheadertags'] = this.headerOptTags ? this.headerOptTags.toString() : "";
      value['optionallinertags'] = this.LineOptTags ? this.LineOptTags.toString() : "";
      value["vendorName"] = this.vendorName;
+     value["model_version"] = this.modelData?.DocumentModel?.model_version;
      if(value["vendorType"] == "PO based"){
        value["batchmap"] = 1;
        if(!value['erprule'] || value['erprule'] == ''){
@@ -696,6 +704,7 @@ export class FrUpdateComponent implements OnInit,AfterContentInit {
     });
   }else{
     _this.saving = false;
+    _this.router.navigate(['IT_Utility/training']);
   }
    } else {
      alert('Please add required fields.');

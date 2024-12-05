@@ -14,7 +14,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   pid:any;
   resp:any;
   previoustraining:any[]=[];
-  ocr_engine:string="Azure Form Recognizer 2.1";
+  ocr_engine:string="v2.1";
   models:any[]=[];
   nottrained:boolean=true;
   selectedmodels:any[]=[];
@@ -33,7 +33,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   constructor(private sharedService:SharedService) { }
   
   ngOnInit(): void {
-      this.ocr_engine = JSON.parse(sessionStorage.getItem('instanceConfig')).InstanceModel.ocr_engine;
+      this.ocr_engine = this.modelData?.model_version || 'v2.1';
       try {
         this.setup();
       }catch(ex){
@@ -57,7 +57,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   }
   selectmodel(id,i){
     let model;
-    if(this.ocr_engine == "Azure Form Recognizer 2.1"){
+    if(this.ocr_engine == "v2.1"){
       model = this.models.filter(v => v.modelInfo.modelId == id)[0];
     }
     else{
@@ -123,7 +123,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
     let modelIds:any[] = [];
     let modelName = (<HTMLInputElement>document.getElementById("modelname")).value;
     for(let s of this.selectedmodels){
-      if(this.ocr_engine == "Azure Form Recognizer 2.1"){
+      if(this.ocr_engine == "v2.1"){
         modelIds.push(s.modelInfo.modelId);
       }else{
         modelIds.push(s);
@@ -141,13 +141,13 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       'modelName':modelName,
       'modelIds':modelIds
     }
-    this.sharedService.composeModels(modelsobj).subscribe((data:any) => {
+    this.sharedService.composeModels(modelsobj,this.ocr_engine).subscribe((data:any) => {
       this.resp = data;
       this.composing = false;
       if(this.resp['message'] == 'success'){
         if(this.resp['result']['message'] == 'success'){
           this.composeresult = this.resp['result']['result'];
-          if(this.ocr_engine == "Azure Form Recognizer 2.1"){
+          if(this.ocr_engine == "v2.1"){
             this.modelName = this.resp['result']['result']['modelInfo']['modelName'];
             this.modelId = this.resp['result']['result']['modelInfo']['modelId'];
             this.averageAccuracy = (Number(this.resp['result']['result']['composedTrainResults'][0]['averageModelAccuracy'] * 100)+ "%");
