@@ -1408,7 +1408,7 @@ export class Comparision3WayComponent
         this.lineDisplayData = data.ok?.linedata;
         this.grnLineCount = this.lineDisplayData[0]?.linedata;
         let dummyLineArray = this.lineDisplayData;
-        this.support_doc_list = data?.sup_docs?.files;
+        this.support_doc_list = data?.ok?.sup_docs?.files;
         if (this.support_doc_list == null) {
           this.support_doc_list = []
         }
