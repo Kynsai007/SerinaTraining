@@ -73,12 +73,12 @@ export class UplaodListenerComponent implements OnInit {
   getAllMailListeners(){
     this.EmailListeners = [];
     this.sharedService.getAllMailListeners().subscribe(data => {
-      if(!data){
+      if(!data?.email_listener_info){
         this.buttonmsg = "Save"
-      }else if(data.length == 0){
+      }else if(data?.email_listener_info?.length == 0){
         this.buttonmsg = "Save"
       }else{
-        this.EmailListeners = data;
+        this.EmailListeners = data?.email_listener_info;
         this.buttonmsg = "Publish Listeners"
       }
       
