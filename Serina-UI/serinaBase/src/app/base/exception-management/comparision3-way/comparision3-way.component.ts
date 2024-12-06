@@ -1408,6 +1408,10 @@ export class Comparision3WayComponent
         this.lineDisplayData = data.ok?.linedata;
         this.grnLineCount = this.lineDisplayData[0]?.linedata;
         let dummyLineArray = this.lineDisplayData;
+        this.support_doc_list = data?.sup_docs?.files;
+        if (this.support_doc_list == null) {
+          this.support_doc_list = []
+        }
         dummyLineArray.forEach((ele, i, array) => {
           if (ele.TagName == 'Quantity') {
             ele.TagName = 'Inv - Quantity';
