@@ -799,3 +799,7 @@ dialog::backdrop {
 .r-490 {
   right: 495px !important;
 }
+.maxHDiv {
+  max-height: 65vh;
+  overflow: auto;
+}
