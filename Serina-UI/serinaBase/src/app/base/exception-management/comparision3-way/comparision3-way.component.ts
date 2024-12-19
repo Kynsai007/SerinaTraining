@@ -960,7 +960,10 @@ export class Comparision3WayComponent
 
   getInvoiceFulldata(str) {
     this.SpinnerService.show();
+    this.lineDisplayData = [];
     this.inputDisplayArray = [];
+    this.vendorData = [];
+    this.inputData = [];
     // this.lineData = [];
     let serviceName;
     if (this.Itype == 'PO' || this.Itype == 'GRN' || this.Itype == 'Service' || this.dataService.documentType == 'advance invoice' || this.dataService.documentType == 'non-po' || this.dataService.documentType == 'credit note' && !this.mappingForCredit) {
@@ -988,28 +991,20 @@ export class Comparision3WayComponent
         }
 
         this.getInvTypes();
-        // this.lineDataConversion();
         if (this.pageType == "mapping") {
           this.calculateCost();
         }
-        // this.po_total = response.po_total;
         const pushedArrayHeader = [];
-        // if(data?.ok?.cost_alloc != null){
-        //   this.normalCostAllocation = true;
         data?.ok?.cost_alloc?.forEach(cost => {
           let merge = { ...cost.AccountCostAllocation }
           this.costAllocation.push(merge);
         })
-
-        // }
-        // else{
         this.normalCostAllocation = false;
         data?.ok?.dynamic_cost_alloc?.forEach(dynamic => {
           this.dynamicdata.push(dynamic);
           this.totalTaxDynamic = this.totalTaxDynamic + Number(dynamic?.calculatedtax);
           this.totalAmountDynamic = this.totalAmountDynamic + Number(dynamic?.amount);
         })
-        // }
         response?.headerdata?.forEach((element) => {
           this.mergedArray = {
             ...element.DocumentData,
@@ -1056,10 +1051,12 @@ export class Comparision3WayComponent
           }
         }
         this.headerDataOrder();
-        if (this.po_num) {
-          this.getPODocId(this.po_num);
-          this.getGRNnumbers(this.po_num);
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
         }
+        this.getPODocId(poNum);
+        this.getGRNnumbers(poNum);
         if (this.documentType == 'credit note') {
           this.getProjectData();
           this.getProjectCatData();
@@ -1567,8 +1564,12 @@ export class Comparision3WayComponent
         });
         this.headerDataOrder();
         this.po_num = po_num_data[0]?.Value;
-        this.getPODocId(this.po_num);
-        this.getGRNnumbers(this.exceptionService.po_num)
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
+        }
+        this.getPODocId(poNum);
+        this.getGRNnumbers(poNum);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -1598,7 +1599,7 @@ export class Comparision3WayComponent
 
   readFilePath() {
     this.showInvoice = '';
-    this.SpinnerService.show();
+    // this.SpinnerService.show();
     this.exceptionService.readFilePath().subscribe(
       (data: any) => {
         this.content_type = data?.content_type;
@@ -1632,7 +1633,7 @@ export class Comparision3WayComponent
         // this.SpinnerService.hide();
       },
       (error) => {
-        this.SpinnerService.hide();
+        // this.SpinnerService.hide();
         this.error("Server error");
       }
     );
@@ -1957,31 +1958,36 @@ export class Comparision3WayComponent
   syncBatch() {
     this.SpinnerService.show();
     this.SharedService.syncBatchTrigger(`?re_upload=false`).subscribe((data: any) => {
-      this.headerpop = 'Batch Progress'
-      this.p_width = '350px';
-      this.progressDailogBool = true;
-      this.GRNDialogBool = false;
-      this.batchData = data[this.invoiceID]?.complete_status;
-      let last_msg = this.batchData[this.batchData.length - 1].msg;
-      let sub_status = this.batchData[this.batchData.length - 1]?.sub_status;
-      this.subStatusId = sub_status;
-      this.isBatchFailed = false;
-      this.batchData.forEach(el => {
-        if (el.msg.includes('Tax')) {
-          this.getInvoiceFulldata('');
+      if(data){
+        this.headerpop = 'Batch Progress'
+        this.p_width = '350px';
+        this.progressDailogBool = true;
+        this.GRNDialogBool = false;
+        this.batchData = data[this.invoiceID]?.complete_status;
+        let last_msg = this.batchData[this.batchData.length - 1].msg;
+        let sub_status = this.batchData[this.batchData.length - 1]?.sub_status;
+        this.subStatusId = sub_status;
+        this.isBatchFailed = false;
+        this.batchData.forEach(el => {
+          if (el.msg.includes('Tax')) {
+            this.getInvoiceFulldata('');
+          }
+        })
+        if (last_msg == 'Batch ran to an Exception!' || last_msg == 'Matching Failed - Batch Failed' && this.batch_count <= 2) {
+          this.batch_count++;
+          this.isBatchFailed = true;
         }
-      })
-      if (last_msg == 'Batch ran to an Exception!' || last_msg == 'Matching Failed - Batch Failed' && this.batch_count <= 2) {
-        this.batch_count++;
-        this.isBatchFailed = true;
+        if (!(this.batch_count <= 2)) {
+          this.error("Dear User, Kindly check with Serina's support team regarding this invoice.")
+          // setTimeout(() => {
+          //   this.router.navigate([`${this.portalName}/ExceptionManagement`])
+          // }, 2000);
+        }
+        this.SpinnerService.hide();
+      } else {
+        this.error("Issue with the batch");
+        this.SpinnerService.hide();
       }
-      if (!(this.batch_count <= 2)) {
-        this.error("Dear User, Kindly check with Serina's support team regarding this invoice.")
-        // setTimeout(() => {
-        //   this.router.navigate([`${this.portalName}/ExceptionManagement`])
-        // }, 2000);
-      }
-      this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
       this.error("Server error");
@@ -2196,7 +2202,7 @@ export class Comparision3WayComponent
       this.btnText = 'Close';
     }
     if (this.isImgBoolean == true) {
-      this.loadImage();
+      // this.loadImage();
     }
   }
   rotate(angle: number) {
@@ -2677,6 +2683,9 @@ export class Comparision3WayComponent
         this.p_width = '350px';
         this.headerpop = 'GRN Creation Status';
         this.APIResponse = data.message;
+      }
+      if(data.grn_doc_id && this.uploadFileList.length >0){
+        this.uploadSupport(data.grn_doc_id);
       }
 
     }, err => {
@@ -3302,6 +3311,7 @@ export class Comparision3WayComponent
     this.saveChanges();
     this.progressDailogBool = false;
     setTimeout(() => {
+      this.readLineItems();
       this.getInvoiceFulldata('');
     }, 1000);
   }
@@ -3410,7 +3420,7 @@ export class Comparision3WayComponent
     for (let i = 0; i < event.target.files.length; i++) {
       this.uploadFileList.push(event.target.files[i]);
     }
-    this.uploadSupport();
+    this.uploadSupport(this.invoiceID);
   }
   onSelectFile(event) {
     for (let i = 0; i < event.target.files.length; i++) {
@@ -3422,7 +3432,7 @@ export class Comparision3WayComponent
     this.uploadFileList.splice(index, 1);
   }
 
-  uploadSupport() {
+  uploadSupport(id) {
     this.progress = 1;
     const formData: any = new FormData();
     for (const file of this.uploadFileList) {
@@ -3430,7 +3440,7 @@ export class Comparision3WayComponent
       formData.append('files', file, cleanedFileName);
     }
     this.SpinnerService.show()
-    this.SharedService.uploadSupportDoc(formData)
+    this.SharedService.uploadSupportDoc(id,formData)
       .pipe(
         map((event: any) => {
           if (event.type == HttpEventType.UploadProgress) {
@@ -4374,6 +4384,8 @@ export class Comparision3WayComponent
     delete this.dataService.number_of_days;
     delete this.SharedService.po_num;
     delete this.exceptionService.po_num;
+    delete this.SharedService.invoiceID;
+    delete this.exceptionService.invoiceID;
     delete this.dataService.grn_manpower_metadata;
     delete this.dataService.manpowerResponse
     this.mat_dlg.closeAll();

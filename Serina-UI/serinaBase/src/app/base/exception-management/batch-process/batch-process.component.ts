@@ -96,6 +96,7 @@ export class BatchProcessComponent implements OnInit {
   isMobile: boolean;
   tableImportData: any;
   userDetails:any;
+  previousUrl: string;
 
   constructor(
     private tagService: TaggingService,
@@ -113,6 +114,10 @@ export class BatchProcessComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.previousUrl = this.ds.getPreviousUrl();
+    if(this.previousUrl?.includes('uploadtime')){
+      window.location.reload();
+    }
     this.apprveBool = this.ds.configData?.enableApprovals;
     this.userDetails = this.authService.currentUserValue;
     this.portalName = this.ds.portalName;

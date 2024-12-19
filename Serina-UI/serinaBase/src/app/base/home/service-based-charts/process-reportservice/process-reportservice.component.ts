@@ -243,6 +243,11 @@ export class ProcessReportserviceComponent implements OnInit {
           }
         });
       })
+      this.stackedChartData = this.stackedChartData.filter(el=>{
+        if(this.stackedChartData[0].length == el.length){
+          return el
+        }
+      })
       this.SpinnerService.hide();
     },err=>{
       this.SpinnerService.hide();

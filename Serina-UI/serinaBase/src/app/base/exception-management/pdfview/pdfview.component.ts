@@ -36,6 +36,8 @@ export class PDFviewComponent implements OnInit {
   @Output() PdfBtnClick: EventEmitter<boolean> =
   new EventEmitter<boolean>();
   isDesktop: any;
+  panX: number;
+  panY: number;
 
   constructor(private SpinnerService: NgxSpinnerService,
     private SharedService : SharedService,
@@ -50,6 +52,8 @@ export class PDFviewComponent implements OnInit {
       this.readFilePath();
     } else {
       this.showInvoice = this.SharedService.fileSrc;
+      this.isImgBoolean = this.SharedService.isImageBoolean;
+      this.loadImage(); 
     }
    }
 
@@ -77,10 +81,13 @@ export class PDFviewComponent implements OnInit {
             new Blob([byteArray], { type: 'application/pdf' })
           );
           this.SharedService.fileSrc = this.showInvoice;
-        } else if (data.result.content_type == 'image/jpg' || data.result.content_type == 'image/png') {
+          this.SharedService.isImageBoolean = false;
+        } else if (['image/jpg','image/png','image/jpeg'].includes(data.result.content_type)) {
           let filetype = data.result.content_type
           this.isPdfAvailable = false;
           this.isImgBoolean = true;
+          this.SharedService.isImageBoolean = true;
+          let img = `data:${filetype};base64,${data.result.filepath}`
           byteArray = new Uint8Array(
             atob(data.result.filepath)
               .split('')
@@ -121,49 +128,84 @@ export class PDFviewComponent implements OnInit {
     if (this.isImgBoolean == true) {
       setTimeout(() => {
         this.zoomVal = 1;
-        (<HTMLDivElement>document.getElementById('canvas1')).style.transform =
-          'scale(' + this.zoomVal + ')';
+        this.panX = 0;
+        this.panY = 0;
+        this.canvasRef.nativeElement.style.transform =
+          'scale(' + this.zoomVal + ') translate(' + this.panX + 'px, ' + this.panY + 'px)';
         this.ctx = this.canvasRef.nativeElement.getContext('2d');
         this.canvasRef.nativeElement.width = window.innerWidth;
         this.canvasRef.nativeElement.height = window.innerHeight;
         this.drawImagein();
+        this.addEventListeners();
       }, 50);
 
     }
   }
 
   drawImagein() {
-
-    // const canvas = <HTMLCanvasElement>document.getElementById('canvas1');
-    // canvas.height = window.innerHeight;
-    // canvas.width = window.innerWidth;
-    // const ctx = canvas.getContext('2d');
     this.imageCanvas = new Image();
     this.imageCanvas.src = this.showInvoice;
     let imageWidth, imageHeight;
     this.imageCanvas.onload = () => {
-      // Calculate the aspect ratio of the image
       const imageAspectRatio = this.imageCanvas.width / this.imageCanvas.height;
-      // Calculate the aspect ratio of the canvas
       const canvasAspectRatio = this.canvasRef.nativeElement.width / this.canvasRef.nativeElement.height;
 
-      // Set the dimensions of the image to fit the canvas while maintaining the aspect ratio
-
       if (imageAspectRatio > canvasAspectRatio) {
-        // The image is wider than the canvas, so set the width of the image to the width of the canvas
-        // and scale the height accordingly
         imageWidth = this.canvasRef.nativeElement.width;
         imageHeight = imageWidth / imageAspectRatio;
       } else {
-        // The image is taller than the canvas, so set the height of the image to the height of the canvas
-        // and scale the width accordingly
         imageHeight = this.canvasRef.nativeElement.height;
         imageWidth = imageHeight * imageAspectRatio;
       }
-      // Draw the image on the canvas
       this.ctx.drawImage(this.imageCanvas, 0, 0, imageWidth, imageHeight);
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = 'high';
     };
+  }
 
+  addEventListeners() {
+    this.canvasRef.nativeElement.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = e.deltaY;
+      const zoomFactor = 1.1;
+      const zoom = this.zoomVal;
+      if (delta < 0) {
+        this.zoomVal = zoom * zoomFactor;
+      } else {
+        this.zoomVal = zoom / zoomFactor;
+      }
+      this.canvasRef.nativeElement.style.transform =
+        'scale(' + this.zoomVal + ') translate(' + this.panX + 'px, ' + this.panY + 'px)';
+      this.drawImagein();
+    });
+
+    this.canvasRef.nativeElement.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      const rect = this.canvasRef.nativeElement.getBoundingClientRect();
+      const startX = e.clientX - rect.left;
+      const startY = e.clientY - rect.top;
+      const startZoom = this.zoomVal;
+      const startPanX = this.panX;
+      const startPanY = this.panY;
+
+      const mouseMove = (e) => {
+        e.preventDefault();
+        const endX = e.clientX - rect.left;
+        const endY = e.clientY - rect.top;
+        this.panX = startPanX + (endX - startX) / startZoom;
+        this.panY = startPanY + (endY - startY) / startZoom;
+        this.canvasRef.nativeElement.style.transform =
+          'scale(' + this.zoomVal + ') translate(' + this.panX + 'px, ' + this.panY + 'px)';
+      };
+
+      const mouseUp = () => {
+        document.removeEventListener('mousemove', mouseMove);
+        document.removeEventListener('mouseup', mouseUp);
+      };
+
+      document.addEventListener('mousemove', mouseMove);
+      document.addEventListener('mouseup', mouseUp);
+    });
   }
   // @HostListener('window:resize', ['$event'])
   // onResize() {
@@ -238,11 +280,13 @@ export class PDFviewComponent implements OnInit {
     } else {
       this.btnText = 'Close';
     }
-    this.loadImage();
+    if(this.isImgBoolean){
+      this.loadImage();
+    }
     this.PdfBtnClick.emit(this.showPdf);
   }
   toggleFullScreen() {
-    const viewerContainer = this.elementRef.nativeElement.querySelector('.docContaner');
+    const viewerContainer = this.elementRef.nativeElement.querySelector('.docContainer');
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {

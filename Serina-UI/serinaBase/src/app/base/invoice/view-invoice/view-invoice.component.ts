@@ -1578,7 +1578,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
       formData.append('files', file, file.name);
     }
     this.SpinnerService.show()
-    this.SharedService.uploadSupportDoc(formData)
+    this.SharedService.uploadSupportDoc(this.invoiceID,formData)
       .pipe(
         map((event: any) => {
           if (event.type == HttpEventType.UploadProgress) {

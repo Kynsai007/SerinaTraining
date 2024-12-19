@@ -1,6 +1,8 @@
 
 import { Injectable } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -242,10 +244,23 @@ export class DataService {
   serviceStatus: any;
   invoiceStatus: any;
   invoiceNumber: any;
-  constructor(
-  ) { 
-    // this.ap_boolean = sessionStorage.getItem("ap_boolean");
-    // console.log(this.ap_boolean)
+  private previousUrl: string | null = null;
+  private currentUrl: string | null = null;
+  apiVersion: string;
+  buildVersion: string;
+  constructor(private router: Router) { 
+    this.currentUrl = this.router.url;
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationStart))
+      .subscribe((event: NavigationStart) => {
+        this.previousUrl = this.currentUrl;
+        this.currentUrl = event.url;
+      });
+  }
+
+  public getPreviousUrl(): string | null {
+    return this.previousUrl;
   }
 
   getEntity():Observable<any>{

@@ -426,7 +426,7 @@
                 />
               </div>
               <div *ngIf="ERPname != 'Oracle'">
-                <label class="label-head">Segments </label>
+                <label class="label-head">{{client_name ==='ATG'?'Suffix': 'Segments'}} </label>
                 <input
                   type="text"
                   formControlName="segments"

@@ -71,6 +71,8 @@ export class SharedService {
   docType: any;
   fileSrc: string;
   current_year:number;
+  usersList: any[];
+  isImageBoolean: boolean;
 
   constructor(private http: HttpClient) {
     let today = new Date();
@@ -511,8 +513,8 @@ export class SharedService {
   }
   
   // SupportDocumnet
-  uploadSupportDoc(data) {
-    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${this.invoiceID}`, data, {
+  uploadSupportDoc(id,data) {
+    return this.http.post(`${this.apiUrl}/${this.apiVersion}/Invoice/UploadSupportingDocument/${this.userId}/idInvoice/${id}`, data, {
       reportProgress: true,
       observe: 'events',
     }).pipe(retry(3));

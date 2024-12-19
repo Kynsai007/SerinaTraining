@@ -21,14 +21,20 @@
         <div class="item3 bg-white box p-2" style="background-color: #eee;">
             <span style="font-size: medium;color: black;font-weight: bolder;">List of Models</span>
             <ol *ngIf="loaded" class="list-group list-group-numbered">
-                <li class="list-group-item d-flex justify-content-between align-items-start" *ngFor="let m of models;let i = index" (click)="selectmodel(m.modelInfo.modelId,i)">
-                  <div class="ms-2 me-auto">
-                    <div class="fw-bold">{{m.modelInfo.modelName}}</div>
-                    <span class="fw-light">{{m.modelInfo.modelId}}</span>
-                  </div>
-                  <div class="form-check" *ngIf="!m.modelInfo.attributes.isComposed"><input class="form-check-input" type="checkbox" value="" id="model-{{i}}" (click)="selectmodel(m.modelInfo.modelId,i)"></div>
-                  <span *ngIf="m.modelInfo.attributes.isComposed"><i class="fa fa-link"></i> Composed</span>
+                <li class="list-group-item d-flex justify-content-between align-items-start"  *ngFor="let m of models;let i = index">
+                    <label for="model-{{i}}" class="d-flex justify-content-between w-100"  [disabled]="selectedModelArr?.length>0 &&!selectedModelArr?.includes(m?.model_version)" (change)="selectmodel(m,m.modelInfo.modelId,i,$event.target.checked)" >
+                        <div class="ms-2 me-auto">
+                          <div class="fw-bold">{{m.modelInfo.modelName}} - {{m?.model_version}}</div>
+                          <span class="fw-light">{{m.modelInfo.modelId}}</span>
+                        </div>
+                        <div class="form-check" *ngIf="!m.modelInfo.attributes.isComposed"><input class="form-check-input" [disabled]="selectedModelArr?.length>0 &&!selectedModelArr?.includes(m?.model_version)" type="checkbox" value="" id="model-{{i}}" ></div>
+                        <span *ngIf="m.modelInfo.attributes.isComposed"><i class="fa fa-link"></i> Composed</span>
+                          <!-- <div *ngIf="(selectedModelArr?.length>0 &&!selectedModelArr?.includes(m?.model_version))">
+                              Please select only same versions, so we are disabling this
+                          </div> -->
+                      </label>
                 </li>
+                
             </ol>
             <div style="margin-top: 10%;"></div>
         </div>

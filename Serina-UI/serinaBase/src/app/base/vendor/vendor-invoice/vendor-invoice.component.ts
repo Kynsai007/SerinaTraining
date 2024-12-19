@@ -48,6 +48,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   ERPname:string;
   mainAccount = [];
   postingList = [{id:1,name:'on-hold'},{id:2,name:'automatic'}];
+  client_name: any;
 
   constructor(private sharedService: SharedService,
     public dataService : DataService,
@@ -63,6 +64,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   }
 
   ngOnChanges(changes:SimpleChanges){
+    this.client_name = this.dataService?.configData?.client_name;
       if(this.dataService.masterTabName == 'vendor' && this.supplier_data?.idVendor){
         this.sharedService.vendorID = this.supplier_data?.idVendor;
         this.readVendorInvoiceData();
@@ -339,7 +341,7 @@ export class VendorInvoiceComponent implements OnInit,OnChanges {
   }
 
   newcostDetails(): FormGroup {
-    if (this.source == ('EBS' || 'ebs')) {
+    if (this.source?.toLowerCase() == 'ebs') {
       return this.fb.group(this.EBS_costData);
     } else {
       return this.fb.group(this.EDP_costData);

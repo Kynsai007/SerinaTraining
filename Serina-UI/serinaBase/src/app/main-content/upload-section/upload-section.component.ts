@@ -1266,7 +1266,7 @@ export class UploadSectionComponent implements OnInit {
   }
 
   onSelectFile(event) {
-    let isSupportedFiletype = !!event.target.files[0].name.toLowerCase().match(/(.png|.jpg|.pdf|.html|.htm)/);
+    let isSupportedFiletype = !!event.target.files[0].name.toLowerCase().match(/(.png|.jpg|.jpeg|.pdf|.html|.htm)/);
     if (isSupportedFiletype) {
       this.isuploadable = false;
       this.selectPageRange = true;

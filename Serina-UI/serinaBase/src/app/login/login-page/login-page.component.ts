@@ -438,6 +438,12 @@ export class LoginPageComponent implements OnInit {
               route = '/home'
             } else if(data.userdetails?.landingPage == 'Exception'){
               route = '/ExceptionManagement'
+            } else if(data.userdetails?.landingPage == 'Service/Vendor master'){
+              if(this.vendorInvoiceAccess){
+                route = '/vendor/vendorDetails';
+              } else {
+                route = '/vendor/ServiceDetails';
+              }
             }
             this.router.navigate([`/customer${route}`]);
             sessionStorage.setItem("prev_URL", JSON.stringify(route));

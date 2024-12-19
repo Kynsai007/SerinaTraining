@@ -307,16 +307,23 @@ export class RolesComponent implements OnInit {
     if (this.permissionService.addUsersBoolean == true) {
       this.router.navigate(['/customer/roles', 'createdUsers']);
       this.someParameterValue = 'createdUsers';
-      this.DisplayCustomerUserDetails();
-      this.toGetEntity();
-      this.getDisplayTotalRoles();
-      this.getVendorsListTocreateNewVendorLogin();
-      this.getVendorSuperUserList();
+      
       this.financeApproveDisplayBoolean =
         this.settingsService.finaceApproveBoolean;
       this.addRoleBoolean = this.permissionService.addUserRoleBoolean;
       this.isVendorportalRequired = this.dataService?.configData?.enablevendorportal;
       this.vendorInvoiceAccess = this.dataService?.configData?.vendorInvoices;
+      if(!this.sharedService.usersList){
+        this.DisplayCustomerUserDetails();
+      } else {
+        this.CustomerUserReadData = this.sharedService.usersList;
+      }
+      this.toGetEntity();
+      this.getDisplayTotalRoles();
+      if(this.isVendorportalRequired){
+        this.getVendorsListTocreateNewVendorLogin();
+        this.getVendorSuperUserList();
+      }
 
     } else {
       // this.alertBoolean = true;
@@ -1258,6 +1265,7 @@ export class RolesComponent implements OnInit {
         usersList.push(mergedData);
       });
       this.CustomerUserReadData = usersList;
+      this.sharedService.usersList = usersList;
       if (this.CustomerUserReadData.length > 10 && this.isDesktop ) {
         this.showPaginator = true;
       }
@@ -1384,7 +1392,7 @@ export class RolesComponent implements OnInit {
         if (error.status == 422) {
           this.alertFun("Please fill all the given fields");
         } else {
-          this.alertFun(error.statusText);
+          this.alertFun("Email already exists, please try with different email");
         }
       }
     );
@@ -1579,7 +1587,7 @@ export class RolesComponent implements OnInit {
           this.getVendorSuperUserList();
         },
         (error) => {
-          this.alertFun(error.statusText);
+          this.alertFun("Email already exists, please try with different email");
         }
       );
    } else {

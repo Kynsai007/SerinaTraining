@@ -57,6 +57,7 @@ export class ProfileComponent implements OnInit {
         { id: 2, page: 'Document Status' },
         { id: 3, page: 'Dashboard' },
         { id: 4, page: 'Exception' },
+        { id: 5, page: 'Service/Vendor master' },
       ];
     // } else {
     //   this.landingPageObj = [

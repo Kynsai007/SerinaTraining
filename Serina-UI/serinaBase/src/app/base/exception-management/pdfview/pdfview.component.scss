@@ -97,3 +97,7 @@
     border-top-width: 0;
     border-bottom-width: 0;
   }
+  .docContainer{
+    max-height: calc(100vh - 170px);
+    overflow: auto;
+  }

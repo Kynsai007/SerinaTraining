@@ -112,8 +112,11 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     this.model_invalidate_msg = "";
     this.model_validate_msg = "";
     this.modelid = e.target.value;
-    let isComposed = this.models.filter(v => v.modelInfo.modelId == this.modelid)[0].modelInfo.attributes.isComposed;
-    this.modelname = this.models.filter(v => v.modelInfo.modelId == this.modelid)[0].modelInfo.modelName;
+    let version = this.models.filter(v => v.modelInfo?.modelId == this.modelid) || this.models.filter(v => v?.modelId == this.modelid);
+
+    this.ocr_version = version[0].model_version;
+    let isComposed = version[0].modelInfo.attributes.isComposed;
+    this.modelname = version[0].modelInfo.modelName;    
     if(!isComposed){
       this.defaultmodel = e.target.value;
     }
@@ -145,6 +148,7 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
                 jsonobj.modelInfo["attributes"]["isComposed"] = true;
               }
             }
+            jsonobj.model_version = p.model_version;
             this.models.push(jsonobj);
           }
           let index = this.models.findIndex(v => v.modelInfo.modelName == this.modelData.modelName);
@@ -357,7 +361,6 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
   uploadToSerina(){
     let _this = this;
     try{
-      console.log(this.jsonFinalData);
       this.jsonFinalData.final_data.ModelID = this.modelid;
       this.jsonFinalData.final_data['TestResult'] = this.jsonresult.analyzeResult ? this.jsonresult.analyzeResult : {};
       this.saving = true;
@@ -413,7 +416,6 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
         }, 1000);
       })
     }catch(ex){
-      console.log(ex)
       setTimeout(() => {
         _this.router.navigate(['IT_Utility/home'])
       }, 1000);
@@ -458,7 +460,6 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     //   updatedData.folderPath = this.pathFolder;
     // }
     this.sharedService.updateModel(updatedData, this.modelStatus.idDocumentModel).subscribe((data: any) => {
-      console.log(data);
     },error=>{
       this.sharedService.errorObject.detail = error.statusText
       this.messageService.add(this.sharedService.errorObject);

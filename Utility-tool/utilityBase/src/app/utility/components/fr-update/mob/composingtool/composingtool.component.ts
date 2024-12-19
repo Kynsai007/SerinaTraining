@@ -30,6 +30,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
   @Input() frConfigData:any; 
   @Input() showtab:any;
   @Output() changeTab = new EventEmitter<{'show1':boolean,'show2':boolean,'show3':boolean,'show4':boolean}>();
+  selectedModelArr = [];
   constructor(private sharedService:SharedService) { }
   
   ngOnInit(): void {
@@ -55,21 +56,15 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       this.changeTab.emit({'show1':false,'show2':false,'show3':false,'show4':true});
     }
   }
-  selectmodel(id,i){
-    let model;
-    if(this.ocr_engine == "v2.1"){
-      model = this.models.filter(v => v.modelInfo.modelId == id)[0];
-    }
-    else{
-      model = id;
-    }
-    let inp = (<HTMLInputElement>document.getElementById("model-"+i));
-    if(inp.checked){
-      inp.checked = false;
-      this.selectedmodels = this.selectedmodels.filter(v => v != model);
+  selectmodel(model_s,id,i,checked){
+    if(checked){
+      this.selectedModelArr.push(model_s.model_version)
+      this.ocr_engine = model_s.model_version;
+      this.selectedmodels.push(model_s);
     }else{
-      inp.checked = true;
-      this.selectedmodels.push(model);
+      this.selectedModelArr = this.selectedModelArr.filter((v, index) => this.selectedModelArr.indexOf(v) !== index)
+      this.ocr_engine = this.selectedModelArr[0];
+      this.selectedmodels = this.selectedmodels.filter(v => v != model_s);
     }
     if(this.selectedmodels.length > 1){
       this.disabled = false;
@@ -105,11 +100,12 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
           for(let p of this.previoustraining){
             let jsonobj = JSON.parse(p.training_result);
             if(jsonobj.docTypes){
-              jsonobj.modelInfo = {"modelId":jsonobj.modelId,"modelName":jsonobj.modelId, "attributes":{"isComposed":false}}
+              jsonobj.modelInfo = {"modelId":jsonobj.modelId,"model_version":p.model_version ,"modelName":jsonobj.modelId, "attributes":{"isComposed":false}}
               if(Object.keys(jsonobj.docTypes).length > 1){
                 jsonobj.modelInfo["attributes"]["isComposed"] = true;
               }
             }
+            jsonobj.model_version = p.model_version;
             this.models.push(jsonobj);
           }
           this.nottrained = false;
@@ -126,7 +122,7 @@ export class ComposingtoolComponent implements OnInit,AfterViewInit {
       if(this.ocr_engine == "v2.1"){
         modelIds.push(s.modelInfo.modelId);
       }else{
-        modelIds.push(s);
+        modelIds.push(s.modelId);
       }
     }
     if(modelIds.length == 0){

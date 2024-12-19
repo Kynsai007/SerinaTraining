@@ -180,13 +180,16 @@ export class PopupComponent implements OnInit {
       let boolean = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (boolean) {
         this.selectedPOLines.push(data);
-        this.linesTotal = Number(this.linesTotal) + Number((data?.Quantity * data?.UnitPrice).toFixed(2))
+        let lineTotal = data?.DiscAmount ? (data?.Quantity * (data?.UnitPrice - data?.DiscAmount)) : (data?.Quantity * data?.UnitPrice);
+        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
       }
     } else {
       const ind = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
-        this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
+        let lineTotal = data?.DiscAmount ? (data?.Quantity * (data?.UnitPrice - data?.DiscAmount)) : (data?.Quantity * data?.UnitPrice);
+        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        // this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
     }
     if (this.selectedPOLines.length == this.POLineData.length) {
@@ -201,7 +204,9 @@ export class PopupComponent implements OnInit {
         val.isSelected = true;
         let id = val[field];
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
-        this.linesTotal = Number(this.linesTotal) + Number((val?.Quantity * val?.UnitPrice).toFixed(2))
+        let lineTotal = val?.DiscAmount ? (val?.Quantity * (val?.UnitPrice - val?.DiscAmount)) : (val?.Quantity * val?.UnitPrice);
+        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        // this.linesTotal = Number(this.linesTotal) + Number((val?.Quantity * val?.UnitPrice).toFixed(2))
       })
       const allData = [...this.POLineData]
       this.selectedPOLines = allData;
@@ -226,7 +231,9 @@ export class PopupComponent implements OnInit {
       if (el[field] == lineid) {
         el[el_flied] = qty;
       }
-      this.linesTotal = Number(this.linesTotal) + Number((el?.Quantity * el?.UnitPrice).toFixed(2))
+      let lineTotal = el?.DiscAmount ? (el?.Quantity * (el?.UnitPrice - el?.DiscAmount)) : (el?.Quantity * el?.UnitPrice);
+      this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+      // this.linesTotal = Number(this.linesTotal) + Number((el?.Quantity * el?.UnitPrice).toFixed(2))
     });
     // this.linesTotal = 0;
     this.POLineData.forEach(el => {

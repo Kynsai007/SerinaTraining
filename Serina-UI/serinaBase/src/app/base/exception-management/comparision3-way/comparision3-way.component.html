@@ -44,7 +44,11 @@
       </button>
       <button
         *ngIf="
-          portalName == 'customer' && [8,16,17,19,21,27,34,205].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
+          portalName == 'customer' 
+          && (this.router.url.includes('Upload') || [8,16,17,18,19,21,27,34,205].includes(subStatusId))
+          || (documentType == 'advance invoice'
+          && [29,108].includes(subStatusId) 
+          && this.userDetails['permissioninfo'].is_fp)
         "
         class="secondary_btn f-12 mr-2"
         (click)="open_dialog_comp('flip line')"
@@ -251,7 +255,7 @@
         class="nav-item ml-2"
         pTooltip="Supporting documents"
         tooltipPosition="top"
-        *ngIf="Itype == 'Invoice' && !approval_selection_boolean || tagService?.headerName?.includes('Create GRN')"
+        *ngIf="['Invoice','GRN'].includes(Itype) && !approval_selection_boolean || tagService?.headerName?.includes('Create GRN')"
         (click)="changeTab('support')"
       >
         <a
@@ -606,7 +610,7 @@
               >
                 Select GRN
               </button>
-              <button
+              <!-- <button
                 *ngIf="
                   portalName == 'customer' &&
                   flipEnabled && [8,16,17,18,19,21,27,34,205].includes(subStatusId) || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)
@@ -615,7 +619,7 @@
                 (click)="open_dialog_comp('flip line', '')"
               >
                 Flip PO
-              </button>
+              </button> -->
             </div>
             <div *ngIf="!grnCreateBoolean && pageType == 'mapping'">
               <div class="d-flex justify-content-between flex-wrap">
@@ -1110,13 +1114,13 @@
                 class="d-flex mb-1"
                 style="gap: 5px"
               >
-                <button
+                <!-- <button
                   *ngIf="portalName == 'customer' && subStatusId == 34 || (documentType == 'advance invoice' && [29,108].includes(subStatusId) && this.userDetails['permissioninfo'].is_fp)"
                   class="secondary_btn f-12 mr-2"
                   (click)="open_dialog_comp('flip')"
                 >
                   Flip PO
-                </button>
+                </button> -->
                 <button
                   *ngIf="
                     portalName == 'customer' &&
@@ -1731,10 +1735,15 @@
               "
             >
               <div class="no_doc_div f-14">
-                No Supporting Document available, <span *ngIf="!(editable || fin_boolean)"> please upload it in exception screen if you have any.</span><span *ngIf="editable || fin_boolean"> please upload if you have any.</span>
+                <div>
+                No Supporting Document available, <span *ngIf="!(editable || fin_boolean)"> please upload it in exception screen if you have any.</span><span *ngIf="editable || fin_boolean"> please upload if you have any.</span> <br>
+                </div>
+                <div *ngIf="GRN_PO_Bool"> Please note once you create the GRN then only supporting documents will be stored.</div>
+
               </div>
+
             </div>
-            <div class="file_table" *ngIf="uploadFileList.length > 0">
+            <div class="file_table" *ngIf="uploadFileList.length > 0 ">
               <table class="table">
                 <tr class="f-12">
                   <th>S.No</th>
@@ -1780,8 +1789,9 @@
               <!-- <input type="file" multiple (change)="uploadSupport($event)"> -->
 
               <button
+                *ngIf="!GRN_PO_Bool"
                 class="img-browse h-35 b-0 ml-2"
-                (click)="uploadSupport()"
+                (click)="uploadSupport(invoiceID)"
                 [disabled]="!(uploadFileList.length > 0)"
                 [ngClass]="!(uploadFileList.length > 0) ? 'disable_clas' : ''"
               >
@@ -1989,7 +1999,7 @@
                 <div class="f-11" style="color: #e56767">
                   Note: Please upload supporting documents if you have any
                   <br />
-                   *SERINA is not reading the supporting document<strong> (.pdf only)</strong>. Please check and review it manually.
+                  *SERINA is not reading the supporting document<strong> (.pdf only)</strong>. Please check and review it manually.
                 </div>
               </div>
             </div>
