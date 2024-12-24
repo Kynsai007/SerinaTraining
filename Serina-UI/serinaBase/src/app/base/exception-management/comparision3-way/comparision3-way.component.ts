@@ -1708,7 +1708,54 @@ export class Comparision3WayComponent
     };
     this.updateInvoiceData.push(updateValue);
   }
-  onChangeLineValue(key, value, data) {
+  async onChangeLineValue(key, value, data) {
+    if(value.includes('=')){
+      const itemCode = data?.itemCode;
+      let unitPrice;  
+      let amounExcTax;
+      let new_value;
+      this.lineDisplayData.forEach(tag => {
+        if (tag.tagname == 'AmountExcTax') {
+        tag.items.forEach(item => {
+          if(item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode){
+           amounExcTax = item.linedetails[0].invline[0].DocumentLineItems.Value;
+          }
+        })
+        }
+        if (tag.tagname == 'UnitPrice') {
+        tag.items.forEach(item => {
+          if(item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode){
+          unitPrice = item.linedetails[0].invline[0].DocumentLineItems.Value;
+          }
+        })
+        }
+      })
+      let count = 2;
+      if (this.dataService?.configData?.miscellaneous?.No_of_Decimals) {
+        count = this.dataService?.configData?.miscellaneous?.No_of_Decimals;
+      }
+
+      if (key == 'Quantity' && value.includes('=')) {
+        new_value = (Number(amounExcTax) / Number(unitPrice)).toFixed(count);
+        this.lineDisplayData.forEach(tag => {
+        if (tag.tagname == 'Quantity') {
+          tag.items.forEach(item => {
+          if (item.linedetails[0].invline[0].DocumentLineItems.itemCode == itemCode) {
+            item.linedetails[0].invline[0].DocumentLineItems.Value = new_value;
+          }
+          });
+        }
+        });
+        // if (new_value % 1 === 0) {
+        //   new_value = new_value.toFixed(2);
+        // } else {
+        //   new_value = new_value.toFixed(count);
+        // }
+      }
+      data.Value = new_value;
+      value =  new_value;
+    }
+    console.log(value)
     if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') {
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
@@ -1722,12 +1769,15 @@ export class Comparision3WayComponent
         this.isEmpty = false;
       }
     }
+    if(data.Value != value){  
     let updateValue = {
       documentLineItemID: data?.idDocumentLineItems,
       OldValue: data.Value || '',
       NewValue: value,
     };
     this.updateInvoiceData.push(updateValue);
+  }
+  console.log(this.updateInvoiceData)
   }
 
   saveChanges() {

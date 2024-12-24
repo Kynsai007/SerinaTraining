@@ -358,7 +358,7 @@
             *ngIf="
               viewType == 'ideal' &&
               (selectedInvoiceType == 'credit note' && dataService.configData.client_name == 'Cenomi') ||
-              (selectedInvoiceType == 'advance invoice' && dataService.configData.client_name == 'SRG')
+              (selectedInvoiceType == 'advance invoice' && ['SRG','Emaar Hospitality'].includes(dataService.configData.client_name))
             "
             class="selectFilter"
             [ngClass]="{
@@ -366,7 +366,7 @@
               'red-border': !selectedPPType && selectedPoNumber
             }"
           >
-            <label class="f-12 mb-0">{{dataService.configData.client_name == 'SRG' ?'Pre-payment type':'Credit type'}}</label>
+            <label class="f-12 mb-0">{{['SRG','Emaar Hospitality'].includes(dataService.configData.client_name) ?'Pre-payment type':'Credit type'}}</label>
             <p-dropdown
               [options]="sub_type"
               placeholder="Select type"
@@ -381,7 +381,7 @@
             </p-dropdown>
           </div>
           <div class="selectFilter ideal" 
-            *ngIf="selectedInvoiceType == 'advance invoice' && dataService.configData.client_name == 'SRG'"
+            *ngIf="selectedInvoiceType == 'advance invoice' && ['SRG','Emaar Hospitality'].includes(dataService.configData.client_name)"
             [ngClass]="{
               'green-border': selectedPPPercentage,
               'red-border': !selectedPPPercentage && selectedPPType

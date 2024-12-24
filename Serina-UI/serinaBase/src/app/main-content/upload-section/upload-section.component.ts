@@ -400,6 +400,17 @@ export class UploadSectionComponent implements OnInit {
         { tagName:'Percentage', value:'percent'},
         { tagName:'Fixed', value:'fixed'}
       ]
+    } else if (this.dataService.configData.client_name == 'Emaar Hospitality') {
+      this.invTypeArr = [ 
+        { name:'Invoice', value:'invoice'},
+        { name:'Non PO Invoice', value:'non po invoice'},
+        { name:'Advance Invoice', value:'advance invoice'},
+        { name:'Credit Note', value:'credit note'}
+      ];
+      this.sub_type = [
+        { tagName:'Percentage', value:'percent'},
+        { tagName:'Fixed', value:'fixed'}
+      ]   
     }
     if (this.PS.uploadPermissionBoolean) {
       this.permissions();
@@ -942,7 +953,7 @@ export class UploadSectionComponent implements OnInit {
         this.getVendorInvoices(event.PODocumentID);
          this.displaySelectPdfBoolean = false;
       }
-      if(this.selectedInvoiceType === 'advance invoice' && this.dataService.configData.client_name == 'SRG'){
+      if(this.selectedInvoiceType === 'advance invoice' && ['SRG','Emaar Hospitality'].includes(this.dataService.configData.client_name)){
         this.displaySelectPdfBoolean = false;
       }
       if(this.selectedInvoiceType !== 'credit note'){

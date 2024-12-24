@@ -152,6 +152,7 @@ export class PopupComponent implements OnInit {
           this.flipApproverlist();
           this.success("PO flip is successful")
           this.approveBool = true;
+          this.spin.hide();
         } else {
           this.ES.popupmsg.next(this.component);
           this.success("PO flip is successful")
@@ -166,8 +167,9 @@ export class PopupComponent implements OnInit {
         // });
       } else {
         this.error(data?.error)
+        this.spin.hide();
       }
-      this.spin.hide();
+      
     }, err => {
       this.error("Server error");
       this.spin.hide();
@@ -188,7 +190,7 @@ export class PopupComponent implements OnInit {
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
         let lineTotal = data?.DiscAmount ? (data?.Quantity * (data?.UnitPrice - data?.DiscAmount)) : (data?.Quantity * data?.UnitPrice);
-        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) - Number(lineTotal.toFixed(2));
         // this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
     }
