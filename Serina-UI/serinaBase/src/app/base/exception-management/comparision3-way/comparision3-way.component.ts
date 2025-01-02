@@ -465,6 +465,7 @@ export class Comparision3WayComponent
 
     if (this.client_name === 'Cenomi') {
       this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
+      this.GRN_PO_tags.splice(6, 0, { TagName: 'PO Remaining %', linedata: [] });
     }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
@@ -800,7 +801,7 @@ export class Comparision3WayComponent
         'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
         'AmountExcTax': {
           value: (ele) => {
-            const unitPrice = parseFloat(ele.UnitPrice.replace(/,/g, ''));
+            const unitPrice = parseFloat(ele.UnitPrice?.replace(/,/g, ''));
             let amount;
             if(this.dataService.isEditGRN){
               amount = (unitPrice * ele.GRNQty).toFixed(2);
@@ -808,14 +809,31 @@ export class Comparision3WayComponent
               amount = (unitPrice * ele.PurchQty).toFixed(2);
             }
             this.GRN_line_total += Number(amount);
+            if(this.client_name == 'Cenomi'){
+              amount = null;
+            }
             return Number(amount);
           },
           isMapped: '',
           tagName: 'AmountExcTax'
         },
+        'PO Remaining %': {
+          value: (ele) => {
+            const POQty = ele?.PurchQty ? parseFloat(ele.PurchQty.replace(/,/g, '')) : 0;
+            const POBalanceQty = ele?.RemainPurchPhysical ? parseFloat(ele.RemainPurchPhysical.replace(/,/g, '')) : 0;
+            let percentage = '0.00';
+            if (POQty !== 0) {
+              // const PORemaining =  (POQty - POBalanceQty) * 100;
+              percentage = ((POBalanceQty / POQty) * 100).toFixed(2);
+            }
+
+            return parseFloat(percentage);
+          },
+          isMapped: '',
+          tagName: 'percentage'
+        },
         'Actions': { value: '', isMapped: '', tagName: 'Actions' }
       };
-
       if (this.client_name == 'Cenomi' && this.isManpowerTags) {
         tagMappings['Duration in months'] = { value: 'durationMonth', isMapped: '', tagName: 'Duration in months' }
         tagMappings['Monthly quantity'] = {
@@ -834,9 +852,12 @@ export class Comparision3WayComponent
       this.GRN_PO_tags.forEach((tag, index) => {
         if (tagMappings[tag.TagName]) {
           const mapping = tagMappings[tag.TagName];
-          const value = typeof mapping.value === 'function' ? mapping.value(ele) : ele[mapping.value];
+          let value = typeof mapping.value === 'function' ? mapping.value(ele) : ele[mapping.value];
+          // if(value == undefined){
+          //   value = '';
+          // }
           tag.linedata.push({
-            Value: value,
+            Value: value || null,
             old_value: mapping.oldValue ? ele[mapping.oldValue] : undefined,
             ErrorDesc: '',
             idDocumentLineItems: ele.LineNumber,
@@ -1168,6 +1189,16 @@ export class Comparision3WayComponent
           this.lineDisplayData.forEach((element, index, arr) => {
             this.lineCount = arr[0].items
             if (element.tagname == 'Description') {
+              if(this.client_name == 'Cenomi'){
+                element?.items?.forEach(el=>{
+                  this.lineItems.forEach(item=>{
+                    if(item.itemCode == el.itemcode){
+                      el.linedetails[0].poline[0].Value = `${item?.itemCode}-${item?.Name}-${item?.UnitPrice}-${item?.SHIP_TO_ORG}-${item?.Qty}`  
+                    }
+                  })
+                })
+              }
+              
               element.order = 1;
             } else if (element.tagname == 'Quantity') {
               element.order = 2;
@@ -1200,7 +1231,9 @@ export class Comparision3WayComponent
           this.support_doc_list = []
         }
         if (str != 'batch') {
-          this.SpinnerService.hide();
+          setTimeout(() => {
+            this.SpinnerService.hide();
+          }, 2000);
         }
       },
       (error) => {
@@ -2495,6 +2528,29 @@ export class Comparision3WayComponent
       this.updateAmountExcTax(lineItem, val, 'GRN - UnitPrice', 'GRN - AmountExcTax', 'invoice_itemcode');
     }
   }
+  onChangeGrnAmount(lineItem, val) {
+    const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
+      .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
+    const grnQty = (Number(val) / Number(grnUnitPrice.Value)).toFixed(2);
+    const grnQuantityItem = this.lineDisplayData.find(item => item.TagName == 'GRN - Quantity')
+      .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
+    
+    if (grnQuantityItem) {
+      grnQuantityItem.Value = grnQty;
+      grnQuantityItem.ErrorDesc = "Quantity changed";
+    }
+    this.GRN_line_total = 0;
+    this.lineDisplayData.forEach(ele => {
+      if (ele.TagName == 'AmountExcTax') {
+        ele.linedata.forEach(v =>{
+          if(v.idDocumentLineItems === lineItem.idDocumentLineItems){
+            v.Value = val;
+          }
+          this.GRN_line_total = this.GRN_line_total + Number(v.Value);
+        } )
+      }
+    })
+  }
   updateAmountExcTax(lineItem, newQuantity: number, TagName_u, TagName_a, field) {
     if (lineItem) {
       const unitPrice = this.lineDisplayData.find(item => item.TagName == TagName_u)
@@ -3098,7 +3154,7 @@ export class Comparision3WayComponent
   create_GRN_PO_tags() {
     this.GRN_PO_tags = this.GRN_PO_tags.filter((tag) => tag.linedata = []);
     if(this.GRN_PO_tags.filter(tag => tag.TagName == 'Duration in months').length == 0) {
-      this.GRN_PO_tags.splice(5, 0, { TagName: 'Duration in months', linedata: [] }, { TagName: 'Monthly quantity', linedata: [] }, { TagName: 'Is Timesheets', linedata: [] }, { TagName: 'Number of Shifts', linedata: [] })
+      this.GRN_PO_tags.splice(7, 0, { TagName: 'Duration in months', linedata: [] }, { TagName: 'Monthly quantity', linedata: [] }, { TagName: 'Is Timesheets', linedata: [] }, { TagName: 'Number of Shifts', linedata: [] })
     }
   }
   open_dialog(str) {
@@ -3550,10 +3606,8 @@ export class Comparision3WayComponent
         this.support_doc_list = [];
         this.SpinnerService.show();
         this.SharedService.deleteSupport(file).subscribe((data:any)=>{
-          console.log(data)
           if(data.status == 'success'){
             this.support_doc_list = data.files;
-            console.log(this.support_doc_list)
             this.success("Deleted successfully.");
             this.SpinnerService.hide();
           }
