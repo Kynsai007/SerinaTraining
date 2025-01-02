@@ -1196,8 +1196,8 @@ export class Comparision3WayComponent
             if (element.tagname == 'Description') {
               if(this.client_name == 'Cenomi'){
                 element?.items?.forEach(el=>{
-                  this.lineItems.forEach(item=>{
-                    if(item.itemCode == el.itemcode){
+                  this.lineItems?.forEach(item=>{
+                    if(item?.itemCode == el?.itemcode){
                       el.linedetails[0].poline[0].Value = `${item?.itemCode}-${item?.Name}-${item?.UnitPrice}-${item?.SHIP_TO_ORG}-${item?.Qty}`  
                     }
                   })
