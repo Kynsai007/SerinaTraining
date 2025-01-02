@@ -59,7 +59,7 @@ export class PDFviewComponent implements OnInit {
 
   readFilePath() {
     this.showInvoice = '';
-    this.SpinnerService.show();
+    // this.SpinnerService.show();
     this.SharedService.getInvoiceFilePath().subscribe(
       (data: any) => {
         this.content_type = data?.result?.content_type;
@@ -103,7 +103,7 @@ export class PDFviewComponent implements OnInit {
           this.showInvoice = '';
         }
         this.boolEmit.emit(this.isPdfAvailable)
-        this.SpinnerService.hide();
+        // this.SpinnerService.hide();
       },
       // (error) => {
       //   this.SpinnerService.hide();

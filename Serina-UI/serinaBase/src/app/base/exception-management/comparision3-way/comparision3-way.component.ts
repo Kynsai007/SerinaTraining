@@ -420,6 +420,7 @@ export class Comparision3WayComponent
   saveDisabled: boolean;
   grnTooltip: string;
   isDraft: boolean;
+  decimal_count:number;
 
   constructor(
     fb: FormBuilder,
@@ -449,6 +450,10 @@ export class Comparision3WayComponent
   ngOnInit(): void {
     this.ERP = this.dataService?.configData?.erpname;
     this.client_name = this.dataService?.configData?.client_name;
+    this.decimal_count = this.dataService?.configData?.miscellaneous?.No_of_Decimals;
+    if(!this.decimal_count){
+      this.decimal_count = 2;
+     }
     if (this.client_name == 'SRG') {
       this.mappingForCredit = true;
     } 
@@ -804,9 +809,9 @@ export class Comparision3WayComponent
             const unitPrice = parseFloat(ele.UnitPrice?.replace(/,/g, ''));
             let amount;
             if(this.dataService.isEditGRN){
-              amount = (unitPrice * ele.GRNQty).toFixed(2);
+              amount = (unitPrice * ele.GRNQty).toFixed(this.decimal_count);
             } else {
-              amount = (unitPrice * ele.PurchQty).toFixed(2);
+              amount = (unitPrice * ele.PurchQty).toFixed(this.decimal_count);
             }
             this.GRN_line_total += Number(amount);
             if(this.client_name == 'Cenomi'){
@@ -842,7 +847,7 @@ export class Comparision3WayComponent
             if (ele.durationMonth) {
               monthlyQuantity = ele.PurchQty / ele.durationMonth;
             }
-            return monthlyQuantity.toFixed(2);
+            return monthlyQuantity.toFixed(this.decimal_count);
           }, isMapped: '', tagName: 'Monthly quantity'
         }
         tagMappings['Is Timesheets'] = { value: 'isTimesheets', isMapped: '', tagName: 'Is Timesheets' }
@@ -1763,10 +1768,8 @@ export class Comparision3WayComponent
         })
         }
       })
-      let count = 2;
-      if (this.dataService?.configData?.miscellaneous?.No_of_Decimals) {
-        count = this.dataService?.configData?.miscellaneous?.No_of_Decimals;
-      }
+      let count = this.decimal_count;
+
 
       if (key == 'Quantity' && value.includes('=')) {
         new_value = (Number(amounExcTax) / Number(unitPrice)).toFixed(count);
@@ -2531,7 +2534,7 @@ export class Comparision3WayComponent
   onChangeGrnAmount(lineItem, val) {
     const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
       .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
-    const grnQty = (Number(val) / Number(grnUnitPrice.Value)).toFixed(2);
+    const grnQty = (Number(val) / Number(grnUnitPrice.Value)).toFixed(this.decimal_count);
     const grnQuantityItem = this.lineDisplayData.find(item => item.TagName == 'GRN - Quantity')
       .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
     
@@ -2555,7 +2558,7 @@ export class Comparision3WayComponent
     if (lineItem) {
       const unitPrice = this.lineDisplayData.find(item => item.TagName == TagName_u)
         .linedata.find(data => data[field] === lineItem[field]);
-      const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(2);
+      const amountExcTax = (Number(unitPrice.Value) * newQuantity).toFixed(this.decimal_count);
       const amountExcTaxItem = this.lineDisplayData.find(item => item.TagName == TagName_a)
         .linedata.find(data => data[field] === lineItem[field]);
 
@@ -4034,9 +4037,9 @@ export class Comparision3WayComponent
       const sum = this.LCMDataTable.reduce((accumulator, object) => {
         return accumulator + Number(object.Allocate);
       }, 0);
-      this.allocateTotal = sum.toFixed(2);
+      this.allocateTotal = sum.toFixed(this.decimal_count);
       let bal: any = Number(this.invoiceTotal) - this.allocateTotal;
-      this.balanceAmount = parseFloat(bal).toFixed(2);
+      this.balanceAmount = parseFloat(bal).toFixed(this.decimal_count);
       this.SpinnerService.hide();
     }, err => {
       this.SpinnerService.hide();
