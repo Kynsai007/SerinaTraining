@@ -113,8 +113,8 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     this.model_validate_msg = "";
     this.modelid = e.target.value;
     let version = this.models.filter(v => v.modelInfo?.modelId == this.modelid) || this.models.filter(v => v?.modelId == this.modelid);
-
-    this.ocr_version = version[0].model_version;
+ 
+    this.ocr_version = version[0].apiVersion;
     let isComposed = version[0].modelInfo.attributes.isComposed;
     this.modelname = version[0].modelInfo.modelName;    
     if(!isComposed){
