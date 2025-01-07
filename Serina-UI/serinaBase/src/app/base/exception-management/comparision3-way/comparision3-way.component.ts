@@ -372,7 +372,7 @@ export class Comparision3WayComponent
   lineData: any;
   priceData: any;
   totalPoCost: any;
-  totalInvCost: number;
+  totalInvCost: any;
   invTypeList: any[];
   isBoxOpen: boolean = false;
   activeTab: string = 'percentage';
