@@ -802,7 +802,7 @@ export class Comparision3WayComponent
         'Description': { value: 'Name', oldValue: 'Name', isMapped: '', tagName: 'Description' },
         'PO Qty': { value: 'PurchQty', isMapped: '', tagName: 'PO Qty' },
         'PO Balance Qty': { value: 'RemainPurchPhysical', isMapped: '', tagName: 'PO Balance Qty' },
-        'GRN - Quantity': { value: this.dataService.isEditGRN ?'GRNQty':'', isMapped: '', tagName: 'Quantity' },
+        'GRN - Quantity': { value: this.dataService.isEditGRN ? 'GRNQty' : (this.client_name === 'Cenomi' ?'':'RemainPurchPhysical'), isMapped: '', tagName: 'Quantity' },
         'UnitPrice': { value: 'UnitPrice', isMapped: 'Price', tagName: 'UnitPrice' },
         'AmountExcTax': {
           value: (ele) => {
@@ -2533,8 +2533,25 @@ export class Comparision3WayComponent
   }
   onChangeGrnAmount(lineItem, val) {
     const grnUnitPrice = this.lineDisplayData.find(item => item.TagName == 'UnitPrice')
-      .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
+    .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
     const grnQty = (Number(val) / Number(grnUnitPrice.Value)).toFixed(this.decimal_count);
+    const po_balance_qty_value = this.po_balance_qty_array?.linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems)?.Value;
+
+    let checking_value;
+    let error_msg;
+    if(po_balance_qty_value){
+      checking_value = po_balance_qty_value;
+      error_msg = 'PO Balance Quantity';
+    } 
+    this.disable_save_btn = false;
+    if(Number(checking_value) < Number(grnQty)){
+      this.lineDisplayData.find(data => data.TagName == 'GRN - Quantity').linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems).Value = lineItem.old_value;
+      this.error(`GRN Quantity cannot be greater than ${error_msg}`);
+      this.grnTooltip = `GRN Quantity cannot be greater than ${error_msg}`;
+      this.disable_save_btn = true;
+      return;
+    }
+
     const grnQuantityItem = this.lineDisplayData.find(item => item.TagName == 'GRN - Quantity')
       .linedata.find(data => data.idDocumentLineItems === lineItem.idDocumentLineItems);
     
@@ -4106,10 +4123,9 @@ export class Comparision3WayComponent
       let totalinvCost = 0;
       for (let i = 0; i < unitPriceData?.length; i++) {
         const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
-        const poquantity = parseInt(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
-
+        const poquantity = parseFloat(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
         const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
-        const invquantity = parseInt(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+        const invquantity = parseFloat(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
 
         if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
           totalpoCost += pounitPrice * poquantity;
@@ -4119,7 +4135,7 @@ export class Comparision3WayComponent
         }
       }
       this.po_total = totalpoCost;
-      this.totalInvCost = totalinvCost;
+      this.totalInvCost = totalinvCost.toFixed(2);
       // console.log("Total Cost:", totalpoCost);
     } else {
       console.log("UnitPrice or Quantity data not found.");
