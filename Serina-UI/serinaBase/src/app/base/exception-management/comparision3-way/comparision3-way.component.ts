@@ -124,6 +124,7 @@ export class Comparision3WayComponent
   timer: any;
   callSession: any;
   invoiceNumber = '';
+  invoiceDescription:string;
   vendorName: any;
   isGRNDataLoaded: boolean;
   content_type: any;
