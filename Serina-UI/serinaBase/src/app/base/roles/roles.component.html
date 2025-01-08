@@ -1849,6 +1849,7 @@
   [baseZIndex]="10000"
   [draggable]="false"
   [resizable]="false"
+  (onHide)="onDialogHide()"
 >
   <div class="p-auto" style="min-height: 50vh">
     <form #vendorPortalUser="ngForm" class="d_flex_wrap mt-2">

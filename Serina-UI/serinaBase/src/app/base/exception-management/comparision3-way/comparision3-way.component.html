@@ -1047,7 +1047,7 @@
                           </div>
                         </ng-container>
                         <ng-container *ngSwitchCase="'AmountExcTax'" [ngSwitch]="GRN_PO_Bool">
-                          <ng-container *ngSwitchCase="true && client_name == 'Cenomi' && !line1.is_timesheets">
+                          <ng-container *ngSwitchCase="true && client_name == 'Cenomi'">
                             <div>
                               <input #inputval type="text" style="border: 0.2px solid #358dc0" 
                               [name]="line1.idDocumentLineItems" [value]="line1.Value"
@@ -1103,6 +1103,7 @@
             </div>
             <table
               class="total"
+              style="bottom: 0px;"
               *ngIf="
                 router.url.includes('Inv_vs_GRN_details') ||
                 router.url.includes('GRN_approvals')

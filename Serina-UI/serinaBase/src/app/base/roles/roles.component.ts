@@ -1875,4 +1875,7 @@ export class RolesComponent implements OnInit {
   exportExcel(exportData){
     this.ImportExcelService.exportExcel(exportData);
   }
+  onDialogHide(){
+    this.entitySelection = [];
+  }
 }
