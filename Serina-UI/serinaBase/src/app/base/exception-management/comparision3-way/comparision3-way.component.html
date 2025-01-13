@@ -218,7 +218,7 @@
         pTooltip="PO Lines details"
         tooltipPosition="top"
         (click)="changeTab('poline')"
-        *ngIf="Itype == 'Invoice' && (['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
+        *ngIf="Itype == 'Invoice' && (['Emaar Hospitality'].includes(client_name) && documentType?.toLowerCase() == 'credit note')"
       >
         <a
           class="nav-link"
@@ -237,7 +237,7 @@
         class="nav-item ml-2"
         pTooltip="GRN details"
         tooltipPosition="top"
-        *ngIf="!grnCreateBoolean && Itype == 'Invoice' && !(['Emaar Hospitality'].includes(client_name) && documentType.toLowerCase() == 'credit note')"
+        *ngIf="!grnCreateBoolean && Itype == 'Invoice' && !(['Emaar Hospitality'].includes(client_name) && documentType?.toLowerCase() == 'credit note')"
         (click)="changeTab('grn')"
       >
         <a
