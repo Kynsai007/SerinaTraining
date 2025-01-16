@@ -13,7 +13,7 @@
     <!-- <h6 class="f-14" *ngIf="approveBool">
       <span></span>
     </h6> -->
-    <div *ngIf="type != 'manpower'">
+    <div *ngIf="!type.includes('manpower')">
       <i class="fa fa-close" style="cursor: pointer" mat-dialog-close></i>
     </div>
   </div>
@@ -319,13 +319,12 @@
   <div *ngIf="type == 'manpower'">
  
     <div class="d-flex justify-content-end">
-      <div class="calender_div">
+      <div class="calender_div" *ngIf="!isEditGRN">
         <p-calendar
           #datePicker
           [(ngModel)]="rangeDates"
           selectionMode="range"
           [minDate]="minDate"
-          [maxDate]="maxiDate"
           placeholder=""
           [readonlyInput]="true"
           [showIcon]="true"
@@ -454,7 +453,7 @@
       
       <div class="f-11">
         <div class="f-13">Notes:</div>
-        1. GRN Quantity calculation:  "(Total timesheet values for the line item)/(number of shifts * number of days in the month)" <br>
+        1. GRN Quantity calculation:  "(Total timesheet values for the line item)/(number of days in the month)" <br>
         2. Disabled input field indicates that the data is already available or overlapping dates have been added <br>
       </div>
       <div
@@ -515,6 +514,7 @@
       <button
         class="primary_btn f-12"
         type="button"
+        [disabled]="disabledSaveMetadata"
         (click)="saveManpowerMetadata()"
       >
         Save

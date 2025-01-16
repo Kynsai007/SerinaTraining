@@ -98,6 +98,7 @@ export class DataService {
     { id:27, sub_id:23, name :'Duplicate Invoice', bgcolor: 'inherit', textColor :'#F1932F'},
     { id:29, sub_id:23, name :'Mail Queue', bgcolor: 'inherit', textColor :'#F1932F'},
     { id:30, sub_id:23, name :'PO Cancelled', bgcolor: 'inherit', textColor :'#F1932F'},
+    { id:31, sub_id:206, name :'Waiting for User Approval', bgcolor: 'inherit', textColor :'#F1932F'},
   ]
 
   // bgColorCode = [

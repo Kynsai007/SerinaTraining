@@ -318,7 +318,7 @@
         </p-table>
 
         <div class="d-flex role card_container" *ngIf="!isTableView">
-          <ng-container *ngFor="let role of DisplayRoleName">
+          <ng-container *ngFor="let role of DisplayRoleName | filter : searchText">
             <div class="card" (click)="editRole(role)">
               <div class="d-flex justify-content-between user_data">
                 <div class="d-flex">
@@ -382,7 +382,7 @@
                 'firstName',
                 'lastName',
                 'NameOfRole',
-                'vendor_data.VendorName',
+                'VendorName',
                 'email',
                 'isActive'
               ]"
@@ -416,7 +416,7 @@
 
                   <th
                     [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
-                    pSortableColumn="vendor_data.VendorName"
+                    pSortableColumn="VendorName"
                   >
                     Vendor Name
                   </th>
@@ -459,8 +459,8 @@
                   </td>
                   <td [title]="users.email">{{ users.email }}</td>
 
-                  <td [title]="users.vendor_data.VendorName">
-                    {{ users.vendor_data.VendorName }}
+                  <td [title]="users.VendorName">
+                    {{ users.VendorName }}
                   </td>
                   <td *ngIf="isDesktop">
                     <span *ngIf="users.isActive == 1" style="color: #000000"
@@ -575,7 +575,7 @@
                       <i class="fa fa-user"></i>
                     </div>
                     <div class="user_name">
-                      <div class="f-16">{{ user.vendor_data.VendorName }}</div>
+                      <div class="f-16">{{ user.VendorName }}</div>
                       <div class="f-14 shade_color">{{ user.email }}</div>
                     </div>
                   </div>
@@ -663,7 +663,7 @@
                 'firstName',
                 'lastName',
                 'NameOfRole',
-                'vendor_data.VendorName',
+                'VendorName',
                 'email',
                 'isActive'
               ]"
@@ -697,7 +697,7 @@
 
                   <th
                     [ngClass]="ap_boolean ? 'ap_bgClor' : 'ar_bgClr'"
-                    pSortableColumn="vendor_data.VendorName"
+                    pSortableColumn="VendorName"
                   >
                     Vendor Name
                   </th>
@@ -728,8 +728,8 @@
                   </td>
                   <td [title]="users.email">{{ users.email }}</td>
 
-                  <td [title]="users.vendor_data.VendorName">
-                    {{ users.vendor_data.VendorName }}
+                  <td [title]="users.VendorName">
+                    {{ users.VendorName }}
                   </td>
                   <td *ngIf="isDesktop" class="text-center">
                     <span *ngIf="users.isActive == 0" style="color: #ff3900">
@@ -783,7 +783,7 @@
                     <i class="fa fa-user"></i>
                   </div>
                   <div class="user_name">
-                    <div class="f-16">{{ user.vendor_data.VendorName }}</div>
+                    <div class="f-16">{{ user.VendorName }}</div>
                     <div class="f-14 shade_color">{{ user.email }}</div>
                   </div>
                 </div>

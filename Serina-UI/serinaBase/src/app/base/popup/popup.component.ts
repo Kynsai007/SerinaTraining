@@ -62,6 +62,7 @@ export class PopupComponent implements OnInit {
   endDate: Date;
   isEditGRN: boolean = false;
   createdDates = [];
+  disabledSaveMetadata: boolean = true;
 
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
@@ -598,6 +599,13 @@ export class PopupComponent implements OnInit {
         [field]: value
       });
     }
+    this.ds.grn_manpower_metadata.headerFields.forEach(el=>{
+      if(Object.keys(el).length <= 3){
+        this.disabledSaveMetadata = true;
+      } else {
+        this.disabledSaveMetadata = false;
+      }
+    })
     // this.ds.grn_manpower_metadata.headerFields[index][field] = value;
   }
   saveManpowerMetadata() {
@@ -724,7 +732,7 @@ export class PopupComponent implements OnInit {
             // Check for valid shiftCount and totalValue before dividing
             if (totalValue && shiftCount && !isNaN(totalValue) && !isNaN(shiftCount) && shiftCount > 0) {
 
-              const calculatedGRNQuantity = totalValue / (numberOfDays * shiftCount);
+              const calculatedGRNQuantity = totalValue / (numberOfDays);
               line.Value = calculatedGRNQuantity.toFixed(2); 
             } else {
               line.Value = "0"; // Default to 0 if something is missing

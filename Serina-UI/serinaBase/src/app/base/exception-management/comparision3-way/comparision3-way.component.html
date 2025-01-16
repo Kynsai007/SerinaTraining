@@ -436,7 +436,7 @@
                     <label class="label-head" style="margin-bottom: -5px"
                       >{{ value.TagLabel }} <span *ngIf="value?.TagLabel?.toLowerCase() == 'invoicedate'">(YYYY-MM-DD)</span>
                       <span
-                        *ngIf="value.isError == 1 || value.IsUpdated > 0"
+                        *ngIf="value.isError == 1"
                         [pTooltip]="value.ErrorDesc"
                         tooltipPosition="top"
                         ><i
@@ -791,7 +791,7 @@
                           >
                           <span
                             *ngIf="
-                              data2?.invline[0]?.DocumentLineItems?.isError >= 1 || data2.invline[0]?.DocumentLineItems.IsUpdated > 0
+                              data2?.invline[0]?.DocumentLineItems?.isError >= 1 
                             "
                             [pTooltip]="
                               data2?.invline[0]?.DocumentLineItems?.ErrorDesc
@@ -2089,7 +2089,7 @@
                   : approveChangesBatch()
               "
             >
-              Next
+              {{subStatusId == 206 ? 'Approve' : 'Next'}}
             </button>
             <button
               *ngIf="fin_boolean && client_name == 'Enova' && !isMoreRequired && !isServiceData"

@@ -422,6 +422,8 @@ export class Comparision3WayComponent
   grnTooltip: string;
   isDraft: boolean;
   decimal_count:number;
+  lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
+  configData: any;
 
   constructor(
     fb: FormBuilder,
@@ -449,9 +451,10 @@ export class Comparision3WayComponent
   }
 
   ngOnInit(): void {
-    this.ERP = this.dataService?.configData?.erpname;
-    this.client_name = this.dataService?.configData?.client_name;
-    this.decimal_count = this.dataService?.configData?.miscellaneous?.No_of_Decimals;
+    this.configData = this.dataService?.configData;
+    this.ERP = this.configData?.erpname;
+    this.client_name = this.configData?.client_name;
+    this.decimal_count = this.configData?.miscellaneous?.No_of_Decimals;
     if(!this.decimal_count){
       this.decimal_count = 2;
      }
@@ -951,7 +954,7 @@ export class Comparision3WayComponent
       //  }
         this.manpower_metadata = this.dataService?.grn_manpower_metadata?.headerFields;
         if (this.client_name == 'Cenomi' && this.router.url.includes('Create_GRN_inv_list')) {
-          if (this.manpower_metadata?.length < 1) {
+          if (this.manpower_metadata?.length < 1 && !this.dataService.isEditGRN) {
             this.manpowerMetadataFunction();
           } else {
             this.createTimeSheetDisplayData('old');
@@ -2665,7 +2668,7 @@ export class Comparision3WayComponent
     }
     const GRNQtyArr = this.lineDisplayData.find(item=> item.TagName === 'GRN - Quantity');
     let validationBool = GRNQtyArr?.linedata?.some(el=> el.Value == '' ||  el.Value == undefined);
-    if (validationBool) {
+    if (validationBool && !this.isDraft) {
       this.error('Please add a valid GRN Quantity');
       return;
     }
@@ -2739,7 +2742,7 @@ export class Comparision3WayComponent
           boolean == true
         ) {
           if (this.GRN_PO_Bool) {
-            if(this.client_name == 'SRG'){
+            if(this.configData?.miscellaneous?.grn_match_with_invoice_no){
               if (this.invoiceNumber) {
                 this.grnDuplicateCheck(boolean);
                 } else {
@@ -3101,10 +3104,12 @@ export class Comparision3WayComponent
             }
 
             // Add the date and quantity to the correct shift
-            quantitiesByLineNumberAndShift[lineNumber][shift].push({
-              date: date,
-              quantity: value
-            });
+            if(value){
+              quantitiesByLineNumberAndShift[lineNumber][shift].push({
+                date: date,
+                quantity: value
+              });
+            }
           } 
         });
       }
@@ -4197,7 +4202,7 @@ export class Comparision3WayComponent
     this.exceptionService.getInvTypes().subscribe((data: any) => {
       this.invTypeList = data.data;
       data.data.forEach(el => {
-        if (el.toLowerCase() == this.docType) {
+        if (el?.toLowerCase() == this.docType) {
           this.docType = el;
         } if (this.docType == 'credit') {
           this.docType = 'Invoice'
@@ -4215,7 +4220,7 @@ export class Comparision3WayComponent
     })
   }
   onSelectInvType(event) {
-    this.exceptionService.changeInvType(event.value.toLowerCase()).subscribe((data: any) => {
+    this.exceptionService.changeInvType(event?.value?.toLowerCase()).subscribe((data: any) => {
       if (data.status == 'success') {
         this.success("Invoice type changed successfully, and sent to batch.");
         this.syncBatch();
@@ -4360,7 +4365,7 @@ export class Comparision3WayComponent
     for (let i = 0; i < arr?.length; i++) {
       let str = arr[i];
       if (
-        str.toLowerCase().indexOf(query.toLowerCase()) == 0
+        str?.toLowerCase()?.indexOf(query?.toLowerCase()) == 0
       ) {
         filtered.push(str);
       }
@@ -4400,7 +4405,7 @@ export class Comparision3WayComponent
     for (let i = 0; i < arr?.length; i++) {
       let str = arr[i];
       if (
-        str.toLowerCase().indexOf(query.toLowerCase()) == 0
+        str?.toLowerCase()?.indexOf(query?.toLowerCase()) == 0
       ) {
         filtered.push(str);
       }
