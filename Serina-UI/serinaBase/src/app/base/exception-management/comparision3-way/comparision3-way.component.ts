@@ -1442,6 +1442,7 @@ export class Comparision3WayComponent
   }
 
   readGRNInvData() {
+    this.SpinnerService.show();
     this.SharedService.readReadyGRNInvData().subscribe(
       (data: any) => {
         this.lineDisplayData = data.ok?.linedata;
@@ -4525,6 +4526,7 @@ export class Comparision3WayComponent
     delete this.exceptionService.invoiceID;
     delete this.dataService.grn_manpower_metadata;
     delete this.dataService.manpowerResponse
+    delete this.tagService?.headerName
     this.mat_dlg.closeAll();
     this.dataService.isEditGRN = false;
   }
