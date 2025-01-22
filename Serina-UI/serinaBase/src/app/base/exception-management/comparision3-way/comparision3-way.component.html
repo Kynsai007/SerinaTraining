@@ -823,7 +823,6 @@
                         >
                           <input
                             *ngIf="
-                              tagName.tagname != 'AmountExcTax' &&
                               (tagName.tagname != 'Description' ||
                                 !submitBtn_boolean || fin_boolean)
                             "
@@ -845,7 +844,7 @@
                                   : 'center'
                             }"
                           />
-                          <input
+                          <!-- <input
                             *ngIf="tagName.tagname == 'AmountExcTax'"
                             type="text"
                             [title]="data2.poline[0]?.Value"
@@ -871,7 +870,7 @@
                                   ? 'left'
                                   : 'center'
                             }"
-                          />
+                          /> -->
                           <div
                             class="mapping"
                             *ngIf="
@@ -947,12 +946,12 @@
               <table class="f-13 total_table">
                 <tr class="mb-1">
                   <td></td>
-                  <td class="total_txt">Invoice Total</td>
+                  <td class="total_txt">Invoice Lines Total </td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td class="total_count">{{ invoice_subTotal }}</td>
+                  <td class="total_count" [pTooltip]="lineTooltip" tooltipPosition="top">{{totalInvCost}}</td>
                   <td *ngIf="editable" style="width: 40px"></td>
                 </tr>
                 <tr *ngIf="documentType != 'advance invoice' && documentType != 'non-po'">

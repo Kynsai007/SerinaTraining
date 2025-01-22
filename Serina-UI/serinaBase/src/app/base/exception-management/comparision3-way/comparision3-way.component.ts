@@ -424,6 +424,7 @@ export class Comparision3WayComponent
   decimal_count:number;
   lineTooltip: string = 'Shows the total amount, calculated as Quantity × Unit Price - Discount(value/percentage), for the line item.';
   configData: any;
+  invoiceDate: Date | null = null;
 
   constructor(
     fb: FormBuilder,
@@ -965,11 +966,15 @@ export class Comparision3WayComponent
         //   return (val.TagLabel == 'InvoiceId') || (val.TagLabel == 'bill_number');
         // });
         // this.invoiceNumber = inv_num_data[0]?.Value;
-        // let po_num_data = this.inputData.filter((val) => {
-        //   return (val.TagLabel == 'PurchaseOrder' || val.TagLabel ==  'PurchId');
-        // });
+        let po_num_data = this.inputData.filter((val) => {
+          return (val.TagLabel == 'PurchaseOrder' || val.TagLabel ==  'PurchId');
+        });
         this.headerDataOrder();
-        // this.po_num = po_num_data[0]?.Value;
+        let poNum = this.po_num;
+        if(!this.po_num){
+          poNum = this.exceptionService.po_num;
+        }
+        this.po_num = poNum;
         if (data?.ok?.vendordata) {
           this.vendorData = {
             ...data?.ok?.vendordata[0].Vendor,
@@ -1085,6 +1090,7 @@ export class Comparision3WayComponent
         if(!this.po_num){
           poNum = this.exceptionService.po_num;
         }
+        this.po_num = poNum;
         this.getPODocId(poNum);
         this.getGRNnumbers(poNum);
         if (this.documentType == 'credit note') {
@@ -1397,6 +1403,7 @@ export class Comparision3WayComponent
           ele.order = 5
         } else if (ele.TagLabel == 'InvoiceDate') {
           ele.order = 6
+          this.invoiceDate = new Date(ele?.Value);
         } else if (ele.TagLabel == 'TotalTax') {
           ele.order = 7
         } else if (ele.TagLabel == 'SubTotal') {
@@ -1598,21 +1605,18 @@ export class Comparision3WayComponent
           pushedArrayHeader.push(this.mergedArray);
         });
         this.inputData = pushedArrayHeader;
-        let inv_num_data: any = this.inputData.filter(val => {
-          return val.TagLabel == 'InvoiceId';
-        })
-        this.invoiceNumber = inv_num_data[0]?.Value;
-        let po_num_data = this.inputData.filter((val) => {
-          return (val.TagLabel == 'PurchaseOrder');
-        });
+        // let inv_num_data: any = this.inputData.filter(val => {
+        //   return val.TagLabel == 'InvoiceId';
+        // })
+        // this.invoiceNumber = inv_num_data[0]?.Value;
         this.headerDataOrder();
-        this.po_num = po_num_data[0]?.Value;
         let poNum = this.po_num;
         if(!this.po_num){
           poNum = this.exceptionService.po_num;
         }
-        this.getPODocId(poNum);
-        this.getGRNnumbers(poNum);
+        this.po_num = poNum;
+        this.getPODocId(this.po_num);
+        this.getGRNnumbers(this.po_num);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -1796,7 +1800,6 @@ export class Comparision3WayComponent
       data.Value = new_value;
       value =  new_value;
     }
-    console.log(value)
     if (key == 'Quantity' || key == 'UnitPrice' || key == 'AmountExcTax') {
       if (value == '' || isNaN(+value)) {
         this.isAmtStr = true;
@@ -1818,7 +1821,6 @@ export class Comparision3WayComponent
     };
     this.updateInvoiceData.push(updateValue);
   }
-  console.log(this.updateInvoiceData)
   }
 
   saveChanges() {
@@ -2907,13 +2909,15 @@ export class Comparision3WayComponent
     }
   }
   CreateGRNAPI(boolean, txt) {
-    if (this.validateUnitpriceBool) {
-      if (confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
-        this.grnAPICall(boolean, txt);
+    // if (this.client_name !== 'SRG' || this.invoiceDescription) {
+      if (this.validateUnitpriceBool && !confirm("Invoice 'unit-price' is not matching with PO. Do you want to proceed?")) {
+        return;
       }
-    } else {
       this.grnAPICall(boolean, txt);
-    }
+    // } else {
+    //   this.error('Please add the invoice description');
+    // }
+      
   }
 
   grnAPICall(boolean, txt) {
@@ -4128,18 +4132,46 @@ export class Comparision3WayComponent
 
     const unitPriceObject = this.lineData?.Result?.find(obj => obj?.tagname === "UnitPrice");
     const quantityObject = this.lineData?.Result?.find(obj => obj?.tagname === "Quantity");
+    const unitPriceDiscountObject = this.lineData?.Result?.find(obj => obj?.tagname === "Discount");
+    const unitPriceDiscPercentageObject = this.lineData?.Result?.find(obj => obj?.tagname === "DiscPercent");
     // console.log(unitPriceObject)
     if (unitPriceObject && quantityObject) {
 
       const unitPriceData = unitPriceObject?.items;
       const quantityData = quantityObject?.items;
+      let unitPriceDiscountData;
+      let unitPriceDiscPercentageData;
 
       let totalpoCost = 0;
       let totalinvCost = 0;
       for (let i = 0; i < unitPriceData?.length; i++) {
-        const pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
+        let po_discount = 0;
+        let inv_discount = 0;
+        let pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value);
+        let invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+        if(unitPriceDiscountObject){
+          unitPriceDiscountData = unitPriceDiscountObject?.items;
+          if(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value && unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value != 0){
+            po_discount = parseFloat(unitPriceDiscountData[i]?.linedetails[0]?.poline[0]?.Value);
+            pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value) - po_discount;
+          }
+          if(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value && unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value != 0){
+            inv_discount = parseFloat(unitPriceDiscountData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
+            invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value) - inv_discount
+          }
+        }
+        if(unitPriceDiscPercentageObject){
+          unitPriceDiscPercentageData = unitPriceDiscPercentageObject?.items;
+          if(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value && unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value != 0){
+            po_discount = (parseFloat(unitPriceDiscPercentageData[i]?.linedetails[0]?.poline[0]?.Value)/100)*(parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value));
+            pounitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.poline[0]?.Value) - po_discount;
+          }
+          if(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value &&unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value != 0){
+            inv_discount = (parseFloat(unitPriceDiscPercentageData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value)/100)*(parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value));
+            invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value) - inv_discount;
+          }
+        }
         const poquantity = parseFloat(quantityData[i]?.linedetails[0]?.poline[0]?.Value);
-        const invunitPrice = parseFloat(unitPriceData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
         const invquantity = parseFloat(quantityData[i]?.linedetails[0]?.invline[0]?.DocumentLineItems?.Value);
 
         if (!isNaN(pounitPrice) && !isNaN(poquantity)) {
@@ -4148,9 +4180,10 @@ export class Comparision3WayComponent
         if (!isNaN(invunitPrice) && !isNaN(invquantity)) {
           totalinvCost += invunitPrice * invquantity;
         }
+
       }
       this.po_total = totalpoCost;
-      this.totalInvCost = totalinvCost.toFixed(2);
+      this.totalInvCost = totalinvCost.toFixed(2);  
       // console.log("Total Cost:", totalpoCost);
     } else {
       console.log("UnitPrice or Quantity data not found.");

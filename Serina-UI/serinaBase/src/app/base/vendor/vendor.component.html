@@ -145,7 +145,14 @@
           <div class="f-12">{{ vendor.VendorName }}</div>
           <div class="d-flex justify-content-between f-12">
             <div class="shade_color">{{ vendor.EntityName }}</div>
-            <div>{{ vendor.VendorCode }}</div>
+            <div class="d-flex justify-content-between f-12">
+              <div class="mr-2"> 
+               {{vendor.OnboardedStatus}}
+                <i *ngIf="vendor.OnboardedStatus == 'Onboarded'" style="color: green;" class="fa fa-check-circle"  aria-hidden="true"></i> 
+                <i *ngIf="vendor.OnboardedStatus != 'Onboarded'" style="color: red;" class="fa fa-times-circle" aria-hidden="true"></i>
+              </div>
+              <div>{{ vendor.VendorCode }}</div>
+            </div>
           </div>
         </div>
       </div>

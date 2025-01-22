@@ -46,6 +46,7 @@
             <th>Quantity</th>
             <th>Unit price</th>
             <th>Disc Amount</th>
+            <th>Disc Percent</th>
             <th>AmountExcTax</th>
           </tr>
           <tr *ngFor="let line of POLineData">
@@ -74,7 +75,8 @@
             </td>
             <td>{{ line.UnitPrice }}</td>
             <td>{{ line.DiscAmount }}</td>
-            <td><span>{{ (line.Quantity * line.UnitPrice).toFixed(2)}}</span></td>
+            <td>{{ line.DiscPercent }}</td>
+            <td><span>{{ line.AmountExcTax}}</span></td>
           </tr>
         </table>
         <table

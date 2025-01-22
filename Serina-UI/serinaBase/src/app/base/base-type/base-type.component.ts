@@ -656,6 +656,10 @@ export class BaseTypeComponent implements OnInit, OnDestroy,AfterViewInit {
     if (sessionStorage.getItem('rejected')) {
       sessionStorage.removeItem('rejected');
     }
+
+    if (sessionStorage.getItem('Service')) {
+      sessionStorage.removeItem('Service');
+    }
   }
   
 }

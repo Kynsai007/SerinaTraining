@@ -1,7 +1,7 @@
 import { ServiceInvoiceService } from './../../services/serviceBased/service-invoice.service';
 import { DocumentService } from './../../services/vendorPortal/document.service';
 import { SharedService } from './../../services/shared.service';
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/auth/auth-service.service';
@@ -259,5 +259,26 @@ export class VendorBaseComponent implements OnInit {
     this.DS.poLoadedData = [];
     this.DS.GRNLoadedData = [];
   }
-
+  @HostListener('window:beforeunload', ['$event'])
+  clearSessionStorage(event: Event): void {
+    // Remove session storage items if they exist
+    if (sessionStorage.getItem('allInvoices')) {
+      sessionStorage.removeItem('allInvoices');
+    }
+    if (sessionStorage.getItem('PO')) {
+      sessionStorage.removeItem('PO');
+    }
+    if (sessionStorage.getItem('GRN')) {
+      sessionStorage.removeItem('GRN');
+    }    
+    if (sessionStorage.getItem('editException')) {
+      sessionStorage.removeItem('editException');
+    }    
+    if (sessionStorage.getItem('Archived')) {
+      sessionStorage.removeItem('Archived');
+    }    
+    if (sessionStorage.getItem('rejected')) {
+      sessionStorage.removeItem('rejected');
+    }
+  }
 }

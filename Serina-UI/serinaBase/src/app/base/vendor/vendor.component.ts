@@ -152,6 +152,7 @@ export class VendorComponent implements OnInit, AfterViewInit {
         //   onboardBoolean = false
         // }
         // mergedData.OnboardedStatus = onboardBoolean;
+        mergedData.OnboardedStatus = ele.OnboardedStatus;
         mergedData.idVendorAccount = ele.idVendorAccount;
         pushArray.push(mergedData);
       })

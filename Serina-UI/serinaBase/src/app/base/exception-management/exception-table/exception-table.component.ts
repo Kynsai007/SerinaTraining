@@ -315,6 +315,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
 
   viewInvoice(e) {
+    this.ExceptionsService.po_num = e?.PODocumentID;
     if (this.router.url.includes('ExceptionManagement')) {
       this.router.navigate([
         `/${this.portalName}/ExceptionManagement/batchProcess/comparision-docs/${e.idDocument}`,
@@ -333,6 +334,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.ExceptionsService.invoiceID = e.idDocument;
   }
   viewInvoiceDetails(e) {
+    this.ExceptionsService.po_num = e?.PODocumentID;
     this.tagService.submitBtnBoolean = false;
     this.tagService.editable = false;
     this.ds.subStatusId = e.documentsubstatusID;
