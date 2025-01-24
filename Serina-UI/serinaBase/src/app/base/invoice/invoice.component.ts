@@ -470,6 +470,7 @@ isMobile:boolean;
             invoiceData['User'] = element?.User;
             invoiceData['Department'] = element?.Department;
             invoiceData['InvoiceType'] = element?.InvoiceType;
+            invoiceData['approverData'] = element?.Document?.approverData?.to_approve_by;
             if (this.portal_name == 'vendorPortal') {
               if (invoiceData['docstatus'] == 'Need To Review') {
                 invoiceData['docstatus'] = 'Under Review';
