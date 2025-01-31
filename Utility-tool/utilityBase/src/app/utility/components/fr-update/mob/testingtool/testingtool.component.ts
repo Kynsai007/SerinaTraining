@@ -363,8 +363,11 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     try{
       this.jsonFinalData.final_data.ModelID = this.modelid;
       this.jsonFinalData.final_data['TestResult'] = this.jsonresult.analyzeResult ? this.jsonresult.analyzeResult : {};
-      this.jsonFinalData.final_data['VendorAccount'] = this.modelStatus.idVendorAccount;
-      this.jsonFinalData.final_data['ServiceAccount'] = this.modelStatus.serviceproviderID;
+      if(this.modelStatus.idVendorAccount){
+        this.jsonFinalData.final_data['VendorAccount'] = this.modelStatus.idVendorAccount;
+      }else{
+        this.jsonFinalData.final_data['ServiceAccount'] = this.modelStatus.serviceproviderID;
+      }
       this.saving = true;
       this.sharedService.uploadDb(this.jsonFinalData.final_data,this.modelStatus.idDocumentModel).subscribe(data=>{
         this.messageService.add({
