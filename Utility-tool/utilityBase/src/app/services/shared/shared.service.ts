@@ -381,6 +381,7 @@ export class SharedService {
       {"language":"Italian","code":'it'},
       {"language":"Turkish","code":'tr'}
     ]
+  serviceRules: any;
   constructor(private http: HttpClient) {
     if (sessionStorage.getItem('vendorData')) {
       this.vendorDataSubject = new BehaviorSubject<any>(JSON.parse(sessionStorage.getItem('vendorData')));

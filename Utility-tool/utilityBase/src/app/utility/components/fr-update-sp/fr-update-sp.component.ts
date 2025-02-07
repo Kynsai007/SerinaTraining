@@ -125,6 +125,10 @@ export class FrUpdateSpComponent implements OnInit {
     this.getAccuracyScore();
     this.getfrConfig();
     this.getModalList();
+    this.serviceRules = this.sharedService.serviceRules;
+    if(!this.serviceRules){
+      this.getServiceRules();
+    }
   }
   
   ngAfterContentInit() : void {
@@ -200,11 +204,12 @@ export class FrUpdateSpComponent implements OnInit {
   selectTemplate(modal_id){
     this.currentTemplate = modal_id;
     this.getAllTags();
-    this.getServiceRules();
+    // this.getServiceRules();
     this.getMetaData(modal_id);
     this.getTrainingTestingRes(modal_id);
     this.outletRef.clear();
     this.outletRef.createEmbeddedView(this.contentRef);
+    this.mandatoryServiceRules = [];
     if(modal_id){
       this.enableTabsBoolean = true;
       let selected = this.modalList.filter(ele=>{
@@ -307,6 +312,7 @@ export class FrUpdateSpComponent implements OnInit {
         this.selected_page_selection = JSON.stringify(data?.pagepreference);
       }
       if(this.FRMetaData?.service_rules_function){
+        this.mandatoryServiceRules = [];
         this.serviceRules?.forEach(el=>{
           if(this.FRMetaData?.service_rules_function?.includes(el.function_name)){
             el.isSelected = true;
@@ -601,6 +607,10 @@ export class FrUpdateSpComponent implements OnInit {
    } else {
      alert('Please add required fields.');
    }
+ }
+
+ routeToTag(){
+    this.router.navigate(['IT_Utility/training']);
  }
  
  changeActiveTab(){

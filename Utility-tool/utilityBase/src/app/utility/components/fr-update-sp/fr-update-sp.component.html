@@ -537,7 +537,8 @@
                         </table>
     
                         <div class="mt-4 d-flex">
-                            <button type="submit" class="btn btnbg f-13 mr-3" [disabled]="saving">Proceed to Onboarding <div *ngIf="saving" class="spinner-border spinner-border-sm" role="status"></div></button>
+                            <button type="submit" class="btn btnbg f-13 mr-3" [disabled]="saving">Update & Proceed to Onboarding <div *ngIf="saving" class="spinner-border spinner-border-sm" role="status"></div></button>
+                            <button type="button" class="btn btnbg f-13 mr-3" (click)="routeToTag()" >Go to Training</button>
                             <button type="button" class="btn btncancel f-13">Cancel</button>&nbsp;
                             <div id="notify" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
                                 <div class="d-flex">

@@ -113,8 +113,13 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
     this.model_validate_msg = "";
     this.modelid = e.target.value;
     let version = this.models.filter(v => v.modelInfo?.modelId == this.modelid) || this.models.filter(v => v?.modelId == this.modelid);
- 
-    this.ocr_version = version[0].apiVersion;
+
+    if(version[0].apiVersion){
+      this.ocr_version = version[0].apiVersion;
+    } else {
+      this.ocr_version = version[0].model_version;
+    }
+
     let isComposed = version[0].modelInfo.attributes.isComposed;
     this.modelname = version[0].modelInfo.modelName;    
     if(!isComposed){
@@ -148,7 +153,15 @@ export class TestingtoolComponent implements OnInit,AfterViewInit {
                 jsonobj.modelInfo["attributes"]["isComposed"] = true;
               }
             }
-            jsonobj.model_version = p.model_version;
+            if(p.model_version){
+              jsonobj.model_version = p.model_version;
+            } else {
+              if(jsonobj?.docTypes){
+                jsonobj.model_version = "v2.1";
+              } else {
+                jsonobj.model_version = "2023-07-31";
+              }
+            }
             this.models.push(jsonobj);
           }
           let index = this.models.findIndex(v => v.modelInfo.modelName == this.modelData.modelName);
