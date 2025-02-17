@@ -76,9 +76,11 @@ export class EntityRoutingComponent implements OnInit {
     if(filteredEntity[0]['SynonymList'].join(",") == filteredEntity[0]['Synonyms']){
       return;
     }
-    let hasduplicate = this.checkSynonymExists(filteredEntity[0]['EntityCode'],filteredEntity[0]['SynonymList']);
+    let hasduplicate =false;
     if(serviceTemplates == 1 && vendorTemplates == 0){
       hasduplicate = false; 
+    }else{
+      hasduplicate = this.checkSynonymExists(filteredEntity[0]['EntityCode'],filteredEntity[0]['SynonymList']);
     }
     if(hasduplicate){
       return;
