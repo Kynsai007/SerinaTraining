@@ -66,6 +66,8 @@ export class EntityRoutingComponent implements OnInit {
     }
   }
   SaveKeyWord(ent){
+    let serviceTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.serviceInvoices;
+    let vendorTemplates = JSON.parse(sessionStorage.getItem("instanceConfig")).InstanceModel.vendorInvoices;
     this.showfailure = false;
     this.showsuccess = false;
     let filteredEntity = this.entities.filter((entity) => {
@@ -75,6 +77,9 @@ export class EntityRoutingComponent implements OnInit {
       return;
     }
     let hasduplicate = this.checkSynonymExists(filteredEntity[0]['EntityCode'],filteredEntity[0]['SynonymList']);
+    if(serviceTemplates == 1 && vendorTemplates == 0){
+      hasduplicate = false; 
+    }
     if(hasduplicate){
       return;
     }
