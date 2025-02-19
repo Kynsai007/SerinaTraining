@@ -46,7 +46,7 @@
         <div class="item3 bg-white h-md-100 loginarea box">
             <div class="row" style="margin-top: 10%;">
                 <label for="modelname" class="form-label"><b>{{textmodel}}</b></label>
-                <input type="text" class="form-control form-control-sm" name="modelname" id="modelname" value="{{modelData.modelName}}" [disabled]="apiversion == 'Azure Form Recognizer 2.1'" (change)="checkvalid($event)">
+                <input type="text" class="form-control form-control-sm" name="modelname" id="modelname" value="{{modelData.modelName}}" [disabled]="apiversion == 'v2.1'" (change)="checkvalid($event)">
                 <div *ngIf="nameinvalid.haserror">
                     <div *ngIf="nameinvalid.novalue" style="font-size: smaller;color: red;">
                         Model name is required.
