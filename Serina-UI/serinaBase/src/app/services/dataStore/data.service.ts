@@ -89,6 +89,7 @@ export class DataService {
     { id:12, sub_id:12, name :'PO Open', bgcolor: 'inherit', textColor :'#14bb12'},
     { id:13, sub_id:13, name :'PO Closed', bgcolor: 'inherit', textColor :'#B2B2B2'},
     { id:16, sub_id:16, name :'ERP Exception', bgcolor: 'inherit', textColor :'#F1932F'},
+    { id:33, sub_id:215, name :'ERP Exception - GRN', bgcolor: 'inherit', textColor :'#F1932F'},
     { id:15, sub_id:15, name :'Mismatch value/s', bgcolor: 'inherit', textColor :'#F1932F'},
     { id:14, sub_id:14, name :'Posted In ERP', bgcolor: 'inherit', textColor :'#14BB12'},
     { id:24, sub_id:70, name :'Set Approval', bgcolor: 'inherit', textColor :'#358DC0'},
