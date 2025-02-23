@@ -330,7 +330,7 @@ export class CreateGRNComponent implements OnInit {
       this.PO_GRN_Number_line = this.poLineData;
       this.permissionService.enable_create_grn = true;
       // this.readTableDataPO(`?po_header_id=${this.sharedService.po_num}`);
-      if(this.poLineData?.length <= 0){
+      if(this.poLineData?.length <= 0 || data == null){
         this.error("Oops, sorry no lines are available")
       }
 
@@ -388,7 +388,7 @@ export class CreateGRNComponent implements OnInit {
   }
   checkPOData(e){
     this.ngxSpinner.show();
-    this.sharedService.updatePO(e.idDocument).subscribe((data: any) => {
+    this.sharedService.checkPOStatus(e.idDocument).subscribe((data: any) => {
       let confirmText:string;
       let icon;
       let header:string;

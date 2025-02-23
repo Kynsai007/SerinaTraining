@@ -358,6 +358,9 @@ export class SharedService {
   updatePO(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/POUpdate/${id}`).pipe(retry(3));
   }
+  checkPOStatus(id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPOStatus/${id}`).pipe(retry(3));
+  }
   get_poDoc_id(id){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getDocid_PO/${this.userId}/PODocumentid/${id}`).pipe(retry(3));
   }

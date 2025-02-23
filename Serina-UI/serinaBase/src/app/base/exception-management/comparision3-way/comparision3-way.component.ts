@@ -100,7 +100,7 @@ export class Comparision3WayComponent
   GRNObject = [];
   GRNObjectDuplicate = [];
 
-  isPdfAvailable: boolean;
+  isPdfAvailable: boolean = true;
   userDetails: any;
   showPdf: boolean = true;
   btnText = 'Close';
@@ -465,17 +465,17 @@ export class Comparision3WayComponent
     const commonTags = [
       { TagName: 'Description', linedata: [] },
       { TagName: 'PO Qty', linedata: [] },
-      { TagName: 'AmountExcTax', linedata: [] },
+      { TagName: 'UnitPrice', linedata: [] }, 
       { TagName: 'GRN - Quantity', linedata: [] },
-      { TagName: 'UnitPrice', linedata: [] },
-      { TagName: 'Actions', linedata: [] }
+      { TagName: 'PO Balance Qty', linedata: [] },
+      { TagName: 'AmountExcTax', linedata: [] },
+      // { TagName: 'Actions', linedata: [] }
     ];
 
     this.GRN_PO_tags = [...commonTags];
 
     if (this.client_name === 'Cenomi') {
-      this.GRN_PO_tags.splice(5, 0, { TagName: 'PO Balance Qty', linedata: [] });
-      this.GRN_PO_tags.splice(6, 0, { TagName: 'PO Remaining %', linedata: [] });
+      this.GRN_PO_tags.push({ TagName: 'PO Remaining %', linedata: [] });
     }
     this.rejectReason = this.dataService.rejectReason;
     this.ap_boolean = this.dataService.ap_boolean;
@@ -500,7 +500,7 @@ export class Comparision3WayComponent
     }
     this.getEntity();
     this.initialData();
-    this.readFilePath();
+    // this.readFilePath();
     this.ERPCostAllocation();
     this.AddPermission();
 
@@ -579,11 +579,13 @@ export class Comparision3WayComponent
       this.Itype = 'Invoice';
       if (this.editable && !['advance invoice', 'non-po', 'credit note'].includes(this.documentType) || this.mappingForCredit) {
         this.readLineItems();
-      }
+      } 
     } else if (this.router.url.includes('PODetails')) {
       this.Itype = 'PO';
+      this.showPdf = false;
     } else if (this.router.url.includes('GRNDetails')) {
       this.Itype = 'GRN';
+      this.showPdf = false;
     } else if (this.router.url.includes('serviceDetails')) {
       this.Itype = 'Service';
     }
@@ -627,10 +629,10 @@ export class Comparision3WayComponent
       // this.readErrorTypes();
       // this.readMappingData();
       if (!['advance invoice'].includes(this.documentType)) {
-        this.getGRNtabData();
-        if(this.client_name != 'SRG'){
-          this.getGrnAttachment();
-        }
+        // this.getGRNtabData();
+        // if(this.client_name != 'SRG'){
+        //   this.getGrnAttachment();
+        // }
       }
 
 
@@ -792,6 +794,19 @@ export class Comparision3WayComponent
     } else {
       this.costTabBoolean = false;
     }
+    if(val == 'grn'){
+      if(!this.GRNTabData){
+        this.getGRNtabData();
+      }
+      // if(this.client_name != 'SRG'){
+      //   this.getGrnAttachment();
+      // }
+    } 
+    // else if(val == 'line'){
+    //   if(!this.lineDisplayData){
+    //     this.readLinedata('');
+    //   }
+    // }
     // if (val == 'line') {
     //   this.lineTabBoolean = true;
     // } else {
@@ -995,7 +1010,7 @@ export class Comparision3WayComponent
 
   getInvoiceFulldata(str) {
     this.SpinnerService.show();
-    this.lineDisplayData = [];
+    // this.lineDisplayData = [];
     this.inputDisplayArray = [];
     this.vendorData = [];
     this.inputData = [];
@@ -1020,11 +1035,10 @@ export class Comparision3WayComponent
         if (response?.uploadtime) {
           this.uploadtime = response?.uploadtime;
         }
-        if (response.doc_type) {
+        if (response?.doc_type) {
           this.docType = response?.doc_type?.toLowerCase();
           this.documentType = response?.doc_type?.toLowerCase();
         }
-
         this.getInvTypes();
         if (this.pageType == "mapping") {
           this.calculateCost();
@@ -1091,11 +1105,11 @@ export class Comparision3WayComponent
           poNum = this.exceptionService.po_num;
         }
         this.po_num = poNum;
-        this.getPODocId(poNum);
-        this.getGRNnumbers(poNum);
+        // this.getPODocId(poNum);
+        // this.getGRNnumbers(poNum);
         if (this.documentType == 'credit note') {
-          this.getProjectData();
-          this.getProjectCatData();
+          // this.getProjectData();
+          // this.getProjectCatData();
           this.getPOs();
           this.getVendorInvoices(this.po_num)
           this.projectCArr = this.dataService.projectCArr;
@@ -1128,6 +1142,7 @@ export class Comparision3WayComponent
                 count = count + 9;
                 val.id = count;
               }
+
             });
             this.lineDisplayData = array.sort((a, b) => a.id - b.id);
           } else {
@@ -1248,7 +1263,7 @@ export class Comparision3WayComponent
         if (str != 'batch') {
           setTimeout(() => {
             this.SpinnerService.hide();
-          }, 2000);
+          }, 100);
         }
       },
       (error) => {
@@ -1567,7 +1582,7 @@ export class Comparision3WayComponent
           }, 10);
         });
         this.lineDisplayData = dummyLineArray;
-        this.getInvTypes();
+        // this.getInvTypes();
         setTimeout(() => {
           this.lineDisplayData = this.lineDisplayData.filter((v) => {
             return !(
@@ -1616,7 +1631,7 @@ export class Comparision3WayComponent
         }
         this.po_num = poNum;
         this.getPODocId(this.po_num);
-        this.getGRNnumbers(this.po_num);
+        // this.getGRNnumbers(this.po_num);
         this.vendorData = {
           ...data.ok.vendordata[0].Vendor,
           ...data.ok.vendordata[0].VendorAccount,
@@ -1634,7 +1649,7 @@ export class Comparision3WayComponent
         setTimeout(() => {
           // document.getElementById('grnTable').style.display = 'block';
           this.SpinnerService.hide();
-        }, 4000);
+        }, 1000);
 
       },
       (error) => {
@@ -1805,6 +1820,7 @@ export class Comparision3WayComponent
         this.isAmtStr = true;
       } else {
         this.isAmtStr = false;
+        this.calculateCost();
       }
     } else if (key == 'Description') {
       if (value == '') {
@@ -1846,7 +1862,8 @@ export class Comparision3WayComponent
       } else if (this.isEmpty) {
         err = "'Description' field cannot be empty";
       }
-      this.error(err)
+      this.error(err);
+      this.isEmpty = false;
       // this.errorTriger('Strings are not allowed in the amount and quantity fields.');
     }
   }
@@ -2114,7 +2131,7 @@ export class Comparision3WayComponent
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
     } else {
-      if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104].includes(sub_status)) {
+      if ([8, 16, 17, 18, 19, 33, 21, 27, 29, 51, 54, 70, 75, 101, 102, 104,216].includes(sub_status)) {
         this.processAlert(sub_status);
       } else if (sub_status == 34) {
         this.update("Please compare the PO lines with the invoices. We generally recommend the 'PO flip' method to resolve issues of this type.")
@@ -2151,6 +2168,8 @@ export class Comparision3WayComponent
       } else {
         this.router.navigate([`${this.portalName}/invoice/allInvoices`]);
       }
+    } else if(subStatus == 216){
+      this.update("Qty x (UnitPrice - Discount) is not Equal to Amount Exclusive of Tax, please check")
     } else {
       this.getInvoiceFulldata('');
       this.update("Please check the values in invoice.");
@@ -2392,6 +2411,7 @@ export class Comparision3WayComponent
   }
 
   updateLine() {
+    this.SpinnerService.show();
     this.exceptionService
       .updateLineItems(
         this.inv_itemcode,
@@ -2404,7 +2424,10 @@ export class Comparision3WayComponent
           this.displayErrorDialog = false;
           this.success("Line item updated successfully");
           this.getInvoiceFulldata('');
-          this.readMappingData();
+          // this.readLinedata('');
+          // this.readMappingData();
+          // this.lineDisplayData = this.replaceData(this.lineDisplayData,data?.linedata?.Result);
+          this.SpinnerService.hide();
         },
         (error) => {
           this.error("Server error");
@@ -2704,7 +2727,7 @@ export class Comparision3WayComponent
 
       } else {
         if(!this.GRN_PO_Bool){
-          this.validateInvPOUnitPrice();
+          // this.validateInvPOUnitPrice();
         }
       }
       let emptyBoolean: boolean = false;
@@ -3294,9 +3317,14 @@ export class Comparision3WayComponent
   }
 
   getGRNtabData() {
+    this.SpinnerService.show();
     this.SharedService.getGRNTabData().subscribe((data: any) => {
       this.GRNTabData = data?.result;
       this.grnTabDatalength = Object.keys(this.GRNTabData).length;
+      this.SpinnerService.hide();
+    }, err => {
+      this.error("Server error");
+      this.SpinnerService.hide();
     })
   }
 
@@ -3311,6 +3339,9 @@ export class Comparision3WayComponent
   }
 
   opengrnDailog() {
+    if(this.grnList.length == 0){
+      this.getGRNnumbers(this.po_num);
+    }
     this.GRNDialogBool = true;
     this.progressDailogBool = true;
     this.headerpop = 'Select GRN';
@@ -3334,10 +3365,20 @@ export class Comparision3WayComponent
       this.PO_GRN_Number_line = data.result;
       this.SpinnerService.hide();
       if (bool) {
+        this.grnList.forEach(el => {
+          if (el.GRNNumber == grn_num) {
+            el.checked = true;
+          }
+        });
         let data = [...this.PO_GRN_Number_line]
         this.selectedGRNList.push(grn_num);
         this.selectedGRNLines.push({ grnNumber: grn_num, linesData: data });
       } else {
+        this.grnList.forEach(el => {
+          if (el.GRNNumber == grn_num) {
+            el.checked = false;
+          }
+        });
         if (this.selectedGRNList.length > 0) {
           this.selectedGRNList = this.selectedGRNList.filter(grn => grn != grn_num);
           this.selectedGRNLines = this.selectedGRNLines.filter(grn => grn.grnNumber != grn_num);
@@ -4134,7 +4175,7 @@ export class Comparision3WayComponent
     const quantityObject = this.lineData?.Result?.find(obj => obj?.tagname === "Quantity");
     const unitPriceDiscountObject = this.lineData?.Result?.find(obj => obj?.tagname === "Discount");
     const unitPriceDiscPercentageObject = this.lineData?.Result?.find(obj => obj?.tagname === "DiscPercent");
-    // console.log(unitPriceObject)
+
     if (unitPriceObject && quantityObject) {
 
       const unitPriceData = unitPriceObject?.items;
@@ -4183,7 +4224,7 @@ export class Comparision3WayComponent
 
       }
       this.po_total = totalpoCost;
-      this.totalInvCost = totalinvCost.toFixed(2);  
+      this.totalInvCost = totalinvCost.toFixed(this.decimal_count);  
       // console.log("Total Cost:", totalpoCost);
     } else {
       console.log("UnitPrice or Quantity data not found.");
