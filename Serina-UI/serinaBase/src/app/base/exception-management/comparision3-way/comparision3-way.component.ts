@@ -100,7 +100,7 @@ export class Comparision3WayComponent
   GRNObject = [];
   GRNObjectDuplicate = [];
 
-  isPdfAvailable: boolean = true;
+  isPdfAvailable: boolean;
   userDetails: any;
   showPdf: boolean = true;
   btnText = 'Close';
