@@ -187,7 +187,6 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-
     if (this.invoiceColumns) {
       this.invoiceColumns.forEach(e => {
         if (e.columnName == 'Rejected BY') {
@@ -688,7 +687,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       let bool: boolean;
       let icon;
       let header: string;
-      this.sharedService.updatePO(data.result).subscribe((data: any) => {
+      this.sharedService.checkPOStatus(data.result).subscribe((data: any) => {
         if (data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed') {
           this.permissionService.enable_create_grn = true;
           if (this.router.url.includes('GRN_approvals')) {
