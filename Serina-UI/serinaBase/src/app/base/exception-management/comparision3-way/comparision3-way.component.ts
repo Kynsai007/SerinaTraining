@@ -3295,9 +3295,14 @@ export class Comparision3WayComponent
   // }
 
   getGRNnumbers(po_num) {
+    this.SpinnerService.show();
     this.SharedService.checkGRN_PO_duplicates(po_num).subscribe((data: any) => {
       this.grnList = data?.result;
       this.filterGRNlist = this.grnList;
+      this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
     })
   }
   ChangeGRNData() {
