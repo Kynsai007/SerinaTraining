@@ -2171,7 +2171,7 @@ export class ViewInvoiceComponent implements OnInit, OnDestroy {
 
   readPOLines(po_num) {
     this.SpinnerService.show();
-    this.SharedService.getPO_Lines(po_num).subscribe((data: any) => {
+    this.SharedService.getPO_Lines(po_num,this.invoiceID).subscribe((data: any) => {
       this.PO_GRN_Number_line = data.result;
       this.SpinnerService.hide();
     }, err => {

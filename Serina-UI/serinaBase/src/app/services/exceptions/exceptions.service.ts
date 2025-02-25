@@ -232,6 +232,9 @@ export class ExceptionsService {
   createTicket(inv_id){
     return this.http.get(`${environment.apiUrl}/${environment.apiVersion}/Invoice/ticket_creation/${inv_id}`) 
   }
+  deleteDraftGRN(idDocument) {
+    return this.http.post(`${environment.apiUrl}/${environment.apiVersion}/Invoice/deleteDraftGRN/${this.userId}/${idDocument}`,'')
+  }
 
   convertData(inputData, purchId: string) {
     const output = [];

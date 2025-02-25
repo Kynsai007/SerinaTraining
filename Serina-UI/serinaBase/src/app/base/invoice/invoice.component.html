@@ -251,6 +251,7 @@
         [columnsData]="GRNDispalyData"
         [searchText]="searchText"
         (paginationEvent) = "paginate($event)"
+        (systemCheckEmit)="refreshInvoice($event)"
         [pageId]="'GRN'"
         [pageNumber]="pageNumber"
         (sideBarBoolean)="showSidebar($event)"

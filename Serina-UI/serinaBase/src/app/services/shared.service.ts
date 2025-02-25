@@ -377,8 +377,8 @@ export class SharedService {
   getPo_numbers(idVen){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_numbers/${this.userId}/${idVen}`).pipe(retry(3))
   }
-  getPO_Lines(po_num){
-    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_Lines/${this.userId}/${po_num}`).pipe(retry(3))
+  getPO_Lines(po_num,doc_id){
+    return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_Lines/${this.userId}/${po_num}?documentid=${doc_id}`).pipe(retry(3))
   }
   getPO_details(po_num){
     return this.http.get(`${this.apiUrl}/${this.apiVersion}/Invoice/getPO_details/${this.userId}/${po_num}`).pipe(retry(3))

@@ -629,7 +629,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     this.ds.grnWithPOBoolean = true;
     this.tagService.editable = true;
     this.ds.isEditGRN = true;
-    this.sharedService.getPO_Lines(e.PODocumentID).subscribe((data: any) => {
+    this.sharedService.getPO_Lines(e.PODocumentID,e.idDocument).subscribe((data: any) => {
       this.ds.po_lines = data?.result
     })
     this.ExceptionsService.getManpowerMetaData(e.PODocumentID).subscribe((data:any)=>{
@@ -641,9 +641,30 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
      })
   }
 
+  deletePopUp(e) {
+    const mat_dlg_ref = this.confirmFun('Are you sure you want to delete this Draft GRN?', 'confirmation', 'Confirmation');
+    mat_dlg_ref.afterClosed().subscribe((res) => {
+      if (res) {
+        this.deleteDraftGRN(e);
+      }
+    });
+  }
+
+  deleteDraftGRN(e) {
+    this.SpinnerService.show();
+    this.ExceptionsService.deleteDraftGRN(e.idDocument).subscribe((data: any) => {
+      this.SpinnerService.hide();
+      this.alertService.success_alert(data.Message);
+      this.systemCheckEmit.emit(`GRN-${e.idDocument}`);
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
+    });
+  }
+
   getPOLines(e) {
     this.SpinnerService.show();
-    this.sharedService.getPO_Lines(e.PODocumentID).subscribe((data: any) => {
+    this.sharedService.getPO_Lines(e.PODocumentID,e.idDocument).subscribe((data: any) => {
       this.SpinnerService.hide();
       this.ds.GRN_PO_Data = [];
       this.ds.grnWithPOBoolean = true;
@@ -802,12 +823,7 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
 
   triggerBatch(event: Event, id) {
     event.stopPropagation();
-    const drf: MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent, {
-      width: '400px',
-      height: '300px',
-      hasBackdrop: false,
-      data: { body: 'Are you sure you want to re-trigger the batch for the Invoice?', type: 'confirmation', heading: 'Confirmation', icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
-    })
+    const drf: MatDialogRef<ConfirmationComponent> = this.confirmFun('Are you sure you want to re-trigger the batch for the Invoice?', 'confirmation', 'Confirmation')
 
     drf.afterClosed().subscribe((bool) => {
       if (bool) {
@@ -1036,6 +1052,15 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
     },err=>{
       this.SpinnerService.hide();
       this.error("Server error")
+    })
+  }
+
+  confirmFun(body, type, head) {
+    return this.md.open(ConfirmationComponent, {
+      width: '400px',
+      height: '300px',
+      hasBackdrop: false,
+      data: { body: body, type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
   }
 

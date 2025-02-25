@@ -322,9 +322,9 @@ export class CreateGRNComponent implements OnInit {
     
     this.checkPOData(id)
   }
-  readPOLines(po_num) {
+  readPOLines(po_num,doc_id) {
     this.ngxSpinner.show();
-    this.sharedService.getPO_Lines(po_num).subscribe((data: any) => {
+    this.sharedService.getPO_Lines(po_num,doc_id).subscribe((data: any) => {
       this.ngxSpinner.hide();
       this.poLineData = data.result;
       this.PO_GRN_Number_line = this.poLineData;
@@ -364,7 +364,7 @@ export class CreateGRNComponent implements OnInit {
       }
     })
   }
-  checkGRNPO(val){
+  checkGRNPO(val,doc_id){
     this.sharedService.checkGRN_PO_duplicates(val).subscribe((data:any)=>{
       if(data.result.length > 0){
         const drf:MatDialogRef<ConfirmationComponent> = this.md.open(ConfirmationComponent,{ 
@@ -375,14 +375,14 @@ export class CreateGRNComponent implements OnInit {
 
           drf.afterClosed().subscribe(bool=>{
             if(bool){
-              this.readPOLines(val);
+              this.readPOLines(val,doc_id);
             } else {
               this.error("Please select other PO to create GRN");
             }
           })
        
       } else {
-        this.readPOLines(val);
+        this.readPOLines(val,doc_id);
       }
     })
   }
@@ -393,7 +393,7 @@ export class CreateGRNComponent implements OnInit {
       let icon;
       let header:string;
       if(data.po_status?.toLowerCase() == 'open' && data.po_confirmation_status?.toLowerCase() == 'confirmed'){
-        this.checkGRNPO(e.PODocumentID);
+        this.checkGRNPO(e.PODocumentID, e.idDocument);
       } else if(data.po_status?.toLowerCase() != 'open') {
         icon = 'assets/Serina Assets/new_theme/closed_icon.svg';
         header = 'Closed';
