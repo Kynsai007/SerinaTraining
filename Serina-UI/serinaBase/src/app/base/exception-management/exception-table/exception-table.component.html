@@ -579,7 +579,8 @@
               router.url.includes('allInvoices') ||
               router.url.includes('archived') ||
               router.url.includes('rejected') ||
-              router.url.includes('ServiceInvoices') 
+              router.url.includes('ServiceInvoices') ||
+             ( router.url.includes('invoice/GRN') && client_name == 'Cenomi')
             "
             pTooltip="Click here to view Full Status details"
             tooltipPosition="left"
