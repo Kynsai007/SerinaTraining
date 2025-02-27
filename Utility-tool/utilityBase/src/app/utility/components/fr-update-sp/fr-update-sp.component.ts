@@ -313,12 +313,13 @@ export class FrUpdateSpComponent implements OnInit {
       }
       if(this.FRMetaData?.service_rules_function){
         this.mandatoryServiceRules = [];
-        this.serviceRules?.forEach(el=>{
-          if(this.FRMetaData?.service_rules_function?.includes(el.function_name)){
-            el.isSelected = true;
-            this.mandatoryServiceRules.unshift(el);
+        this.FRMetaData.service_rules_function.forEach((functionName) => {
+          const rule = this.serviceRules.find(el => el.function_name === functionName);
+          if (rule) {
+            rule.isSelected = true;
+            this.mandatoryServiceRules.push(rule);
           }
-        })
+        });
       }
       if(this.FRMetaData?.mandatoryheadertags){
         this.headerArray = this.FRMetaData['mandatoryheadertags'].split(',');
