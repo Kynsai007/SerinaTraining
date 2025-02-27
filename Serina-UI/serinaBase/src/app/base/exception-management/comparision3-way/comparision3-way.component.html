@@ -994,16 +994,15 @@
                   <div class="mr-2">{{ vendorName }}</div>
                   <div class="pipe mr-2">|</div>
                   <div class="mr-2">{{ po_num }}</div>
-                  <div class="pipe mr-2">|</div>
-                  <div>
+                  <div *ngIf="client_name != 'Cenomi'" class="pipe mr-2">|</div>
+                  <div *ngIf="client_name != 'Cenomi'">
                     <span *ngIf="!GRN_PO_Bool">{{ invoiceNumber }}</span>
                     <input
                       *ngIf="GRN_PO_Bool"
                       type="text"
                       name="inv_number"
-                      [ngModelOptions]="{standalone: true}"
                       class="inv_number f-12 text_color"
-                      placeholder="Please add invoice number"
+                      placeholder="Add invoice number"
                       [(ngModel)]="invoiceNumber"
                     />
                   </div>

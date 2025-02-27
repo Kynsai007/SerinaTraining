@@ -1180,15 +1180,19 @@ isMobile:boolean;
       if (this.route.url == this.invoiceTab) {
       } else if (this.route.url == this.POTab) {
         this.ds.poLoadedData = [];
+        this.ds.searchPOStr = str;
         this.getDisplayPOData(this.APIParams);
       } else if (this.route.url == this.GRNTab) {
         this.ds.GRNLoadedData = [];
+        this.ds.searchGRNStr = str;
         this.getDisplayGRNdata(this.APIParams);
       } else if (this.route.url == this.archivedTab) {
+        this.ds.searchArcStr = str;
         this.ds.archivedDisplayData = [];
         this.getDisplayARCData(this.APIParams);
       } else if (this.route.url == this.rejectedTab) {
         this.ds.rejectedDisplayData = [];
+        this.ds.searchRejStr = str;
         this.getDisplayRejectedData(this.APIParams);
       } 
       // else if (this.route.url == this.SOTab) {
