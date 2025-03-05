@@ -1247,9 +1247,9 @@ export class Comparision3WayComponent
         if (vendorData) {
           this.isServiceData = false;
           this.vendorData = {
-            ...vendorData[0].Vendor,
-            ...vendorData[0].VendorAccount,
-            ...vendorData[0].VendorUser,
+            ...vendorData[0]?.Vendor,
+            ...vendorData[0]?.VendorAccount,
+            ...vendorData[0]?.VendorUser,
           };
           this.vendorAcId = this.vendorData['idVendorAccount'];
           this.vendorName = this.vendorData['VendorName'];

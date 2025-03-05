@@ -346,6 +346,9 @@ isMobile:boolean;
       { dbColumnname: 'totalAmount', columnName: 'Amount' },
       // { dbColumnname: 'documentPaymentStatus', columnName: 'Status' },
     ];
+    if(this.ds.configData.client_name == 'Aster'){
+      this.rejectedColumns.push({ dbColumnname: 'Account', columnName: 'Service Account' });
+    }
 
     this.GRNColumns = [
       { dbColumnname: 'EntityName', columnName: 'Entity Name' },
@@ -406,14 +409,22 @@ isMobile:boolean;
     } else if (this.route.url == this.POTab) {
       this.pageNumber = this.ds.poTabPageNumber;
       if (this.ds.poLoadedData.length == 0) {
-        this.getDisplayPOData(this.APIParams);
+        if (this.ds.searchPOStr != '') {
+          this.getDisplayPOData(this.APIParams);
+        } else {
+          this.getDisplayPOData('?offset=1&limit=50');
+        }
       }
       this.routeName = 'PO';
       this.searchStr = this.ds.searchPOStr;
     } else if (this.route.url == this.archivedTab) {
       this.pageNumber = this.ds.arcTabPageNumber;
       if (this.ds.archivedDisplayData.length == 0) {
-        this.getDisplayARCData(this.APIParams);
+        if (this.ds.searchArcStr != '') {
+          this.getDisplayARCData(this.APIParams);
+        } else {
+          this.getDisplayARCData('?offset=1&limit=50');
+        }
       }
       this.routeName = 'archived';
       this.searchStr = this.ds.searchArcStr;
@@ -421,13 +432,21 @@ isMobile:boolean;
       this.pageNumber = this.ds.rejTabPageNumber;
       this.routeName = 'rejected';
       if (this.ds.rejectedDisplayData.length == 0) {
-        this.getDisplayRejectedData(this.APIParams);
+        if(this.ds.searchRejStr != ''){
+          this.getDisplayRejectedData(this.APIParams);
+        } else {
+          this.getDisplayRejectedData(`?offset=1&limit=50`);
+        }
       }
       this.searchStr = this.ds.searchRejStr;
     } else if( this.route.url == this.GRNTab){
       this.pageNumber = this.ds.grnTabPageNumber;
       if (this.ds.GRNLoadedData.length == 0) {
-        this.getDisplayGRNdata(this.APIParams);
+        if(this.ds.searchGRNStr != ''){
+          this.getDisplayGRNdata(this.APIParams);
+        } else {
+          this.getDisplayGRNdata(`?offset=1&limit=50`);
+        } 
       }
       this.routeName = 'GRN';
       this.searchStr = this.ds.searchGRNStr;
@@ -565,6 +584,9 @@ isMobile:boolean;
         this.showPaginatorGRNTable = true;
       }
       this.SpinnerService.hide();
+    },err=>{
+      this.SpinnerService.hide();
+      this.error("Server error");
     });
   }
 
@@ -648,6 +670,7 @@ isMobile:boolean;
           ...element.Document,
           ...element.Entity,
           ...element.EntityBody,
+          ...element.DocumentHistoryLogs,
           ...element.ServiceProvider,
           ...element.ServiceAccount
         };
@@ -848,12 +871,13 @@ isMobile:boolean;
 
   menuChange(value) {
     this.updateColumns = [];
-
+    
     this.activeMenuName = value;
     // this.getInvoiceData();
     this.ds.allPaginationFirst = 0;
     this.ds.allPaginationRowLength = 10;
     if (value == 'invoice') {
+      this.search_placeholder = 'Ex : By Vendor. By PO, Select Date range from the Calendar icon';
       this.route.navigate([this.invoiceTab]);
       this.ds.doc_status_tab = this.invoiceTab;
       this.allSearchInvoiceString = [];
@@ -882,6 +906,7 @@ isMobile:boolean;
       this.allSearchInvoiceString = [];
       this.searchStr = this.ds.searchGRNStr;
     } else if (value == 'ServiceInvoices') {
+      this.search_placeholder = 'Ex : By Service provider. By Account, Select Date range from the Calendar icon';
       if (!this.serviceColumns) {
         this.getServiceColumns();
       }

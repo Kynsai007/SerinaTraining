@@ -354,6 +354,9 @@ export class ExceptionTableComponent implements OnInit, OnChanges {
       route = 'InvoiceDetails';
       this.ds.editableInvoiceData = e;
     }
+    if(e.ServiceProviderName){
+      route = 'serviceDetails';
+    }
     if (this.userType == 'vendor_portal') {
       this.router.navigate([
         `/vendorPortal/invoice/${route}/${e.idDocument}`,
