@@ -1,526 +1,540 @@
-<section class="p-4" cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="position: relative;">
-  <div class="d-flex justify-content-between">
-    <h6 class="f-14">
-      <span *ngIf="type.includes('flip')"
-        >Please select the lines</span
-      >
-      <span *ngIf="type == 'Amend'">Please change the template body</span>
-      <span *ngIf="type == 'editApprover'">Please add the approvers</span>
-      <span *ngIf="type == 'manpower'">Please add timesheet details</span>
-      <span *ngIf="type == 'manpower_metadata'">Please add meta data</span>
-    </h6>
 
-    <!-- <h6 class="f-14" *ngIf="approveBool">
-      <span></span>
-    </h6> -->
-    <div *ngIf="!type.includes('manpower')">
-      <i class="fa fa-close" style="cursor: pointer" mat-dialog-close></i>
-    </div>
-  </div>
-
-  <div *ngIf="type.includes('flip')">
-    <form
-      #polines="ngForm"
-      (ngSubmit)="onSubmit(polines.value)"
-    >
-      <div class="tb_div">
-        <table
-          style="border-collapse: collapse"
-          class="table table-bordered f-11"
-          *ngIf="POLineData.length > 0 && type != 'flip returns'"
-        >
-          <tr class="f-12 tb_head">
-            <th>
-              <input
-                class="mt-1"
-                type="checkbox"
-                name="selectAll"
-                [checked]="select_all_bool"
-                (change)="onSelectAll($event.target.checked,'LineNumber')"
-              />
-            </th>
-            <th>Description</th>
-            <th>Procurement Category</th>
-            <th>PO Quantity</th>
-            <!-- <th>Balance Quantity</th> -->
-            <th>Quantity</th>
-            <th>Unit price</th>
-            <th>Disc Amount</th>
-            <th>Disc Percent</th>
-            <th>AmountExcTax</th>
-          </tr>
-          <tr *ngFor="let line of POLineData">
-            <td>
-              <input
-                type="checkbox"
-                [name]="line.Name"
-                [checked]="line.isSelected"
-                (change)="onSelect($event.target.checked, line,'LineNumber')"
-              />
-            </td>
-            <td>{{ line.Name }}</td>
-            <td>{{ line?.ProcurementCategory }}</td>
-            <td>{{ line.PurchQty }}</td>
-            <!-- <td>{{ line.RemainPurchFinancial }}</td> -->
-            <td>
-              <input
-                [id]="line.LineNumber"
-                #qty
-                type="text"
-                value="{{ line.Quantity }}"
-                class="form-control f-11"
-                style="width: 70px"
-                (change)="changeQty(qty.value, line.LineNumber,'LineNumber')"
-              />
-            </td>
-            <td>{{ line.UnitPrice }}</td>
-            <td>{{ line.DiscAmount }}</td>
-            <td>{{ line.DiscPercent }}</td>
-            <td><span>{{ line.AmountExcTax}}</span></td>
-          </tr>
-        </table>
-        <table
-        style="border-collapse: collapse"
-        class="table table-bordered f-11"
-        *ngIf="POLineData.length > 0 && type == 'flip returns'"
-      >
-        <tr class="f-12 tb_head">
-          <th>
-            <input
-              class="mt-1"
-              type="checkbox"
-              name="selectAll"
-              (change)="onSelectAll($event.target.checked,'itemCode')"
-            />
-          </th>
-          <th>Description</th>
-          <th>Quantity</th>
-          <th>Return Quantity</th>
-        </tr>
-        <tr *ngFor="let line of POLineData">
-          <td>
-            <input
-              type="checkbox"
-              [name]="line.Description"
-              [checked]="line.isSelected"
-              (change)="onSelect($event.target.checked, line,'itemCode')"
-            />
-          </td>
-          <td>{{ line.Description }}</td>
-          
-          <td>{{ line.Quantity }}</td>
-          <td>
-            <input
-              [id]="line.itemCode"
-              #qty
-              type="text"
-              value="{{ line.Quantity }}"
-              class="form-control f-11"
-              style="width: 70px"
-              (change)="changeQty(qty.value, line.itemCode,'itemCode')"
-            />
-          </td>
-        </tr>
-      </table>
-      </div>
-
-      <div style="position: relative;" *ngIf="POLineData.length > 0">
-        <table class="f-13 total_table">
-          <tr>
-            <td></td><td>Total</td> <td></td><td></td><td></td><td></td><td class="p_l_40">{{ linesTotal.toFixed(2) }}</td>
-          </tr>
-          <tr >
-            <td></td><td>Invoice Total</td> <td></td><td></td><td></td><td></td><td class="p_l_40">{{ inv_total }}</td>
-          </tr>
-          
-        </table>
-      </div>
-      
-      <div class="text-center f-13" *ngIf="!POLineData[0]?.Name && type != 'flip returns'">
-        PO lines are not available to flip
-      </div>
-      <div
-        class="mt-5 d-flex justify-content-end footer mb-3"
-        *ngIf="POLineData[0]?.Name"
-      >
-      <button
-        class="secondary_btn f-12"
-        type="button"
-        mat-dialog-close
-      >
-        Cancel
-      </button>
-        <button
-          *ngIf="!uploadBool"
-          class="primary_btn f-12 ml-3"
-          type="submit"
-          [disabled]="selectedPOLines.length == 0"
-        >
-          Flip
+  <section class="p-4" 
+    cdkDrag 
+    [cdkDragRootElement]="dragRootElement"
+    [cdkDragDisabled]="isResizingEnabled" style="position: relative;">
+    <div class="d-flex justify-content-between " >
+      <h6 class="f-14 w-100 d-flex justify-content-between">
+        <div>
+          <span *ngIf="type.includes('flip')"
+            >Please select the lines</span
+          >
+          <span *ngIf="type == 'Amend'">Please change the template body</span>
+          <span *ngIf="type == 'editApprover'">Please add the approvers</span>
+          <span *ngIf="type == 'manpower'">Please add timesheet details</span>
+          <span *ngIf="type == 'manpower_metadata'">Please add meta data</span>
+        </div>
+        
+        <button (click)="toggleResize()" class="primary_btn f-12 toggle-btn">
+          {{ isResizingEnabled ? 'Enable Drag' : 'Enable Resize' }}
         </button>
-        <button
-          *ngIf="uploadBool"
-          class="primary_btn f-12 ml-3"
-          type="button"
-          [disabled]="selectedPOLines.length == 0"
-          (click)="validateFlip()"
-        >
-          Validate
-        </button>
-
-      </div>
-
-      <div
-      class="mt-5 d-flex justify-content-end footer mb-3"
-      *ngIf="POLineData[0]?.Description"
-    >
-
-      <button
-        *ngIf="uploadBool"
-        class="f-12 primary_btn mr-3"
-        type="button"
-        [disabled]="selectedPOLines.length == 0"
-        (click)="validateFlip()"
-      >
-        Validate
-      </button>
-      <button
-        class="f-12 secondary_btn"
-        type="button"
-        mat-dialog-close
-      >
-        Cancel
-      </button>
-    </div>
-    </form>
-  </div>
-
-  <div *ngIf="type == 'Amend'">
-    <form
-    
-    #poAmend="ngForm"
-    (ngSubmit)="onSubmitRequest(poAmend.value)"
-  >
-    <!-- <label for="email" class="f-13">Recipient email ID</label>
-  <input
-    type="email"
-    name="recipient"
-    class="form-control f-12"
-    ngModel
-    required
-    placeholder="abc@example.com"
-  /> -->
-
-    <!-- <label for="sub" class="f-13">Please Add Subject</label>
-  <input
-    type="text"
-    name="subject"
-    id="sub"
-    class="form-control f-12"
-    ngModel
-    required
-    placeholder="Regarding PO..."
-  /> -->
-
-    <label for="body" class="f-12"
-      >Please Add your inputs for the rejection comments</label
-    >
-    <textarea
-      name="body"
-      id="body"
-      class="form-control f-12"
-      [(ngModel)]="rejectionComments"
-      required
-      placeholder="body"
-    >
-    </textarea>
-    <div class="mt-4 d-flex justify-content-end mb-3">
-      <button class="f-12 primary_btn mr-3" type="submit">
-        Reject & Send
-      </button>
-      <button
-        class="f-12 secondary_btn"
-        type="button"
-        mat-dialog-close
-      >
-        Cancel
-      </button>
-    </div>
-  </form>
-  </div>
-
-  <div *ngIf="type == 'editApprover'">
-    <div class="d-flex justify-content-between flex-wrap f-12">
-      <!-- <div>
-        <label>Select Entity</label>
-        <select
-          class="form-control inputHeight"
-          disabled
-        >
-          <option
-            *ngFor="let entity of entityList"
-            [value]="entity.EntityName"
-          >
-            {{ entity.EntityName }}
-          </option>
-        </select>
-      </div> -->
-      <!-- <div>
-        <label>Select Department</label>
-        <select
-          class="form-control inputHeight"
-          [(ngModel)]="selectedDepartment"
-          (change)="onSelectDepartment($event.target.value)"
-        >
-          <option
-            *ngFor="let name of DepartmentList"
-            [value]="name.DepartmentName"
-          >
-            {{ name.DepartmentName }}
-          </option>
-        </select>
-      </div> -->
-      <div *ngFor="let item of approverList | keyvalue; let i = index">
-        <label>Select Approver {{ i + 1 }}</label>
-        <!-- <div>{{item.value | json}}</div> -->
-        <select
-          class="form-control inputHeight"
-          (change)="onSelectApprovers($event.target.value, i)"
-        >
-          <option *ngFor="let element of item.value" [value]="element.user_id">
-            {{ element.name }}
-          </option>
-        </select>
-      </div>
-      <!-- <div>
-        <label>Select Approver 2</label>
-        <select class="form-control inputHeight" [disabled]="preApproveBoolean">
-          <option value="">Karan</option>
-        </select>
-      </div> -->
-    </div>
-
-    <div class="mt-4 d-flex justify-content-end mb-3">
-      <button
-        class="f-12 primary_btn mr-3"
-        type="submit"
-        (click)="setApprover()"
-      >
-        Submit
-      </button>
-      <button
-        class="f-12 secondary_btn"
-        type="button"
-        mat-dialog-close
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
-
-  <div *ngIf="type == 'manpower'">
- 
-    <div class="d-flex justify-content-end">
-      <div class="calender_div" *ngIf="!isEditGRN">
-        <p-calendar
-          #datePicker
-          [(ngModel)]="rangeDates"
-          selectionMode="range"
-          [minDate]="minDate"
-          placeholder=""
-          [readonlyInput]="true"
-          [showIcon]="true"
-          showButtonBar="true"
-          (onClearClick)="clearDates()"
-          (onSelect)="filterByDate(rangeDates)"
-          [disabledDates]="disabledDates"
-          inputId="range"
-        ></p-calendar>
+      </h6>
+  
+      <!-- <h6 class="f-14" *ngIf="approveBool">
+        <span></span>
+      </h6> -->
+      <div *ngIf="!type.includes('manpower')">
+        <i class="fa fa-close" style="cursor: pointer" mat-dialog-close></i>
       </div>
     </div>
-
-    <form #manpowerForm="ngForm" (ngSubmit)="onSubmitManpower(manpowerForm.value)" class="tabDiv">
-       
-      <!-- <table class="table f-12">
-        <tr class="tHead">
-          <th *ngFor="let head of manPowerData">{{ head.TagName }}</th>
-        </tr>
-        <tr
-          *ngFor="
-            let poLine of orderHistoryData?.order_history;
-            let i = index
-          "
-          class="tbdytr"
+  
+    <div>
+      <div *ngIf="type.includes('flip')">
+        <form
+          #polines="ngForm"
+          (ngSubmit)="onSubmit(polines.value)"
         >
-          <td>
-            <input
-              type="text"
-              class="pos-r mr-1"
-              style="top: 4px"
-              name="SOMap"
-              [id]="poLine.idDocumentLineItems"
-              (change)="onSelectMaster(poLine.Description)"
-            />
-            <label [for]="poLine.idDocumentLineItems">{{
-              poLine.Description
-            }}</label>
-          </td>
-          <td>{{ poLine.Unit }}</td>
-          <td>{{ poLine.UnitPrice }}</td>
-          <td>{{ poLine.Quantity }}</td>
-        </tr>
-      </table> -->
-      <table class="invert mt-2 w-100" id="grnTable">
-        <tr class="invert_tr" style="width: 50px">
-          <td
-            class="lineName invert_th_td text-center"
-            style="min-width: 50px"
-          >
-            S.No
-          </td>
-          <td
-            class="count_line"
-            *ngFor="let item2 of grnLineCount; let ind = index"
-          >
-            <div class="s-no">
-              {{ ind + 1 }}
-            </div>
-          </td>
-        </tr>
-        <ng-container
-          *ngFor="let item of manPowerData; let i = index"
-        >
-          <tr
-            class="invert_tr"
-            *ngIf="
-              !['AmountExcTax','UnitPrice','Duration in months','Is Timesheets','Actions','Number of Shifts'].includes(item.TagName)
-            "
-          >
-            <td
-              class="lineName invert_th_td"
+          <div class="tb_div">
+            <table
+              style="border-collapse: collapse"
+              class="table table-bordered f-11"
+              *ngIf="POLineData.length > 0 && type != 'flip returns'"
             >
-              <div  class="d-flex justify-content-between">
-                <div>{{ item.TagName }}</div>
-              </div>
-            </td>
-            <td
-              class="linevalue invert_th_td"
-              *ngFor="let line1 of item.linedata; let i = index"
-            >
-              <div *ngIf="item.TagName != 'Actions'" [ngStyle]="{'background-color': (['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData) ? '#f1f1f1':''}">
+              <tr class="f-12 tb_head">
+                <th>
+                  <input
+                    class="mt-1"
+                    type="checkbox"
+                    name="selectAll"
+                    [checked]="select_all_bool"
+                    (change)="onSelectAll($event.target.checked,'LineNumber')"
+                  />
+                </th>
+                <th>Description</th>
+                <th>Procurement Category</th>
+                <th>PO Quantity</th>
+                <!-- <th>Balance Quantity</th> -->
+                <th>Quantity</th>
+                <th>Unit price</th>
+                <th>Disc Amount</th>
+                <th>Disc Percent</th>
+                <th>AmountExcTax</th>
+              </tr>
+              <tr *ngFor="let line of POLineData">
+                <td>
+                  <input
+                    type="checkbox"
+                    [name]="line.Name"
+                    [checked]="line.isSelected"
+                    (change)="onSelect($event.target.checked, line,'LineNumber')"
+                  />
+                </td>
+                <td>{{ line.Name }}</td>
+                <td>{{ line?.ProcurementCategory }}</td>
+                <td>{{ line.PurchQty }}</td>
+                <!-- <td>{{ line.RemainPurchFinancial }}</td> -->
+                <td>
+                  <input
+                    [id]="line.LineNumber"
+                    #qty
+                    type="text"
+                    value="{{ line.Quantity }}"
+                    class="form-control f-11"
+                    style="width: 70px"
+                    (change)="changeQty(qty.value, line.LineNumber,'LineNumber')"
+                  />
+                </td>
+                <td>{{ line.UnitPrice }}</td>
+                <td>{{ line.DiscAmount }}</td>
+                <td>{{ line.DiscPercent }}</td>
+                <td><span>{{ decimalRoundOff(line.UnitPrice * line.Quantity) }}</span></td>
+              </tr>
+            </table>
+            <table
+            style="border-collapse: collapse"
+            class="table table-bordered f-11"
+            *ngIf="POLineData.length > 0 && type == 'flip returns'"
+          >
+            <tr class="f-12 tb_head">
+              <th>
                 <input
-                  #inputval
-                  [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity','PO Balance Qty'].includes(item.TagName)?'text':'number'"
-                  [name]="line1.tagName_u"
-                  [title]="line1.Value"
-                  class="form-control inputHeight w-sm"
-                  [(ngModel)]="line1.Value"
-                  [ngClass]="item.TagName == 'Description'?'w-des':''"
-                  required
-                  (change)="onChange(line1, line1.Value)"
-                  [disabled]="['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData"
+                  class="mt-1"
+                  type="checkbox"
+                  name="selectAll"
+                  (change)="onSelectAll($event.target.checked,'itemCode')"
                 />
-              </div>
-              <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
+              </th>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th>Return Quantity</th>
+            </tr>
+            <tr *ngFor="let line of POLineData">
+              <td>
                 <input
-                  #inputval
+                  type="checkbox"
+                  [name]="line.Description"
+                  [checked]="line.isSelected"
+                  (change)="onSelect($event.target.checked, line,'itemCode')"
+                />
+              </td>
+              <td>{{ line.Description }}</td>
+              
+              <td>{{ line.Quantity }}</td>
+              <td>
+                <input
+                  [id]="line.itemCode"
+                  #qty
                   type="text"
-                  [name]="line1.tagName"
-                  [value]="line1.Value"
-                  [title]="line1.Value"
-                  class="form-control inputHeight w-sm"
-                  [(ngModel)]="line1.Value"
-                  [ngClass]="item.TagName == 'Description'?'w-des':''"
-                  
+                  value="{{ line.Quantity }}"
+                  class="form-control f-11"
+                  style="width: 70px"
+                  (change)="changeQty(qty.value, line.itemCode,'itemCode')"
                 />
-              </div> -->
-              <!-- <div *ngIf="item.TagName === 'Actions'" class="linevalue invert_thtd act_div">
-                  <button
-                    class="trash_btn"
-                    (click)="addNewShift(line1.Value,i)"
-                  >
-                    <i class="fa fa-plus" aria-hidden="true"></i>
-                  </button>
-                  <button
-                    class="trash_btn"
-                    (click)="removeShift(line1.Value,i)"
-                  >
-                    <i class="fa fa-trash-o" aria-hidden="true"></i>
-                  </button>
-              </div> -->
-            </td>
-          </tr>
-        </ng-container>
-      </table>
-      
-      <div class="f-11">
-        <div class="f-13">Notes:</div>
-        1. GRN Quantity calculation:  "(Total timesheet values for the line item)/(number of days in the month)" <br>
-        2. Disabled input field indicates that the data is already available or overlapping dates have been added <br>
-      </div>
-      <div
-        class="mt-4 d-flex justify-content-end mb-2 man_btns"
-      >
-        <button
-          class="secondary_btn f-12 mr-3"
-          type="button"
-          (click)="closeDialog(manpowerForm.touched, manpowerForm.dirty)"
+              </td>
+            </tr>
+          </table>
+          </div>
+    
+          <div style="position: relative;" *ngIf="POLineData.length > 0">
+            <table class="f-13 total_table">
+              <tr>
+                <td></td><td>Total</td> <td></td><td></td><td></td><td></td><td class="p_l_40">{{decimalRoundOff(linesTotal)}}</td>
+              </tr>
+              <tr >
+                <td></td><td>Invoice Total</td> <td></td><td></td><td></td><td></td><td class="p_l_40">{{ inv_total }}</td>
+              </tr>
+              
+            </table>
+          </div>
+          
+          <div class="text-center f-13" *ngIf="!POLineData[0]?.Name && type != 'flip returns'">
+            PO lines are not available to flip
+          </div>
+          <div
+            class="mt-5 d-flex justify-content-end footer mb-3"
+            *ngIf="POLineData[0]?.PurchQty"
+          >
+          <button
+            class="secondary_btn f-12"
+            type="button"
+            mat-dialog-close
+          >
+            Cancel
+          </button>
+            <button
+              *ngIf="!uploadBool"
+              class="primary_btn f-12 ml-3"
+              type="submit"
+              [disabled]="selectedPOLines.length == 0"
+            >
+              Flip
+            </button>
+            <button
+              *ngIf="uploadBool"
+              class="primary_btn f-12 ml-3"
+              type="button"
+              [disabled]="selectedPOLines.length == 0"
+              (click)="validateFlip()"
+            >
+              Validate
+            </button>
+    
+          </div>
+    
+          <div
+          class="mt-5 d-flex justify-content-end footer mb-3"
+          *ngIf="POLineData[0]?.Description"
         >
-          Cancel
-        </button>
-        <button
-          class="primary_btn f-12"
-          type="submit"
-        >
-          Save
-        </button>
-
+    
+          <button
+            *ngIf="uploadBool"
+            class="f-12 primary_btn mr-3"
+            type="button"
+            [disabled]="selectedPOLines.length == 0"
+            (click)="validateFlip()"
+          >
+            Validate
+          </button>
+          <button
+            class="f-12 secondary_btn"
+            type="button"
+            mat-dialog-close
+          >
+            Cancel
+          </button>
+        </div>
+        </form>
       </div>
-    </form>
-
-  </div>
-
-  <div *ngIf="type == 'manpower_metadata'">
-    <!-- {{manPowerMetadata | json}} -->
-    <table *ngIf="manPowerMetadata.length > 0"           
-      style="border-collapse: collapse"
-      class="table table-bordered f-11">
-      <thead >
-        <tr class="f-12 tb_head">
-          <th *ngFor="let header of manpowerTableHeaders">{{header.header}}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let row of manPowerMetadata; let i = index">
-          <td>{{row.description}}</td>
-          <td>
-            <input type="checkbox"  [(ngModel)]="row.isTimesheets" (ngModelChange)="updateManpowerMetadata(i, 'isTimesheets', $event, row.itemCode)">
-          </td>
-          <td>
-            <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event, row.itemCode)">
-          </td>
-
-          <td>
-            <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event, row.itemCode)">
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="f-11">
-      <div class="f-13">Instructions:</div>
-      1. Check the "is Timesheets" box if you want to add manpower data for a specific line. <br>
-      2. Enter the duration data in months. <br>
-      3. Include the number of shifts for the same line. <br>
-    </div>
-    <div class="mt-4 d-flex justify-content-end mb-2">
-      <button
-        class="primary_btn f-12"
-        type="button"
-        [disabled]="disabledSaveMetadata"
-        (click)="saveManpowerMetadata()"
+    
+      <div *ngIf="type == 'Amend'">
+        <form
+        
+        #poAmend="ngForm"
+        (ngSubmit)="onSubmitRequest(poAmend.value)"
       >
-        Save
-      </button>
+        <!-- <label for="email" class="f-13">Recipient email ID</label>
+      <input
+        type="email"
+        name="recipient"
+        class="form-control f-12"
+        ngModel
+        required
+        placeholder="abc@example.com"
+      /> -->
+    
+        <!-- <label for="sub" class="f-13">Please Add Subject</label>
+      <input
+        type="text"
+        name="subject"
+        id="sub"
+        class="form-control f-12"
+        ngModel
+        required
+        placeholder="Regarding PO..."
+      /> -->
+    
+        <label for="body" class="f-12"
+          >Please Add your inputs for the rejection comments</label
+        >
+        <textarea
+          name="body"
+          id="body"
+          class="form-control f-12"
+          [(ngModel)]="rejectionComments"
+          required
+          placeholder="body"
+        >
+        </textarea>
+        <div class="mt-4 d-flex justify-content-end mb-3">
+          <button class="f-12 primary_btn mr-3" type="submit">
+            Reject & Send
+          </button>
+          <button
+            class="f-12 secondary_btn"
+            type="button"
+            mat-dialog-close
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+      </div>
+    
+      <div *ngIf="type == 'editApprover'">
+        <div class="d-flex justify-content-between flex-wrap f-12">
+          <!-- <div>
+            <label>Select Entity</label>
+            <select
+              class="form-control inputHeight"
+              disabled
+            >
+              <option
+                *ngFor="let entity of entityList"
+                [value]="entity.EntityName"
+              >
+                {{ entity.EntityName }}
+              </option>
+            </select>
+          </div> -->
+          <!-- <div>
+            <label>Select Department</label>
+            <select
+              class="form-control inputHeight"
+              [(ngModel)]="selectedDepartment"
+              (change)="onSelectDepartment($event.target.value)"
+            >
+              <option
+                *ngFor="let name of DepartmentList"
+                [value]="name.DepartmentName"
+              >
+                {{ name.DepartmentName }}
+              </option>
+            </select>
+          </div> -->
+          <div *ngFor="let item of approverList | keyvalue; let i = index">
+            <label>Select Approver {{ i + 1 }}</label>
+            <!-- <div>{{item.value | json}}</div> -->
+            <select
+              class="form-control inputHeight"
+              (change)="onSelectApprovers($event.target.value, i)"
+            >
+              <option *ngFor="let element of item.value" [value]="element.user_id">
+                {{ element.name }}
+              </option>
+            </select>
+          </div>
+          <!-- <div>
+            <label>Select Approver 2</label>
+            <select class="form-control inputHeight" [disabled]="preApproveBoolean">
+              <option value="">Karan</option>
+            </select>
+          </div> -->
+        </div>
+    
+        <div class="mt-4 d-flex justify-content-end mb-3">
+          <button
+            class="f-12 primary_btn mr-3"
+            type="submit"
+            (click)="setApprover()"
+          >
+            Submit
+          </button>
+          <button
+            class="f-12 secondary_btn"
+            type="button"
+            mat-dialog-close
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    
+      <div *ngIf="type == 'manpower'">
+     
+        <div class="d-flex justify-content-end">
+          <div class="calender_div" *ngIf="!isEditGRN">
+            <p-calendar
+              #datePicker
+              [(ngModel)]="rangeDates"
+              selectionMode="range"
+              [minDate]="minDate"
+              placeholder=""
+              [readonlyInput]="true"
+              [showIcon]="true"
+              showButtonBar="true"
+              (onClearClick)="clearDates()"
+              (onSelect)="filterByDate(rangeDates)"
+              [disabledDates]="disabledDates"
+              inputId="range"
+            ></p-calendar>
+          </div>
+        </div>
+    
+        <form #manpowerForm="ngForm" (ngSubmit)="onSubmitManpower(manpowerForm.value)" class="tabDiv">
+           
+          <!-- <table class="table f-12">
+            <tr class="tHead">
+              <th *ngFor="let head of manPowerData">{{ head.TagName }}</th>
+            </tr>
+            <tr
+              *ngFor="
+                let poLine of orderHistoryData?.order_history;
+                let i = index
+              "
+              class="tbdytr"
+            >
+              <td>
+                <input
+                  type="text"
+                  class="pos-r mr-1"
+                  style="top: 4px"
+                  name="SOMap"
+                  [id]="poLine.idDocumentLineItems"
+                  (change)="onSelectMaster(poLine.Description)"
+                />
+                <label [for]="poLine.idDocumentLineItems">{{
+                  poLine.Description
+                }}</label>
+              </td>
+              <td>{{ poLine.Unit }}</td>
+              <td>{{ poLine.UnitPrice }}</td>
+              <td>{{ poLine.Quantity }}</td>
+            </tr>
+          </table> -->
+          <table class="invert mt-2 w-100" id="grnTable">
+            <tr class="invert_tr" style="width: 50px">
+              <td
+                class="lineName invert_th_td text-center"
+                style="min-width: 50px"
+              >
+                S.No
+              </td>
+              <td
+                class="count_line"
+                *ngFor="let item2 of grnLineCount; let ind = index"
+              >
+                <div class="s-no">
+                  {{ ind + 1 }}
+                </div>
+              </td>
+            </tr>
+            <ng-container
+              *ngFor="let item of manPowerData; let i = index"
+            >
+              <tr
+                class="invert_tr"
+                *ngIf="
+                  !['AmountExcTax','UnitPrice','Duration in months','Is Timesheets','Actions','Number of Shifts'].includes(item.TagName)
+                "
+              >
+                <td
+                  class="lineName invert_th_td"
+                >
+                  <div  class="d-flex justify-content-between">
+                    <div>{{ item.TagName }}</div>
+                  </div>
+                </td>
+                <td
+                  class="linevalue invert_th_td"
+                  *ngFor="let line1 of item.linedata; let i = index"
+                >
+                  <div *ngIf="item.TagName != 'Actions'" [ngStyle]="{'background-color': (['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData) ? '#f1f1f1':''}">
+                    <input
+                      #inputval
+                      [type]="['Description','PO Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity','PO Balance Qty'].includes(item.TagName)?'text':'number'"
+                      [name]="line1.tagName_u"
+                      [title]="line1.Value"
+                      class="form-control inputHeight w-sm"
+                      [(ngModel)]="line1.Value"
+                      [ngClass]="item.TagName == 'Description'?'w-des':''"
+                      required
+                      (change)="onChange(line1, line1.Value)"
+                      [disabled]="['Description','PO Qty','PO Balance Qty','Monthly quantity','Number of Shifts','Shift','GRN - Quantity'].includes(item.TagName) || line1.isSavedData"
+                    />
+                  </div>
+                  <!-- <div *ngIf="!['Description','PO Qty','Actions'].includes(item.TagName) ">
+                    <input
+                      #inputval
+                      type="text"
+                      [name]="line1.tagName"
+                      [value]="line1.Value"
+                      [title]="line1.Value"
+                      class="form-control inputHeight w-sm"
+                      [(ngModel)]="line1.Value"
+                      [ngClass]="item.TagName == 'Description'?'w-des':''"
+                      
+                    />
+                  </div> -->
+                  <!-- <div *ngIf="item.TagName === 'Actions'" class="linevalue invert_thtd act_div">
+                      <button
+                        class="trash_btn"
+                        (click)="addNewShift(line1.Value,i)"
+                      >
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                      </button>
+                      <button
+                        class="trash_btn"
+                        (click)="removeShift(line1.Value,i)"
+                      >
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                      </button>
+                  </div> -->
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+          
+          <div class="f-11">
+            <div class="f-13">Notes:</div>
+            1. GRN Quantity calculation:  "(Total timesheet values for the line item)/(number of days in the month)" <br>
+            2. Disabled input field indicates that the data is already available or overlapping dates have been added <br>
+          </div>
+          <div
+            class="mt-4 d-flex justify-content-end mb-2 man_btns"
+          >
+            <button
+              class="secondary_btn f-12 mr-3"
+              type="button"
+              (click)="closeDialog(manpowerForm.touched, manpowerForm.dirty)"
+            >
+              Cancel
+            </button>
+            <button
+              class="primary_btn f-12"
+              type="submit"
+            >
+              Save
+            </button>
+    
+          </div>
+        </form>
+    
+      </div>
+    
+      <div *ngIf="type == 'manpower_metadata'">
+        <!-- {{manPowerMetadata | json}} -->
+        <table *ngIf="manPowerMetadata.length > 0"           
+          style="border-collapse: collapse"
+          class="table table-bordered f-11">
+          <thead >
+            <tr class="f-12 tb_head">
+              <th *ngFor="let header of manpowerTableHeaders">{{header.header}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of manPowerMetadata; let i = index">
+              <td>{{row.description}}</td>
+              <td>
+                <input type="checkbox"  [(ngModel)]="row.isTimesheets" (ngModelChange)="updateManpowerMetadata(i, 'isTimesheets', $event, row.itemCode)">
+              </td>
+              <td>
+                <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.durationMonth" (ngModelChange)="updateManpowerMetadata(i, 'durationMonth', $event, row.itemCode)">
+              </td>
+    
+              <td>
+                <input type="number" [disabled]="!row.isTimesheets" class="form-control f-11" [(ngModel)]="row.shifts" (ngModelChange)="updateManpowerMetadata(i, 'shifts', $event, row.itemCode)">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="f-11">
+          <div class="f-13">Instructions:</div>
+          1. Check the "is Timesheets" box if you want to add manpower data for a specific line. <br>
+          2. Enter the duration data in months. <br>
+          3. Include the number of shifts for the same line. <br>
+        </div>
+        <div class="mt-4 d-flex justify-content-end mb-2">
+          <button
+            class="primary_btn f-12"
+            type="button"
+            [disabled]="disabledSaveMetadata"
+            (click)="saveManpowerMetadata()"
+          >
+            Save
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+
+  </section>
+

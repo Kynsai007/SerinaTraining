@@ -221,7 +221,13 @@ $theme_color: var(--themeColor);
 }
 .basic_details {
   position: relative;
-  top: 5px;
+  top: 0px;
+}
+.basic_details_grn{
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .dummy_div {
   height: 45px;
@@ -801,6 +807,15 @@ dialog::backdrop {
   right: 495px !important;
 }
 .maxHDiv {
-  max-height: 65vh;
+  max-height: 56vh;
   overflow: auto;
+}
+.D_none {
+  display: none;
+}
+.p_events_all {
+  pointer-events: all;
+}
+.p_events_none {
+  pointer-events: none;
 }

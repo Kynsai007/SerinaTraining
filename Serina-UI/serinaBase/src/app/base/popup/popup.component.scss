@@ -169,3 +169,10 @@ $theme_color: var(--themeColor);
     bottom: -26px;
     right: 30px;
 }
+::ng-deep .cdk-overlay-pane {
+  position: absolute !important;
+}
+.toggle-btn {
+  margin-right: 10px;
+  height: 25px;
+}

@@ -2,7 +2,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/services/alert/alert.service';
 import { ExceptionsService } from 'src/app/services/exceptions/exceptions.service';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/dataStore/data.service';
 import { DatePipe } from '@angular/common';
@@ -64,6 +64,18 @@ export class PopupComponent implements OnInit {
   createdDates = [];
   disabledSaveMetadata: boolean = true;
 
+  isDragging = false;
+  isResizing = false;
+  isResizingEnabled = false;
+  resizeDirection: string = '';
+  startX!: number;
+  startY!: number;
+  startWidth!: number;
+  startHeight!: number;
+  edgeThreshold = 10; // Pixels from the edge to trigger resize
+  decimal_count: number;
+  dragRootElement = '.cdk-overlay-pane';
+
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
     private ES: ExceptionsService,
@@ -74,6 +86,8 @@ export class PopupComponent implements OnInit {
     private datePipe: DatePipe,
     private dateFilterService: DateFilterService,
     private sharedService: SharedService,
+    private el: ElementRef, 
+    private renderer: Renderer2,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
@@ -85,6 +99,10 @@ export class PopupComponent implements OnInit {
     this.POLineData = this.data?.resp?.podata;
     this.inv_total = this.data?.resp?.sub_total;
     this.isEditGRN = this.ds?.isEditGRN;
+    this.decimal_count = this.ds.configData?.miscellaneous?.No_of_Decimals;
+    if(!this.decimal_count){
+      this.decimal_count = 2;
+     }
     if (grn) {
       grn?.forEach(el => {
         let obj = { LineNumber: el.POLineNumber, grnpackagingid: el.PackingSlip };
@@ -197,14 +215,14 @@ export class PopupComponent implements OnInit {
       if (boolean) {
         this.selectedPOLines.push(data);
         let lineTotal = this.calculateAmount(data);
-        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) + Number(this.decimalRoundOff(lineTotal));
       }
     } else {
       const ind = this.selectedPOLines?.findIndex(el => el[field] == data[field]);
       if (ind != -1) {
         this.selectedPOLines.splice(ind, 1)
         let lineTotal= this.calculateAmount(data);
-        this.linesTotal = Number(this.linesTotal) - Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) - Number(this.decimalRoundOff(lineTotal));
         // this.linesTotal = Number(this.linesTotal) - Number((data?.Quantity * data?.UnitPrice).toFixed(2))
       }
     }
@@ -222,7 +240,7 @@ export class PopupComponent implements OnInit {
         val.Quantity = (<HTMLInputElement>document.getElementById(id)).value;
         let lineTotal = this.calculateAmount(val);
         // let lineTotal = val?.DiscAmount ? (val?.Quantity * (val?.UnitPrice - val?.DiscAmount)) : (val?.Quantity * val?.UnitPrice); 
-        this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+        this.linesTotal = Number(this.linesTotal) + Number(this.decimalRoundOff(lineTotal));
         // this.linesTotal = Number(this.linesTotal) + Number((val?.Quantity * val?.UnitPrice).toFixed(2))
       })
       const allData = [...this.POLineData]
@@ -249,7 +267,7 @@ export class PopupComponent implements OnInit {
         el[el_flied] = qty;
       }
       let lineTotal = this.calculateAmount(el);
-      this.linesTotal = Number(this.linesTotal) + Number(lineTotal.toFixed(2));
+      this.linesTotal = Number(this.linesTotal) + Number(this.decimalRoundOff(lineTotal));
       // this.linesTotal = Number(this.linesTotal) + Number((el?.Quantity * el?.UnitPrice).toFixed(2))
     });
     // this.linesTotal = 0;
@@ -747,7 +765,7 @@ export class PopupComponent implements OnInit {
             if (totalValue && shiftCount && !isNaN(totalValue) && !isNaN(shiftCount) && shiftCount > 0) {
 
               const calculatedGRNQuantity = totalValue / (numberOfDays);
-              line.Value = calculatedGRNQuantity.toFixed(2); 
+              line.Value = this.decimalRoundOff(calculatedGRNQuantity);
             } else {
               line.Value = "0"; // Default to 0 if something is missing
             }
@@ -767,4 +785,22 @@ export class PopupComponent implements OnInit {
       data: { body: body, type: type, heading: head, icon: 'assets/Serina Assets/new_theme/Group 1336.svg' }
     })
   }
+  toggleResize() {
+    this.isResizingEnabled = !this.isResizingEnabled;
+  }
+  decimalRoundOff(num: any) {
+    return Number(num).toLocaleString(undefined,
+       { minimumFractionDigits: this.decimal_count, 
+          maximumFractionDigits: this.decimal_count,
+          useGrouping: false 
+        });
+  }
+  addDrag() {
+    this.dragRootElement = '.cdk-overlay-pane';
+  }
+  removeDrag() {
+    this.dragRootElement ='';
+  }
+ 
 }
+
