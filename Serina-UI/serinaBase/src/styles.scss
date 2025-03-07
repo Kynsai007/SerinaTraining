@@ -566,7 +566,8 @@ input:checked + .slider:before {
   /* box-shadow: 0px 0px 4px #00000029; */
   border: 0 !important;
   background: #ffffff;
-  transform: translate(70%, 0);
+  transform: translateX(-50%);
+  left: 50%;
 }
 .p-paginator .p-paginator-pages .p-paginator-page {
   border: 1px solid #27272721 !important;
@@ -1362,11 +1363,20 @@ option:hover {
   padding-top: 10px;
 }
 dialog::backdrop {
-  background-color: rgb(247 247 255 / 80%);
+  background-color: rgb(255 255 255 / 93%);
   opacity: 0.9;
 }
+// .mat-dialog-container {
+//   padding: 0px 0px 20px 0px !important;
+// }
 .mat-dialog-container {
   padding: 0px 0px 20px 0px !important;
+  resize: both;
+}
+.p-dropdown:not(.p-disabled).p-focus {
+  outline: 0 none;
+  outline-offset: 0;
+  box-shadow: 0 0 0 0rem #495057 !important;
 }
 @media screen and (max-width: 576px) {
   .d_mobile {
